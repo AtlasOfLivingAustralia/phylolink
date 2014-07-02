@@ -1,0 +1,38 @@
+#phylolink-content{
+    border-top:1px;
+    border-top-color: #808080;
+    margin-top: 5px;
+    padding-top: 3px;
+}
+#phylolink-visualization {
+    float: left;
+    width: 50%;
+    overflow-x: auto;
+}
+
+#phylolink-widgets{
+    float: left;
+    width: 50%;
+    height: 650px;
+    border-left: 1px;
+    border-left-color: #808080;
+    overflow-y: auto;
+}
+#phylolink-content .phylolink-widget{
+    color: #808080;
+    background-color: #ffffff;
+    border:1px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: #808080;
+    margin-top:20px;
+    margin-left: 20px;
+    float: left;
+}
+#phylolink-content .phylolink-env{
+    width:300px;
+    height: 300px;
+}
+#phylolink-content .phylolink-widget h6{
+    text-align: center;
+}

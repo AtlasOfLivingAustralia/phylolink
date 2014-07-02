@@ -1,0 +1,1 @@
+<g:render template="chart" model="['title':'Environmental Layer']"/>

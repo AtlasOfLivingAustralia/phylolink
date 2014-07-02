@@ -1,0 +1,15 @@
+/**
+bootstrap pagination style from opentree's curator app
+*/
+.navbar-inner .pagination {
+    margin: 0.5em 0 0;
+}
+.pagination-small ul > li > a.pagination-spacer {
+    padding-left: 0;
+    padding-right: 0;
+    border-right-width: 0;
+    background-color: #ddd;
+}
+.pagination-small ul > li > a.pagination-spacer:hover {
+    background-color: #0088cc;
+}
