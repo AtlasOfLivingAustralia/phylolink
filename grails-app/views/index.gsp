@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta name="layout" content="main"/>
-		<title>PhyloViz | Atlas of Living Australia</title>
+		<title>PhyloLink | Atlas of Living Australia</title>
         <link rel="stylesheet" href="${resource(dir: 'css', file: 'index.css')}"/>
         <style type="text/css">
         table#trees td, table#trees th {
@@ -12,22 +12,23 @@
             border-left:0;
         }
         </style>
+        <r:require modules="application"/>
 	</head>
 	<body>
     <div id="content">
-        <header id="page-header">
-            <div class="inner">
-                <nav id="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li><a href="http://www.ala.org.au">Home</a> <span class=" icon icon-arrow-right"></span></li>
+        %{--<header id="page-header">--}%
+            %{--<div class="inner">--}%
+                %{--<nav id="breadcrumb">--}%
+                    %{--<ol class="breadcrumb">--}%
+                        %{--<li><a href="http://www.ala.org.au">Home</a> <span class=" icon icon-arrow-right"></span></li>--}%
                         %{--<li><a href="#">Second breadcrumb (change me)</a></li>--}%
-                        <li class="last">PhyloLink</li>
-                    </ol>
-                </nav>
-                <h1>Phylo Link</h1>
+                        %{--<li class="last">PhyloLink</li>--}%
+                    %{--</ol>--}%
+                %{--</nav>--}%
+                %{--<h1>Phylo Link</h1>--}%
 
-            </div><!--inner-->
-        </header>
+            %{--</div><!--inner-->--}%
+        %{--</header>--}%
     %{--# JSON support for older browsers (esp. IE7)--}%
     <script type="text/javascript" src="${resource(dir: 'js', file: 'json2.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'knockout-2.3.0.js')}"></script>
@@ -39,6 +40,7 @@
 //        var viewOrEdit = '{{= viewOrEdit }}';
         var viewOrEdit = 'VIEW';
         var findAllStudies_url = "http://115.146.93.110:7478/db/data/ext/QueryServices/graphdb/findAllStudies";
+        var searchTreeUrl = "http://115.146.93.110:7478/db/data/ext/QueryServices/graphdb/singlePropertySearchForTrees";
         var phylesystem_config_url = '{{=phylesystem_config_url}}';
     </script>
 
@@ -52,12 +54,12 @@
             %{--{{pass}}--}%
         %{--</div>--}%
     %{--</div><!-- /.row -->--}%
-
+<span style="width:100%">  <input id="nodename" type="text" value="" placeholder="Search for trees with name"/> <a style="margin-bottom: 10px" class="btn" onclick="searchForTrees()">Search</a></span>
     <div class="row"  Xstyle="position: relative; top: -1em;">
         <div class="span12"><!-- full width... -->
 
-            <a name="new-study-submit" class="btn btn-info" style="margin-bottom: 1em;" href="/curator/study/create">Add new study
-                <i class="icon-circle-arrow-up Xicon-plusXicon-upload icon-white"></i></a>
+            %{--<a name="new-study-submit" class="btn btn-info" style="margin-bottom: 1em;" href="/curator/study/create">Add new study--}%
+                %{--<i class="icon-circle-arrow-up Xicon-plusXicon-upload icon-white"></i></a>--}%
 
             <div class="navbar" style="clear: both;">
                 <div class="navbar-inner">

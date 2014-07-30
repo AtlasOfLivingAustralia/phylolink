@@ -7,3 +7,9 @@ if (typeof jQuery !== 'undefined') {
 		});
 	})(jQuery);
 }
+function searchForTrees( ){
+    var name = $("#nodename").attr('value');
+    var data = {"property":"ot:originalLabel","value":'',"verbose":true};
+    data.value = name;
+    loadStudyList( data , searchTreeUrl );
+}

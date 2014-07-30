@@ -6,13 +6,14 @@ public enum WidgetType{
     Environmental('environmental'),
     Contextual('contextual'),
     Map('map'),
-    Metrics('metrics'),
+    PD('PD'),
     Scatter('scatter plot')
     String id
     WidgetType( String id){
         this.id = id
     }
     static list(){
-        [Environmental,Contextual,Map,Metrics,Scatter]
+//        [Environmental,Contextual,Map,Metrics,Scatter]
+        [Environmental,Contextual,PD]
     }
 }

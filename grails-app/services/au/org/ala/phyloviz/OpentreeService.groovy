@@ -1,0 +1,98 @@
+package au.org.ala.phyloviz
+
+import grails.transaction.Transactional
+import jade.tree.JadeTree
+
+@Transactional
+class OpentreeService {
+    def grailsApplication
+    def webService
+    def metricsService
+    def getStudyMetadata( id, addMeta ) {
+        def i
+        addMeta = addMeta?:[:]
+        def url = grailsApplication.config['studyMeta']
+        url = url.replaceAll( 'STUDYID', id.toString() )
+        println ( url )
+        def meta = webService.getJson( url )
+        def result
+        result = this.mapStudyFields( meta, addMeta )
+        // do some processing now
+        result = this.getAuthor( result );
+        return result
+    }
+    def mapStudyFields( meta , result){
+        def i
+        def mapping = grailsApplication.config.nexmlMetaMapping
+        result = result?:[:]
+
+        mapping.each {metaProp, path->
+            def pathArray = path.split('/');
+            def val = meta;
+            for( i = 0; i<pathArray.size(); i++ ){
+//                println( pathArray[i] )
+//                println( val )
+                val = val[ pathArray[i] ];
+            }
+            result[ metaProp ]= val
+        }
+        return result;
+    }
+    /**
+     * extract authors from full publication text
+     * @param data
+     * @return
+     */
+    def getAuthor ( data ){
+        def studyMeta = grailsApplication.config.studyMetaMap
+        def study = data[ studyMeta.name ]
+        def year = data[studyMeta.year]
+        data[studyMeta.authors] = study?.split ("\\s+[\\(]*${year}[\\)]*\\.")[0]
+        return data;
+    }
+    /**
+     * add tree meta data to meta parameter
+     * @param tree
+     * @param meta
+     * @return
+     */
+    def addTreeMeta( JadeTree tree, meta ){
+        meta = meta?:[:]
+        meta[grailsApplication.config.treeMeta.numLeaves] = tree.externalNodeCount;
+        meta[grailsApplication.config.treeMeta.numIntNodes] = tree.internalNodeCount;
+
+        // branch length variable in tree is not set by jadetree class properly
+        // meta[grailsApplication.config.treeMeta.hasBL] = tree.hasBranchLengths;
+        return  meta
+    }
+    /**
+     * get the url of a tree resource
+     * @param format
+     * @param treeid
+     * @param studyid
+     * @return a url string
+     */
+    def getTreeUrl( String format, treeid, studyid ){
+        def url;
+        def urlFormat
+        switch (format){
+            case 'newick':
+                urlFormat = grailsApplication.config['newick_tree']
+                url = urlFormat.replace('STUDYID',studyid.toString()).replace('TREEID',treeid.toString());
+                break;
+        }
+        return url;
+    }
+    def getTreeUrlNewick( String treeId , String studyId ){
+        return this.getTreeUrl('newick', treeId, studyId)
+    }
+    /**
+     * create url that will fetch all studies
+     */
+    def getAllStudiesUrl(){
+        def result = [:]
+        result.url = grailsApplication.config.find_all_studies
+        result.data = grailsApplication.config.find_all_studies_postdata
+        return result
+    }
+}

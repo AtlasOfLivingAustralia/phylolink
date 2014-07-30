@@ -20,7 +20,8 @@ class Visualization {
         }
         static list(){
 //            this.values()
-            [PhyloJive, Argus, OneZoom ]
+//            [PhyloJive, Argus, OneZoom ]
+            [PhyloJive ]
         }
     }
     static constraints = {

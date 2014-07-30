@@ -1,9 +1,92 @@
 /******* Change this stuff for your project *******/
-//appName = 'PhyloViz'
+appName = 'Phylo Link'
 serverName='http://localhost:8080'
 contextPath='/PhyloLink'
 //security.cas.uriFilterPattern = ''
 /******* End of change this stuff for your project *******/
+
+/*** Phylo Link config *******/
+debug = true
+
+//opentree configs
+treemachine_address = 'http://115.146.93.110:8000'
+oti_address = 'http://115.146.93.110:7478'
+ot_address = 'http://115.146.93.110:8000'
+find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
+ot_api = "${ot_address}/api/v1"
+tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
+newick_tree = "${tree_api}.tre"
+studyMeta = "${ot_api}/study/STUDYID.json?output_nexml2json=1.0.0"
+
+find_all_studies_postdata = [ "includeTreeMetadata":true,"verbose":true ]
+//opentree configs end
+
+
+//variable config
+jsonkey = [
+        stList:"studies"
+]
+
+
+
+treeMeta = [
+        numLeaves:'numberOfLeaves',
+        numIntNodes:'numberOfInternalNodes',
+        hasBL:'hasBranchLength',
+        treeText:'tree',
+        treeUrl:'treeViewUrl'
+]
+studyMetaMap = [
+        name :'studyName',
+        year :'year',
+        authors:'authors'
+]
+expertTreesMeta=[
+        et:'expertTrees'
+]
+
+nexmlMetaMapping = [
+        "${studyMetaMap.name}":'data/nexml/^ot:studyPublicationReference',
+        'focalClade': 'data/nexml/^ot:focalCladeOTTTaxonName',
+        'doi': 'data/nexml/^ot:studyPublication/@href',
+        'year':'data/nexml/^ot:studyYear'
+]
+
+
+studyListMapping=[
+        'ot:studyPublicationReference': studyMetaMap.name,
+        'is_deprecated': 'deprecated',
+        'ot:focalCladeOTTTaxonName': 'focalCladeName',
+        'ot:studyYear': studyMetaMap.year,
+        'matched_trees':'trees',
+        'is_deprecated': 'deprecated',
+        'oti_tree_id': "treeId",
+        'ot:tag': 'tag',
+        'ot:curatorName': 'curator',
+        'ot:studyPublication': 'doi',
+        'ot:focalClade': 'focalCladeId',
+        'ot:studyId': 'studyId',
+        'ot:dataDeposit': 'source'
+]
+//variable config end
+
+/**** Phylo Link config end ****/
+
+/**
+ * Expert Tree config
+ */
+
+expert_trees = [[
+            "group":"mammals",
+            "studyId":"2816",
+            "treeId":"tree6557"
+        ],[
+        "group":"acacia",
+        "studyId":"2740",
+        "treeId":"tree6336"
+]]
+
+/** Tree config **/
 
 /******* ALA standard config ************/
 headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
@@ -118,8 +201,24 @@ environments {
         grails.logging.jul.usebridge = true
         grails.serverURL = "${serverName}/${appName}" //'http://nickdos.ala.org.au:8080/' + appName
     }
+    test {
+        serverName = 'http://115.146.93.110:8080'
+        contextPath = ''
+        security.cas.appServerName = serverName
+        grails.logging.jul.usebridge = true
+        security.cas.contextPath = ""
+        grails.serverURL = "${serverName}/${appName}"
+//        grails.logging.jul.usebridge = false
+        // TODO: grails.serverURL = "http://www.changeme.com"
+    }
     production {
+        serverName = 'http://115.146.93.193:8080'
+        contextPath = ''
+        security.cas.appServerName = serverName
         grails.logging.jul.usebridge = false
+        security.cas.contextPath = ""
+        grails.serverURL = "${serverName}/${appName}"
+//        grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }

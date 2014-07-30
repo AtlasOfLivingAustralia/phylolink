@@ -18,7 +18,11 @@ $(document).ready(function() {
     loadStudyList();
 });
 
-function loadStudyList() {
+function loadStudyList( data , url) {
+
+    data = data || { verbose: true, includeTreeMetadata: true };
+    url = url || findAllStudies_url;
+
     // show/hide spinner during all AJAX requests?
 
     /* START of fake study list
@@ -95,21 +99,39 @@ function loadStudyList() {
     $.ajax({
         type: 'POST',
         dataType: 'json',
-        url: findAllStudies_url,
-        data: { verbose: true, includeTreeMetadata: true },
+        url: url,
+        data: data,
         success: function( data, textStatus, jqXHR ) {
             // this should be properly parsed JSON
-
+//            debugger;
             // report errors or malformed data, if any
             if (textStatus !== 'success') {
                 showErrorMessage('Sorry, there was an error loading this study.');
                 return;
             }
+            if( data["matched_studies"] ){
+                console.log( 'found matched studies' );
+
+                data = data["matched_studies"];
+            }
             if (typeof data !== 'object' || !($.isArray(data))) {
                 showErrorMessage('Sorry, there is a problem with the study data.');
                 return;
             }
-
+            if( viewModel ){
+                console.log("adding searched values");
+                while( viewModel.length > 0 ){
+                    viewModel.pop();
+                }
+                data.forEach(function( val, index ){
+                   viewModel.push( val );
+                });
+//                viewModel.filteredStudies.filteredList( [] );
+                viewModel._filteredStudies(viewModel);
+//                viewModel.filteredStudies()
+//                viewModel._filteredStudies.goToPage(1);
+                return;
+            }
             viewModel = data; /// ko.mapping.fromJS( fakeStudyList );  // ..., mappingOptions);
 
             // enable sorting and filtering for lists in the editor

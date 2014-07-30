@@ -21,7 +21,7 @@ grails.project.source.level = 1.6
 //    console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 //]
 //
-//grails.project.dependency.resolver = "maven" // or ivy
+grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -35,6 +35,7 @@ grails.project.dependency.resolution = {
     repositories {
         inherits true // Whether to inherit repository definitions from plugins
 
+//        flatDir  appName:'myRepo', dirs:'/User/var03f/git/Phylo/lib'
         grailsPlugins()
         grailsHome()
 //        mavenLocal()
@@ -51,6 +52,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         // runtime 'mysql:mysql-connector-java:5.1.27'
         // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
+//        runtime "jade:jade-tree:1.0"
     }
 
     plugins {

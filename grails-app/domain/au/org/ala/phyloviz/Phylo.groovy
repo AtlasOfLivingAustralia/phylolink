@@ -11,6 +11,8 @@ class Phylo {
     Visualization viz
     Integer index
     String studyid
+    String regionType
+    String regionName
     List widgets = new ArrayList()
 //    List env = new ArrayList()
 //    List widgets = new ArrayList<Widget>();
@@ -29,6 +31,8 @@ class Phylo {
         index (nullable: true)
         studyid ( nullable: true)
         widgets (nullable:true)
+        regionType(nullable: true, blank: false)
+        regionName(nullable: true, blank: false)
     }
     def beforeValidate(){
 //        if( treeid.matches(studyid)){
@@ -56,4 +60,14 @@ class Phylo {
 //                FactoryUtils.instantiateFactory( Widget.class )
 //        )
 //    }
+    def getTreeUrl( format ){
+        def url;
+        def grailsapplication = this.getDomainClass().getGrailsApplication();
+        switch (format){
+            case 'newick':
+                url = grailsapplication.config.treemachine.replace('STUDYID',studyid).replace('TREEID',treeid) + '.tre';
+                break;
+        }
+        return url;
+    }
 }

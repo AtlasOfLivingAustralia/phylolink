@@ -25,6 +25,20 @@
     <script type="text/javascript" src="${resource(dir: 'js', file: 'PhyloLink.js')}"></script>
     <!--[if IE]><script language="javascript" type="text/javascript" src="${resource(dir: 'js', file: 'excanvas.js')}"></script><![endif]-->
     <script type="text/javascript">
+        $(document).ready(function(){
+//            width = $("#phylolink-visualization").width();
+//            height = $("#phylolink-visualization").height();
+            $('#phylolink-widgetpanel').width(width/2);
+            $('#phylolink-widgetpanel').height( height );
+            $("#widgets-overlay").height(height);
+            $("#phylolink-widgets").height(height);
+            $("#widgets-overlay").width(width/2);
+            $("#phylolink-widgets").width(width/2);
+            $("#phylolink-widgetpanel").css('left',width/2 +'px');
+            $("#phylolink-widgetpanel").css('top','0px');
+        })
+    </script>
+    <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart"]});
         function Widgets(){
             this.widgetsList = [];
@@ -38,9 +52,9 @@
             }
         }
         var widgets = new Widgets();
-        function widget( wid, id, url ){
-            var widgetid, widgeturl,wid;
-            widgetid = id;
+        function widget( wid, elemid, url ){
+            var widgetelemid, widgeturl,wid;
+            widgetelemid = elemid;
             widgeturl = url;
             wid = wid;
             return {
@@ -50,7 +64,7 @@
                         method:'GET',
                         data:{
                             speciesList : JSON.stringify( data ),
-                            id: widgetid,
+                            id: widgetelemid,
                             wid: wid
                         },
                         success: this.drawChart
@@ -61,10 +75,17 @@
 
                     var options = result.options;
 
-                    var chart = new google.visualization.ColumnChart(document.getElementById( widgetid ));
+                    var chart = new google.visualization.ColumnChart(document.getElementById( widgetelemid ));
                     chart.draw(data, options);
                 }
             };
+        }
+        function widgetPD(  wid, elemid, url ){
+            var pdWidget = widget( wid, elemid, url);
+            pdWidget.drawChart = function( data ){
+                $("#"+elemid).html( "<p>PD: "+data[0].pd + "</p><p>Max PD: " + data[0].maxPd +"</p");
+            }
+            return pdWidget;
         }
         //        google.setOnLoadCallback(testChart);
 
@@ -73,23 +94,29 @@
     function toggleProp( size , btn){
         switch ( size ){
             case 'half':
-                $("#phylolink-widgets").width('50%');
-                    $("#phylolink-widgets").show();
-                    $("#phylolink-visualization").width('50%');
-                    $("#phylolink-visualization").show();
+                $("#phylolink-widgetpanel").css('display','block');
+                $('#phylolink-widgetpanel').width(width/2);
+                $('#phylolink-widgetpanel').height( height );
+                $("#widgets-overlay").height(height);
+                $("#phylolink-widgets").height(height);
+                $("#widgets-overlay").width(width/2);
+                $("#phylolink-widgets").width(width/2);
+                $("#phylolink-widgetpanel").css('left',width/2 +'px');
+                $("#phylolink-widgetpanel").css('top','0px');
                 break;
             case 'min':
-                $("#phylolink-widgets").hide();
-                $("#phylolink-visualization").width('100%');
-                $("#phylolink-visualization").show();
+                $("#phylolink-widgetpanel").css('display','none');
                 break;
             case 'full':
-                $("#phylolink-widgets").width('100%');
-                $("#phylolink-widgets").show();
-
-                $("#phylolink-visualization").width("0%");
-                $("#phylolink-visualization").hide();
-
+                $("#phylolink-widgetpanel").css('display','block');
+                $('#phylolink-widgetpanel').width(width);
+//                $('#phylolink-widgetpanel').height( height );
+//                $("#widgets-overlay").height(height);
+//                $("#phylolink-widgets").height(height);
+                $("#widgets-overlay").width(width);
+                $("#phylolink-widgets").width(width);
+                $("#phylolink-widgetpanel").css('left','0px');
+                $("#phylolink-widgetpanel").css('top','0px');
                 break;
 
         }
@@ -99,8 +126,9 @@
 //        var tree = "(Thalassiosira weissflogii,(((Thalassiosira sp. A,(Thalassiosira gessneri,Thalassiosira lacustris)),((Thalassiosira sp. B,(((((((Thalassiosira brunii,(Thalassiosira cedarkeyensis,Tryblioptychus cocconeiformis)),Thalassiosira temperei),Thalassiosira transitoria),Thalassiosira kanayae),Thalassiosira hyperborea),Thalassiosira perispinosa),(((Thalassiosira californica,(Thalassiosira flexuosa,Thalassiosira grunowii)),Thalassiosira elliptipora),Thalassiosira yabei),Thalassiosira praeyabei)),(Thalassiosira marujamica,Thalassiosira orientalis))),(((Spicaticribra kingstonii,Cyclotella meneghiniana),Thalassiosira pseudonana),Conticribra tricircularis)));";
 
         %{--var treebaseurl = "${createLink(controller: 'phylojive', action: 'getTree')}";--}%
-        var treebaseurl = "http://115.146.93.110:8000/api/v1/study/${instance.studyid}/tree/${instance.treeid}.tre", tree = '';
-    var treeIndex = ${instance.index};
+        var treebaseurl = "${createLink(controller: 'phylo', action: 'getTree')}?studyId=${instance.studyid}&treeId=${instance.treeid}", tree = '';
+        %{--var treebaseurl = "http://115.146.93.110:8000/api/v1/study/${instance.studyid}/tree/${instance.treeid}.tre", tree = '';--}%
+        var treeIndex = ${instance.index};
         var characters = [];
         var setup = false;
 
@@ -112,10 +140,12 @@
                     url: treebaseurl,
                     method:'JSONP',
                     success:function( nex ){
-//                        debugger;
-//                    console.log('success!')
                         console.log( nex );
+                        nex = nex.tree;
+                        // smits parser does not like quotes in label. It goes into infinite loop.
                         nex = nex.replace(/\'/g, '');
+                        // sometimes opentree interface returns something like "[pre-ingroup-marker]"
+                        nex = nex.replace(/\[[^\]]+]/g,'');
                         !setup && init_phylojive(nex, characters, '', '');
                         setup = true;
                     }
@@ -126,8 +156,8 @@
         function init_phylojive(tree, characters, url, nexml) {
             //console.log("getkey", getKey(characters), getKey(characters[getKey(characters)]));
             phylogenyExplorer_init({
-                width: 900,
-                height: 600,
+                width: width,
+                height: height,
                 tree: tree,
                 treeIndex: treeIndex,
                 nexml: nexml,

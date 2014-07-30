@@ -125,4 +125,12 @@ class WebService implements InitializingBean {
             return error as JSON
         }
     }
+    def postData(String url, String data){
+        def uri =  new URL(url);
+        println( uri.host)
+        println( uri.path )
+        println( uri.port.toString())
+        println( data )
+        this.doJsonPost( "http://${uri.host}", uri.path, uri.port.toString(), data)
+    }
 }

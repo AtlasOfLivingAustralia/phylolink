@@ -61,8 +61,8 @@ var Nav = {
             'className':'clearfix roundedCornerZ',
             'style':{
                 'position':'relative',
-                'width':border + 'px',
-                'height':(opt.height + 20) + 'px'
+                'width':opt.width + 'px',
+                'height':opt.height + 'px'
             }
         });
 

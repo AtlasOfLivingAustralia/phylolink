@@ -1,19 +1,22 @@
 package au.org.ala.phyloviz
-
-import grails.web.JSONBuilder
+import grails.converters.JSON
+import grails.transaction.Transactional
 import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+import java.lang.reflect.Array
+
+import static org.springframework.http.HttpStatus.*
 
 /**
  * Created by Temi Varghese on 19/06/2014.
  */
-
-import static org.springframework.http.HttpStatus.*
-import grails.transaction.Transactional
-import grails.converters.JSON
-
 @Transactional(readOnly = true)
 class PhyloController {
     def webService;
+    def metricsService;
+    def opentreeService
+    def utilsService
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def list(Integer max) {
@@ -111,100 +114,274 @@ class PhyloController {
     }
 
     def getWidgetData(Phylo phyloInstance){
-//        def config = JSON.parse( phyloInstance.env.config );
-        def layers = ['cl678','cl617','cl966','cl613','cl613']
+//        def layers = ['cl678','cl617','cl966','cl613','cl613']
         def species = JSON.parse( params.speciesList );
         def summary = [:]
-//        def layer = phyloInstance.env?.getAt(0).config?:'landuse';
-//        def layer = layers[Integer.parseInt(params.wid)];
         println( 'wid' )
         println( params.wid );
         def widget = phyloInstance.widgets?.getAt( Integer.parseInt(params.wid) );
         def layer = widget.config
         def name = widget.displayname
-        for( speciesName in species ){
-            def occurenceUrl = "http://biocache.ala.org.au/ws/occurrences/search?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}&pageSize=10";
-            println( occurenceUrl );
-            def occurencesResult = JSON.parse( webService.get( occurenceUrl ) );
-            println("query")
-            println( occurencesResult.query )
+        def region = phyloInstance.regionName;
+        def regionType = phyloInstance.regionType? phyloInstance.regionType : 'state' ;
+        region = region? "${regionType}:\"${region.replaceAll(' ', '+')}\"" : '';
 
-            println( occurencesResult.dump());
-            if( occurencesResult['facetResults'][0]?.fieldResult ){
-//                println( occurencesResult['facetResults'][0]?.fieldResult.size() )
-                for( def i = 0 ; i < occurencesResult['facetResults'][0]?.fieldResult.size(); i++ ){
-                    def v = occurencesResult['facetResults'][0]?.fieldResult[ i ];
-                    if ( summary[v.label] ){
-//                    println( v.label );
-                        summary[v.label] += v.count
+        //the below logic for pd. it is short circuited. need to change logic.
+        if( layer == 'pd'){
+//            def treeurl = phyloInstance.getTreeUrl( 'newick' );
+//            println( 'treebase url: ')
+//            println ( treeurl );
+//            def treeNewcik =  webService.get( treeurl ) ;
+//            def treeReader = new TreeReader(  );
+//            def tree  = treeReader( treeNewcik );
+//            def leafIt = tree.iterateExternalNodes();
+//            def text = '';
+//            leafIt.each( function ( node ) {
+//                text += node.getName();
+//            });
+//            render( contentType: 'application/json', text:"{ \"pd\" :\"${text}\" }" );
+//            render( contentType: 'application/json', text:'{ "pd" :"25" }' );
+            params.studyId = phyloInstance.studyid;
+            params.treeId = phyloInstance.treeid;
+            this.getPD();
+            return ;
+        }
+
+
+        for( speciesName in species ){
+//            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrence/facets?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}";
+            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrences/search?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}&fq=${region}"
+            println( occurrenceUrl );
+            def occurrencesResult = JSON.parse( webService.get( occurrenceUrl ) );
+            occurrencesResult = occurrencesResult?.facetResults[0]
+            if( occurrencesResult?.fieldResult ){
+                for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
+                    def v = occurrencesResult.fieldResult[ i ];
+                    v.label = v.label? v.label : 'n/a';
+                    // this is important as it is getting summary for all the species list received.
+                    if(  summary[v.label] ){
+                        summary[v.label] += v.count;
                     } else {
                         summary[v.label] = v.count;
                     }
 
+
                 }
-//                println(i);
+
             }
-//            println( occurencesResult.occurrences )
-//            for( occurrence in occurencesResult.occurrences){
-//                def lat = occurrence.decimalLatitude
-//                def lng = occurrence.decimalLongitude
-//
-//                def urlStr = "http://spatial.ala.org.au/ws/intersect/${layer}/${lat}/${lng}";
-//                println( urlStr )
-//                def iValue = webService.getJson( urlStr );
-//                def value = iValue?.get(0)?.get('value')
-//                if ( value ){
-//                    if( summary[value] == null ){
-//                        summary[value] = 0;
-//                    }
-//                    summary[value] += 1;
-//                }
-//            }
-        }
-//        summary.sort{it.value};
-        def result = []
-        if( layer.contains('ev') ){
-            println( "Matching found" );
-            summary = summary.sort{ Float.parseFloat( it.key ) }
-        } else {
-            summary = summary.sort{ it.key }
-        }
-        summary.each(){ k,v->
-            result.push([ k,v ]);
         }
 
+        def result = []
+//        if( layer.contains('ev') ){
+//            println( "Matching found" );
+//            summary = summary.sort{ Float.parseFloat( it.key ) }
+//        } else {
+            summary = summary.sort{ it.key }
+//        }
+        if( layer.contains('el') ) {
+println( 'parsing to double')
+            summary.each() { k, v ->
+                result.push([ Double.parseDouble( k ), v]);
+            }
+        } else {
+            summary.each() { k, v ->
+                result.push([k, v]);
+            }
+        }
         if( result.size() != 0 ){
             result.add(0, ['Character','Occurrences'])
         } else {
             result.push( ['Character','Occurrences'] );
             result.push( ['',0] );
         }
-//        def data = result;
-//
-//        def data = summary.keySet().toArray();
-//        def data = summary.values().toArray();
-//        def data = summary.entrySet().toArray();;
-        // get guid
-        // get occurrences
-        // get env charachters
         render( contentType: 'application/json', text:'{ "data" :'+ new JsonBuilder( result ).toString() +
                 ',"options":{' +
                 "          \"title\": \"${name}\"," +
-                '          "hAxis": {"title": "Type", "titleTextStyle": {"color": "red"}}' +
+                "          \"hAxis\": {\"title\": \"${name}\", \"titleTextStyle\": {\"color\": \"red\"}}" +
                 '        }' +
                 '}');
-//        render( contentType: 'application/json', text:'{ "data" :[' +
-//                '          ["Year", "Sales", "Expenses"],' +
-//                '          ["2004",  1000,      400],' +
-//                '          ["2005",  1170,      460],' +
-//                '          ["2006",  660,       1120],' +
-//                '          ["2007",  1030,      540]' +
-//                '        ], '+
-//                '"options":{' +
-//                '          "title": "Company Performance",' +
-//                '          "hAxis": {"title": "Year", "titleTextStyle": {"color": "red"}}' +
-//                '        }' +
-//                '}');
-//        render { contentType:'application/json' text:'{data:[],options:{}}'}
+    }
+
+    def getRegions(){
+        def regions =[], json;
+        def regionsUrl = [ "state":"http://regions.ala.org.au/regions/regionList?type=states", "ibra":"http://regions.ala.org.au/regions/regionList?type=ibras"];
+        regionsUrl.each{ type, url->
+            json = JSON.parse( webService.get( url ) );
+            for( name in json.names ){
+                regions.push( ["value":name,"type":type] );
+            }
+        }
+        render( contentType: 'application/json', text: new JsonBuilder( regions ).toString() );
+
+    }
+
+    def getPD( ){
+        def treeId, studyId, tree, speciesList
+        def noTreeText = params.noTreeText?:false;
+        noTreeText = noTreeText.toBoolean()
+        treeId = params.treeId?.toString()
+        studyId = params.studyId?.toString()
+        tree = params.newick;
+        speciesList = params.speciesList
+        def result = this.getPDCalc(treeId, studyId, tree, speciesList)
+        result = noTreeText? this.removeProp(result, grailsApplication.config.treeMeta.treeText): result
+        render ( contentType: 'application/json',text: result as JSON )
+    }
+    def getPDCalc( String treeId, String studyId, String tree, String speciesList ){
+        def startTime, deltaTime
+        def treeUrl, type, i,pd, sList;
+        def studyMeta = [:], result =[], trees = [], input =[]
+
+        type = tree?"tree":treeId?"gettree":"besttrees"
+//        startTime = System.currentTimeMillis()
+        switch (type){
+            case 'tree':
+                studyMeta [grailsApplication.config.treeMeta.treeText]=tree
+                studyMeta [ grailsApplication.config.studyMetaMap.name ]= message(code: 'phylo.userTreeName', default: 'User tree' )
+                studyMeta = opentreeService.addTreeMeta(metricsService.getJadeTree( tree ), studyMeta )
+                input.push( studyMeta )
+                break;
+            case 'gettree':
+                studyMeta = this.getTreeMeta(treeId, studyId, null )
+                input.push( studyMeta )
+                break;
+            case 'besttrees':
+                startTime = System.currentTimeMillis()
+                input = this.getExpertTreeMeta();
+                deltaTime = System.currentTimeMillis() - startTime
+                println( "time elapse: ${deltaTime}")
+                input = input[grailsApplication.config.expertTreesMeta.et]
+                break;
+        }
+//        deltaTime = System.currentTimeMillis() - startTime
+//        println( "time elapse: ${deltaTime}")
+        sList = new JsonSlurper().parseText( speciesList )
+
+        for( i = 0; i < input.size(); i++){
+            studyMeta = [:]
+            input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
+//            startTime = System.currentTimeMillis()
+            // calculate pd
+            pd = metricsService.pd( input[i][grailsApplication.config.treeMeta.treeText], sList )
+//            deltaTime = System.currentTimeMillis() - startTime
+//            println( "time elapse: ${deltaTime}")
+//            startTime = System.currentTimeMillis()
+            input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
+//            deltaTime = System.currentTimeMillis() - startTime
+//            println( "time elapse: ${deltaTime}")
+            // merge the variables
+            pd.each {k,v->
+                input[i][k]=v
+            }
+            result.push( input[i] )
+        }
+
+        return  result;
+    }
+    def getTree(){
+        def studyId = params.studyId?.toString()
+        def treeId = params.treeId?.toString()
+        def noTreeText = params.noTreeText?:false;
+        noTreeText = noTreeText.toBoolean()
+        def meta = [:]
+        meta = this.getTreeMeta(treeId, studyId, meta)
+        meta = noTreeText? this.removeProp( meta , grailsApplication.config.treeMeta.treeText ): meta ;
+        render( contentType: 'application/json', text: meta as JSON )
+    }
+    /**
+     * attaches metadata of tree onto given metadata variable
+     * @param treeId
+     * @param studyId
+     * @param meta
+     * @return
+     */
+    private def getTreeMeta(String treeId, String studyId, meta){
+        def startTime, deltaTime
+        meta = meta?:[:]
+        meta = this.getTreeText( treeId, studyId, meta )
+//        startTime = System.currentTimeMillis()
+        meta = utilsService.getViewerUrl(treeId, studyId, meta)
+//        deltaTime = System.currentTimeMillis() - startTime
+//        println( " get viewer url time elapse: ${deltaTime}")
+//        startTime = System.currentTimeMillis()
+        meta = opentreeService.getStudyMetadata( studyId, meta )
+//        deltaTime = System.currentTimeMillis() - startTime
+//        println( " get study meta elapse: ${deltaTime}")
+//        startTime = System.currentTimeMillis()
+        def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
+//        deltaTime = System.currentTimeMillis() - startTime
+//        println( " create tree  object time elapse: ${deltaTime}")
+//        startTime = System.currentTimeMillis()
+        meta = opentreeService.addTreeMeta(jadetree, meta )
+//        deltaTime = System.currentTimeMillis() - startTime
+//        println( " add meta of tree: ${deltaTime}")
+        return  meta
+    }
+    private def removeProp( Collection meta, String prop){
+        for ( def i = 0 ; i < meta.size(); i++){
+            meta[i]?.remove( prop )
+        }
+        return meta;
+    }
+    private def removeProp( HashMap meta , String prop ){
+        meta?.remove( prop )
+        return meta;
+    }
+    /**
+     * this func creates a url and fetches its newick string
+     * @param treeId
+     * @param studyId
+     * @param meta
+     * @return
+     */
+    private def getTreeText(String treeId, String studyId, meta){
+        meta = meta?:[:]
+        def tree = webService.get( opentreeService.getTreeUrlNewick(treeId, studyId) )
+        meta[grailsApplication.config.treeMeta.treeText] = tree;
+        return meta
+    }
+    /**
+     * webservice that returns trees recommended by experts
+     * @return a json
+     * {
+     *  'expertTrees':[{},{}]
+     * }
+     */
+    def getExpertTrees(){
+        def noTreeText = params.noTreeText?:false;
+        def result = this.getExpertTreeMeta()
+        result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
+        render ( contentType: 'application/json', text: result as JSON)
+    }
+    /**
+     *
+     * @param meta
+     * metadata variable to which the result of this function gets added to
+     * @return
+     */
+    private def getExpertTreeMeta( meta ) {
+        meta = meta?:[:]
+        def trees = grailsApplication.config.expert_trees, i, studyId , treeId, input = [], studyMeta, temp
+        for( i = 0;i < trees.size(); i++ ){
+            studyId = trees[i].studyId?.toString()
+            treeId = trees[i].treeId?.toString()
+            studyMeta = this.getTreeMeta( treeId, studyId, trees[i] )
+            input.push( studyMeta )
+        }
+        meta[ grailsApplication.config.expertTreesMeta.et ] = input
+        return  meta
+    }
+    /**
+     * returns all studies and associated metadata
+     * @param
+     */
+    def getStudies(){
+        def meta = [:]
+        def result = this.getStudiesMeta( meta );
+        render ('contentType':'application/json', text: result as JSON )
+    }
+
+    private def getStudiesMeta( meta ){
+
     }
 }

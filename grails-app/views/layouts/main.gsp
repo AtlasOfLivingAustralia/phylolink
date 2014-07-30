@@ -8,6 +8,8 @@
     <meta name="description" content="Atlas of Living Australia"/>
     <meta name="author" content="Atlas of Living Australia">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="${resource(dir:"css", file: 'main.css')}"/>
+    <link rel="stylesheet" href="${resource(dir:"css", file: 'maingsp.css')}"/>
     <link href="http://www.ala.org.au/wp-content/themes/ala2011/images/favicon.ico" rel="shortcut icon"
           type="image/x-icon"/>
     <title><g:layoutTitle/></title>
@@ -17,7 +19,17 @@
     <r:require modules="bootstrap, application"/>
     <r:script disposition='head'>
         // initialise plugins
+        width = 900;
+        height = 600;
+
         jQuery(function(){
+            width = $("#vizscreen").width(  );
+            height = $("#vizscreen").height( );
+            height -= $("#nav-site").outerHeight( true );
+            height -= $("#site-header").outerHeight( true );
+            // some random margin coming up
+            height -= 30;
+            $("#vizscreen").height( height)
             // autocomplete on navbar search input
 //            jQuery("form#search-form-2011 input#search-2011, form#search-inpage input#search, input#search-2013").autocomplete('http://bie.ala.org.au/search/auto.jsonp', {
 //                extraParams: {limit: 100},
@@ -74,16 +86,17 @@
 
 <hf:menu fluidLayout="${fluidLayout}"/>
 
-<div class="${fluidLayout ? 'container-fluid' : 'container'}" id="main-content">
+%{--<div class="${fluidLayout ? 'container-fluid' : 'container'}" id="main-content">--}%
+<div class="container" id="vizscreen">
     <g:layoutBody/>
 </div><!--/.container-->
 
-<div class="${fluidLayout ? 'container-fluid' : 'container'} hidden-desktop">
-    <%-- Borrowed from http://marcusasplund.com/optout/ --%>
-    <a class="btn btn-small toggleResponsive"><i class="icon-resize-full"></i> <span>Desktop</span> version</a>
-</div>
+%{--<div class="${fluidLayout ? 'container-fluid' : 'container'} hidden-desktop">--}%
+    %{--<%-- Borrowed from http://marcusasplund.com/optout/ --%>--}%
+    %{--<a class="btn btn-small toggleResponsive"><i class="icon-resize-full"></i> <span>Desktop</span> version</a>--}%
+%{--</div>--}%
 
-<hf:footer/>
+%{--<hf:footer/>--}%
 
 <script type="text/javascript">
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
