@@ -77,14 +77,26 @@ studyListMapping=[
  */
 
 expert_trees = [[
-            "group":"mammals",
+            "group":"Fungi",
+            "studyId":"439",
+            "treeId":"tree556"
+        ],[
+            "group":"Frogs",
+            "studyId":"423",
+            "treeId":"tree2857"
+        ],[
+        "group":"Birds",
+        "studyId":"2015",
+        "treeId":"tree4152"
+        ],[
+            "group":"Primates",
             "studyId":"2816",
             "treeId":"tree6557"
         ],[
-        "group":"acacia",
-        "studyId":"2740",
-        "treeId":"tree6336"
-]]
+            "group":"Dinosaur",
+            "studyId":"2740",
+            "treeId":"tree6336"
+        ]]
 
 /** Tree config **/
 

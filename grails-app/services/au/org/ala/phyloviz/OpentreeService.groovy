@@ -30,9 +30,12 @@ class OpentreeService {
             def pathArray = path.split('/');
             def val = meta;
             for( i = 0; i<pathArray.size(); i++ ){
-//                println( pathArray[i] )
-//                println( val )
-                val = val[ pathArray[i] ];
+                if( val != null ){
+                    val = val[ pathArray[i] ];
+                } else {
+                    break;
+                }
+
             }
             result[ metaProp ]= val
         }

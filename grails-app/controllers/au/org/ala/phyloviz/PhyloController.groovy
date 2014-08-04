@@ -180,7 +180,9 @@ class PhyloController {
 //        }
         if( layer.contains('el') ) {
 println( 'parsing to double')
+            println( summary )
             summary.each() { k, v ->
+                println( k )
                 result.push([ Double.parseDouble( k ), v]);
             }
         } else {
