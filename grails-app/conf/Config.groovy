@@ -16,7 +16,7 @@ find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudi
 ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
 newick_tree = "${tree_api}.tre"
-studyMeta = "${ot_api}/study/STUDYID.json?output_nexml2json=1.0.0"
+studyMeta = "${ot_api}/study/STUDYID.json?output_nexml2json=1.2.1"
 
 find_all_studies_postdata = [ "includeTreeMetadata":true,"verbose":true ]
 //opentree configs end
@@ -76,27 +76,32 @@ studyListMapping=[
  * Expert Tree config
  */
 
-expert_trees = [[
-            "group":"Fungi",
-            "studyId":"439",
-            "treeId":"tree556"
-        ],[
-            "group":"Frogs",
-            "studyId":"423",
-            "treeId":"tree2857"
-        ],[
+expert_trees = [
+//        [
+//            "group":"Fungi",
+//            "studyId":"439",
+//            "treeId":"tree556"
+//        ],
+//                [
+//            "group":"Frogs",
+//            "studyId":"423",
+//            "treeId":"tree2857"
+//        ],
+                [
         "group":"Birds",
         "studyId":"2015",
         "treeId":"tree4152"
-        ],[
-            "group":"Primates",
-            "studyId":"2816",
-            "treeId":"tree6557"
-        ],[
-            "group":"Dinosaur",
-            "studyId":"2740",
-            "treeId":"tree6336"
-        ]]
+        ]
+//                ,[
+//            "group":"Primates",
+//            "studyId":"2816",
+//            "treeId":"tree6557"
+//        ],[
+//            "group":"Dinosaur",
+//            "studyId":"2740",
+//            "treeId":"tree6336"
+//        ]
+]
 
 /** Tree config **/
 
