@@ -8,6 +8,9 @@ contextPath='/PhyloLink'
 /*** Phylo Link config *******/
 debug = true
 
+//ala webservices
+occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
+
 //opentree configs
 treemachine_address = 'http://115.146.93.110:8000'
 oti_address = 'http://115.146.93.110:7478'
@@ -17,8 +20,10 @@ ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
 newick_tree = "${tree_api}.tre"
 studyMeta = "${ot_api}/study/STUDYID.json?output_nexml2json=1.0.0"
+treesearch_url = "${oti_address}/db/data/ext/QueryServices/graphdb/singlePropertySearchForTrees"
 
 find_all_studies_postdata = [ "includeTreeMetadata":true,"verbose":true ]
+search_postdata = ["property":"ot:originalLabel","value":'',"verbose":true]
 //opentree configs end
 
 
@@ -27,7 +32,9 @@ jsonkey = [
         stList:"studies"
 ]
 
-
+opentree_jsonvars=[
+        searchTree :'matched_studies'
+]
 
 treeMeta = [
         numLeaves:'numberOfLeaves',
@@ -77,11 +84,11 @@ studyListMapping=[
  */
 
 expert_trees = [[
-            "group":"mammals",
+            "group":"Primates",
             "studyId":"2816",
             "treeId":"tree6557"
         ],[
-        "group":"acacia",
+        "group":"Dinosaurs",
         "studyId":"2740",
         "treeId":"tree6336"
 ]]

@@ -105,6 +105,7 @@ function loadStudyList( data , url) {
             // this should be properly parsed JSON
 //            debugger;
             // report errors or malformed data, if any
+            data = data['studies']
             if (textStatus !== 'success') {
                 showErrorMessage('Sorry, there was an error loading this study.');
                 return;
@@ -163,15 +164,15 @@ function loadStudyList( data , url) {
                     viewModel, 
                     function(study) {
                         // match entered text against pub reference (author, title, journal name, DOI)
-                        var pubReference = study['ot:studyPublicationReference'];
-                        var pubURL = study['ot:studyPublication'];
-                        var pubYear = study['ot:studyYear'];
-                        var tags = $.isArray(study['ot:tag']) ? study['ot:tag'].join('|') : study['ot:tag'];
-                        var curator = study['ot:curatorName'];
-                        var clade = ('ot:focalCladeOTTTaxonName' in study && 
-                                     ($.trim(study['ot:focalCladeOTTTaxonName']) !== "")) ?
-                                        study['ot:curatorName'] :
-                                        study['ot:focalClade'];
+                        var pubReference = study['studyName'];
+                        var pubURL = study['doi'];
+                        var pubYear = study['year'];
+                        var tags = $.isArray(study['tag']) ? study['tag'].join('|') : study['tag'];
+                        var curator = study['curator'];
+                        var clade = ('focalCladeName' in study && 
+                                     ($.trim(study['focalCladeName']) !== "")) ?
+                                        study['curator'] :
+                                        study['focalCladeId'];
                         if (!matchPattern.test(pubReference) && !matchPattern.test(pubURL) && !matchPattern.test(pubYear) && !matchPattern.test(curator) && !matchPattern.test(tags) && !matchPattern.test(clade)) {
                             return false;
                         }
@@ -209,15 +210,15 @@ function loadStudyList( data , url) {
                      */
                     case 'Newest publication first':
                         filteredList.sort(function(a,b) { 
-                            if (a['ot:studyYear'] === b['ot:studyYear']) return 0;
-                            return (a['ot:studyYear'] > b['ot:studyYear'])? -1 : 1;
+                            if (a['year'] === b['year']) return 0;
+                            return (a['year'] > b['year'])? -1 : 1;
                         });
                         break;
 
                     case 'Oldest publication first':
                         filteredList.sort(function(a,b) { 
-                            if (a['ot:studyYear'] === b['ot:studyYear']) return 0;
-                            return (a['ot:studyYear'] > b['ot:studyYear'])? 1 : -1;
+                            if (a['year'] === b['year']) return 0;
+                            return (a['year'] > b['year'])? 1 : -1;
                         });
                         break;
 
@@ -266,31 +267,33 @@ function getViewOrEditLinks(study) {
 
     /* Send authorized users straight to Edit page?
     var viewOrEditURL = (viewOrEdit === 'EDIT') ?
-        '/curator/study/edit/'+ study['ot:studyId'] : 
-        '/curator/study/view/'+ study['ot:studyId'];
+        '/curator/study/edit/'+ study['studyId'] : 
+        '/curator/study/view/'+ study['studyId'];
     */
-    var viewOrEditURL = '/curator/study/view/'+ study['ot:studyId'];
+    var viewOrEditURL = '/curator/study/view/'+ study['studyId'];
 
-    var fullRef = study['ot:studyPublicationReference'];
+    var fullRef = study['studyName'];
     if (fullRef) {
         // hide/show full publication reference
-        html += '<a class="compact-study-ref" href="'+ viewOrEditURL +'">'+ fullToCompactReference(fullRef) +'</a>';
+//        html += '<a class="compact-study-ref" href="'+ viewOrEditURL +'">'+ fullToCompactReference(fullRef) +'</a>';
+        html += fullToCompactReference(fullRef);
         html += '&nbsp; &nbsp; <a class="full-ref-toggle" href="#" onclick="toggleStudyDetails(this); return false;">[show details]</a>';
     } else {
         // nothing to toggle
-        html += '<a href="'+ viewOrEditURL +'">(Untitled study)</a>';
+//        html += '<a href="'+ viewOrEditURL +'">(Untitled study)</a>';
+        html += "(Untitled study)";
     }
 
     return html;
 }
 function getCuratorLink(study) {
-    return '<a href="#" onclick="filterByCurator(\''+ study['ot:curatorName'] +'\'); return false;"'+'>'+ study['ot:curatorName'] +'</a'+'>';
+    return '<a href="#" onclick="filterByCurator(\''+ study['curator'] +'\'); return false;"'+'>'+ study['curator'] +'</a'+'>';
 }
 function getFocalCladeLink(study) {
     var ottIdNotFound = false;
     var ottID;
-    if ('ot:focalClade' in study) {
-        ottID = study['ot:focalClade'];
+    if ('focalCladeId' in study) {
+        ottID = study['focalCladeId'];
         if ($.trim(ottID) === "") {
             ottIdNotFound = true;
         }
@@ -300,8 +303,8 @@ function getFocalCladeLink(study) {
 
     var cladeNameNotFound = false;
     var cladeName;
-    if ('ot:focalCladeOTTTaxonName' in study) {
-        cladeName = study['ot:focalCladeOTTTaxonName'];
+    if ('focalCladeName' in study) {
+        cladeName = study['focalCladeName'];
         if ($.trim(cladeName) === "") {
             cladeNameNotFound = true;
         }
@@ -321,13 +324,13 @@ function getFocalCladeLink(study) {
         return '<span style="color: #ccc;">'+ cladeName +'</span>';
     }
 
-    return '<a href="#" onclick="filterByClade(\''+ ottID +'\'); return false;"'+'>'+ cladeName +'</a'+'>';
+    return '<a href="#" onclick="filterByClade(\''+ cladeName +'\'); return false;"'+'>'+ cladeName +'</a'+'>';
 }
 function getPubLink(study) {
     var urlNotFound = false;
     var pubURL;
-    if ('ot:studyPublication' in study) {
-        pubURL = study['ot:studyPublication'];
+    if ('doi' in study) {
+        pubURL = study['doi'];
         if ($.trim(pubURL) === "") {
             urlNotFound = true;
         }

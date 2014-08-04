@@ -30,9 +30,12 @@ class OpentreeService {
             def pathArray = path.split('/');
             def val = meta;
             for( i = 0; i<pathArray.size(); i++ ){
-//                println( pathArray[i] )
-//                println( val )
-                val = val[ pathArray[i] ];
+                if( val != null ){
+                    val = val[ pathArray[i] ];
+                } else {
+                    break;
+                }
+
             }
             result[ metaProp ]= val
         }
@@ -93,6 +96,16 @@ class OpentreeService {
         def result = [:]
         result.url = grailsApplication.config.find_all_studies
         result.data = grailsApplication.config.find_all_studies_postdata
+        return result
+    }
+    /**
+     * create url that will search for trees with query term
+     */
+    def getSearchTreeUrl( query ){
+        def result = [:]
+        result.url = grailsApplication.config.treesearch_url
+        result.data = grailsApplication.config.search_postdata.clone()
+        result['data']['value'] = query;
         return result
     }
 }

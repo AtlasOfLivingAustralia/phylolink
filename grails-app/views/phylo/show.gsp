@@ -57,6 +57,9 @@
                         <g:if test="${phyloInstance.widgets[i].config == 'pd'}">
                             <g:render template="pd" model="['i': i, 'title': 'Phylogenetic Diversity']"/>
                         </g:if>
+                        <g:if test="${phyloInstance.widgets[i].config == ''}">
+                            <g:render template="pd" model="['i': i, 'title': 'Phylogenetic Diversity']"/>
+                        </g:if>
                         <g:else>
                             <g:render template="environmental" model="['i': i]"/>
                         </g:else>

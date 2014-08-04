@@ -6,9 +6,12 @@ class Widget {
 //    def id
     String config
     String displayname
+    String type
+    String region
 ////    WidgetType type
     static constraints = {
 //        id(nullable:false)
+        region ( nullable: true)
         config(nullable: false)
         displayname(nullable: false)
 //        type(inList: WidgetType.list(), nullable: false)

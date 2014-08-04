@@ -62,21 +62,32 @@
     function addWidgetForm(){
         var widgetid = "widgets[" + counter +  "]",
             id = "widgets[" + counter +  "].config",
-            nameid = widgetid+".displayname", source, widgetType;
-        var tpl =  '<div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'widgets', 'error')} row">\
-            <div class="span4">\
-            <g:message code="phylo.widgets.label" default="Summarize data for" />:\
-            </div><div class="span4">\
-            <input type="hidden" id="' + id +  '" name="' + id +  '" value="pd" readonly="true" />' +
-                ' <input type="text" id="'+nameid+'" name="'+ nameid +'" readonly="true" value=""/></div><div class="span4"> ' +
-                '<input id="contextualautocomplete'+counter+'" type="text" placeholder="Choose a layer here"/></div>\
-            </div>';
+            nameid = widgetid+".displayname", source, widgetType, typeid = widgetid+".type";
+        var tpl ;
         widgetType = $("#widgetType").attr('value');
         switch ( widgetType ){
             case 'Contextual':
+                tpl = '<div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'widgets', 'error')} row">\
+            <div class="span4">\
+            <g:message code="phylo.widgets.label" default="Summarize data for" />:\
+            </div><div class="span4">\
+            <input type="hidden" id="' + id +  '" name="' + id +  '" value="contextual" readonly="true" />\
+            <input type="hidden" id="' + id +  '" name="' + id +  '" value="pd" readonly="true" />' +
+                ' <input type="text" id="'+nameid+'" name="'+ nameid +'" readonly="true" value=""/></div><div class="span4"> ' +
+                '<input id="contextualautocomplete'+counter+'" type="text" placeholder="Choose a layer here"/></div>\
+            </div>'
                 source = contextual;
                 break;
             case 'Environmental':
+                    tpl = '<div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'widgets', 'error')} row">\
+            <div class="span4">\
+            <g:message code="phylo.widgets.label" default="Summarize data for" />:\
+            </div><div class="span4">\
+            <input type="hidden" id="' + typeid +  '" name="' + typeid +  '" value="environmental" readonly="true" />\
+            <input type="hidden" id="' + id +  '" name="' + id +  '" value="pd" readonly="true" />' +
+                            ' <input type="text" id="'+nameid+'" name="'+ nameid +'" readonly="true" value=""/></div><div class="span4"> ' +
+                            '<input id="contextualautocomplete'+counter+'" type="text" placeholder="Choose a layer here"/></div>\
+            </div>'
                 source = environmental;
                 break;
             case 'PD':
@@ -84,6 +95,7 @@
             <div class="span4">\
             Metric:\
             </div><div class="span4">\
+            <input type="hidden" id="' + typeid +  '" name="' + typeid +  '" value="pd" readonly="true" />\
             <input type="hidden" id="' + id +  '" name="' + id +  '" value="pd" readonly="true" />' +
                         ' <input type="text" id="'+nameid+'" name="'+ nameid +'" readonly="true" value="PD"/></div>\
             </div>';

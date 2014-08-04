@@ -4,8 +4,6 @@ import grails.transaction.Transactional
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
-import java.lang.reflect.Array
-
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -114,9 +112,9 @@ class PhyloController {
     }
 
     def getWidgetData(Phylo phyloInstance){
-//        def layers = ['cl678','cl617','cl966','cl613','cl613']
         def species = JSON.parse( params.speciesList );
-        def summary = [:]
+//        params.speciesList = species;
+        def summary = [:], result
         println( 'wid' )
         println( params.wid );
         def widget = phyloInstance.widgets?.getAt( Integer.parseInt(params.wid) );
@@ -125,29 +123,35 @@ class PhyloController {
         def region = phyloInstance.regionName;
         def regionType = phyloInstance.regionType? phyloInstance.regionType : 'state' ;
         region = region? "${regionType}:\"${region.replaceAll(' ', '+')}\"" : '';
-
+        def data = widget
+        data.region = region;
+        println( widget)
+        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService )
+        data = widgetObject.process( params )
+        println( data )
+        render( contentType: 'application/json', text: data as JSON)
         //the below logic for pd. it is short circuited. need to change logic.
-        if( layer == 'pd'){
-//            def treeurl = phyloInstance.getTreeUrl( 'newick' );
-//            println( 'treebase url: ')
-//            println ( treeurl );
-//            def treeNewcik =  webService.get( treeurl ) ;
-//            def treeReader = new TreeReader(  );
-//            def tree  = treeReader( treeNewcik );
-//            def leafIt = tree.iterateExternalNodes();
-//            def text = '';
-//            leafIt.each( function ( node ) {
-//                text += node.getName();
-//            });
-//            render( contentType: 'application/json', text:"{ \"pd\" :\"${text}\" }" );
-//            render( contentType: 'application/json', text:'{ "pd" :"25" }' );
-            params.studyId = phyloInstance.studyid;
-            params.treeId = phyloInstance.treeid;
-            this.getPD();
-            return ;
-        }
-
-
+//        switch (layer){
+//            case 'pd':
+//                params.studyId = phyloInstance.studyid;
+//                params.treeId = phyloInstance.treeid;
+//                this.getPD();
+//                break;
+//            default:
+//                summary = this.getIntersections( species, layer, region );
+//                result = this.toGoogleColumnChart( summary, layer)
+//                render( contentType: 'application/json', text:'{ "data" :'+ new JsonBuilder( result ).toString() +
+//                        ',"options":{' +
+//                        "          \"title\": \"${name}\"," +
+//                        "          \"hAxis\": {\"title\": \"${name}\", \"titleTextStyle\": {\"color\": \"red\"}}" +
+//                        '        }' +
+//                        '}');
+//
+//                break
+//        }
+    }
+    def getIntersections( species, layer, region ){
+        def summary = [:]
         for( speciesName in species ){
 //            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrence/facets?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}";
             def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrences/search?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}&fq=${region}"
@@ -170,16 +174,13 @@ class PhyloController {
 
             }
         }
-
+        return  summary;
+    }
+    def toGoogleColumnChart( summary, layer ){
         def result = []
-//        if( layer.contains('ev') ){
-//            println( "Matching found" );
-//            summary = summary.sort{ Float.parseFloat( it.key ) }
-//        } else {
-            summary = summary.sort{ it.key }
-//        }
+        summary = summary.sort{ it.key }
         if( layer.contains('el') ) {
-println( 'parsing to double')
+            println( 'parsing to double')
             summary.each() { k, v ->
                 result.push([ Double.parseDouble( k ), v]);
             }
@@ -194,14 +195,8 @@ println( 'parsing to double')
             result.push( ['Character','Occurrences'] );
             result.push( ['',0] );
         }
-        render( contentType: 'application/json', text:'{ "data" :'+ new JsonBuilder( result ).toString() +
-                ',"options":{' +
-                "          \"title\": \"${name}\"," +
-                "          \"hAxis\": {\"title\": \"${name}\", \"titleTextStyle\": {\"color\": \"red\"}}" +
-                '        }' +
-                '}');
+        return result;
     }
-
     def getRegions(){
         def regions =[], json;
         def regionsUrl = [ "state":"http://regions.ala.org.au/regions/regionList?type=states", "ibra":"http://regions.ala.org.au/regions/regionList?type=ibras"];
