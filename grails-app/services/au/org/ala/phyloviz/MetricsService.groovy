@@ -1,6 +1,7 @@
 
 package au.org.ala.phyloviz
 
+import jade.tree.JadeNode
 import jade.tree.JadeTree
 import jade.tree.TreeReader
 
@@ -16,102 +17,52 @@ class MetricsService {
         def tree = this.getJadeTree( treeText );
         return this.pd(tree, speciesList)
     }
-    def pd ( JadeTree tree , speciesList ){
-        def i = 0, j =0,k =0;
-        def node;
-        def cSize = tree.externalNodeCount
-        def rSize = tree.internalNodeCount
-        def testChild
-        def val
-        def matrix = new Double[rSize][cSize + rSize]
-
-        for( i = 0; i < rSize; i ++ ){
-            for( j = 0; j < cSize + rSize; j++ ){
-                node = tree.getInternalNode( i );
-                if( j < cSize ){
-                    testChild = tree.getExternalNode( j )
-                } else {
-                    testChild = tree.getInternalNode( j - cSize );
-                }
-
-                if( node.hasChild( testChild )  ){
-                    matrix[i][j]  = testChild.getBL();
-                    // naming all child
-                    testChild.assocObject('position',"${i},${j}");
-                } else {
-                    matrix[i][j]  = 0;
-                }
-
+    def pdByTraversal( JadeNode node ){
+        Double sum = 0;
+        if( node && node.getObject('pd') ){
+            node.children?.each {v->
+                sum += this.pdByTraversal( v )
             }
+            sum += node.getBL();
         }
-
-        def flag = false;
+        return sum;
+    }
+    def pd ( JadeTree tree , speciesList ){
+        def node,i,j
+        def val
+        def start,end
+        speciesList = speciesList.clone()
 
         //do a intersection of speciesList and leaf node names to get the smallest array
-        speciesList = speciesList.intersect( this.getLeafNames( tree ))
+        def intersect = []
+        def leaves = this.getLeafNames( tree )
+        def leavesSmall = [:]
+        def lcase
+        for( i =0; i< leaves.size();i++){
+            lcase = leaves[i].trim().toLowerCase()
+            leavesSmall[ lcase ] = leaves[i]
+            leaves[i] = lcase;
+        }
+        leavesSmall
+//        speciesList = speciesList.unique();
+        for(i=0;i<speciesList.size();i++){
+           speciesList[i] = speciesList[i].trim().toLowerCase()
+        }
+        speciesList = speciesList.intersect(  leaves )
 
+        start = System.currentTimeMillis();
         //get list of decedent nodes that are in speciesList ie. create a white list
-        def whiteList = []
         for ( i =0; i < speciesList.size(); i++ ){
            val  = speciesList[i]
-           node = tree.getExternalNode(val)
+           node = tree.getExternalNode( leavesSmall[val] )
            while( node ){
-               whiteList.push( node )
+               node.assocObject('pd',true)
                node = node.parent
            }
         }
-        whiteList = whiteList.unique();
-
-        //create an inverse list
-        def whiteListPosition = [:]
-        for ( i =0; i < whiteList.size(); i++ ){
-            whiteListPosition[ whiteList[i].getObject( 'position' ) ] = whiteList[i];
-        }
-//        //get nodes from white list and find their positions in matrix
-//        def whiteListPositionMat = [:]
-//        for( i = 0; i < rSize; i ++ ) {
-//            for (j = 0; j < cSize + rSize; j++) {
-//                if( j < cSize ){
-//                    node = tree.getExternalNode( j )
-//                } else {
-//                    node = tree.getInternalNode( j - cSize );
-//                }
-//            }
-//        }
-
-        for( i = 0; i < rSize; i ++ ) {
-            for( j = 0; j < cSize + rSize; j++ ) {
-                if( j < cSize ){
-                    node = tree.getExternalNode( j )
-                } else {
-                    node = tree.getInternalNode( j - cSize );
-                }
-                // do it only if the value is non zero.
-                if ( whiteListPosition[ "${i},${j}" ] == null ){
-                    matrix[i][j] = 0
-                }
-//                if( matrix[i][j]){
-//                    flag = true
-//                    for( k =0 ; k < whiteList.size(); k++){
-//                        testChild = whiteList[k]
-//                        if( node == testChild){
-//                            flag = false;
-//                        }
-//                    }
-//                    if( flag ){
-//                        matrix[i][j] = 0
-//                    }
-//
-//                }
-            }
-        }
-
-        def sum = 0;
-        for( i = 0 ; i < rSize; i++){
-            for( j = 0 ; j < rSize+cSize; j++ ){
-                sum += matrix[i][j];
-            }
-        }
+        def sum = this.pdByTraversal( tree.getRoot() );
+        end = System.currentTimeMillis();
+        println( "pd elapsed time" + (end -start))
         return ['pd':sum.trunc(4),'taxaRecognised':speciesList];
     }
     def getTree( String format, String treeId, String studyId){
