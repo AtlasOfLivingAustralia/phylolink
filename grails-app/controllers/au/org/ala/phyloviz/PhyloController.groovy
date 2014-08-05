@@ -218,9 +218,15 @@ class PhyloController {
         studyId = params.studyId?.toString()
         tree = params.newick;
         speciesList = params.speciesList
-        def result = this.getPDCalc(treeId, studyId, tree, speciesList)
-        result = noTreeText? this.removeProp(result, grailsApplication.config.treeMeta.treeText): result
-        render ( contentType: 'application/json',text: result as JSON )
+        try {
+            def result = this.getPDCalc(treeId, studyId, tree, speciesList)
+            result = noTreeText ? this.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
+            render(contentType: 'application/json', text: result as JSON)
+        } catch (Exception e){
+            println( e.message )
+            println( e.stackTrace )
+            println('breaking');
+        }
     }
     def getPDCalc( String treeId, String studyId, String tree, String speciesList ){
         def startTime, deltaTime
