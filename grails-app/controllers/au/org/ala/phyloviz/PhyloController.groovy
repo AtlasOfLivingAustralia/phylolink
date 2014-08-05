@@ -260,6 +260,7 @@ class PhyloController {
 
         for( i = 0; i < input.size(); i++){
             studyMeta = [:]
+            println( input[i] );
             input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
 //            startTime = System.currentTimeMillis()
             // calculate pd
@@ -309,6 +310,7 @@ class PhyloController {
 //        deltaTime = System.currentTimeMillis() - startTime
 //        println( " get study meta elapse: ${deltaTime}")
 //        startTime = System.currentTimeMillis()
+        println( meta )
         def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
 //        deltaTime = System.currentTimeMillis() - startTime
 //        println( " create tree  object time elapse: ${deltaTime}")
@@ -364,10 +366,15 @@ class PhyloController {
         meta = meta?:[:]
         def trees = grailsApplication.config.expert_trees, i, studyId , treeId, input = [], studyMeta, temp
         for( i = 0;i < trees.size(); i++ ){
-            studyId = trees[i].studyId?.toString()
-            treeId = trees[i].treeId?.toString()
-            studyMeta = this.getTreeMeta( treeId, studyId, trees[i] )
-            input.push( studyMeta )
+            if( trees[i][grailsApplication.config.treeMeta.treeText] == null ){
+                studyId = trees[i].studyId?.toString()
+                treeId = trees[i].treeId?.toString()
+                studyMeta = this.getTreeMeta( treeId, studyId, trees[i] )
+                input.push( studyMeta.clone() )
+            } else {
+                input.push( trees[i].clone() )
+            }
+
         }
         meta[ grailsApplication.config.expertTreesMeta.et ] = input
         return  meta
