@@ -365,10 +365,15 @@ println( 'parsing to double')
         meta = meta?:[:]
         def trees = grailsApplication.config.expert_trees, i, studyId , treeId, input = [], studyMeta, temp
         for( i = 0;i < trees.size(); i++ ){
-            studyId = trees[i].studyId?.toString()
-            treeId = trees[i].treeId?.toString()
-            studyMeta = this.getTreeMeta( treeId, studyId, trees[i] )
-            input.push( studyMeta )
+            if( trees[i][grailsApplication.config.treeMeta.treeText] == null ){
+                studyId = trees[i].studyId?.toString()
+                treeId = trees[i].treeId?.toString()
+                studyMeta = this.getTreeMeta( treeId, studyId, trees[i] )
+                input.push( studyMeta.clone() )
+            } else {
+                input.push( trees[i].clone() )
+            }
+
         }
         meta[ grailsApplication.config.expertTreesMeta.et ] = input
         return  meta

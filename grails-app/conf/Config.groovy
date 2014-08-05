@@ -83,7 +83,7 @@ expert_trees = [
 //            "treeId":"tree556"
 //        ],
 //                [
-//            "group":"Frogs",
+//            "group":"Amphibia",
 //            "studyId":"423",
 //            "treeId":"tree2857"
 //        ],
