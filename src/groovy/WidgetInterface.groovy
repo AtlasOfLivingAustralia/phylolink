@@ -6,7 +6,7 @@ public interface WidgetInterface {
 //    def grailsApplication
 //    def webService
 //    def config
-    def process( data )
+    def process( data, phylo )
     def getViewFile()
     def getInputFile()
 }

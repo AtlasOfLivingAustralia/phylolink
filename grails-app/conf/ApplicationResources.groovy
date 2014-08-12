@@ -20,5 +20,6 @@ modules = {
         resource url:[dir:'css', file:  "jquery-ui.css"]
         resource url: [ dir: "js" , file:"jquery-ui.min.js"]
         resource url:[dir:"js", file:'application.js']
+        resource url:[dir:"js", file:'utils.js']
     }
 }

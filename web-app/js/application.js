@@ -16,3 +16,9 @@ function searchForTrees( ){
     data.q = name
     loadStudyList( data , searchTreeUrl );
 }
+function addWidgetForm(){
+    var widgetType;
+    widgetType = $("#widgetType").attr('value');
+    var widget = new widgets[ widgetType ](  )
+    widget.create( "widgets" );
+}

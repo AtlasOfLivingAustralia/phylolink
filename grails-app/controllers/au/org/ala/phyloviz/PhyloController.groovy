@@ -126,56 +126,13 @@ class PhyloController {
         def data = widget
         data.region = region;
         println( widget)
-        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService )
-        data = widgetObject.process( params )
+        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext)
+        data = widgetObject.process( params , phyloInstance )
         println( data )
         render( contentType: 'application/json', text: data as JSON)
-        //the below logic for pd. it is short circuited. need to change logic.
-//        switch (layer){
-//            case 'pd':
-//                params.studyId = phyloInstance.studyid;
-//                params.treeId = phyloInstance.treeid;
-//                this.getPD();
-//                break;
-//            default:
-//                summary = this.getIntersections( species, layer, region );
-//                result = this.toGoogleColumnChart( summary, layer)
-//                render( contentType: 'application/json', text:'{ "data" :'+ new JsonBuilder( result ).toString() +
-//                        ',"options":{' +
-//                        "          \"title\": \"${name}\"," +
-//                        "          \"hAxis\": {\"title\": \"${name}\", \"titleTextStyle\": {\"color\": \"red\"}}" +
-//                        '        }' +
-//                        '}');
-//
-//                break
-//        }
     }
-    def getIntersections( species, layer, region ){
-        def summary = [:]
-        for( speciesName in species ){
-//            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrence/facets?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}";
-            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrences/search?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}&fq=${region}"
-            println( occurrenceUrl );
-            def occurrencesResult = JSON.parse( webService.get( occurrenceUrl ) );
-            occurrencesResult = occurrencesResult?.facetResults[0]
-            if( occurrencesResult?.fieldResult ){
-                for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
-                    def v = occurrencesResult.fieldResult[ i ];
-                    v.label = v.label? v.label : 'n/a';
-                    // this is important as it is getting summary for all the species list received.
-                    if(  summary[v.label] ){
-                        summary[v.label] += v.count;
-                    } else {
-                        summary[v.label] = v.count;
-                    }
 
 
-                }
-
-            }
-        }
-        return  summary;
-    }
     def toGoogleColumnChart( summary, layer ){
         def result = []
         summary = summary.sort{ it.key }
@@ -392,4 +349,5 @@ class PhyloController {
     private def getStudiesMeta( meta ){
 
     }
+
 }

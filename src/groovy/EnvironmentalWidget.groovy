@@ -7,15 +7,21 @@ import grails.converters.JSON
 class EnvironmentalWidget implements  WidgetInterface{
     def webService
     def grailsApplication
+    def utilsService
+    def applicationContext
     def config
     def layer
     def region
-    EnvironmentalWidget(config , grailsApplication, webService){
+    def alaController
+    EnvironmentalWidget(config , grailsApplication, webService, utilsService, applicationContext){
         this.webService = webService;
         this.grailsApplication = grailsApplication;
+        this.utilsService = utilsService
+        this.applicationContext = applicationContext
         this.config = config;
         this.layer = config.config
         this.region = config.region
+        this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
     }
     def getViewFile(){
         return 'environmental';
@@ -23,57 +29,14 @@ class EnvironmentalWidget implements  WidgetInterface{
     def getInputFile(){
         return 'environmentalInput';
     }
-    def process( data ){
+    def process( data , phylo){
         data.speciesList = JSON.parse( data.speciesList );
-        def summary = this.getIntersections( data.speciesList )
-        return  this.toGoogleColumnChart( summary )
-    }
-    def getIntersections( species ){
-        def summary = [:]
-        for( speciesName in species ){
-            speciesName = speciesName.replaceAll(' ', '%20')
-            def occurrenceUrl = this.grailsApplication.config.occurrences.replace('SEARCH', speciesName).replace('LAYER',this.layer).replace('REGION',this.region)
-//            "http://biocache.ala.org.au/ws/occurrences/search?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}&fq=${region}"
-            println( occurrenceUrl );
-            def occurrencesResult = JSON.parse( this.webService.get( occurrenceUrl ) );
-            occurrencesResult = occurrencesResult?.facetResults[0]
-            if( occurrencesResult?.fieldResult ){
-                for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
-                    def v = occurrencesResult.fieldResult[ i ];
-                    v.label = v.label? v.label : 'n/a';
-                    // this is important as it is getting summary for all the species list received.
-                    if(  summary[v.label] ){
-                        summary[v.label] += v.count;
-                    } else {
-                        summary[v.label] = v.count;
-                    }
-
-
-                }
-
-            }
-        }
-        return  summary;
-    }
-    def toGoogleColumnChart( summary ){
-        def result = []
-        summary = summary.sort{ it.key }
-//        if( layer.contains('el') ) {
-//            println( 'parsing to double')
-            summary.each() { k, v ->
-                result.push([ Double.parseDouble( k ), v]);
-            }
-//        } else {
-//            summary.each() { k, v ->
-//                result.push([k, v]);
-//            }
-//        }
-        if( result.size() != 0 ){
-            result.add(0, ['Character','Occurrences'])
-        } else {
-            result.push( ['Character','Occurrences'] );
-            result.push( ['',0] );
-        }
-        return ['data':result];
+        def summary = alaController.getIntersections( data.speciesList, this.layer, this.region );
+        def output = [:]
+        def widgetConf = grailsApplication.config.widgetMeta
+        summary = utilsService.summarize( summary, grailsApplication.config.intersectionMeta.var, grailsApplication.config.intersectionMeta.count )
+        output[ widgetConf.data ] = utilsService.toGoogleColumnChart( summary, true )
+        output[widgetConf.chartOptions]= utilsService.googleChartOptions( this.config.type, this.config.displayname)
+        return output
     }
 }

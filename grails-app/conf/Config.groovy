@@ -10,6 +10,7 @@ debug = true
 
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
+layers = "http://spatial.ala.org.au/ws/layers"
 
 //opentree configs
 treemachine_address = 'http://115.146.93.110:8000'
@@ -25,6 +26,14 @@ treesearch_url = "${oti_address}/db/data/ext/QueryServices/graphdb/singlePropert
 find_all_studies_postdata = [ "includeTreeMetadata":true,"verbose":true ]
 search_postdata = ["property":"ot:originalLabel","value":'',"verbose":true]
 //opentree configs end
+
+
+// ala web service meta
+layersMeta=[
+        env:"Environmental",
+        cl:'Contextual'
+]
+// ala web service meta end
 
 
 //variable config
@@ -74,6 +83,17 @@ studyListMapping=[
         'ot:focalClade': 'focalCladeId',
         'ot:studyId': 'studyId',
         'ot:dataDeposit': 'source'
+]
+
+intersectionMeta =[
+        name:'name',
+        var:'variable',
+        count:'count'
+]
+
+widgetMeta =[
+        data:'data',
+        chartOptions:'options'
 ]
 //variable config end
 
