@@ -39,8 +39,10 @@
         <script type='text/javascript'>
 //        var viewOrEdit = '{{= viewOrEdit }}';
         var viewOrEdit = 'VIEW';
-        var findAllStudies_url = "http://115.146.93.110:7478/db/data/ext/QueryServices/graphdb/findAllStudies";
-        var searchTreeUrl = "http://115.146.93.110:7478/db/data/ext/QueryServices/graphdb/singlePropertySearchForTrees";
+//        var findAllStudies_url = "http://115.146.93.110:7478/db/data/ext/QueryServices/graphdb/findAllStudies";
+        var findAllStudies_url = "${createLink(controller: "study", action: 'listStudies')}";
+//        var searchTreeUrl = "http://115.146.93.110:7478/db/data/ext/QueryServices/graphdb/singlePropertySearchForTrees";
+        var searchTreeUrl = findAllStudies_url;
         var phylesystem_config_url = '{{=phylesystem_config_url}}';
     </script>
 
@@ -69,17 +71,17 @@
                                data-bind="value: viewModel.listFilters.STUDIES.match, valueUpdate: ['afterkeydown', 'input']">
                     </form>
                     <ul class="nav" style="padding-left: 1em;">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span data-bind="text: viewModel.listFilters.STUDIES.workflow">WORKFLOW</span>
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu" data-bind="foreach: ['Any workflow state', 'Draft study', 'Submitted for synthesis', 'Under revision', 'Included in synthetic tree']">
-                                <li data-bind="css: {'disabled': viewModel.listFilters.STUDIES.workflow() == $data }">
-                                    <a href="#" data-bind="text: $data, click: function () { viewModel.listFilters.STUDIES.workflow($data); }">WORKFLOW</a>
-                                </li>
-                            </ul>
-                        </li>
+                        %{--<li class="dropdown">--}%
+                            %{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">--}%
+                                %{--<span data-bind="text: viewModel.listFilters.STUDIES.workflow">WORKFLOW</span>--}%
+                                %{--<b class="caret"></b>--}%
+                            %{--</a>--}%
+                            %{--<ul class="dropdown-menu" data-bind="foreach: ['Any workflow state', 'Draft study', 'Submitted for synthesis', 'Under revision', 'Included in synthetic tree']">--}%
+                                %{--<li data-bind="css: {'disabled': viewModel.listFilters.STUDIES.workflow() == $data }">--}%
+                                    %{--<a href="#" data-bind="text: $data, click: function () { viewModel.listFilters.STUDIES.workflow($data); }">WORKFLOW</a>--}%
+                                %{--</li>--}%
+                            %{--</ul>--}%
+                        %{--</li>--}%
                         <!--<li class="divider-vertical"></li>-->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -100,9 +102,10 @@
                 <thead>
                 <tr>
                     <th>Reference (click to view study)</th>
-                    <th>Tree id</th>
                     <th>Focal clade</th>
                     <th>Curator</th>
+                    <th>Trees</th>
+
                     <!--
                 <th style="text-align: right;">Publication</th>
                 <th>Completeness</th>
@@ -115,10 +118,10 @@
                 <tbody data-bind="foreach: { data: viewModel.filteredStudies().pagedItems(), as: 'study' }">
                 <tr >
                     <td data-bind="html: getViewOrEditLinks(study)">&nbsp;</td>
-                    <td data-bind="html: createViz( study.matched_trees, '${createLink(controller:"phylo", action:"create")}'  )">&nbsp;</td>
                     <td data-bind="html: getFocalCladeLink(study)">&nbsp;</td>
                     <td data-bind="html: getCuratorLink(study)">&nbsp;</td>
-                    <td data-bind="text: study.completeness">&nbsp;</td>
+                    %{--<td data-bind="text: study.completeness">&nbsp;</td>--}%
+                    <td data-bind="html: createViz( study.trees, '${createLink(controller:"phylo", action:"create")}'  )">&nbsp;</td>
                     <!--
                 <td data-bind="text: study.is_deprecated">?</td>
                 <td data-bind="text: study.pubYear">?</td>
@@ -130,19 +133,19 @@
                     <td colspan="4" style="border-top: none; padding-top: 0px;">
                         <div class="full-study-ref" style="display: none; overflow: visible;">
                             <div Xclass=""
-                                 data-bind="html: study['ot:studyPublicationReference']">&nbsp;</div>
+                                 data-bind="html: study['studyName']">&nbsp;</div>
                             <div style="Xfont-size: 90%; margin-top: 3px;" data-bind="html: getPubLink(study)">&nbsp;</div>
 
-                            <label style="display: inline-block" data-bind="visible: (study['ot:tag'])">Tags&nbsp;</label>
+                            <label style="display: inline-block" data-bind="visible: (study['tag'])">Tags&nbsp;</label>
                             <div class="bootstrap-tagsinput"
                                  style="display: inline-block; border: none; margin-bottom: 0; padding: 0 0 4px 0;"
-                                 data-bind="visible: study['ot:tag'] !== ''">
-                                <!-- ko foreach: makeArray(study['ot:tag']) -->
+                                 data-bind="visible: study['tag'] !== ''">
+                                <!-- ko foreach: makeArray(study['tag']) -->
                                 <a class="tag label label-info" style="display: none;"
                                    href="#" data-bind="text: $data, visible: true"
                                    onclick="filterByTag($(this).text()); return false;">&nbsp;</a>
                                 <!-- /ko -->
-                                <span style="color: #999; display: none;" data-bind="visible: !(study['ot:tag'])">
+                                <span style="color: #999; display: none;" data-bind="visible: !(study['tag'])">
                                     This study has not been tagged.
                                 </span>
                             </div>

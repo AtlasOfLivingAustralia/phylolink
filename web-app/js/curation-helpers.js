@@ -178,7 +178,7 @@ function isVisiblePage( pageNum, pagedArray ) {
 var cladeNameTimeoutID = null;
 function loadMissingFocalCladeNames() {
     // temporary behavior to AJAX-load missing taxon names wherever we
-    // display 'ot:focalClade' values (bare OTT ids, which nobody knows)
+    // display 'focalCladeId' values (bare OTT ids, which nobody knows)
     if (cladeNameTimeoutID) {
         clearTimeout( cladeNameTimeoutID );
     }
@@ -304,9 +304,9 @@ function createViz( trees, url ){
 //    var url  = '${createLink(controller:"phylo", action:"create")}';
     var links = [];
     trees && trees.forEach( function( val , index ){
-        links.push( "<a href='" + url + '/' +val['ot:studyId'] +'/'+val['oti_tree_id'] +'/'+index+"'>"+ val['oti_tree_id'] + "</a>" );
+        links.push( "<a href='" + url + '/' +val['studyId'] +'/'+val['treeId'] +'/'+index+"'>"+ val['treeId'] + "</a>" );
     });
-    return links.join(' , ');
+    return links.join(' <br/> ');
 }
 /* NOTE that Bootstrap modals are somewhat limited; in particular, the
  * expectation is that only one will appear at a time, vs. chained or nested

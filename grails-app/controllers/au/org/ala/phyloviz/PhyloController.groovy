@@ -4,8 +4,6 @@ import grails.transaction.Transactional
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
-import java.lang.reflect.Array
-
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -114,9 +112,9 @@ class PhyloController {
     }
 
     def getWidgetData(Phylo phyloInstance){
-//        def layers = ['cl678','cl617','cl966','cl613','cl613']
         def species = JSON.parse( params.speciesList );
-        def summary = [:]
+//        params.speciesList = species;
+        def summary = [:], result
         println( 'wid' )
         println( params.wid );
         def widget = phyloInstance.widgets?.getAt( Integer.parseInt(params.wid) );
@@ -125,62 +123,21 @@ class PhyloController {
         def region = phyloInstance.regionName;
         def regionType = phyloInstance.regionType? phyloInstance.regionType : 'state' ;
         region = region? "${regionType}:\"${region.replaceAll(' ', '+')}\"" : '';
-
-        //the below logic for pd. it is short circuited. need to change logic.
-        if( layer == 'pd'){
-//            def treeurl = phyloInstance.getTreeUrl( 'newick' );
-//            println( 'treebase url: ')
-//            println ( treeurl );
-//            def treeNewcik =  webService.get( treeurl ) ;
-//            def treeReader = new TreeReader(  );
-//            def tree  = treeReader( treeNewcik );
-//            def leafIt = tree.iterateExternalNodes();
-//            def text = '';
-//            leafIt.each( function ( node ) {
-//                text += node.getName();
-//            });
-//            render( contentType: 'application/json', text:"{ \"pd\" :\"${text}\" }" );
-//            render( contentType: 'application/json', text:'{ "pd" :"25" }' );
-            params.studyId = phyloInstance.studyid;
-            params.treeId = phyloInstance.treeid;
-            this.getPD();
-            return ;
-        }
+        def data = widget
+        data.region = region;
+        println( widget)
+        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext)
+        data = widgetObject.process( params , phyloInstance )
+        println( data )
+        render( contentType: 'application/json', text: data as JSON)
+    }
 
 
-        for( speciesName in species ){
-//            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrence/facets?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}";
-            def occurrenceUrl = "http://biocache.ala.org.au/ws/occurrences/search?q=${speciesName.replaceAll(' ', '%20')}&facets=${layer}&fq=${region}"
-            println( occurrenceUrl );
-            def occurrencesResult = JSON.parse( webService.get( occurrenceUrl ) );
-            occurrencesResult = occurrencesResult?.facetResults[0]
-            if( occurrencesResult?.fieldResult ){
-                for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
-                    def v = occurrencesResult.fieldResult[ i ];
-                    v.label = v.label? v.label : 'n/a';
-                    // this is important as it is getting summary for all the species list received.
-                    if(  summary[v.label] ){
-                        summary[v.label] += v.count;
-                    } else {
-                        summary[v.label] = v.count;
-                    }
-
-
-                }
-
-            }
-        }
-
+    def toGoogleColumnChart( summary, layer ){
         def result = []
-//        if( layer.contains('ev') ){
-//            println( "Matching found" );
-//            summary = summary.sort{ Float.parseFloat( it.key ) }
-//        } else {
-            summary = summary.sort{ it.key }
-//        }
+        summary = summary.sort{ it.key }
         if( layer.contains('el') ) {
-println( 'parsing to double')
-            println( summary )
+            println( 'parsing to double')
             summary.each() { k, v ->
                 println( k )
                 result.push([ Double.parseDouble( k ), v]);
@@ -196,14 +153,8 @@ println( 'parsing to double')
             result.push( ['Character','Occurrences'] );
             result.push( ['',0] );
         }
-        render( contentType: 'application/json', text:'{ "data" :'+ new JsonBuilder( result ).toString() +
-                ',"options":{' +
-                "          \"title\": \"${name}\"," +
-                "          \"hAxis\": {\"title\": \"${name}\", \"titleTextStyle\": {\"color\": \"red\"}}" +
-                '        }' +
-                '}');
+        return result;
     }
-
     def getRegions(){
         def regions =[], json;
         def regionsUrl = [ "state":"http://regions.ala.org.au/regions/regionList?type=states", "ibra":"http://regions.ala.org.au/regions/regionList?type=ibras"];
@@ -225,9 +176,15 @@ println( 'parsing to double')
         studyId = params.studyId?.toString()
         tree = params.newick;
         speciesList = params.speciesList
-        def result = this.getPDCalc(treeId, studyId, tree, speciesList)
-        result = noTreeText? this.removeProp(result, grailsApplication.config.treeMeta.treeText): result
-        render ( contentType: 'application/json',text: result as JSON )
+        try {
+            def result = this.getPDCalc(treeId, studyId, tree, speciesList)
+            result = noTreeText ? this.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
+            render(contentType: 'application/json', text: result as JSON)
+        } catch (Exception e){
+            println( e.message )
+            println( e.stackTrace )
+            println('breaking');
+        }
     }
     def getPDCalc( String treeId, String studyId, String tree, String speciesList ){
         def startTime, deltaTime
@@ -261,6 +218,7 @@ println( 'parsing to double')
 
         for( i = 0; i < input.size(); i++){
             studyMeta = [:]
+            println( input[i] );
             input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
 //            startTime = System.currentTimeMillis()
             // calculate pd
@@ -310,6 +268,7 @@ println( 'parsing to double')
 //        deltaTime = System.currentTimeMillis() - startTime
 //        println( " get study meta elapse: ${deltaTime}")
 //        startTime = System.currentTimeMillis()
+        println( meta )
         def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
 //        deltaTime = System.currentTimeMillis() - startTime
 //        println( " create tree  object time elapse: ${deltaTime}")
@@ -391,4 +350,5 @@ println( 'parsing to double')
     private def getStudiesMeta( meta ){
 
     }
+
 }

@@ -6,11 +6,16 @@ class StudyController {
     def webService
     def utilsService
     def listStudies() {
-        def pageSize, page, result;
+        def pageSize, page, result, search;
         page = params.page as Integer;
         pageSize = params.pageSize;
+        search = params.q?:null;
         try{
-            result = this._listStudies();
+            if( search != null ){
+                result = this._searchStudies( search, null);
+            } else {
+                result = this._listStudies();
+            }
             if( (page != null) && (pageSize != null) ) {
                 page = page as Integer
                 pageSize = pageSize as Integer
@@ -36,6 +41,14 @@ class StudyController {
         def studies = webService.postData(  post.url, (post.data as JSON).toString() );
 
         meta[grailsApplication.config.jsonkey.stList] = studies
+        return meta
+    }
+    private  def _searchStudies( String search, meta ){
+        meta = meta?:[:]
+        def post
+        post = opentreeService.getSearchTreeUrl( search );
+        def studies = webService.postData(  post.url, (post.data as JSON).toString() );
+        meta[grailsApplication.config.jsonkey.stList] = studies[grailsApplication.config.opentree_jsonvars.searchTree]
         return meta
     }
     private  def getPage(Integer page , Integer pageSize, array ){

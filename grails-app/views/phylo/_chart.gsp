@@ -9,13 +9,12 @@
 </head>
 
 <body>
-<div id="env${i}" class="phylolink-widget phylolink-env" >
-    <h6>${title}</h6>
-    <div id="env${i}-content"></div>
-    <script type="text/javascript">
-        widgets.add( widget( '${i}','env${i}-content', "${createLink( controller: 'Phylo', action:'getWidgetData') }/${phyloInstance.id}" ) );
-    </script>
-</div>
-
+    <div id="env${i}" class="phylolink-widget phylolink-env" >
+        <h6>${title}</h6>
+        <div id="env${i}-content"></div>
+        <script type="text/javascript">
+            widgets.add( widget( '${i}','env${i}-content', "${createLink( controller: 'Phylo', action:'getWidgetData') }/${phyloInstance.id}" ) );
+        </script>
+    </div>
 </body>
 </html>

@@ -1,15 +1,7 @@
 <%--
-  Created by: nick
-  Date: 8/08/12
-  Time: 2:37 PM
-  Modified by: Temi Varghese
+  Created by: Temi Varghese
   Date: 18/06/14
 --%>
-<%@ page import="groovy.json.StringEscapeUtils; org.codehaus.groovy.grails.commons.ConfigurationHolder; grails.converters.JSON" contentType="text/html;charset=UTF-8" %>
-<html xmlns="http://www.w3.org/1999/html">
-<head>
-    %{--<title>Tree for .name}</title>--}%
-    <meta name="layout" content="main"/>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'PhyloJive.css')}" type="text/css" media="screen" />
     <link rel="stylesheet" href="${resource(dir: 'css/colorbox', file: 'colorbox.css')}" type="text/css" media="screen" />
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery.contextMenu.css')}" type="text/css" media="screen" />
@@ -26,8 +18,6 @@
     <!--[if IE]><script language="javascript" type="text/javascript" src="${resource(dir: 'js', file: 'excanvas.js')}"></script><![endif]-->
     <script type="text/javascript">
         $(document).ready(function(){
-//            width = $("#phylolink-visualization").width();
-//            height = $("#phylolink-visualization").height();
             $('#phylolink-widgetpanel').width(width/2);
             $('#phylolink-widgetpanel').height( height );
             $("#widgets-overlay").height(height);
@@ -37,58 +27,6 @@
             $("#phylolink-widgetpanel").css('left',width/2 +'px');
             $("#phylolink-widgetpanel").css('top','0px');
         })
-    </script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {packages:["corechart"]});
-        function Widgets(){
-            this.widgetsList = [];
-            this.add = function( widget ){
-                this.widgetsList.push( widget );
-            }
-            this.load = function( data ){
-                for( var wid in this.widgetsList ){
-                    this.widgetsList[wid].load( data );
-                }
-            }
-        }
-        var widgets = new Widgets();
-        function widget( wid, elemid, url ){
-            var widgetelemid, widgeturl,wid;
-            widgetelemid = elemid;
-            widgeturl = url;
-            wid = wid;
-            return {
-                load: function ( data ){
-                    $.ajax({
-                        url:widgeturl,
-                        method:'GET',
-                        data:{
-                            speciesList : JSON.stringify( data ),
-                            id: widgetelemid,
-                            wid: wid
-                        },
-                        success: this.drawChart
-                    });
-                },
-                drawChart: function ( result ) {
-                    var data = google.visualization.arrayToDataTable( result.data );
-
-                    var options = result.options;
-
-                    var chart = new google.visualization.ColumnChart(document.getElementById( widgetelemid ));
-                    chart.draw(data, options);
-                }
-            };
-        }
-        function widgetPD(  wid, elemid, url ){
-            var pdWidget = widget( wid, elemid, url);
-            pdWidget.drawChart = function( data ){
-                $("#"+elemid).html( "<p>PD: "+data[0].pd + "</p><p>Max PD: " + data[0].maxPd +"</p");
-            }
-            return pdWidget;
-        }
-        //        google.setOnLoadCallback(testChart);
-
     </script>
     <script type="text/javascript">
     function toggleProp( size , btn){
@@ -110,9 +48,6 @@
             case 'full':
                 $("#phylolink-widgetpanel").css('display','block');
                 $('#phylolink-widgetpanel').width(width);
-//                $('#phylolink-widgetpanel').height( height );
-//                $("#widgets-overlay").height(height);
-//                $("#phylolink-widgets").height(height);
                 $("#widgets-overlay").width(width);
                 $("#phylolink-widgets").width(width);
                 $("#phylolink-widgetpanel").css('left','0px');
@@ -123,11 +58,8 @@
         jQuery( btn.parentNode ).find('.btn').removeClass('active');
         jQuery( btn ).addClass('active');
     }
-//        var tree = "(Thalassiosira weissflogii,(((Thalassiosira sp. A,(Thalassiosira gessneri,Thalassiosira lacustris)),((Thalassiosira sp. B,(((((((Thalassiosira brunii,(Thalassiosira cedarkeyensis,Tryblioptychus cocconeiformis)),Thalassiosira temperei),Thalassiosira transitoria),Thalassiosira kanayae),Thalassiosira hyperborea),Thalassiosira perispinosa),(((Thalassiosira californica,(Thalassiosira flexuosa,Thalassiosira grunowii)),Thalassiosira elliptipora),Thalassiosira yabei),Thalassiosira praeyabei)),(Thalassiosira marujamica,Thalassiosira orientalis))),(((Spicaticribra kingstonii,Cyclotella meneghiniana),Thalassiosira pseudonana),Conticribra tricircularis)));";
 
-        %{--var treebaseurl = "${createLink(controller: 'phylojive', action: 'getTree')}";--}%
         var treebaseurl = "${createLink(controller: 'phylo', action: 'getTree')}?studyId=${instance.studyid}&treeId=${instance.treeid}", tree = '';
-        %{--var treebaseurl = "http://115.146.93.110:8000/api/v1/study/${instance.studyid}/tree/${instance.treeid}.tre", tree = '';--}%
         var treeIndex = ${instance.index};
         var characters = [];
         var setup = false;
@@ -154,7 +86,6 @@
         });
 
         function init_phylojive(tree, characters, url, nexml) {
-            //console.log("getkey", getKey(characters), getKey(characters[getKey(characters)]));
             phylogenyExplorer_init({
                 width: width,
                 height: height,
@@ -215,30 +146,3 @@
         }
 
     </script>
-</head>
-<body>
-<div id="content">
-    <header id="page-header">
-        <div class="inner">
-            %{--<button id="newTreeButton" class="btn" onclick="location.href='${createLink(controller:"tree", action:"create")}'">Create a new tree</button>--}%
-            <phy:isLoggedIn>
-            %{--<hf:ifGranted role="ROLE_ADMIN">--}%
-                %{--<div style="color:#999;margin-bottom: 20px;">--}%
-                    %{--Admin actions:--}%
-                    %{--<g:link controller="tree" action="list" style="color:#999;font-size:12px;" class="btn btn-mini">Tree list</g:link>&nbsp;--}%
-                    %{--<g:link controller="tree" action="edit" id=".id}" style="color:#999;font-size:12px;" class="btn btn-mini">Edit tree</g:link>--}%
-                    %{--<g:link controller="tree" action="create" style="color:#999;font-size:12px;" class="btn btn-mini">Create a new tree</g:link>--}%
-                %{--</div>--}%
-            %{--</hf:ifGranted>--}%
-            </phy:isLoggedIn>
-        </div><!--inner-->
-    </header>
-    <div class="row-fluid">
-        %{--<h2 id="loadingMsg" >Loading Tree...</h2>--}%
-        <div id="section" class="span12">
-            <div id="infovis"></div>
-        </div>
-    </div>
-</div>
-</body>
-</html>
