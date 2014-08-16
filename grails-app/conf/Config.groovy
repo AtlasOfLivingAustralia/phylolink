@@ -8,9 +8,19 @@ contextPath='/PhyloLink'
 /*** Phylo Link config *******/
 debug = true
 
+//variables used for facetting
+alaWebServiceMeta = [
+        "speciesfacet":'taxon_name'
+]
+
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
 layers = "http://spatial.ala.org.au/ws/layers"
+regionsUrl = [
+        "state": "http://regions.ala.org.au/regions/regionList?type=states",
+        "ibra": "http://regions.ala.org.au/regions/regionList?type=ibras"
+];
+speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION"
 
 //opentree configs
 treemachine_address = 'http://115.146.93.110:8000'
@@ -96,6 +106,8 @@ widgetMeta =[
         data:'data',
         chartOptions:'options'
 ]
+
+
 //variable config end
 
 /**** Phylo Link config end ****/

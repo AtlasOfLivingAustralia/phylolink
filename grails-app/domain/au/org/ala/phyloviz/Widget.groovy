@@ -6,14 +6,17 @@ class Widget {
 //    def id
     String config
     String displayname
+    String title
     String type
     String region
+    String data
 ////    WidgetType type
     static constraints = {
 //        id(nullable:false)
         region ( nullable: true)
         config(nullable: false)
         displayname(nullable: false)
+        data ( nullable: true, widget:'textarea')
 //        type(inList: WidgetType.list(), nullable: false)
     }
     static hasMany=[ vizBook :Phylo ]

@@ -22,4 +22,5 @@ modules = {
         resource url:[dir:"js", file:'application.js']
         resource url:[dir:"js", file:'utils.js']
     }
+
 }

@@ -29,7 +29,7 @@
 
 <div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'displayName', 'error')} row">
     <div class="span4">
-        <g:message code="phylo.displayName.label" default="Study Name" />:
+        <g:message code="phylo.displayName.label" default="Name" />:
 </div>
     <div class="span8">
     <g:textField name="displayName" value="${phyloInstance?.displayName}"/>
@@ -39,7 +39,7 @@
 <div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'treeid', 'error')} required row">
 
 <div class="span4">
-		<g:message code="phylo.treeid.label" default="Treeid" />
+		<g:message code="phylo.treeid.label" default="Tree ID" />
 		<span class="required-indicator">*</span>:
 </div>
 
@@ -54,7 +54,7 @@
 
 <div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'viz', 'error')} required row">
     <div class="span4">
-		<g:message code="phylo.viz.label" default="Choose visualisation software" />
+		<g:message code="phylo.viz.label" default="Visualisation Tool" />
 		<span class="required-indicator">*</span>:
     </div>
     <div class="span8">
@@ -84,14 +84,16 @@
         <div class="span8">
                 <g:field name="widgets[${i}].config" value="${phyloInstance?.widgets?.getAt(i)?.config}" type="hidden" required=""/>
                 <g:field name="widgets[${i}].displayname" value="${phyloInstance?.widgets?.getAt(i)?.displayname}" required="" readonly="" type="text"/>
+                <g:field name="widgets[${i}].title" value="${phyloInstance?.widgets?.getAt(i)?.title}" type="text"/>
             </div>
             </div>
+            <g:render template="${phyloInstance?.widgets?.getAt(i)?.type}/edit"/>
     </g:each>
 </div>
 <div id="widgetSelectionRow" class="row">
-            <div class="offset4 span8">
+            <div class="span8">
 <g:select name="widgetType" from="${au.org.ala.phyloviz.WidgetType.list()}"
-          value="" style="margin-bottom: 0px"/>
+          value="" style="margin-bottom: 0px" optionValue="id"/>
 <button class="btn" id="addWidget" onclick="addWidgetForm();return false;" >Add widget</button>
 </div>
 </div>

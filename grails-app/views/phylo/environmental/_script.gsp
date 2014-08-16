@@ -53,7 +53,7 @@
         loadLayers:function(callback, args){
             var that = this;
             $.ajax(this.layerUrl,{
-                method:'GET',
+                type:'GET',
                 success:function( data ){
                     for(var i in data ){
                         that.envLayers.push( data[i] );

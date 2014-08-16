@@ -21,5 +21,17 @@ var utils={
                 $( document.getElementById(  displayId  ) ).attr( 'value', selection.item.label );
             }
         });
+    },
+    addTemplate: function( dest, tmpId){
+        $('#'+dest).append( $('#'+tmpId).html() )
+    },
+    download:function( data ){
+        $.ajax({
+            url:'http://localhost:8080/PhyloLink/download',
+            method:'POST',
+            data:{
+                json: JSON.stringify( data )
+            }
+        })
     }
 }

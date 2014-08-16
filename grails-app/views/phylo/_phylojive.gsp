@@ -70,7 +70,6 @@
             }else {
                 $.ajax({
                     url: treebaseurl,
-                    method:'JSONP',
                     success:function( nex ){
                         console.log( nex );
                         nex = nex.tree;
