@@ -5,7 +5,7 @@
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo Link')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
-        <r:require modules="application"/>
+        <r:require modules="application, form"/>
         %{--render widgets after getting all requirements--}%
         <g:render template="widgets"/>
 	</head>

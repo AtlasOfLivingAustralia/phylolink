@@ -3,7 +3,7 @@ package au.org.ala.phyloviz;
  * Created by Temi Varghese on 1/08/2014.
  */
 class WidgetFactory {
-    static def createWidget( data, grailsApplication, webService, utilsService, applicationContext ){
+    static def createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr ){
         if( data == null){
             return ;
         }
@@ -18,7 +18,7 @@ class WidgetFactory {
                 break;
             case 'pd':
                 println( ' creating pd')
-                return  new PDWidget( data, grailsApplication, webService, utilsService, applicationContext )
+                return  new PDWidget( data, grailsApplication, webService, utilsService, applicationContext, dr )
                 break;
         }
     }

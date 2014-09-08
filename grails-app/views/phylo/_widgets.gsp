@@ -6,7 +6,15 @@
         widgetsList : [],
         widgetUrl: '${createLink(controller: "phylo", action:"getWidgetData" )}/${phyloInstance.id}',
         downloadUrl: '${createLink(controller: "phylo", action:"download" )}/${phyloInstance.id}',
+        layerHtmlUrl:"${createLink(controller: 'ala', action: 'layerSelectionDialog')}",
         counter: 0,
+        data:{
+            regions:<phy:reg ab="11">null</phy:reg>
+        },
+        envLayerUrl:"${createLink(controller: 'ala', action: 'getEnvLayers')}",
+        clLayerUrl:"${createLink(controller: 'ala', action: 'getClLayers')}",
+        envLayers:[],
+        clLayers:[],
         add :  function( widget ){
             this.widgetsList.push( widget );
             this.counter ++;
@@ -26,13 +34,18 @@
                     url: this.widgetUrl,
                     type:'POST',
                     data:params,
-                    success: this.display
+                    success: this.display,
+                    error: this.failure
                 });
             }
         },
         display:function( data ){
             this.widget.display( data );
             widgets.loadingOff( this.widget )
+        },
+        failure:function( data ){
+            widgets.loadingOff( this.widget );
+            $('#' + this.widget.showContentId ).html( "<span style='color:red'> Failed to execute query.</span>" );
         },
         beforeSave: function(){
             var widget;
@@ -65,9 +78,57 @@
                     }
                 });
             }
+        },
+        loadLayers:function( url, array ){
+            var that = this;
+            $.ajax(url,{
+                type:'GET',
+                success:function( data ){
+                    for(var i in data ){
+                        array.push( data[i] );
+                    }
+                }
+            })
+//            .done( function(){
+//                callback && callback.apply( utils, args)
+//            })
+        },
+        initLayers:function(){
+          this.loadLayers(this.envLayerUrl, this.envLayers );
+          this.loadLayers(this.clLayerUrl, this.clLayers );
+        },
+        select:function(index, data){
+            var widget = this.widgetsList[index];
+            if( !widget ){
+                return;
+            }
+            $(document.getElementById( widget.configNameId ) ).attr( 'value', data.value );
+            $( document.getElementById(  widget.displayNameId  ) ).attr( 'value', data.label );
+        },
+        showLayerDialog:function(e, data){
+            e.preventDefault()
+            var widget = e.data;
+            var wtype = $(document.getElementById(widget.typeId)).val();
+            var val;
+            switch ( wtype ){
+                case 'environmental':
+                    val='${grailsApplication.config.layersMeta.env}';
+                    break;
+                case 'contextual':
+                    val='${grailsApplication.config.layersMeta.cl}';
+                    break;
+            }
+            var opts = {
+                url: widgets.layerHtmlUrl+"?i="+widget.wid +"&type="+val,
+                widget: widget,
+                title: 'Select a layer',
+                height:600
+            }
+            utils.modalDialog( opts )
         }
     };
     google.load("visualization", "1", {packages:["corechart"]});
+    widgets.initLayers()
 </script>
 <g:render template="environmental/script"/>
 <g:render template="contextual/script"/>

@@ -126,8 +126,9 @@ class PhyloController {
         region = region? "${regionType}:\"${region.replaceAll(' ', '+')}\"" : '';
         def data = widget
         data.region = region;
+        def dr = phyloInstance.dataResource
         println( widget)
-        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext)
+        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr)
         data = widgetObject.process( params , phyloInstance )
         println( data )
         if( download ){

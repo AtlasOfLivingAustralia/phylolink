@@ -17,6 +17,7 @@ class Widget {
         config(nullable: false)
         displayname(nullable: false)
         data ( nullable: true, widget:'textarea')
+        title ( nullable: true)
 //        type(inList: WidgetType.list(), nullable: false)
     }
     static hasMany=[ vizBook :Phylo ]

@@ -16,6 +16,7 @@ class PDWidget implements WidgetInterface{
     def regions
     def alaController
     def phyloController
+    def dr
     PDWidget(config , grailsApplication, webService, utilsService, applicationContext){
         this.webService = webService;
         this.grailsApplication = grailsApplication;
@@ -27,6 +28,19 @@ class PDWidget implements WidgetInterface{
         this.regions = JSON.parse( config.data )
         this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
         this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
+    }
+    PDWidget(config , grailsApplication, webService, utilsService, applicationContext, dr){
+        this.webService = webService;
+        this.grailsApplication = grailsApplication;
+        this.utilsService = utilsService
+        this.applicationContext = applicationContext
+        this.config = config;
+        this.layer = config.config
+        this.region = config.region
+        this.regions = JSON.parse( config.data )
+        this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
+        this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
+        this.dr = dr
     }
     def getViewFile(){
         return '';
@@ -47,7 +61,7 @@ class PDWidget implements WidgetInterface{
             def th
             th = Thread.start {
                 def speciesList,pd ;
-                speciesList = this.getSpeciesList( r );
+                speciesList = this.getSpeciesList( r.code );
 //                println( speciesList )
                 speciesList = utilsService.convertJsonToArray( speciesList, grailsApplication.config.alaWebServiceMeta['speciesfacet'] )
 //                println( 'convert to array ')
@@ -56,7 +70,7 @@ class PDWidget implements WidgetInterface{
                 pd = pd[0]
 //                println( 'printing region code')
 //                println( pd )
-                pd['region'] = r.split(":")[1];
+                pd['region'] = r.code.split(":")[1];
                 if( removeTree ){
                     pd.remove(grailsApplication.config.treeMeta.treeText)
                 }
@@ -76,6 +90,9 @@ class PDWidget implements WidgetInterface{
     }
     def getSpeciesList( region ){
         def url = grailsApplication.config.speciesListUrl;
+        if( dr ){
+            url = grailsApplication.config.drUrl
+        }
         url = url.replaceAll( 'REGION', region.encodeAsURL() )
         println( url )
         def species =  webService.get( url );

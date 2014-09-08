@@ -12,8 +12,14 @@
                     <label class="span2">Title:</label><input class="offset2 span2" type="text" id="widgets[ID].title" name="widgets[ID].title" value="Phylogenetic Diversity (ID)"/>
             </div>
         </div>
-        <div id="pdRegionsID">
-
+        <div id="pdRegionsID" data-bind="foreach: regions">
+            <div class="row">
+                <div  class="offset2 span4">
+                    <label class="span2">Choose region:</label>
+                    %{--<g:render template="regions" model="[name:'gtest',id:'test',type:'ibra']"/>--}%
+                    %{--<select data-bind="option:regionSelect.code, optionText:regionSelect.value, value:$data"></select>--}%
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="offset4 span4">
@@ -22,11 +28,11 @@
         </div>
     </div>
 </script>
-<script id="_tmpRegions" type="text/html">
-    <div class="row">
-        <div  class="offset2 span4">
-            <label class="span2">Choose region:</label>
-            <g:render template="regions" model="[name:'gtest',id:'test',type:'ibra']"/>
-        </div>
-    </div>
-</script>
+%{--<script id="_tmpRegions" type="text/html">--}%
+    %{--<div class="row">--}%
+        %{--<div  class="offset2 span4">--}%
+            %{--<label class="span2">Choose region:</label>--}%
+            %{--<g:render template="regions" model="[name:'gtest',id:'test',type:'ibra']"/>--}%
+        %{--</div>--}%
+    %{--</div>--}%
+%{--</script>--}%

@@ -5,4 +5,4 @@ params
     name
     type
 --}%
-<g:select class="offset2 span2" id="${id}" name="${name}" from="${new PhyloController().getRegionsByType(type)}" optionKey="code" optionValue="value" key=""/>
+<g:select class="offset2 span2" id="${id}" name="${name}" from="${new PhyloController().getRegionsByType(type)}" optionKey="code" optionValue="value" key="${key}" />

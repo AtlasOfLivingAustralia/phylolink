@@ -14,9 +14,11 @@
           type="image/x-icon"/>
     <title><g:layoutTitle/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    %{--<script type="text/javascript" src="${resource( dir:'js', file: 'utils.js')}"></script>--}%
 <%-- Do not include JS & CSS files here - add them to your app's "application" module (in "Configuration/ApplicationResources.groovy") --%>
     %{--<r:require modules="bootstrap, application, phylojive"/>--}%
-    <r:require modules="bootstrap, application"/>
+<r:require modules="appSpecific"/>
+    <r:require modules="bootstrap, application" />
     <r:script disposition='head'>
         // initialise plugins
         width = 900;

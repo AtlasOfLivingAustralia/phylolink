@@ -35,7 +35,6 @@
     <script type="text/javascript" src="${resource(dir: 'js', file: 'knockout-paged-e4a5770702.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'knockout-bootstrap.min.js')}"></script>
 
-
         <script type='text/javascript'>
 //        var viewOrEdit = '{{= viewOrEdit }}';
         var viewOrEdit = 'VIEW';

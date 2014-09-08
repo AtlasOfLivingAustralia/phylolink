@@ -16,12 +16,13 @@ alaWebServiceMeta = [
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
 layers = "http://spatial.ala.org.au/ws/layers"
+spatialPortalRoot="http://spatial.ala.org.au"
 regionsUrl = [
         "state": "http://regions.ala.org.au/regions/regionList?type=states",
         "ibra": "http://regions.ala.org.au/regions/regionList?type=ibras"
 ];
 speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION"
-
+drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
 //opentree configs
 treemachine_address = 'http://115.146.93.110:8000'
 oti_address = 'http://115.146.93.110:7478'

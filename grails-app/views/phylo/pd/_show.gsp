@@ -3,31 +3,19 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
-<div id="env${i}" class="phylolink-widget phylolink-env">
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="#" ><h6>${phyloInstance.widgets.getAt(i).title}</h6></a>
-
-                <div class="nav-collapse collapse pull-right">
-                    <ul class="nav">
-                        <li>
-                            <a href="#" title="Download this data" onclick="widgets.download(${i})">
-                                <i class="icon-download"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<div id="env${i}" class="phylolink-widget phylolink-env panel">
+    <div class="panel-heading" title="${phyloInstance.widgets.getAt(i).title}">
+            ${phyloInstance.widgets.getAt(i).title}
+        <div class="pull-right">
+            <button class="btn-mini btn btn-inverse" onclick="widgets.download(${i})" title="Download this data">
+                <i class="icon-download-alt icon-white"></i>
+            </button>
         </div>
     </div>
-    <div id="env${i}-content"></div>
+    <div id="env${i}-content" class="panel-content"></div>
     <script type="text/javascript">
-        new widgets.PD(${i});
+        $(document).ready(function(){
+            new widgets.PD(${i});
+        })
     </script>
 </div>

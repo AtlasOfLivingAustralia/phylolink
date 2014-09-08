@@ -5,6 +5,7 @@ package au.org.ala.phyloviz
  */
 class Phylo {
     Integer id
+    Long userId
     String treeid
     Integer nodeid
     String displayName
@@ -13,6 +14,7 @@ class Phylo {
     String studyid
     String regionType
     String regionName
+    String dataResource
     List widgets = new ArrayList()
 //    List env = new ArrayList()
 //    List widgets = new ArrayList<Widget>();
@@ -27,12 +29,14 @@ class Phylo {
         nodeid (nullable: true)
         displayName (nullable: true)
         viz (nullable: false)
+        userId unique: true
 //        env(nullable: true)
         index (nullable: true)
         studyid ( nullable: true)
         widgets (nullable:true)
         regionType(nullable: true, blank: false)
         regionName(nullable: true, blank: false)
+        dataResource(nullable: true, blank: true)
     }
     def beforeValidate(){
 //        if( treeid.matches(studyid)){
