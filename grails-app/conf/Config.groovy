@@ -21,7 +21,7 @@ regionsUrl = [
         "state": "http://regions.ala.org.au/regions/regionList?type=states",
         "ibra": "http://regions.ala.org.au/regions/regionList?type=ibras"
 ];
-speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION"
+speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
 //opentree configs
 treemachine_address = 'http://115.146.93.110:8000'

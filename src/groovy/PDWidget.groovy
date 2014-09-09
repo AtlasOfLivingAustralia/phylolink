@@ -1,7 +1,6 @@
 package au.org.ala.phyloviz
 import grails.converters.JSON
 import groovy.json.JsonOutput
-
 /**
  * Created by Temi Varghese on 1/08/2014.
  */
@@ -62,13 +61,13 @@ class PDWidget implements WidgetInterface{
             th = Thread.start {
                 def speciesList,pd ;
                 speciesList = this.getSpeciesList( r.code );
-//                println( speciesList )
-                speciesList = utilsService.convertJsonToArray( speciesList, grailsApplication.config.alaWebServiceMeta['speciesfacet'] )
-//                println( 'convert to array ')
-//                println( speciesList)
+                println( r.code )
+//                speciesList = utilsService.convertJsonToArray( speciesList, grailsApplication.config.alaWebServiceMeta['speciesfacet'] )
+                println( 'convert to array ' + r.code)
+                println( speciesList )
                 pd = this.phyloController.getPDCalc( phylo.treeid, phylo.studyid, null, JsonOutput.toJson( speciesList ) );
                 pd = pd[0]
-//                println( 'printing region code')
+                println( 'printing region code')
 //                println( pd )
                 pd['region'] = r.code.split(":")[1];
                 if( removeTree ){
@@ -83,20 +82,31 @@ class PDWidget implements WidgetInterface{
         for( def th in threads){
             th.join();
         }
+        println('completed!')
         return result;
     }
     def getRegions(){
 
     }
     def getSpeciesList( region ){
+        def startTime, deltaTime;
         def url = grailsApplication.config.speciesListUrl;
+
         if( dr ){
             url = grailsApplication.config.drUrl
         }
         url = url.replaceAll( 'REGION', region.encodeAsURL() )
         println( url )
+
+        startTime = System.currentTimeMillis()
         def species =  webService.get( url );
-        species = utilsService.convertCsvToJson( species, null )
+        deltaTime = System.currentTimeMillis() - startTime
+        println( "download time: ${deltaTime}")
+        startTime = System.currentTimeMillis()
+//        species = utilsService.convertCsvToJson( species, null )
+        species = utilsService.convertCsvToArray( species, null, grailsApplication.config.alaWebServiceMeta['speciesfacet'])
+        deltaTime = System.currentTimeMillis() - startTime
+        println( "convert time: ${deltaTime}")
         return  species;
     }
     def testData(){

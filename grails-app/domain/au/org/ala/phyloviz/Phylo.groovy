@@ -29,7 +29,7 @@ class Phylo {
         nodeid (nullable: true)
         displayName (nullable: true)
         viz (nullable: false)
-        userId unique: true
+        userId (unique: true, nullable: true)
 //        env(nullable: true)
         index (nullable: true)
         studyid ( nullable: true)

@@ -142,6 +142,38 @@ class UtilsService {
 
         return charMap
     }
+    def convertCsvToArray(String charCsv, String internalSeparator, String columnName) {
+        def lineCount = 0;
+        def columnNumber = 0;
+        def headers = [] // Names of characters
+        def result = []
+        internalSeparator = Pattern.quote(internalSeparator?:"||") // separator string needs escaping as per a regex
+        log.debug "input csv = " + charCsv
+        charCsv.eachCsvLine { tokens ->
+            log.debug "tokens = " + tokens
+            if (lineCount == 0) {
+                // assume first line is header with character names
+                headers = tokens // ignore first field as it is taxon name
+                headers.eachWithIndex{ header, i ->
+                    if( header == columnName){
+                        columnNumber = i;
+                    }
+                }
+            } else {
+                // data lines
+//                def thisChars = [:]
+//                def name = tokens[0] // taxon name
+//                def charValues = tokens[1..<tokens.size()] // characters
+                result.push( tokens[ columnNumber ]);
+            }
+            lineCount++;
+        }
+
+        //def jsonOutput = new groovy.json.JsonBuilder( charMap ).toString()
+        //log.debug("JSON output: " + jsonOutput);
+
+        return result
+    }
     /**
      * convert an object into format that can be displayed as column graphs on google charts
      */
