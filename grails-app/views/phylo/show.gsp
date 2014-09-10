@@ -6,7 +6,7 @@
         <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
         %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'phylolink.css')}"/>--}%
         <title><g:message code="default.show.label" args="[entityName]"/></title>
-        <r:require modules="application"/>
+        <r:require modules="application,form"/>
         %{--render widgets after getting all requirements--}%
         <g:render template="widgets"/>
         <g:render template="phylojive" model="['instance': phyloInstance]"/>

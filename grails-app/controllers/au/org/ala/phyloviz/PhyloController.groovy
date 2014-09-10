@@ -122,14 +122,21 @@ class PhyloController {
         def name = widget.displayname
         def region = phyloInstance.regionName;
         def regionType = phyloInstance.regionType? phyloInstance.regionType : 'state' ;
+        def download = ( params.download?:false ) as Boolean
         region = region? "${regionType}:\"${region.replaceAll(' ', '+')}\"" : '';
         def data = widget
         data.region = region;
+        def dr = phyloInstance.dataResource
         println( widget)
-        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext)
+        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr)
         data = widgetObject.process( params , phyloInstance )
         println( data )
-        render( contentType: 'application/json', text: data as JSON)
+        if( download ){
+            response.setHeader('Content-disposition','attachment; filename=data.csv')
+            render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
+        } else {
+            render(contentType: 'application/json', text: data as JSON)
+        }
     }
 
 
@@ -157,17 +164,24 @@ class PhyloController {
     }
     def getRegions(){
         def regions =[], json;
-        def regionsUrl = [ "state":"http://regions.ala.org.au/regions/regionList?type=states", "ibra":"http://regions.ala.org.au/regions/regionList?type=ibras"];
+        def regionsUrl = grailsApplication.config.regionsUrl;
         regionsUrl.each{ type, url->
-            json = JSON.parse( webService.get( url ) );
-            for( name in json.names ){
-                regions.push( ["value":name,"type":type] );
-            }
+            regions.addAll( this.getRegionsByType( type ) );
         }
         render( contentType: 'application/json', text: new JsonBuilder( regions ).toString() );
 
     }
-
+    def getRegionsByType( String typeS ) {
+        def regions = [], json;
+        def regionsUrl = grailsApplication.config.regionsUrl[typeS];
+        if( regionsUrl ) {
+            json = JSON.parse(webService.get( regionsUrl ) );
+            for (name in json.names) {
+                regions.push(["value": name, "type": typeS, "code":"${typeS}:${name}"]);
+            }
+        }
+        return  regions;
+    }
     def getPD( ){
         def treeId, studyId, tree, speciesList
         def noTreeText = params.noTreeText?:false;
@@ -186,11 +200,14 @@ class PhyloController {
             println('breaking');
         }
     }
-    def getPDCalc( String treeId, String studyId, String tree, String speciesList ){
+//    def getPDCalc( String treeId, String studyId, String tree, String speciesList){
+//        return  this.getPDCalc( treeId, studyId, tree, speciesList, true)
+//    }
+    def getPDCalc( String treeId, String studyId, String tree, String speciesList){
         def startTime, deltaTime
         def treeUrl, type, i,pd, sList;
         def studyMeta = [:], result =[], trees = [], input =[]
-
+//        maxPd = maxPd?:true;
         type = tree?"tree":treeId?"gettree":"besttrees"
 //        startTime = System.currentTimeMillis()
         switch (type){
@@ -226,7 +243,9 @@ class PhyloController {
 //            deltaTime = System.currentTimeMillis() - startTime
 //            println( "time elapse: ${deltaTime}")
 //            startTime = System.currentTimeMillis()
-            input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
+//            if( maxPd ){
+                input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
+//            }
 //            deltaTime = System.currentTimeMillis() - startTime
 //            println( "time elapse: ${deltaTime}")
             // merge the variables
@@ -349,6 +368,11 @@ class PhyloController {
 
     private def getStudiesMeta( meta ){
 
+    }
+    def download(){
+        def download =  JSON.parse( params.json )
+        response.setHeader('Content-disposition','attachment; filename=data.csv')
+        render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV( download ) )
     }
 
 }

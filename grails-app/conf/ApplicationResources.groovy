@@ -19,7 +19,12 @@ modules = {
         resource url:[dir:'css', file:  "main.css"]
         resource url:[dir:'css', file:  "jquery-ui.css"]
         resource url: [ dir: "js" , file:"jquery-ui.min.js"]
+    }
+    appSpecific{
         resource url:[dir:"js", file:'application.js']
         resource url:[dir:"js", file:'utils.js']
+    }
+    form{
+        resource url: [dir:"js", file: 'knockout-2.3.0.js']
     }
 }

@@ -7,6 +7,7 @@
 		<title><g:message code="default.edit.label" args="[entityName]" /></title>
         %{--render widgets after getting all requirements--}%
         <g:render template="widgets"/>
+        <r:require modules="application,form"/>
 	</head>
 	<body>
 		<a href="#edit-phylo" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
@@ -35,7 +36,7 @@
 					<g:render template="form"/>
 				</fieldset>
 				<fieldset class="buttons">
-					<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+					<g:actionSubmit class="save" action="update" onclick="widgets.beforeSave()" value="${message(code: 'default.button.update.label', default: 'Update')}" />
 				</fieldset>
 			</g:form>
 		</div>

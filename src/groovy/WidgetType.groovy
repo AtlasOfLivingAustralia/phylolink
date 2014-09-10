@@ -3,11 +3,11 @@ package au.org.ala.phyloviz;
  * Created by Temi Varghese on 23/06/2014.
  */
 public enum WidgetType{
-    Environmental('environmental'),
-    Contextual('contextual'),
-    Map('map'),
-    PD('PD'),
-    Scatter('scatter plot')
+    Environmental('Environmental Histogram'),
+    Contextual('Contextual Histogram'),
+    Map('Map'),
+    PD('Phylogenetic Diversity'),
+    Scatter('Scatter plot')
     String id
     WidgetType( String id){
         this.id = id
