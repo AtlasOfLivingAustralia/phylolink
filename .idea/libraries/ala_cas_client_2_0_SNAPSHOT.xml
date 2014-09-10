@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="ala-cas-client-2.0-SNAPSHOT">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/.grails/ivy-cache/au.org.ala/ala-cas-client/jars/ala-cas-client-2.0-SNAPSHOT.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

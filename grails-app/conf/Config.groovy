@@ -105,11 +105,6 @@ widgetMeta =[
  */
 
 expert_trees = [
-//        [
-//            "group":"Fungi",
-//            "studyId":"439",
-//            "treeId":"tree556"
-//        ],
                 [
             "group":"Amphibia",
             "studyId":"423",
@@ -120,15 +115,11 @@ expert_trees = [
         "studyId":"2015",
         "treeId":"tree4152"
         ]
-//                ,[
-//            "group":"Primates",
-//            "studyId":"2816",
-//            "treeId":"tree6557"
-//        ],[
-//            "group":"Dinosaur",
-//            "studyId":"2740",
-//            "treeId":"tree6336"
-//        ]
+        ,[
+           "group":"Acacia",
+           "studyId":"ot_29",
+          "treeId":"tree5"
+]
 ]
 
 /** Tree config **/
