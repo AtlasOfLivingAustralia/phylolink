@@ -56,6 +56,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
+        build ":release:3.0.1"
 
         // plugins for the compile step
 //        compile ":scaffolding:2.0.2"
