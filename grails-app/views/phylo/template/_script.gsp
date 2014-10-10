@@ -1,6 +1,4 @@
 <g:render template="template/create"/>
-%{--<g:render template="template/edit"/>--}%
-%{--<g:render template="template/show"/>--}%
 <script type="text/javascript">
     widgets.template = {
         createTmpl: $("#_tmplTemplateCreate").html(),

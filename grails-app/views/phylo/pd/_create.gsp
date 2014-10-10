@@ -16,8 +16,6 @@
             <div class="row">
                 <div  class="offset2 span4">
                     <label class="span2">Choose region:</label>
-                    %{--<g:render template="regions" model="[name:'gtest',id:'test',type:'ibra']"/>--}%
-                    %{--<select data-bind="option:regionSelect.code, optionText:regionSelect.value, value:$data"></select>--}%
                 </div>
             </div>
         </div>
@@ -28,11 +26,3 @@
         </div>
     </div>
 </script>
-%{--<script id="_tmpRegions" type="text/html">--}%
-    %{--<div class="row">--}%
-        %{--<div  class="offset2 span4">--}%
-            %{--<label class="span2">Choose region:</label>--}%
-            %{--<g:render template="regions" model="[name:'gtest',id:'test',type:'ibra']"/>--}%
-        %{--</div>--}%
-    %{--</div>--}%
-%{--</script>--}%

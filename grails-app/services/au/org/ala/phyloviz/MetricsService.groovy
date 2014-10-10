@@ -8,15 +8,18 @@ import jade.tree.TreeReader
 class MetricsService {
     def grailsApplication
     def webService
+
     def getJadeTree( String treeText ){
         def tReader = new TreeReader();
         def tree = tReader.readTree(treeText);
         return tree;
     }
+
     def pd( String treeText, speciesList ) {
         def tree = this.getJadeTree( treeText );
         return this.pd(tree, speciesList)
     }
+
     def pdByTraversal( JadeNode node ){
         Double sum = 0;
         if( node && node.getObject('pd') ){
@@ -27,6 +30,7 @@ class MetricsService {
         }
         return sum;
     }
+
     def pd ( JadeTree tree , speciesList ){
         def node,i,j
         def val
@@ -44,7 +48,6 @@ class MetricsService {
             leaves[i] = lcase;
         }
         leavesSmall
-//        speciesList = speciesList.unique();
         for(i=0;i<speciesList.size();i++){
            speciesList[i] = speciesList[i].trim().toLowerCase()
         }
@@ -62,9 +65,10 @@ class MetricsService {
         }
         def sum = this.pdByTraversal( tree.getRoot() );
         end = System.currentTimeMillis();
-        println( "pd elapsed time" + (end -start))
+        log.debug( "pd elapsed time" + (end -start))
         return ['pd':sum.trunc(4),'taxaRecognised':speciesList];
     }
+
     def getTree( String format, String treeId, String studyId){
         def treeUrl = this.getTreeUrl(format, treeId , studyId )
         return  webService.get( treeUrl )
@@ -78,6 +82,7 @@ class MetricsService {
     def treeProcessing(String tree){
         return tree.replace('\'', '')
     }
+
     def getLeafNames( JadeTree tree ){
         def i = 0, node, result =[]
         for( i = 0; i< tree.externalNodeCount; i++ ){
@@ -86,6 +91,7 @@ class MetricsService {
         }
         return result
     }
+
     def maxPd( String tree ){
         def treeObj = this.getJadeTree( tree )
         def leaves = this.getLeafNames( treeObj );

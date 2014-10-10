@@ -16,8 +16,6 @@
     <tr>
         <td><h5 style="margin-top: 0px; margin-bottom: 10px;">Selected Layer - ${layerDefinition.displayname}</h5></td>
         <td style="vertical-align: middle;">
-            %{--<button id="btnLayerSummaryLoadLayer" class="btn btn-small btn-primary pull-right"><i--}%
-                %{--class="icon-plus icon-white"></i>&nbsp;Add Layer</button>--}%
             <g:if test="${params.showInfoButton}">
                 <button style="margin-right: 10px" id="btnLayerSummaryShowInfo" class="btn btn-small pull-right"><i
                     class="icon-info-sign"></i>&nbsp;Layer details</button>
@@ -88,6 +86,4 @@
             addLayer(layerName, false);
         }
     }
-
-
 </script>

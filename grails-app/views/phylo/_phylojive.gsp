@@ -94,11 +94,9 @@
                 branchMultiplier: 0.1,
                 charServiceUrl: url,
                 character: characters,
-                %{--attribution:'<g:if test=".attribution}">".attribution.normalize().encodeAsHTML().replace('\n', '<br/>')?:''}"</g:if>',--}%
                 toolWidget: "tabs", // tabs || accordion
                 codeBase: "${resource(dir: 'images')}",
                 hideInput: true,
-                %{--<g:if test=".identifyLifeDataset =='acacia'}">mapParams: "&fq=data_provider_uid:dp36", // AVH only</g:if>--}%
                 presentClade: function(clade) {
                     var tmpl = st.config.tmpl, nodeList = [], node, html, split, names =[];
                     for (var i = 0;
@@ -129,9 +127,7 @@
                     }
                     return html;
 
-                },
-                //presentClade
-                %{--tmpl: '.presentClade?.code?:defaultTmpl}'--}%
+                }
             });
             st.config.initCharacter = false;
         } // end init_phylojive
@@ -143,5 +139,4 @@
             });
             return L;
         }
-
     </script>

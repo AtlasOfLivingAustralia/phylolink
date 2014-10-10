@@ -12,7 +12,7 @@
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
  */
- 
+
 package au.org.ala.phyloviz
 
 import grails.converters.JSON
@@ -25,7 +25,7 @@ import org.springframework.beans.factory.InitializingBean
 class WebService implements InitializingBean {
 
     public void afterPropertiesSet() {
-        JSONObject.NULL.metaClass.asBoolean = {-> false}
+        JSONObject.NULL.metaClass.asBoolean = { -> false }
     }
 
     def get(String url) {
@@ -37,11 +37,11 @@ class WebService implements InitializingBean {
             return conn.content.text
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= \${url}."]
-            println error.error
+            log.debug error.error
             return error as JSON
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}."]
-            println error.error
+            log.debug error.error
             return error as JSON
         }
     }
@@ -49,7 +49,6 @@ class WebService implements InitializingBean {
     def getJson(String url) {
         log.debug "getJson URL = " + url
         def conn = new URL(url).openConnection()
-        //JSONObject.NULL.metaClass.asBoolean = {-> false}
 
         try {
             conn.setConnectTimeout(60000)
@@ -72,10 +71,9 @@ class WebService implements InitializingBean {
     }
 
     def doJsonPost(String url, String path, String port, String postBody) {
-        //println "post = " + postBody
         log.debug "postBody = " + postBody
         def http = new HTTPBuilder(url)
-        http.request( groovyx.net.http.Method.POST, groovyx.net.http.ContentType.JSON ) {
+        http.request(groovyx.net.http.Method.POST, groovyx.net.http.ContentType.JSON) {
             uri.path = path
             if (port) {
                 uri.port = port as int
@@ -98,7 +96,6 @@ class WebService implements InitializingBean {
     }
 
     def doPost(String url, String path, String port, String postBody) {
-        //def conn = new URL("http://bie.ala.org.au/ws/species/guids/bulklookup.json").openConnection()
         def conn = new URL(url).openConnection()
         try {
             conn.setDoOutput(true)
@@ -114,23 +111,24 @@ class WebService implements InitializingBean {
             }
             rd.close()
             wr.close()
-            return [error:  null, resp: JSON.parse(resp)]
+            return [error: null, resp: JSON.parse(resp)]
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= \${url}."]
-            println error.error
+            log.debug error.error
             return error as JSON
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} ${e} URL= ${url}."]
-            println error.error
+            log.debug error.error
             return error as JSON
         }
     }
-    def postData(String url, String data){
-        def uri =  new URL(url);
-        println( uri.host)
-        println( uri.path )
-        println( uri.port.toString())
-        println( data )
-        this.doJsonPost( "http://${uri.host}", uri.path, uri.port.toString(), data)
+    
+    def postData(String url, String data) {
+        def uri = new URL(url);
+        log.debug(uri.host)
+        log.debug(uri.path)
+        log.debug(uri.port.toString())
+        log.debug(data)
+        this.doJsonPost("http://${uri.host}", uri.path, uri.port.toString(), data)
     }
 }

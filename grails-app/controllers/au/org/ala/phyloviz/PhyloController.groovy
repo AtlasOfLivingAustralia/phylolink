@@ -29,9 +29,7 @@ class PhyloController {
     def create() {
         respond new Phylo(params)
     }
-//    def create( $studyId, $treeId, $index) {
-//        respond new Phylo(params)
-//    }
+
     @Transactional
     def save(Phylo phyloInstance) {
         if (phyloInstance == null) {
@@ -113,10 +111,9 @@ class PhyloController {
 
     def getWidgetData(Phylo phyloInstance){
         def species = JSON.parse( params.speciesList );
-//        params.speciesList = species;
         def summary = [:], result
-        println( 'wid' )
-        println( params.wid );
+        log.debug( 'wid' )
+        log.debug( params.wid );
         def widget = phyloInstance.widgets?.getAt( Integer.parseInt(params.wid) );
         def layer = widget.config
         def name = widget.displayname
@@ -127,10 +124,10 @@ class PhyloController {
         def data = widget
         data.region = region;
         def dr = phyloInstance.dataResource
-        println( widget)
+        log.debug( widget)
         def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr)
         data = widgetObject.process( params , phyloInstance )
-        println( data )
+        log.debug( data )
         if( download ){
             response.setHeader('Content-disposition','attachment; filename=data.csv')
             render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
@@ -139,14 +136,13 @@ class PhyloController {
         }
     }
 
-
     def toGoogleColumnChart( summary, layer ){
         def result = []
         summary = summary.sort{ it.key }
         if( layer.contains('el') ) {
-            println( 'parsing to double')
+            log.debug( 'parsing to double')
             summary.each() { k, v ->
-                println( k )
+                log.debug( k )
                 result.push([ Double.parseDouble( k ), v]);
             }
         } else {
@@ -162,6 +158,7 @@ class PhyloController {
         }
         return result;
     }
+
     def getRegions(){
         def regions =[], json;
         def regionsUrl = grailsApplication.config.regionsUrl;
@@ -171,6 +168,7 @@ class PhyloController {
         render( contentType: 'application/json', text: new JsonBuilder( regions ).toString() );
 
     }
+
     def getRegionsByType( String typeS ) {
         def regions = [], json;
         def regionsUrl = grailsApplication.config.regionsUrl[typeS];
@@ -182,6 +180,7 @@ class PhyloController {
         }
         return  regions;
     }
+
     def getPD( ){
         def treeId, studyId, tree, speciesList
         def noTreeText = params.noTreeText?:false;
@@ -195,21 +194,17 @@ class PhyloController {
             result = noTreeText ? this.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
             render(contentType: 'application/json', text: result as JSON)
         } catch (Exception e){
-            println( e.message )
-            println( e.stackTrace )
-            println('breaking');
+            log.debug( e.message )
+            log.debug( e.stackTrace )
+            log.debug('breaking');
         }
     }
-//    def getPDCalc( String treeId, String studyId, String tree, String speciesList){
-//        return  this.getPDCalc( treeId, studyId, tree, speciesList, true)
-//    }
+
     def getPDCalc( String treeId, String studyId, String tree, String speciesList){
         def startTime, deltaTime
         def treeUrl, type, i,pd, sList;
         def studyMeta = [:], result =[], trees = [], input =[]
-//        maxPd = maxPd?:true;
         type = tree?"tree":treeId?"gettree":"besttrees"
-//        startTime = System.currentTimeMillis()
         switch (type){
             case 'tree':
                 studyMeta [grailsApplication.config.treeMeta.treeText]=tree
@@ -225,38 +220,28 @@ class PhyloController {
                 startTime = System.currentTimeMillis()
                 input = this.getExpertTreeMeta();
                 deltaTime = System.currentTimeMillis() - startTime
-                println( "time elapse: ${deltaTime}")
+                log.debug( "time elapse: ${deltaTime}")
                 input = input[grailsApplication.config.expertTreesMeta.et]
                 break;
         }
-//        deltaTime = System.currentTimeMillis() - startTime
-//        println( "time elapse: ${deltaTime}")
         sList = new JsonSlurper().parseText( speciesList )
 
         for( i = 0; i < input.size(); i++){
             studyMeta = [:]
-            println( input[i] );
+            log.debug( input[i] );
             input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
-//            startTime = System.currentTimeMillis()
             // calculate pd
             pd = metricsService.pd( input[i][grailsApplication.config.treeMeta.treeText], sList )
-//            deltaTime = System.currentTimeMillis() - startTime
-//            println( "time elapse: ${deltaTime}")
-//            startTime = System.currentTimeMillis()
-//            if( maxPd ){
                 input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
-//            }
-//            deltaTime = System.currentTimeMillis() - startTime
-//            println( "time elapse: ${deltaTime}")
             // merge the variables
             pd.each {k,v->
                 input[i][k]=v
             }
             result.push( input[i] )
         }
-
         return  result;
     }
+
     def getTree(){
         def studyId = params.studyId?.toString()
         def treeId = params.treeId?.toString()
@@ -267,6 +252,7 @@ class PhyloController {
         meta = noTreeText? this.removeProp( meta , grailsApplication.config.treeMeta.treeText ): meta ;
         render( contentType: 'application/json', text: meta as JSON )
     }
+
     /**
      * attaches metadata of tree onto given metadata variable
      * @param treeId
@@ -278,35 +264,26 @@ class PhyloController {
         def startTime, deltaTime
         meta = meta?:[:]
         meta = this.getTreeText( treeId, studyId, meta )
-//        startTime = System.currentTimeMillis()
         meta = utilsService.getViewerUrl(treeId, studyId, meta)
-//        deltaTime = System.currentTimeMillis() - startTime
-//        println( " get viewer url time elapse: ${deltaTime}")
-//        startTime = System.currentTimeMillis()
         meta = opentreeService.getStudyMetadata( studyId, meta )
-//        deltaTime = System.currentTimeMillis() - startTime
-//        println( " get study meta elapse: ${deltaTime}")
-//        startTime = System.currentTimeMillis()
-        println( meta )
+        log.debug( meta )
         def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
-//        deltaTime = System.currentTimeMillis() - startTime
-//        println( " create tree  object time elapse: ${deltaTime}")
-//        startTime = System.currentTimeMillis()
         meta = opentreeService.addTreeMeta(jadetree, meta )
-//        deltaTime = System.currentTimeMillis() - startTime
-//        println( " add meta of tree: ${deltaTime}")
         return  meta
     }
+
     private def removeProp( Collection meta, String prop){
         for ( def i = 0 ; i < meta.size(); i++){
             meta[i]?.remove( prop )
         }
         return meta;
     }
+
     private def removeProp( HashMap meta , String prop ){
         meta?.remove( prop )
         return meta;
     }
+
     /**
      * this func creates a url and fetches its newick string
      * @param treeId
@@ -320,6 +297,7 @@ class PhyloController {
         meta[grailsApplication.config.treeMeta.treeText] = tree;
         return meta
     }
+
     /**
      * webservice that returns trees recommended by experts
      * @return a json
@@ -333,6 +311,7 @@ class PhyloController {
         result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
         render ( contentType: 'application/json', text: result as JSON)
     }
+
     /**
      *
      * @param meta
@@ -356,6 +335,7 @@ class PhyloController {
         meta[ grailsApplication.config.expertTreesMeta.et ] = input
         return  meta
     }
+
     /**
      * returns all studies and associated metadata
      * @param
@@ -369,10 +349,10 @@ class PhyloController {
     private def getStudiesMeta( meta ){
 
     }
+
     def download(){
         def download =  JSON.parse( params.json )
         response.setHeader('Content-disposition','attachment; filename=data.csv')
         render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV( download ) )
     }
-
 }

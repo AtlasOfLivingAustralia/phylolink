@@ -1,7 +1,4 @@
-%{--<g:render template="pd/create"/>--}%
 <g:render template="pd/form"/>
-%{--<g:render template="pd/edit"/>--}%
-%{--<g:render template="pd/show"/>--}%
 <script type="text/javascript">
     widgets.PD = function( id, initData ){
         this.id = id || widgets.counter;
@@ -10,9 +7,6 @@
     }
     widgets.PD.prototype = {
         createTmpl: $("#_tmplPd").html(),
-//        createTmpl: $("#_tmplPdCreate").html(),
-//        showTmpl: $("#_tmplContextualShow").html(),
-//        editTmpl: $("#_tmplContextualEdit").html(),
         showEl: 'envID',
         widgetEl: 'widgets[ID]',
         showContentEl: 'envID-content',
@@ -65,17 +59,6 @@
             } else {
                 $.extend( this, this.domainData )
             }
-//            this.displayNameId = ko.observable( this.displayNameEl.replace(/ID/g, id) )
-//            this.configNameId = ko.observable(  this.configNameEl.replace(/ID/g, id) )
-//            this.showId = ko.observable(  this.showEl.replace(/ID/g, id) )
-//            this.showContentId = ko.observable( this.showContentEl.replace(/ID/g, id) )
-//            this.widgetId = ko.observable( this.widgetEl.replace(/ID/g, id))
-//            this.dataId = ko.observable( this.dataEL.replace(/ID/g, id))
-//            this.pdRegionsId = ko.observable( this.pdRegionsEl.replace(/ID/g, id))
-//            this.typeId = ko.observable( this.typeEl.replace( /ID/g, id));
-//            this.titleId = ko.observable( this.titleEl.replace( /ID/g, id));
-//            this.regions = [];
-//            this.regionViewModelInstance = new this.RegionsViewModel( this );
         },
         chartOptions: {
           title:'Phylogenetic Diversity',
@@ -88,21 +71,12 @@
         },
         create:function( widgetAddAreaId ){
             var html = $(this.createTmpl).appendTo( "#"+widgetAddAreaId )
-            //$( "#"+widgetAddAreaId ).append( this.createTmpl.replace(/ID/g, this.id ) );
             // add the regions drop down on init
-//            utils.addTemplate(this.pdRegionsId, '_tmpRegions' )
             ko.applyBindings( this, html[0] )
         },
 
         edit:function(){
-//            var region
-//            var data = $( document.getElementById( this.dataId ) ).attr( 'value' );
-//            data = JSON.parse( data )
-//            for( var i in data ){
-//                region = data[i];
-//                utils.addTemplate( 'pdRegions'+this.getId(), '_tmpRegions' )
-//            }
-//            this.addRegions( data )
+
         },
         show:function(){
 
@@ -120,22 +94,13 @@
             result = google.visualization.arrayToDataTable( result );
             var chart = new google.visualization.ColumnChart( document.getElementById( this.showContentId ));
             chart.draw(result, this.chartOptions );
-//                $("#"+this.showContentId ).html( "<p>PD: "+data[0].pd + "</p><p>Max PD: " + data[0].maxPd +"</p");
         },
         addParams:function( params ){
 
         },
         createData: function(  ){
             var result = [];
-//            $( document.getElementById( this.widgetId ) ).find('select').each( function( index, it ){
-////                console.log( it.val() );
-//                result.push( $(it).val() );
-//            });
-//            this.regions().forEach( function( it ){
-//                result.push( it.selected )
-//            })
             return ko.toJS(  this.regions )
-//            return result
         },
         beforeSave: function( params ){
             $( document.getElementById( this.dataId ) ).attr( 'value', JSON.stringify ( this.createData ( ) ) );

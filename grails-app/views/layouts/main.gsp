@@ -14,9 +14,7 @@
           type="image/x-icon"/>
     <title><g:layoutTitle/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    %{--<script type="text/javascript" src="${resource( dir:'js', file: 'utils.js')}"></script>--}%
 <%-- Do not include JS & CSS files here - add them to your app's "application" module (in "Configuration/ApplicationResources.groovy") --%>
-    %{--<r:require modules="bootstrap, application, phylojive"/>--}%
 <r:require modules="appSpecific"/>
     <r:require modules="bootstrap, application" />
     <r:script disposition='head'>
@@ -32,34 +30,7 @@
             // some random margin coming up
             height -= 30;
             $("#vizscreen").height( height)
-            %{--
-            // autocomplete on navbar search input
-//            jQuery("form#search-form-2011 input#search-2011, form#search-inpage input#search, input#search-2013").autocomplete('http://bie.ala.org.au/search/auto.jsonp', {
-//                extraParams: {limit: 100},
-//                dataType: 'jsonp',
-//                parse: function(data) {
-//                    var rows = new Array();
-//                    data = data.autoCompleteList;
-//                    for(var i=0; i<data.length; i++) {
-//                        rows[i] = {
-//                            data:data[i],
-//                            value: data[i].matchedNames[0],
-//                            result: data[i].matchedNames[0]
-//                        };
-//                    }
-//                    return rows;
-//                },
-//                matchSubset: false,
-//                formatItem: function(row, i, n) {
-//                    return row.matchedNames[0];
-//                },
-//                cacheLength: 10,
-//                minChars: 3,
-//                scroll: false,
-//                max: 10,
-//                selectFirst: false
-//            });
---}%
+
             // Mobile/desktop toggle
             // TODO: set a cookie so user's choice is remembered across pages
             var responsiveCssFile = $("#responsiveCss").attr("href"); // remember set href
@@ -77,7 +48,6 @@
             });
         });
     </r:script>
-
     <r:layoutResources/>
     <g:layoutHead/>
 </head>

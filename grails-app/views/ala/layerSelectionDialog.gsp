@@ -59,8 +59,6 @@
                 $("#modalSearchWell").html( data );
             }})
             widgets.select( i, item );
-//            $(document.getElementById( configId ) ).attr( 'value', selection.item.value );
-//            $( document.getElementById(  displayId  ) ).attr( 'value', selection.item.label );
         }
     })
     // the autocomplete box is appearing below the modal dialog. below logic to prevent it.

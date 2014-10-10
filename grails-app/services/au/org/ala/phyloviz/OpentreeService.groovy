@@ -8,12 +8,13 @@ class OpentreeService {
     def grailsApplication
     def webService
     def metricsService
+
     def getStudyMetadata( id, addMeta ) {
         def i
         addMeta = addMeta?:[:]
         def url = grailsApplication.config['studyMeta']
         url = url.replaceAll( 'STUDYID', id.toString() )
-        println ( url )
+        log.debug ( url )
         def meta = webService.getJson( url )
         def result
         result = this.mapStudyFields( meta, addMeta )
@@ -21,6 +22,7 @@ class OpentreeService {
         result = this.getAuthor( result );
         return result
     }
+
     def mapStudyFields( meta , result){
         def i
         def mapping = grailsApplication.config.nexmlMetaMapping
@@ -39,8 +41,10 @@ class OpentreeService {
             }
             result[ metaProp ]= val
         }
+
         return result;
     }
+
     /**
      * extract authors from full publication text
      * @param data
@@ -53,6 +57,7 @@ class OpentreeService {
         data[studyMeta.authors] = study?.split ("\\s+[\\(]*${year}[\\)]*\\.")[0]
         return data;
     }
+
     /**
      * add tree meta data to meta parameter
      * @param tree
@@ -64,10 +69,9 @@ class OpentreeService {
         meta[grailsApplication.config.treeMeta.numLeaves] = tree.externalNodeCount;
         meta[grailsApplication.config.treeMeta.numIntNodes] = tree.internalNodeCount;
 
-        // branch length variable in tree is not set by jadetree class properly
-        // meta[grailsApplication.config.treeMeta.hasBL] = tree.hasBranchLengths;
         return  meta
     }
+
     /**
      * get the url of a tree resource
      * @param format
@@ -86,9 +90,11 @@ class OpentreeService {
         }
         return url;
     }
+
     def getTreeUrlNewick( String treeId , String studyId ){
         return this.getTreeUrl('newick', treeId, studyId)
     }
+
     /**
      * create url that will fetch all studies
      */
@@ -98,6 +104,7 @@ class OpentreeService {
         result.data = grailsApplication.config.find_all_studies_postdata
         return result
     }
+
     /**
      * create url that will search for trees with query term
      */

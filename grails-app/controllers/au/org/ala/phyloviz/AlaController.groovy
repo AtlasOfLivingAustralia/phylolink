@@ -9,22 +9,23 @@ class AlaController {
     def utilsService
     def layerService
 
-    def index() { }
+    def index() {
+
+    }
+
     def getOccurrenceRecords(speciesName, layer, region){
-        layer = layer?:''
-        region = region?:''
+        layer = layer ?: ''
+        region = region ?: ''
         def occurrenceUrl = this.grailsApplication.config.occurrences.replace('SEARCH', speciesName.encodeAsURL()).replace('LAYER',layer.encodeAsURL()).replace('REGION',region.encodeAsURL())
-        println( occurrenceUrl );
         def occurrencesResult = JSON.parse( webService.get( occurrenceUrl ) );
-//        def occurrencesResult = webService.getJson( occurrenceUrl );
         return occurrencesResult;
     }
+
     def extractFacets( occurrencesResult,speciesName ){
         def v, var, summary = []
         def config = grailsApplication.config.intersectionMeta
         occurrencesResult = occurrencesResult?.facetResults[0]
-
-        if( occurrencesResult?.fieldResult ){
+        if ( occurrencesResult?.fieldResult ) {
             for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
                 var = [:]
                 v = occurrencesResult.fieldResult[ i ];
@@ -37,6 +38,7 @@ class AlaController {
         }
         return summary
     }
+
     def getIntersections( species, layer, region ){
         def summary = [], config
         def occurrencesResult
@@ -44,10 +46,10 @@ class AlaController {
         for( speciesName in species ){
             occurrencesResult = this.getOccurrenceRecords( speciesName, layer, region)
             summary.addAll( this.extractFacets( occurrencesResult, speciesName ))
-//            println( this.extractFacets( occurrencesResult, speciesName ) )
         }
         return  summary;
     }
+
     def getOccurrenceIntersections(){
         def species = JSON.parse( params.species )
         def download = params.download?:"false"
@@ -57,7 +59,6 @@ class AlaController {
         def data = this.getIntersections( species, layer, region )
 
         if( download ){
-//            println( 'setting content')
             response.setHeader('Content-disposition','attachment; filename=data.csv')
             render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
         } else {
@@ -65,21 +66,23 @@ class AlaController {
         }
 
     }
+
     def getEnvLayers(){
         def data = this.getLayers( grailsApplication.config.layersMeta.env )
         render(contentType: 'application/json', text: data as JSON )
     }
+
     def getClLayers(){
         def data = this.getLayers( grailsApplication.config.layersMeta.cl )
         render(contentType: 'application/json', text: data as JSON )
     }
+
     def getLayers( type ){
         def result =[]
         def url = grailsApplication.config.layers
-
-        grailsApplication.config.debug?println( url ):null;
         def data = JSON.parse( webService.get( url ) )
         def code='';
+
         switch ( type ){
             case grailsApplication.config.layersMeta.cl:
                 code = 'cl';
@@ -88,7 +91,6 @@ class AlaController {
                 code = 'el';
                 break;
         }
-        println( data )
         data.eachWithIndex { def entry, int i ->
             if( type == entry.type ){
                 entry.id = code + entry.id
@@ -98,9 +100,10 @@ class AlaController {
         }
         return result;
     }
+
     def browseLayersFragment() {
-        println( params.type )
-        println( grailsApplication.config.layersMeta.env )
+        log.debug( params.type )
+        log.debug( grailsApplication.config.layersMeta.env )
         def layerData = getLayers( params.type );
         def results = new ArrayList<LayerDefinition>()
         layerData.each {
@@ -112,10 +115,7 @@ class AlaController {
             }
             results.add(layer)
         }
-
-
         def root = new LayerTreeNode(label: 'Unclassified')
-
         results.each {
             if (it.classification1) {
                 def topLevelFolder =  root.getOrAddFolder(it.classification1)
@@ -132,9 +132,11 @@ class AlaController {
         }
         [layerTree: root]
     }
+
     def layerSelectionDialog(){
 
     }
+
     def layerSummaryFragment(){
         def layerName = params.layerName;
         def info = [:]

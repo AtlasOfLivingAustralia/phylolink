@@ -1,6 +1,3 @@
-%{--<g:render template="environmental/create"/>--}%
-%{--<g:render template="environmental/edit"/>--}%
-%{--<g:render template="environmental/show"/>--}%
 <g:render template="environmental/form"/>
 <script>
     widgets.Environmental = function( id, initData ){
@@ -10,8 +7,6 @@
     }
     widgets.Environmental.prototype = {
         createTmpl: $("#_tmplEnvironmental").html(),
-//        showTmpl: $("#_tmplEnvironmentalShow").html(),
-//        editTmpl: $("#_tmplEnvironmentalEdit").html(),
         envLayers:[],
         layerUrl:"${createLink(controller: 'ala', action: 'getEnvLayers')}",
         showEl: 'envID',
@@ -55,7 +50,6 @@
         create:function(  widgetAddAreaId ){
             var html = $( this.createTmpl ).appendTo( "#"+widgetAddAreaId );
             ko.applyBindings( this, html[0])
-//            utils.autocomplete( this.autocompleteId, widgets.envLayers, this.displayNameId, this.configNameId);
             this.addEventHandlers();
         },
         edit:function(){
@@ -86,9 +80,6 @@
                     }
                 }
             })
-//            .done( function(){
-//                callback && callback.apply( utils, args)
-//            })
         },
         addEventHandlers:function(){
             $(document.getElementById( this.widgetId )).find('button').click(  this, widgets.showLayerDialog);

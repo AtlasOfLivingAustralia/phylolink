@@ -89,9 +89,6 @@
                     }
                 }
             })
-//            .done( function(){
-//                callback && callback.apply( utils, args)
-//            })
         },
         initLayers:function(){
           this.loadLayers(this.envLayerUrl, this.envLayers );

@@ -1,6 +1,4 @@
 <g:render template="contextual/form"/>
-%{--<g:render template="contextual/edit"/>--}%
-%{--<g:render template="contextual/show"/>--}%
 <script>
     widgets.Contextual = function( id , initData){
         this.wid = id || widgets.counter;
@@ -10,8 +8,6 @@
     }
     widgets.Contextual.prototype = {
         createTmpl: $("#_tmplContextual").html(),
-//        showTmpl: $("#_tmplContextualShow").html(),
-//        editTmpl: $("#_tmplContextualEdit").html()
         clLayers:[],
         layerUrl:"${createLink(controller: 'ala', action: 'getClLayers')}",
         widgetEl: 'widgets[ID]',
@@ -45,15 +41,11 @@
             this.showId = this.showEl.replace(/ID/g, id)
             this.showContentId = this.showContentEl.replace(/ID/g, id)
 
-//            this.dataId = this.dataEl.replace(/ID/g, id)
-//            this.clLayers.length == 0 ? this.loadLayers(): null;
-
             if( initData ){
                 $.extend( this, initData)
             } else {
                 $.extend( this, this.domainData)
             }
-
         },
         create:function(  widgetAddAreaId ){
             var html = $( this.createTmpl ).appendTo( "#"+widgetAddAreaId );
@@ -68,24 +60,20 @@
 
         },
         display: function (  data  ){
-//            var data = google.visualization.arrayToDataTable( result.data );
-//            var options = result.options;
-//            var chart = new google.visualization.ColumnChart( document.getElementById( this.showContentId ));
-//            chart.draw(data, options);
-
             // aggregate returned values.
             var agg = {}, row;
             this.displayData = data;
             var result = [['Contextual value','Count']], pd;
+
             for( var i in data ){
                 row = data[i]
                 agg[ row['variable'] ] = ( agg[ row['variable'] ] + row['count'] ) || 0
             }
+
             for( i in agg){
                 result.push([i, agg[i]])
             }
 
-//            console.log( result )
             result = google.visualization.arrayToDataTable( result );
             var chart = new google.visualization.ColumnChart( document.getElementById( this.showContentId ));
             chart.draw(result, this.chartOptions );
@@ -96,7 +84,6 @@
         createData: function(  ){
             var result = [];
             $( document.getElementById( this.widgetId ) ).find('select').each( function( index, it ){
-//                console.log( it.getValue() );
                 result.push( $(it).val() );
             });
             return result
@@ -117,9 +104,6 @@
                     }
                 }
             })
-//            .done( function(){
-//                callback && callback.apply( utils, args)
-//            })
         },
         addEventHandlers:function(){
             $(document.getElementById( this.widgetId )).find('button').click(  this, widgets.showLayerDialog);

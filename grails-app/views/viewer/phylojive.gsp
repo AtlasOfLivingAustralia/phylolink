@@ -8,7 +8,6 @@
 <%@ page import="groovy.json.StringEscapeUtils; org.codehaus.groovy.grails.commons.ConfigurationHolder; grails.converters.JSON" contentType="text/html;charset=UTF-8" %>
 <html xmlns="http://www.w3.org/1999/html">
 <head>
-    %{--<title>Tree for ${treeInstance.name}</title>--}%
     <meta name="layout" content="main"/>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'PhyloJive.css')}" type="text/css" media="screen" />
     <link rel="stylesheet" href="${resource(dir: 'css/colorbox', file: 'colorbox.css')}" type="text/css" media="screen" />
@@ -26,11 +25,6 @@
     <!--[if IE]><script language="javascript" type="text/javascript" src="${resource(dir: 'js', file: 'excanvas.js')}"></script><![endif]-->
     <script type="text/javascript">
         var tree = '', nexml = '', characters =[];
-        %{--var nexml = '${StringEscapeUtils.escapeJavaScript(treeInstance.tree)}';--}%
-        %{--var treebaseurl = encodeURIComponent( "${treeInstance.getTreebaseUrl()}" );--}%
-        %{--var characters = jQuery.parseJSON( '${treeInstance.characters?:""}' );--}%
-        %{--var IlDataset = "${treeInstance.identifyLifeDataset}";--}%
-
         $(document).ready(function() {
             var url = ""; //used
             $('#loadingMsg') .hide()  // hide it initially
@@ -60,7 +54,7 @@
         });
 
         function init_phylojive(tree, characters, url, nexml) {
-            //console.log("getkey", getKey(characters), getKey(characters[getKey(characters)]));
+
             phylogenyExplorer_init({
                 width: width || 900,
                 height: height || 600,
@@ -102,9 +96,7 @@
                     }
                     return html;
 
-                },
-                //presentClade
-                %{--tmpl: '${treeInstance.presentClade?.code?:defaultTmpl}'--}%
+                }
             });
             st.config.initCharacter = false;
         } // end init_phylojive
@@ -121,28 +113,6 @@
 </head>
 <body>
 <div id="content">
-    %{--<header id="page-header">--}%
-        %{--<div class="inner">--}%
-            %{--<button id="newTreeButton" class="btn" onclick="location.href='${createLink(controller:"tree", action:"create")}'">Create a new tree</button>--}%
-            %{--<nav id="breadcrumb">--}%
-                %{--<ol class="breadcrumb">--}%
-                    %{--<li><a href="${grailsApplication.config.contextPath}">Home</a> <span class=" icon icon-arrow-right"></span></li>--}%
-                    %{--<li class="last">Tree Viewer</li>--}%
-                %{--</ol>--}%
-            %{--</nav>--}%
-            %{--<h1>Tree: ${treeInstance.name}</h1>--}%
-            %{--<phy:isLoggedIn>--}%
-                %{--<hf:ifGranted role="ROLE_ADMIN">--}%
-                %{--<div style="color:#999;margin-bottom: 20px;">--}%
-                    %{--Admin actions:--}%
-                    %{--<g:link controller="tree" action="list" style="color:#999;font-size:12px;" class="btn btn-mini">Tree list</g:link>&nbsp;--}%
-                    %{--<g:link controller="tree" action="edit" id="${treeInstance.id}" style="color:#999;font-size:12px;" class="btn btn-mini">Edit tree</g:link>--}%
-                    %{--<g:link controller="tree" action="create" style="color:#999;font-size:12px;" class="btn btn-mini">Create a new tree</g:link>--}%
-                %{--</div>--}%
-                %{--</hf:ifGranted>--}%
-            %{--</phy:isLoggedIn>--}%
-        %{--</div><!--inner-->--}%
-    %{--</header>--}%
     <div>
         <h2 id="loadingMsg" >Loading Tree...</h2>
         <div id="section">

@@ -4,7 +4,6 @@
     <head>
         <meta name="layout" content="main">
         <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
-        %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'phylolink.css')}"/>--}%
         <title><g:message code="default.show.label" args="[entityName]"/></title>
         <r:require modules="application,form"/>
         %{--render widgets after getting all requirements--}%
@@ -39,7 +38,6 @@
                             </div><!--inner-->
                         </header>
                         <div class="row-fluid">
-                            %{--<h2 id="loadingMsg" >Loading Tree...</h2>--}%
                             <div id="section" class="span12">
                                 <div id="infovis"></div>
                             </div>

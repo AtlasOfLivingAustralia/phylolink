@@ -2,7 +2,10 @@ package au.org.ala.phyloviz
 
 class ViewerController {
 
-    def index() {}
+    def index() {
+
+    }
+
     def show(){
         def viewer = params.viewer?:'phylojive'
         switch ( viewer ){

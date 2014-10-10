@@ -54,8 +54,6 @@
 <script type="text/javascript">
     var theme = "ui-smoothness";
     var widgetId = ${params.id}
-    //  $("#browseExpander").jqxExpander({ showArrow: false, toggleMode: 'none', width: '300px', height: 'auto', theme: theme });
-
     $("#layerTree").jqxTree({
         theme: theme
     }).bind('select', onLayerSelect);
@@ -71,13 +69,12 @@
                 value: $(event.args.element).attr("layerId"),
                 label: $(event.args.element).attr("layerDisplayName")
             });
-console.log(  {
-    value: $(event.args.element).attr("layerId"),
-    label: $(event.args.element).attr("layerDisplayName")
-});
+            console.log(  {
+                value: $(event.args.element).attr("layerId"),
+                label: $(event.args.element).attr("layerDisplayName")
+            });
         } else {
             $("#browseLayerInfo").html("");
         }
     }
-
 </script>
