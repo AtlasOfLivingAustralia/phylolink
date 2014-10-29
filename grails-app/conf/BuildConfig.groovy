@@ -35,7 +35,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.8.3"
         runtime ":csv:0.3.1"
         runtime ":resources:1.2.1"
-        runtime ":ala-web-theme:0.1.12"
+        runtime ":ala-web-theme:0.8.2"
 
         // plugins for the build system only
         build ":tomcat:7.0.50"
