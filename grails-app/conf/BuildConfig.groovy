@@ -4,6 +4,9 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
+grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.groupId = "au.org.ala"
+
 
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
@@ -29,6 +32,12 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
+        build ":release:3.0.1"
+
+        // plugins for the compile step
+//        compile ":scaffolding:2.0.2"
+//        compile ':cache:1.1.1'
+
         // plugins needed at runtime but not for compilation
         runtime ":hibernate:3.6.10.7" // or ":hibernate4:4.3.4"
         runtime ":database-migration:1.3.8"
