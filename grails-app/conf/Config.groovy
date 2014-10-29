@@ -1,7 +1,7 @@
 /******* Change this stuff for your project *******/
 appName = 'Phylo Link'
 serverName='http://localhost:8080'
-contextPath='/PhyloLink'
+contextPath='/phylolink'
 security.cas.uriFilterPattern = ''
 runWithNoExternalConfig = true
 /******* End of change this stuff for your project *******/
