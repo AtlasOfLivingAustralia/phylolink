@@ -3,8 +3,8 @@ package au.org.ala.phyloviz
 import au.com.bytecode.opencsv.CSVWriter
 import grails.transaction.Transactional
 import net.sf.json.JSONObject
+import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
-
 import java.util.regex.Pattern
 
 @Transactional
@@ -12,8 +12,10 @@ class UtilsService {
     def metricsService
     def grailsApplication
     def opentreeService
-    def utilsService
     def webService
+    def alaService
+    def treeService
+    def log = LogFactory.getLog(getClass())
     LinkGenerator grailsLinkGenerator
 
     def getViewerUrl(treeId, studyId, meta) {
@@ -212,5 +214,47 @@ class UtilsService {
             result.push(obj[var]);
         }
         return result;
+    }
+
+    /**
+     * search for doi using given search terms
+     * params
+     * q - search terms
+     *
+     * return
+     * [{
+     *  doi:
+     *  title:
+     *  reference:
+     *  year:
+     * }]
+     */
+    def searchDoi( terms ){
+        String url = grailsApplication.config.doiSearchUrl
+        log.debug( url )
+        url = url.replaceAll('SEARCH', terms );
+        log.debug( url )
+        def json = webService.getJson( url );
+        return json;
+    }
+
+    /**
+     * get all leaf from a tree or all trees in a study
+     */
+    def leafNodes( study , tree ){
+        def nexson = opentreeService.getNexson( study )
+        def leaves = treeService.getLeaves( nexson, tree )
+        return leaves
+    }
+
+    def lookupLeafName( study , tree){
+        def leaves = this.leafNodes( study, null )
+
+        def names = [];
+        for( def i = 0 ; i < leaves.size(); i++){
+            names.push( leaves[i].name )
+        }
+
+        return alaService.getLsid( names );
     }
 }

@@ -8,7 +8,7 @@ class AlaController {
     def webService
     def utilsService
     def layerService
-
+    def alaService
     def index() {
 
     }
@@ -151,5 +151,12 @@ class AlaController {
             }
         }
         [layerName: layerName, layerDefinition: layerDefinition]
+    }
+
+    def getAlaLsid(){
+        def study = params.study
+        def tree = params.tree
+        utilsService.lookupLeafName( study, tree);
+        render( contentType: 'application/json', text: utilsService.lookupLeafName( study, tree) as JSON )
     }
 }

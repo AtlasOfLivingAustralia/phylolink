@@ -24,7 +24,7 @@
 
     <script type='text/javascript'>
         var viewOrEdit = 'VIEW';
-        var findAllStudies_url = "${createLink(controller: "study", action: 'listStudies')}";
+        var findAllStudies_url = "${createLink(controller: "OTStudy", action: 'listStudies')}";
         var searchTreeUrl = findAllStudies_url;
         var phylesystem_config_url = '{{=phylesystem_config_url}}';
     </script>

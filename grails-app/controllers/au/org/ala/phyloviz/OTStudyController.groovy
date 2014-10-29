@@ -1,7 +1,7 @@
 package au.org.ala.phyloviz
 import grails.converters.JSON
 
-class StudyController {
+class OTStudyController {
     def opentreeService
     def webService
     def utilsService
@@ -76,4 +76,13 @@ class StudyController {
         def mapping = grailsApplication.config.studyListMapping
         return  utilsService.map(study, mapping)
     }
+
+    def leafNodes(){
+        def study, tree;
+        study = params.study
+        tree = params.tree
+        def nexson = utilsService.leafNodes( study, tree );
+        render( contentType: 'application/json', text: nexson as JSON)
+    }
+
 }

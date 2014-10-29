@@ -131,4 +131,19 @@ class WebService implements InitializingBean {
         log.debug(data)
         this.doJsonPost("http://${uri.host}", uri.path, uri.port.toString(), data)
     }
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
+    def postData( String url, data ){
+        def http = new HTTPBuilder( url )
+        http.post( body: data,
+                requestContentType: ContentType.URLENC ) { resp, result ->
+            log.debug( "POST Success: ${resp.statusLine}" )
+            return  result
+        }
+    }
 }

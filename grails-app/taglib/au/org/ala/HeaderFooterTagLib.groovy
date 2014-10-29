@@ -72,7 +72,7 @@ class HeaderFooterTagLib {
      */
     def clearCache = {
         hfCache.each { key, obj -> hfCache[key].content = ""}
-        println "cache cleared"
+        log.debug "cache cleared"
     }
 
     /**
@@ -142,7 +142,7 @@ class HeaderFooterTagLib {
         }
         else {
             content = hfCache[which].content
-            //println "using cache"
+            //log.debug "using cache"
         }
         return transform(content, attrs)
     }
@@ -154,7 +154,7 @@ class HeaderFooterTagLib {
      */
     String getContent(which) {
         def url = grailsApplication.config.headerAndFooter.baseURL + '/' + which + ".html"
-        //println url
+        //log.debug url
         def conn = new URL(url).openConnection()
         try {
             conn.setConnectTimeout(10000)
@@ -162,10 +162,10 @@ class HeaderFooterTagLib {
             return conn.content.text
         } catch (SocketTimeoutException e) {
             log.warn "Timed out getting ${which} template. URL= ${url}."
-            println "Timed out getting ${which} template. URL= ${url}."
+            log.debug "Timed out getting ${which} template. URL= ${url}."
         } catch (Exception e) {
             log.warn "Failed to get ${which} template. ${e.getClass()} ${e.getMessage()} URL= ${url}."
-            println "Failed to get ${which} template. ${e.getClass()} ${e.getMessage()} URL= ${url}."
+            log.debug "Failed to get ${which} template. ${e.getClass()} ${e.getMessage()} URL= ${url}."
         }
         return ""
     }

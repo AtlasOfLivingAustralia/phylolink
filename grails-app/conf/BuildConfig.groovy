@@ -5,6 +5,14 @@ grails.project.test.reports.dir = "target/test-reports"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 
+forkConfig = [maxMemory: 1024, minMemory: 64, debug: false, maxPerm: 256]
+grails.project.fork = [
+        test: forkConfig, // configure settings for the test-app JVM
+        run: forkConfig, // configure settings for the run-app JVM
+        war: forkConfig, // configure settings for the run-war JVM
+        console: forkConfig // configure settings for the Swing console JVM
+]
+
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -22,10 +30,12 @@ grails.project.dependency.resolution = {
         grailsHome()
         grailsCentral()
         mavenCentral()
+        mavenLocal()
         mavenRepo "http://maven.ala.org.au/repository/"
     }
 
     dependencies {
+        runtime 'postgresql:postgresql:9.1-901.jdbc4'
     }
 
     plugins {
@@ -35,7 +45,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.8.3"
         runtime ":csv:0.3.1"
         runtime ":resources:1.2.1"
-        runtime ":ala-web-theme:0.1.12"
+        runtime ":ala-web-theme:0.8.2"
 
         // plugins for the build system only
         build ":tomcat:7.0.50"

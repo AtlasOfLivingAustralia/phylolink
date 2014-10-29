@@ -2,7 +2,8 @@
 appName = 'Phylo Link'
 serverName='http://localhost:8080'
 contextPath='/PhyloLink'
-//security.cas.uriFilterPattern = ''
+security.cas.uriFilterPattern = ''
+runWithNoExternalConfig = true
 /******* End of change this stuff for your project *******/
 
 /*** Phylo Link config *******/
@@ -12,6 +13,8 @@ debug = true
 alaWebServiceMeta = [
         "speciesfacet":'taxon_name'
 ]
+//external webservice
+doiSearchUrl = "http://search.crossref.org/dois?q=SEARCH&header=true"
 
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
@@ -23,6 +26,7 @@ regionsUrl = [
 ];
 speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
+
 //opentree configs
 treemachine_address = 'http://115.146.93.110:8000'
 oti_address = 'http://115.146.93.110:7478'
@@ -32,8 +36,10 @@ ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
 newick_tree = "${tree_api}.tre"
 studyMeta = "${ot_api}/study/STUDYID.json?output_nexml2json=1.2.1"
+studyUrl = "${ot_api}/study/STUDYID.json?output_nexml2json=FORMAT"
 treesearch_url = "${oti_address}/db/data/ext/QueryServices/graphdb/singlePropertySearchForTrees"
-
+curator = "${ot_address}/curator"
+to_nexson = "${curator}/default/to_nexson"
 
 find_all_studies_postdata = [ "includeTreeMetadata":true,"verbose":true ]
 search_postdata = ["property":"ot:originalLabel","value":'',"verbose":true]
@@ -49,6 +55,8 @@ layersMeta=[
 
 
 //variable config
+// nexml2json 0.0 is best since other versions are giving errors.
+nexml2json = "1.2"
 jsonkey = [
         stList:"studies"
 ]
@@ -245,10 +253,11 @@ grails.hibernate.osiv.readonly = false
 environments {
     development {
         serverName = 'http://dev.ala.org.au:8080'
+//        server.url = 'http://dev.ala.org.au:8080'
         security.cas.appServerName = serverName
         security.cas.contextPath = "/${appName}"
         grails.logging.jul.usebridge = true
-        grails.serverURL = "${serverName}/${appName}" //'http://nickdos.ala.org.au:8080/' + appName
+        grails.serverURL = "${serverName}/${appName}"
     }
     test {
         serverName = 'http://115.146.93.110:8080'
@@ -276,9 +285,9 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    }
     debug 'grails.app'
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
