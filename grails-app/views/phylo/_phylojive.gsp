@@ -14,7 +14,7 @@
     <script type="text/javascript" src="${resource(dir: 'js', file: 'jsphylosvg-min.js')}"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'PhyloLink.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'phylolink.js')}"></script>
     <!--[if IE]><script language="javascript" type="text/javascript" src="${resource(dir: 'js', file: 'excanvas.js')}"></script><![endif]-->
     <script type="text/javascript">
         $(document).ready(function(){

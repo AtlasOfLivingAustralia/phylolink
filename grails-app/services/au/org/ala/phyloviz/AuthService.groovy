@@ -13,7 +13,7 @@
  * rights and limitations under the License.
  */
 
-package au.org.ala.phyloviz
+
 
 import au.org.ala.cas.util.AuthenticationCookieUtils
 import org.codehaus.groovy.grails.commons.ConfigurationHolder

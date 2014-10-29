@@ -28,7 +28,7 @@ var utils={
     },
     download:function( data ){
         $.ajax({
-            url:'http://localhost:8080/PhyloLink/download',
+            url:'http://localhost:8080/phylolink/download',
             method:'POST',
             data:{
                 json: JSON.stringify( data )
