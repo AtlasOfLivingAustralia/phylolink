@@ -21,6 +21,7 @@ import groovyx.net.http.HTTPBuilder
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
+import groovyx.net.http.RESTClient
 
 class WebService implements InitializingBean {
 
@@ -44,6 +45,14 @@ class WebService implements InitializingBean {
             log.debug error.error
             return error as JSON
         }
+    }
+
+    def getXml( url ){
+        def weather = new RESTClient( url )
+        def resp = weather.get( contentType: groovyx.net.http.ContentType.TEXT,
+                headers : [Accept : 'application/xml'] )
+
+        return resp.data.text
     }
 
     def getJson(String url) {
@@ -138,12 +147,48 @@ class WebService implements InitializingBean {
      * @param data - data to post
      * @return data from post response
      */
-    def postData( String url, data ){
+    def postData( String url, data, header = [:] ){
         def http = new HTTPBuilder( url )
+        def res
         http.post( body: data,
-                requestContentType: ContentType.URLENC ) { resp, result ->
-            log.debug( "POST Success: ${resp.statusLine}" )
+                requestContentType: ContentType.URLENC, headers: header ) { resp, result ->
+//            headers['Accept'] = 'application/json'
+            log.debug( "POST Success: ${resp.statusLine} ${result}" )
+            res =  result
+        }
+        return  res
+    }
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
+    def postData( String url){
+        def http = new HTTPBuilder( url )
+        http.post( body:"" ) { resp, result ->
+//            headers['Accept'] = 'application/json'
+            log.debug( "POST Success: ${resp.statusLine} ${result}" )
             return  result
         }
+    }
+
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
+    def delete( String url){
+        def cl = new RESTClient( url )
+        try {
+            def resp = cl.delete( path:'phylolink')
+            return resp.status == 200
+        } catch ( Exception e){
+            log.debug( 'cannot delete ' + e.getMessage() )
+        }
+
     }
 }

@@ -120,7 +120,7 @@ var Nav = {
         navigation = $E('div', {
             'id':'navigationPanel',
             'style':{
-                'left':(opt.width - (opt.width * 0.355)) + 'px'
+                'left':(opt.width - (opt.width * 0.5)) + 'px'
             }
         });
         jQuery(navigation).html(navHTML);
@@ -231,7 +231,8 @@ var Nav = {
                                 var node = $trigger.data("node");
                                 var name = jQuery("div#"+id).text().trim();
                                 //console.log("map", name, options)
-                                loadMap(node, name, opt, false);
+//                                loadMap(node, name, opt, false);
+                                updateMap( ['Macropus rufus', 'Acacia Mulga'])
                             }//,
 //                            disabled: function(key, options) {
 //                                //var name = options.$trigger.text().trim();
@@ -451,7 +452,7 @@ settingsPage = function (opts) {
         '<tr><td>Characters:<br/> (<a href="http://wiki.trin.org.au/HubRIS/PhyloJive/CharJSON" target="_blank">CharJSON</a>)</td><td><textarea id="characterUpload" rows="4"  size="15"></textarea></td></tr>' +
         '<tr><td></td><td><input id="renderCharacters" type="submit" value="Import" onclick="onCharRender(this)"></td></tr></table>';
     var mapHtml = '<div id="mapTitle" style="font-weight:bold;"></div><div id="mapColourBy" style="display:none">Colour by: <select id="colourBy" onchange="updateMapColours(this);"><option value="species">Species</option><option>----</option></select></div>' +
-        '<div id="recordsMap">Click a taxa and select &quot;view map&quot;</div><div id="mapLegend"></div>';
+        '<div id="recordMap" style="height: 250px"></div><div id="mapLegend"></div>';
     var attrHtml = "<p>PhyloJive was developed by the <a href=\"http://www.taxonomy.org.au/\" target=\"_blank\">Taxonomy Research &amp; Information Network (TRIN)</a> " +
         "with enhancments added by the <a href=\"http://www.ala.org.au/\" target=\"_blank\">Atlas of Living Australia (ALA)</a>. " +
         "Project genisis thanks to Garry Jolley-Rogers and Joe Miller. Software development by Temi Varghese, Paul Harvey and Nick dos Remedios.</p>" +

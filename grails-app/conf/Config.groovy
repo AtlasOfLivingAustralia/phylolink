@@ -2,19 +2,24 @@
 appName = 'Phylo Link'
 serverName='http://localhost:8080'
 contextPath='/phylolink'
-security.cas.uriFilterPattern = ''
+//security.cas.uriFilterPattern = ''
 runWithNoExternalConfig = true
 /******* End of change this stuff for your project *******/
 
 /*** Phylo Link config *******/
 debug = true
 
+//address that resolves doi value
+doiAddress = "http://dx.doi.org/"
+
 //variables used for facetting
 alaWebServiceMeta = [
         "speciesfacet":'taxon_name'
 ]
+
 //external webservice
 doiSearchUrl = "http://search.crossref.org/dois?q=SEARCH&header=true"
+citationParser = "http://freecite.library.brown.edu/citations/create"
 
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
@@ -26,11 +31,13 @@ regionsUrl = [
 ];
 speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
+autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON"
+bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
 
 //opentree configs
-treemachine_address = 'http://115.146.93.110:8000'
-oti_address = 'http://115.146.93.110:7478'
-ot_address = 'http://115.146.93.110:8000'
+treemachine_address = 'http://phylo:8000'
+oti_address = 'http://phylo:7478'
+ot_address = 'http://phylo:8000'
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
 ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
@@ -55,8 +62,13 @@ layersMeta=[
 
 
 //variable config
+
 // nexml2json 0.0 is best since other versions are giving errors.
-nexml2json = "1.2"
+nexml2json = "1.2.1"
+
+// supported tree formats
+treeFormats = [ 'nexml', 'nexus', 'newick' ]
+
 jsonkey = [
         stList:"studies"
 ]
@@ -145,10 +157,38 @@ expert_trees = [
 
 /** Tree config **/
 
+/**
+ * elastic search configs
+ */
+if( !app.elasticsearch.location ){
+    app.elasticsearch.location = "/data/phylolink/elasticsearch/"
+}
+elasticBaseUrl = 'http://localhost:9200'
+eIndex = 'phylolink'
+eType = 'nexson'
+elasticSchema = 'artifacts/schema.json'
+facets ='''
+        {
+    "aggs" : {
+        "Publisher" : {
+            "terms" : {
+                "field" : "^dc:publisher"
+            }
+        },
+        "Expert Trees":{
+            "terms":{
+                "field" : "expertTree"
+            }
+        }
+    }
+}
+'''
+
+/** elastic search configs end **/
 /******* ALA standard config ************/
 headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 security.cas.casServerName = "https://auth.ala.org.au"
-security.cas.uriFilterPattern = "/tree/.*,/user/.*,/treeViewer/showPrivate/.*"
+security.cas.uriFilterPattern = "/wizard/.*"
 security.cas.authenticateOnlyIfLoggedInPattern = "/,/treeViewer/.*"
 security.cas.uriExclusionFilterPattern = "/images.*,/css.*,/js.*"
 security.cas.loginUrl = "${security.cas.casServerName}/cas/login"
@@ -260,7 +300,7 @@ environments {
         grails.serverURL = "${serverName}/${appName}"
     }
     test {
-        serverName = 'http://115.146.93.110:8080'
+        serverName = 'http://phylo:8080'
         contextPath = ''
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = true
@@ -270,7 +310,7 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
     production {
-        serverName = 'http://115.146.93.193:8080'
+        serverName = 'http://130.56.249.207:8080'
         contextPath = ''
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = false
@@ -285,10 +325,14 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    appenders {
-        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    root{
+        debug 'stdout'
     }
-    debug 'grails.app'
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+    }
+    debug 'grails.app',
+          'au.org.ala.phyloviz.Nexson'
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts

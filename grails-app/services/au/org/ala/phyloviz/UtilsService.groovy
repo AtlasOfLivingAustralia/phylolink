@@ -1,10 +1,11 @@
 package au.org.ala.phyloviz
-
 import au.com.bytecode.opencsv.CSVWriter
+import grails.converters.JSON
 import grails.transaction.Transactional
 import net.sf.json.JSONObject
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+
 import java.util.regex.Pattern
 
 @Transactional
@@ -15,12 +16,14 @@ class UtilsService {
     def webService
     def alaService
     def treeService
+
     def log = LogFactory.getLog(getClass())
     LinkGenerator grailsLinkGenerator
 
     def getViewerUrl(treeId, studyId, meta) {
         meta = meta ?: [:]
-        meta[grailsApplication.config.treeMeta.treeUrl] = "${grailsLinkGenerator.link(controller: 'viewer', action: 'show', absolute: true)}?studyId=${studyId}&treeId=${treeId}"
+        meta[grailsApplication.config.treeMeta.treeUrl] =
+                "${grailsLinkGenerator.link(controller: 'viewer', action: 'show', absolute: true)}?studyId=${studyId}&treeId=${treeId}"
         return meta
     }
 
@@ -256,5 +259,41 @@ class UtilsService {
         }
 
         return alaService.getLsid( names );
+    }
+
+    /**
+     * give a citation and parse it into respective elements
+     */
+    def parseCitation( String cite ){
+        if( cite == null){
+            return
+        }
+        log.debug( cite )
+        def url = grailsApplication.config['citationParser'];
+        def data = [
+                'citation':cite
+        ]
+        def xml = webService.postData(url, data, ['Accept':'application/json'])
+        log.debug( xml.toString() )
+        def result = [:]
+        result['title'] = xml[0]?.title;
+        result['year'] = xml[0]?.year
+        result['fullCitation'] = cite
+        result['authors'] = xml[0]?.authors
+        result['doi'] = xml[0]?.doi
+        result['journal'] = xml[0]?.journal
+        result['pages'] = xml[0]?.pages
+        result['volume'] = xml[0]?.volume
+        return result
+    }
+
+    def autocomplete( q ){
+        def url = grailsApplication.config.autocompleteUrl
+        log.debug( url )
+        url = url.replace( 'QUERY', q )
+        def result = webService.get( url )
+        result = JSON.parse( result )
+        log.debug(result)
+        return result?.searchResults?.results
     }
 }

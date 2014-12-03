@@ -131,15 +131,24 @@ class OpentreeService {
         return  webService.getJson( url )
     }
 
-    def convertNexmltoNexson( nexml, format ){
+    def convertNexmlToNexson( nexml ){
+        return this.convertToNexson( nexml, 'nexml' )
+    }
+
+    def convertNewickToNexson( newick ){
+        return this.convertToNexson( newick, 'newick' )
+    }
+
+    def convertToNexson( tree, format){
         def url = grailsApplication.config['to_nexson'];
         log.debug( url )
         def data = [:]
-        data['content'] = nexml
+        data['content'] = tree
         data['output'] = 'nexson'
         data['inputFormat'] = format
         data['nexml2json'] = grailsApplication.config[ 'nexml2json' ]
-        def nexson = webService.postData( url, data )
+        def nexson = webService.postData( url, data, ['Accepts':'application/json'])
+        log.debug('nexson returned is : '+nexson)
         return JSON.parse( nexson.text() ) ;
     }
 }

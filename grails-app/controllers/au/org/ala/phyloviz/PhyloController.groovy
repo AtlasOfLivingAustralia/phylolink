@@ -1,6 +1,5 @@
 package au.org.ala.phyloviz
 import grails.converters.JSON
-import grails.transaction.Transactional
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
@@ -9,7 +8,6 @@ import static org.springframework.http.HttpStatus.*
 /**
  * Created by Temi Varghese on 19/06/2014.
  */
-@Transactional(readOnly = true)
 class PhyloController {
     def webService;
     def metricsService;
@@ -30,8 +28,10 @@ class PhyloController {
         respond new Phylo(params)
     }
 
-    @Transactional
     def save(Phylo phyloInstance) {
+        log.debug('save ')
+        log.debug( params )
+        log.debug( phyloInstance )
         if (phyloInstance == null) {
             notFound()
             return
@@ -57,7 +57,6 @@ class PhyloController {
         respond phyloInstance
     }
 
-    @Transactional
     def update(Phylo phyloInstance) {
         if (phyloInstance == null) {
             notFound()
@@ -80,7 +79,6 @@ class PhyloController {
         }
     }
 
-    @Transactional
     def delete(Phylo phyloInstance) {
 
         if (phyloInstance == null) {
@@ -253,6 +251,14 @@ class PhyloController {
         render( contentType: 'application/json', text: meta as JSON )
     }
 
+    public def params(){
+        def url = 'http://biocache.ala.org.au/ws/webportal/params'
+        def ret = webService.postData(url, [fq:params.fq])
+//        def ret = webService.postData(url,'/ws/webportal/params',[fq:params.fq])
+    //        log.debug( "POST return" +ret.readLines() )
+        render ( text: ret.toString() )
+    }
+
     /**
      * attaches metadata of tree onto given metadata variable
      * @param treeId
@@ -355,4 +361,5 @@ class PhyloController {
         response.setHeader('Content-disposition','attachment; filename=data.csv')
         render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV( download ) )
     }
+
 }

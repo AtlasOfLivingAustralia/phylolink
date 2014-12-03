@@ -1,7 +1,7 @@
 //package au.org.ala
 //package au.org.ala.phyloviz
 
-import au.org.ala.phyloviz.PhylogeneticTreeController
+import au.org.ala.phyloviz.TreeController
 import au.org.ala.phyloviz.UtilsService
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
@@ -16,7 +16,7 @@ import spock.lang.Specification
  */
 @TestFor(UrlMappings)
 @TestMixin(UrlMappingsUnitTestMixin)
-@Mock([UtilsService, PhylogeneticTreeController])
+@Mock([UtilsService, TreeController])
 class UrlMappingsSpec extends  Specification{
     void "testing url mapping"(){
         expect:

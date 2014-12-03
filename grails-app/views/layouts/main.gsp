@@ -48,6 +48,11 @@
             });
         });
     </r:script>
+<r:script disposition="head">
+            var BVP_JS_URLS = {
+                picklistAutocompleteUrl: "${createLink(action:'autocomplete', controller:'PhylogeneticTree')}"
+            };
+</r:script>
     <r:layoutResources/>
     <g:layoutHead/>
 </head>
