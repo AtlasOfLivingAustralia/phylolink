@@ -63,20 +63,31 @@ class WizardController {
             params.tree = request.getFile('file').inputStream.text
             log.debug( 'tree data: ' + params.tree )
         }
+        def tree
 
-        def tree = treeService.createTreeInstance(params);
+        try{
+            tree = treeService.createTreeInstance(params);
+            if (tree && !tree.hasErrors() && tree.validate()) {
+                tree.save(flush: true)
+                flash.message = message(code: 'default.created.message',
+                        args: [message(code: 'tree.label', default: 'Tree'), tree.id])
+                redirect(controller: 'tree', action: 'mapOtus', id: tree.id)
+            } else {
+                log.debug('error creating tree')
+                flash.message = 'Error saving tree to database.'
+                render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
+            }
+        } catch ( Exception e){
+            log.debug('error creating tree')
+            flash.message = 'Error creating/storing tree to database. Check if tree format is correct?'
+            render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
+        }
+
 //        userService.registerCurrentUser()
 //        def user = Owner.findByUserId(authService.getUserId()?:-1)
 //        params.owner = user
 //        def tree = new Tree( params )
-        if (!tree.hasErrors() && tree.validate()) {
-            tree.save(flush: true)
-            flash.message = message(code: 'default.created.message',
-                    args: [message(code: 'tree.label', default: 'Tree'), tree.id])
-            redirect(controller: 'tree', action: 'mapOtus', id: tree.id)
-        } else {
-            render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
-        }
+
     }
 
     def visualize() {

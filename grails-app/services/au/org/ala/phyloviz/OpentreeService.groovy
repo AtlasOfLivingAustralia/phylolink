@@ -135,9 +135,9 @@ class OpentreeService {
         return this.convertToNexson( nexml, 'nexml' )
     }
 
-    def convertNewickToNexson( newick ){
-        return this.convertToNexson( newick, 'newick' )
-    }
+//    def convertNewickToNexson( newick ){
+//        return this.convertToNexson( newick, 'newick' )
+//    }
 
     def convertToNexson( tree, format){
         def url = grailsApplication.config['to_nexson'];

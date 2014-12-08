@@ -17,8 +17,8 @@
     <label class="control-label" for="treeFormat">Tree data format</label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'treeFormat', 'error')}">
-        %{--<g:select name="treeFormat" from="${['nexml', 'newick', 'nexus']}" value="${tree?.treeFormat}" class="span2"/>--}%
-        <g:select name="treeFormat" from="${['nexml']}" value="${tree?.treeFormat}" class="span2"/>
+        <g:select name="treeFormat" from="${['nexml', 'newick']}" value="${tree?.treeFormat}" class="span2"/>
+        %{--<g:select name="treeFormat" from="${['nexml']}" value="${tree?.treeFormat}" class="span2"/>--}%
     </div>
 </div>
 

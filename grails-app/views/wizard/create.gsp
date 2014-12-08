@@ -15,14 +15,14 @@
     <g:if test="${flash.message}">
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>
-    <g:hasErrors bean="${tree}">
-        <ul class="errors alert-error unstyled" role="alert">
-            <g:eachError bean="${tree}" var="error">
-                <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message
-                        error="${error}"/></li>
-            </g:eachError>
-        </ul>
-    </g:hasErrors>
+    %{--<g:hasErrors bean="${tree}">--}%
+        %{--<ul class="errors alert-error unstyled" role="alert">--}%
+            %{--<g:eachError bean="${tree}" var="error">--}%
+                %{--<li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message--}%
+                        %{--error="${error}"/></li>--}%
+            %{--</g:eachError>--}%
+        %{--</ul>--}%
+    %{--</g:hasErrors>--}%
     <g:form action="save" class="form-horizontal" method="POST" enctype="multipart/form-data">
         <legend>Upload a tree</legend>
         <fieldset class="form">

@@ -30,19 +30,24 @@ class TreeService {
         }
 
         def lsid = alaService.getLsid(names)
-        lsid = lsid.resp;
-        log.debug(lsid)
-        (0..<lsid.size()).each { index ->
-            if (lsid[index]) {
-                taxon = lsid[index]
+        if( lsid?.error ){
+            result = lsid
+        } else {
+            lsid = lsid.resp;
+            log.debug(lsid)
+            (0..<lsid.size()).each { index ->
+                if (lsid[index]) {
+                    taxon = lsid[index]
 
-                // check if taxon is in australia
-                taxon.isAustralian == 'recorded' ? isAussie++ : 0;
-                recogNames++;
+                    // check if taxon is in australia
+                    taxon.isAustralian == 'recorded' ? isAussie++ : 0;
+                    recogNames++;
+                }
             }
+            result['recognisedNames'] = recogNames;
+            result['australianCount'] = isAussie;
         }
-        result['recognisedNames'] = recogNames;
-        result['australianCount'] = isAussie;
+
         return result
     }
 
@@ -239,30 +244,33 @@ class TreeService {
      */
     def createTreeInstance( treep ){
         def tree;
-//        treep.userId = authService.getUserId()
-//        treep.displayName = authService.getDisplayName()
         log.debug('in create tree instance function:' + authService.getUserId())
         treep.created = new Date()
 //        userService.registerCurrentUser()
         def user = Owner.findByUserId( authService.getUserId()?:-1 )
 
-//        log.debug( treep )
         log.debug( user.toString() )
         if( treep.tree && treep.treeFormat && user ){
             try {
                 log.debug('before convert nexson')
-                treep.nexson = opentreeService.convertToNexson( treep.tree, treep.treeFormat );
+                treep.nexson = opentreeService.convertToNexson(treep.tree, treep.treeFormat);
+                return
+                if(treep.nexson == null){
+                    return;
+                }
+
                 log.debug('after convert nexson')
                 treep.nexson = treep.nexson.toString()
                 treep.owner = user
                 log.debug('before tree instance creation')
                 tree = new Tree( treep )
-                if( tree.save( flush: true, failOnError: true) ){
+                if( tree.save( flush: true ) ){
                     log.debug('tree saved to database.' + tree.getId())
 //                    elasticService.indexDoc(elasticService.getNEXSON_INDEX(), tree.getId(), tree.getNexson());
                 }
             } catch (Exception e) {
                 log.debug( 'exception while converting tree to nexson' + e.getMessage() )
+                return
             }
 
         }

@@ -4,9 +4,13 @@ import au.org.ala.phyloviz.Owner
 
 class BootStrap {
     def opentreeService
+    def skip = true
 //    def elasticService
 
     def init = { servletContext ->
+        if(skip){
+            return
+        }
         log.debug('checking for system user name')
         def systemUser = Owner.findByDisplayName("System")
         if (!systemUser) {
@@ -20,9 +24,6 @@ class BootStrap {
         }
         log.debug('after getting system username')
         log.debug( 'in bootstrap init func')
-//        log.debug('before elasticsearch index init')
-//        elasticService.initDatabase()
-//        log.debug('after elasticsearch index init')
         def trees = [ this.acaciaTree(), this.amphibianTree(), this.mammalsTree()]
         trees.each{
             def tree = it
@@ -35,39 +36,7 @@ class BootStrap {
                 log.debug( 'tree already in database' )
             }
         }
-//        def tree = this.loadNexmlFile1()
-//        tree.owner = systemUser;
-//        def pt = Tree.findByReference(tree.reference)
-//        if (!pt) {
-//            log.debug( 'before save 1 tree')
-//            pt = new Tree(tree).save(flush: true, failOnError: true);
-////            elasticService.indexDoc(null, pt.getId(), tree.nexson)
-//            log.info('saved a tree ' + tree.reference)
-//        } else {
-//            log.debug( 'tree already in database' )
-//        }
-//
-//        tree = this.loadNexmlFile2()
-//        tree.owner = systemUser;
-//        pt = Tree.findByReference(tree.reference)
-//        if (!pt) {
-//            pt = new Tree(tree).save(flush: true, failOnError: true);
-////            elasticService.indexDoc(null, pt.getId(), tree.nexson)
-//            log.info('saved a tree ' + tree.reference)
-//        } else {
-//            log.debug( 'tree already in database' )
-//        }
-//
-//        tree = this.loadNexmlFile3()
-//        tree.owner = systemUser;
-//        pt = Tree.findByReference(tree.reference)
-//        if (!pt) {
-//            pt = new Tree(tree).save(flush: true, failOnError: true);
-////            elasticService.indexDoc(null, pt.getId(), tree.nexson)
-//            log.info('saved a tree ' + tree.reference)
-//        } else {
-//            log.debug( 'tree already in database' )
-//        }
+
     }
 
     def destroy = {

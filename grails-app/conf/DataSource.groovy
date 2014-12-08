@@ -25,13 +25,13 @@ environments {
     test {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/phylo"
+            url = "jdbc:postgresql://localhost:5432/phylolink"
         }
     }
     production {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/phylo"
+            url = "jdbc:postgresql://localhost:5432/phylolink"
         }
     }
 }
