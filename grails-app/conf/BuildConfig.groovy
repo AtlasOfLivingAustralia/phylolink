@@ -19,13 +19,10 @@ grails.project.dependency.resolution = {
 //    legacyResolve false // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
     repositories {
-        inherits true // Whether to inherit repository definitions from plugins
-
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
-        mavenCentral()
-        mavenRepo "http://maven.ala.org.au/repository/"
+        mavenLocal()
+        mavenRepo ("http://nexus.ala.org.au/content/groups/public/") {
+            updatePolicy 'always'
+        }
     }
 
     dependencies {
