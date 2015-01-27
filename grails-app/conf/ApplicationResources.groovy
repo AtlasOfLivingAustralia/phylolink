@@ -17,6 +17,10 @@ modules = {
         resource url: 'js/knockout-2.3.0.js',disposition: 'head'
     }
 
+    knockout3 {
+        resource url: 'js/knockout-3.0.0.js'
+    }
+
     application {
         resource url: [dir: 'css', file: "main.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
@@ -30,6 +34,14 @@ modules = {
 
     form {
         resource url: [dir: "js", file: 'knockout-2.3.0.js'],disposition: 'head'
+    }
+
+//    googlechart{
+//        resource url: 'https://www.google.com/jsapi'
+//    }
+
+    emitter{
+        resource url: 'js/emitter.js'
     }
 
     jqxCore {
@@ -67,5 +79,43 @@ modules = {
         resource url: 'slickgrid/slick.editors.js', disposition: 'head'
         resource url: 'slickgrid/slickgrid.bvp.js', disposition: 'head'
         resource url: 'slickgrid/slick.grid.css', disposition: 'head'
+    }
+
+    leaflet{
+        dependsOn('jquery')
+        resource url: 'css/leaflet.v0.7.3.css', disposition: 'head'
+        resource url: 'css/slider.css'
+        resource url: 'css/leaflet.fullscreen.v0.0.2.css'
+        resource url: 'css/Control.Legend.css'
+        resource url: 'css/Control.Loading.css'
+        resource url: 'js/spin.min.v2.0.1.js'
+        resource url: 'js/leaflet.v0.7.3.js', disposition: 'head'
+        resource url: 'js/Leaflet.fullscreen.v0.0.2.min.js', disposition: 'head'
+        resource url: 'js/Control.Checkbox.js'
+        resource url: 'js/Control.Legend.js'
+        resource url: 'js/Control.Loading.js'
+        resource url: 'js/Control.Select.js'
+        resource url: 'js/Control.Slider.js'
+        resource url: 'js/bootstrap-slider.js'
+    }
+
+    phylojive {
+        dependsOn('bootstrap','emitter')
+        resource url: 'css/PhyloJive.css', disposition: 'head'
+        resource url: 'js/jsphylosvg-min.js', disposition: 'head'
+        resource url: 'js/jit.js', disposition: 'head'
+        resource url: 'js/PJ.js'
+    }
+
+    character {
+        dependsOn('knockout3','emitter')
+        resource url: 'js/knockout-sortable.min.js'
+        resource url: 'js/Character.js'
+        resource url: 'css/PhyloJive.css'
+    }
+
+    map{
+        dependsOn('emitter','leaflet')
+        resource url: 'js/Map.js'
     }
 }

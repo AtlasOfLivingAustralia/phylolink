@@ -159,4 +159,68 @@ class AlaController {
         utilsService.lookupLeafName( study, tree);
         render( contentType: 'application/json', text: utilsService.lookupLeafName( study, tree) as JSON )
     }
+
+    /**
+     * creates charjson which can be consumed by phylojive.
+     * params
+     * data resource id
+     * field name that will have key of charjson
+     * and a list of field names that will be an attribute in charjson
+     */
+    def getSandboxCharJson(){
+        def drid = params.drid;
+        def key = params.key
+        def fields = JSON.parse(params.fields);
+        def result = alaService.getSandboxCharJson(drid, key, fields);
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    def jsonp(){
+        // do not use decodeUrl function since it converts + to whitespace.
+        def url = params.url
+        def result = webService.get(url);
+        log.debug(result);
+        log.debug(url);
+        result = JSON.parse(result)
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    def dynamicFacets(){
+        def drid = params.drid
+        def result = alaService.getDynamicFacets(drid);
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    def facets(){
+        def drid = params.drid
+//        def json = webService.get('http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:drt2783');
+//        json = JSON.parse(json);
+        def source = params.source;
+        def result ;
+        switch (source){
+            case 'sandbox':
+                result = alaService.getSandboxFacets(params.q, params.fq);
+                break;
+            case 'ala':
+                result = alaService.getAlaFacets(params.q, params.fq);
+                break;
+        }
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
 }

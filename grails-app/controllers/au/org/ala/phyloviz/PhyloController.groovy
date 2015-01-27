@@ -21,7 +21,8 @@ class PhyloController {
     }
 
     def show(Phylo phyloInstance) {
-        respond phyloInstance
+        def tree = Tree.findById(phyloInstance.getStudyid());
+        respond phyloInstance, model: [ tree: tree]
     }
 
     def create() {
@@ -248,7 +249,11 @@ class PhyloController {
         def meta = [:]
         meta = this.getTreeMeta(treeId, studyId, meta)
         meta = noTreeText? this.removeProp( meta , grailsApplication.config.treeMeta.treeText ): meta ;
-        render( contentType: 'application/json', text: meta as JSON )
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})")
+        } else {
+            render(contentType: 'application/json', text: meta as JSON)
+        }
     }
 
     public def params(){

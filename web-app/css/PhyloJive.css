@@ -1,8 +1,8 @@
 /*@import url("base.css");*/
 /*@import url('colorbox/colorbox.css');*/
 /*@import url('http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');*/
-@import url('ala-theme/jquery-ui-1.8.23.custom.css');
-@import url('http://code.jquery.com/qunit/qunit-git.css');
+/*@import url('ala-theme/jquery-ui-1.8.23.custom.css');*/
+/*@import url('http://code.jquery.com/qunit/qunit-git.css');*/
 
 
 h1, h2, h3, h4, h5, h6 {
@@ -42,10 +42,15 @@ h1, h2, h3, h4, h5, h6 {
     margin-left: -10px;
 }
 /* added by temi, white background for canvas */
-#infovis-canvas{
-/*   background-color:#F4EDE9; */
-/*   background-color:#E4FFAE; */
-background-color:#EEF2F7;
+canvas{
+    background-color:#EEF2F7;
+}
+/**
+draw border on this div
+*/
+#info-canvaswidget{
+    border: 2px;
+    border-style: solid;
 }
 .box {
   width: 10px;
@@ -180,7 +185,6 @@ background-color:#EEF2F7;
 #center-jitcontainer {
     float:left;
     color:#ccc;
-    width: 65%;
     font-size: 14px;
     border: 2px solid #464646;
 }
@@ -203,12 +207,9 @@ background-color:#EEF2F7;
     /*position: relative;*/
 }
 
-#infovis {
+.infovis {
     position:relative;
-    margin:auto;
     overflow:hidden;
-    width: auto;
-    height: auto;
 }
 #popup {
   background-color:#E0E2E7;
@@ -303,4 +304,68 @@ figure img {
 #create-tree textarea, #edit-tree textarea {
     width: 560px;
     height: 200px;
+}
+
+.top-buffer{
+    margin-top: 10px;
+}
+
+/*
+bootstrap callout
+*/
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+.bs-callout code {
+    border-radius: 3px;
+}
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+.bs-callout-default {
+    border-left-color: #777;
+}
+.bs-callout-default h4 {
+    color: #777;
+}
+.bs-callout-primary {
+    border-left-color: #428bca;
+}
+.bs-callout-primary h4 {
+    color: #428bca;
+}
+.bs-callout-success {
+    border-left-color: #5cb85c;
+}
+.bs-callout-success h4 {
+    color: #5cb85c;
+}
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+.bs-callout-danger h4 {
+    color: #d9534f;
+}
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+.bs-callout-warning h4 {
+    color: #f0ad4e;
+}
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+.bs-callout-info h4 {
+    color: #5bc0de;
 }

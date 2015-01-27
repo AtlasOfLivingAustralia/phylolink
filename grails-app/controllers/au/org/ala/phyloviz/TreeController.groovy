@@ -254,6 +254,20 @@ class TreeController {
     }
 
     /**
+     * get tree. return json object
+     */
+    def getTree(Tree tree){
+        def result = [:]
+        result['tree']=tree.getTree();
+        result['format']=tree.getTreeFormat();
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    /**
      *
      * @return
      */

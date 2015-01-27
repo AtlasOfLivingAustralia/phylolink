@@ -31,6 +31,8 @@ regionsUrl = [
 ];
 speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
+sandboxData = "http://sandbox.ala.org.au/biocache-service/occurrences/search";
+occurrencesSearch = "http://biocache.ala.org.au/ws/occurrences/search"
 autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON"
 bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
 
@@ -300,7 +302,7 @@ environments {
         grails.serverURL = "${serverName}/${appName}"
     }
     test {
-        serverName = 'http://phylo:8080'
+        serverName = 'http://115.146.93.110:8080'
         contextPath = ''
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = true

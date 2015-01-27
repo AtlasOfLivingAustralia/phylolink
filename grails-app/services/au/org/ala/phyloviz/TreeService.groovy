@@ -254,7 +254,7 @@ class TreeService {
             try {
                 log.debug('before convert nexson')
                 treep.nexson = opentreeService.convertToNexson(treep.tree, treep.treeFormat);
-                return
+//                return
                 if(treep.nexson == null){
                     return;
                 }

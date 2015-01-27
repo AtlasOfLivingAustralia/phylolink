@@ -25,7 +25,7 @@ environments {
     test {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/phylolink"
+            url = "jdbc:postgresql://130.56.249.207:5432/phylolink"
         }
     }
     production {

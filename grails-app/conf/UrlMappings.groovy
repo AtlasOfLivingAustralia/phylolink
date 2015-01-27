@@ -14,7 +14,7 @@ class UrlMappings {
         "/ws/searchDoi(.$format)?"(controller: "PhylogeneticTree", action: 'searchDoi')
         "/ws/leafNodes"(controller: "OTStudy", action: 'leafNodes')
         "/ws/treeInfo(.$format)?"(controller: "PhylogeneticTree", action: 'treeInfo')
-        "/tree/visualize/$id/$treeId?"(controller: 'Tr//        "phylogeneticTree/index"(controller: \'PhylogeneticTree\', action: \'index\')ee', action: 'visualize')
+        "/tree/visualize/$id/$treeId?"(controller: 'Tree', action: 'visualize')
         "/tree/mapOtus/$id(.$format)?"(controller: 'Tree', action: 'mapOtus')
         "/tree/taxonInfo/$q"(controller: 'Tree', action: 'taxonInfo')
         "/"(view:"/index")

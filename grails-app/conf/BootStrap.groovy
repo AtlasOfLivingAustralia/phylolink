@@ -4,7 +4,7 @@ import au.org.ala.phyloviz.Owner
 
 class BootStrap {
     def opentreeService
-    def skip = true
+    def skip = false
 //    def elasticService
 
     def init = { servletContext ->
