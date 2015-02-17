@@ -15,10 +15,14 @@ class Phylo {
     String regionType
     String regionName
     String dataResource
+    String habitat
+    String characters
     List widgets = new ArrayList()
     static hasMany = [ widgets: Widget ]
     static mapping = {
         widgets cascade:"all-delete-orphan"
+        habitat type:'text'
+        characters type:'text'
     }
     static constraints = {
         treeid (nullable: false)
@@ -31,6 +35,8 @@ class Phylo {
         regionName(nullable: true, blank: false)
         dataResource(nullable: true, blank: true)
         owner( nullable: true)
+        habitat(nullable: true, blank: true)
+        characters(nullable: true, blank: true)
     }
 
 //    def beforeValidate(){

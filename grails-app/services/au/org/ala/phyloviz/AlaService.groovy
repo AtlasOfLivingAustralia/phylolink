@@ -190,4 +190,28 @@ class AlaService {
         def result = getAlaPoints(q, fq);
         return getFacetElements(result);
     }
+
+    /**
+     * get all layers in spatial portal
+     */
+    def getAllLayers(){
+        def result =[]
+        def url = grailsApplication.config.layers
+        def data = JSON.parse( webService.get( url ) )
+        def code;
+        data.eachWithIndex { def entry, int i ->
+            code = '';
+            switch ( entry.type ){
+                case grailsApplication.config.layersMeta.cl:
+                    code = 'cl';
+                    break;
+                case grailsApplication.config.layersMeta.env:
+                    code = 'el';
+                    break;
+            }
+            entry.id = code + entry.id;
+            entry.label = entry.displayname;
+            result.push( entry )
+        }
+    }
 }

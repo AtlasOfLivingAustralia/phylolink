@@ -312,7 +312,7 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
     production {
-        serverName = 'http://130.56.249.207:8080'
+        serverName = 'http://130.56.252.154:8080'
         contextPath = ''
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = false

@@ -13,7 +13,6 @@ class TreeController {
     def authService
     def alaService
     def nexsonService
-    def elasticService
     def userService
     def webService
 

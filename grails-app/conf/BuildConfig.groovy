@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        compile 'org.elasticsearch:elasticsearch:1.4.0'
+//        compile 'org.elasticsearch:elasticsearch:1.4.0'
         runtime 'postgresql:postgresql:9.1-901.jdbc4'
     }
 

@@ -40,9 +40,8 @@ class AlaController {
     }
 
     def getIntersections( species, layer, region ){
-        def summary = [], config
+        def summary = []
         def occurrencesResult
-        config = grailsApplication.config.intersectionMeta
         for( speciesName in species ){
             occurrencesResult = this.getOccurrenceRecords( speciesName, layer, region)
             summary.addAll( this.extractFacets( occurrencesResult, speciesName ))
@@ -99,6 +98,18 @@ class AlaController {
             }
         }
         return result;
+    }
+
+    /**
+     * get all the layers in atlas of living australia
+     */
+    def getAllLayers(){
+        def result = alaService.getAllLayers();
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
     }
 
     def browseLayersFragment() {

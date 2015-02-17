@@ -105,6 +105,8 @@ modules = {
         resource url: 'js/jsphylosvg-min.js', disposition: 'head'
         resource url: 'js/jit.js', disposition: 'head'
         resource url: 'js/PJ.js'
+        resource url: 'js/Filter.js'
+        resource url: 'js/Habitat.js'
     }
 
     character {

@@ -12,7 +12,6 @@ class TreeService {
     def grailsApplication
     def authService
     def nexsonService
-    def elasticService
     def userService
     def webService
 //    def utilsService

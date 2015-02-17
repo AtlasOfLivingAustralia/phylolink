@@ -95,12 +95,13 @@ class WizardController {
         def nex = new Nexson(tree.getNexson())
         def viz, id, treeId = params.treeId;
         def treeIds = nex.getTreeList()
+        def owner = userService.registerCurrentUser();
 
         if ((treeIds.size() > 1) && (params.treeId == null)) {
             redirect(action: 'pickTree', params: params)
         } else {
             treeId = treeId ?: treeIds[0].id
-            viz = phyloService.createVisualization(tree.id, treeId);
+            viz = phyloService.createVisualization(tree.id, treeId, owner);
             id = viz.getId();
             redirect(controller: 'phylo', action: 'show', params: [id: viz.id])
         }

@@ -34,9 +34,8 @@ class ContextualWidget implements WidgetInterface{
         def summary = alaController.getIntersections( data.speciesList, this.layer, this.region );
         def output =[:]
         def widgetConf = grailsApplication.config.widgetMeta
-        if( summary.error == null){
+        if( summary.error != null){
             summary = utilsService.summarize( summary, grailsApplication.config.intersectionMeta.var, grailsApplication.config.intersectionMeta.count )
-
             output[ widgetConf.data ] = utilsService.toGoogleColumnChart( summary, false )
             output[widgetConf.chartOptions]= utilsService.googleChartOptions( this.config.type, this.config.displayname)
             return  output

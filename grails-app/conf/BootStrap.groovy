@@ -4,8 +4,9 @@ import au.org.ala.phyloviz.Owner
 
 class BootStrap {
     def opentreeService
-    def skip = false
+    def skip = true
 //    def elasticService
+    def grailsApplication
 
     def init = { servletContext ->
         if(skip){
@@ -45,7 +46,7 @@ class BootStrap {
     def acaciaTree() {
         log.debug('loading acacia tree')
         def result = [:], filename = 'acacia.nexml'
-        def file = new File('artifacts/' + filename)
+        def file =  grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         result['nexson'] = opentreeService.convertNexmlToNexson(result.tree)
         result['nexson'] = result['nexson'].toString();
@@ -67,7 +68,7 @@ class BootStrap {
     def mammalsTree(){
         log.debug('adding mammals tree to map object')
         def result = [:], filename = 'mammals.nexml'
-        def file = new File('artifacts/' + filename)
+        def file =grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         log.debug('mammals tree' + result['tree'])
         result['treeFormat'] = 'nexml'
@@ -91,7 +92,7 @@ class BootStrap {
     def amphibianTree(){
         log.debug('loading amphibians tree')
         def result = [:], filename = 'amp.nexml'
-        def file = new File('artifacts/' + filename)
+        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         log.debug('amphibians tree' + result['tree'])
         result['treeFormat'] = 'nexml'
@@ -113,9 +114,9 @@ class BootStrap {
 
     def loadNexmlFile2() {
         def result = [:], filename = 'ot_13.nexml.txt'
-        def file = new File('artifacts/' + filename)
+        def file =  grailsApplication.mainContext.getResource('artifacts/' + filename).file
         result['tree'] = file.text
-        result['nexson'] = new File('artifacts/ot_13.json.1.2.1.json').text
+        result['nexson'] = new File('/artifacts/ot_13.json.1.2.1.json').text
         result['year'] = '2014'
         result['hide'] = false
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
@@ -130,9 +131,9 @@ class BootStrap {
 
     def loadNexmlFile3(){
         def result = [:], filename = 'ot_14.nexml.json'
-        def file = new File( 'artifacts/' + filename )
+        def file = new File( '/artifacts/' + filename )
         result['tree'] = file.text
-        result['nexson'] = new File( 'artifacts/ot_14.json.1.2.1.json' ).text
+        result['nexson'] = new File( '/artifacts/ot_14.json.1.2.1.json' ).text
         result['year'] = '2014'
         result['hide'] = false
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'

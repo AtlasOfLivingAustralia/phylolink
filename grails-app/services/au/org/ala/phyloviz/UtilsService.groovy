@@ -189,9 +189,9 @@ class UtilsService {
             }
         }
         if (result.size() != 0) {
-            result.add(0, ['Character', 'Occurrences'])
+            result.add(0, ['Character', 'Occurrence count'])
         } else {
-            result.push(['Character', 'Occurrences']);
+            result.push(['Character', 'Occurrence count']);
             result.push(['', 0]);
         }
         return result;
