@@ -1,10 +1,13 @@
 package au.org.ala.phyloviz
+
+import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import grails.transaction.Transactional
 import net.sf.json.JSONObject
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 import java.util.regex.Pattern
 
@@ -295,5 +298,38 @@ class UtilsService {
         result = JSON.parse( result )
         log.debug(result)
         return result?.searchResults?.results
+    }
+
+    /**
+     * checks separator for csv file
+     * @param raw
+     * @return
+     */
+    def getSeparator(String raw) {
+        String firstLine = raw.indexOf("\n") > 0 ? raw.substring(0, raw.indexOf("\n")) : raw
+
+        int tabs = firstLine.count("\t")
+        int commas = firstLine.count(",")
+
+        tabs > commas ? '\t' : ','
+    }
+
+    /**
+     * finds the separator used by file
+     * @param file
+     * @return
+     */
+    String detectSeparator(CommonsMultipartFile file) {
+        file.getInputStream().withReader { r -> getSeparator(r.readLine()) }
+    }
+
+    /**
+     * creates reader for multipart file
+     * @param file
+     * @param separator
+     * @return
+     */
+    def getCSVReaderForCSVFileUpload(CommonsMultipartFile file, char separator) {
+        new CSVReader(new InputStreamReader(file.getInputStream()), separator)
     }
 }

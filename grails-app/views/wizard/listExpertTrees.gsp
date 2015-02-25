@@ -13,6 +13,9 @@
 
 <div class="container">
     <legend>Choose from a list of expert recommended trees</legend>
+    <p style="font-size:14px; max-width: 60em">List of expert recommended trees. You can click
+        <span class="label label-info">open</span> button to create a visualisation. Or, use
+        <span class="label label-info">back</span> button to go to previous page</p>
     <table class="table table-hover table-bordered">
         <thead>
         <tr>

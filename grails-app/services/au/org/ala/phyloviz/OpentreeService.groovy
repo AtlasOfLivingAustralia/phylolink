@@ -149,6 +149,6 @@ class OpentreeService {
         data['nexml2json'] = grailsApplication.config[ 'nexml2json' ]
         def nexson = webService.postData( url, data, ['Accepts':'application/json'])
         log.debug('nexson returned is : '+nexson)
-        return JSON.parse( nexson.text() ) ;
+        return JSON.parse( nexson ) ;
     }
 }

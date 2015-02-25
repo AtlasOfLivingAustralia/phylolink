@@ -23,6 +23,7 @@ modules = {
 
     application {
         resource url: [dir: 'css', file: "main.css"]
+        resource url: [dir: 'css', file: "maingsp.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
         resource url: [dir: "js", file: "jquery-ui.min.js"]
     }
@@ -36,8 +37,8 @@ modules = {
         resource url: [dir: "js", file: 'knockout-2.3.0.js'],disposition: 'head'
     }
 
-//    googlechart{
-//        resource url: 'https://www.google.com/jsapi'
+//    chart{
+//        resource url: 'https://www.google.com/jsapi', disposition: 'head'
 //    }
 
     emitter{
@@ -119,5 +120,12 @@ modules = {
     map{
         dependsOn('emitter','leaflet')
         resource url: 'js/Map.js'
+    }
+
+    nano{
+        dependsOn('jquery')
+        resource url: 'css/nanoscroller.css'
+        resource url:'js/overthrow.min.js'
+        resource url: 'js/jquery.nanoscroller.min.js'
     }
 }

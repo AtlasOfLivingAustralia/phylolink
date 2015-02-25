@@ -25,9 +25,15 @@ class PhyloController {
     def show(Phylo phyloInstance) {
         def tree = Tree.findById(phyloInstance.getStudyid());
         def userId = userService.getCurrentUserId();
-        log.debug("user id : ${userId}")
+        userId = userId instanceof String?Long.parseLong(userId):userId;
+        Boolean edit = false
+        log.debug("user id : ${userId instanceof String}")
         log.debug("owner id: ${phyloInstance.getOwner().userId}");
-        respond phyloInstance, model: [ tree: tree, userId: userId]
+        if( phyloInstance.getOwner().userId == userId ){
+            edit = true
+            log.debug('editable');
+        }
+        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit]
     }
 
     def create() {
@@ -145,12 +151,12 @@ class PhyloController {
     }
 
     /**
-     * INTERSECTION BETWEEN A LAYER AND SPECEIS OCCURRENCE
+     * INTERSECTION BETWEEN A LAYER AND SPECIES OCCURRENCE
      * @param phyloInstance
      * @return
      */
     def getHabitat(){
-        def species = JSON.parse( params.speciesList );
+//        def species = JSON.parse( params.speciesList?:'[]' );
         def summary = [:], result
         def region = '';
         def download = ( params.download?:false ) as Boolean
@@ -412,7 +418,7 @@ class PhyloController {
     def saveHabitat(Phylo phyloInstance){
         String habInit = params.json
         log.debug(habInit);
-        phyloInstance.setHabitat(JSON.parse(habInit.decodeURL()).toString());
+        phyloInstance.setHabitat(JSON.parse(habInit).toString());
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
     }
@@ -439,7 +445,7 @@ class PhyloController {
     def saveCharacters(Phylo phyloInstance){
         String charInit = params.json
         log.debug(charInit);
-        phyloInstance.setCharacters(JSON.parse(charInit.decodeURL()).toString());
+        phyloInstance.setCharacters(JSON.parse(charInit).toString());
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
     }
@@ -455,6 +461,37 @@ class PhyloController {
             render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
         } else {
             render(contentType: 'application/json', text: meta as JSON);
+        }
+    }
+
+    /**
+     * save visualization title to database
+     * @param phyloInstance
+     * @return
+     */
+    def saveTitle(Phylo phyloInstance){
+        def user = Owner.findByUserId(userService.getCurrentUserId())
+        def result = [:]
+        log.debug(user)
+        log.debug(phyloInstance.getOwner()?.userId)
+        if(phyloInstance.getOwner().userId == user.userId){
+            phyloInstance.setTitle(params.title);
+            phyloInstance.save(
+                    flush: true
+            );
+            if (phyloInstance.hasErrors()) {
+                result['error'] = 'An error occurred';
+            } else {
+                result['message'] = 'Successfully saved title';
+            }
+        } else {
+            result['error'] = 'User not recognised'
+        }
+
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})");
+        } else {
+            render(contentType: 'application/json', text: result as JSON);
         }
     }
 }

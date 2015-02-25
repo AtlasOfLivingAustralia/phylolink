@@ -7,6 +7,7 @@ class Phylo {
     def Owner owner
     static belongsTo = [Owner]
     Integer id
+    String title = "unnamed"
     String treeid
     Integer nodeid
     Visualization viz
@@ -23,6 +24,7 @@ class Phylo {
         widgets cascade:"all-delete-orphan"
         habitat type:'text'
         characters type:'text'
+        title defaultValue:"'Unnamed'"
     }
     static constraints = {
         treeid (nullable: false)
@@ -37,7 +39,9 @@ class Phylo {
         owner( nullable: true)
         habitat(nullable: true, blank: true)
         characters(nullable: true, blank: true)
+        title(nullable: true)
     }
+
 
 //    def beforeValidate(){
 //            log.debug( 'match found!' )

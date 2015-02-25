@@ -14,14 +14,15 @@
  */
 
 package au.org.ala.phyloviz
-
 import grails.converters.JSON
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.RESTClient
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
-import groovyx.net.http.RESTClient
+
+import static groovyx.net.http.Method.POST
 
 class WebService implements InitializingBean {
 
@@ -132,13 +133,13 @@ class WebService implements InitializingBean {
         }
     }
     
-    def postData(String url, String data) {
+    def postStrData(String url, String data) {
         def uri = new URL(url);
         log.debug(uri.host)
         log.debug(uri.path)
         log.debug(uri.port.toString())
         log.debug(data)
-        this.doJsonPost("http://${uri.host}", uri.path, uri.port.toString(), data)
+        this.doJsonPost("http://${uri.host}", uri.path, uri.port?.toString(), data)
     }
 
     /**
@@ -147,16 +148,47 @@ class WebService implements InitializingBean {
      * @param data - data to post
      * @return data from post response
      */
-    def postData( String url, data, header = [:] ){
+    def postData( String url, data, head = [:], enc = ContentType.URLENC ){
         def http = new HTTPBuilder( url )
-        def res
-        http.post( body: data,
-                requestContentType: ContentType.URLENC, headers: header ) { resp, result ->
-//            headers['Accept'] = 'application/json'
-            log.debug( "POST Success: ${resp.statusLine} ${result}" )
-            res =  result
+        def resp = ''
+//        def response = http.post( body: data,
+//                requestContentType: ContentType.URLENC, headers: header ) { resp, result ->
+////            headers['Accept'] = 'application/json'
+//            log.debug( "POST Success: ${resp.statusLine} ${result}" )
+////            return  result
+////            res =  result
+////            if( res instanceof InputStreamReader ){
+////                BufferedReader rd = new BufferedReader(res);
+////                String line;
+////                def s = ""
+////                while ((line = rd.readLine()) != null) {
+////                    s += line
+////                }
+////                res = s;
+////            }
+//        }
+//        return  response?.text();
+        log.debug('cookie:'+head['cookie']);
+        http.getHeaders()['Cookie']= head['cookie'];
+        def response = http.request( POST){
+//            headers['Set-Cookie'] = head['cookie'];
+            requestContentType = enc;
+            body = data;
+            log.debug(head['cookie'])
         }
-        return  res
+        def ch;
+        if( response instanceof  StringReader){
+            while((ch = response.read())!= -1){
+                resp += (char)ch;
+            }
+        } else if(response instanceof String ) {
+            resp = response;
+        } else if(response instanceof  java.util.HashMap){
+            resp = response
+        }else {
+            resp = response?.text();
+        }
+        return resp
     }
 
     /**
@@ -172,6 +204,29 @@ class WebService implements InitializingBean {
             log.debug( "POST Success: ${resp.statusLine} ${result}" )
             return  result
         }
+    }
+
+    def postMultipart(url, multi, String cookie) {
+        def http = new HTTPBuilder(url)
+        def ch, resp;
+        def c = [];
+
+        def response = http.request(POST) { multipartRequest ->
+            headers.put('Cookie', cookie)
+            multipartRequest.entity = multi
+        }
+
+        if( response instanceof  StringReader){
+            while((ch = response.read())!= -1){
+                resp += (char)ch;
+            }
+        } else if(response instanceof String ) {
+            resp = response;
+        } else {
+            resp = response?.text();
+        }
+
+        return resp;
     }
 
 

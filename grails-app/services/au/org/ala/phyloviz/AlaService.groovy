@@ -1,14 +1,17 @@
 package au.org.ala.phyloviz
-
-import grails.transaction.Transactional
+import au.com.bytecode.opencsv.CSVReader
 import grails.converters.JSON
+import grails.transaction.Transactional
+import groovyx.net.http.ContentType
+import org.codehaus.groovy.grails.web.json.JSONArray
 
 @Transactional
 class AlaService {
-    def opentreeService
-    def utilService
     def webService
     def grailsApplication
+    def userService
+    def authService
+
     def getLsid( names ) {
         def url = "http://bie.ala.org.au/ws/species/lookup/bulk.json"
 
@@ -154,10 +157,16 @@ class AlaService {
         def p = [];
         if(!q?.endsWith('q=')){
             p.push(q)
+        } else if(!q?.startsWith('q=')){
+            p.push('q='+q)
         }
+
         if(!fq?.endsWith('fq=')){
             p.push(fq);
+        }else if(!fq?.startsWith('fq=')){
+            p.push('fq='+fq)
         }
+
         url = "${url}?${p.join('&')}";
         def result = webService.get(url);
         result = JSON.parse(result);
@@ -174,12 +183,18 @@ class AlaService {
     def getAlaPoints(q, fq){
         def url = grailsApplication.config['occurrencesSearch'];
         def p = [];
-        if(!q?.endsWith('q=')){
+        if(q?.startsWith('q=')){
             p.push(q)
+        }else if(!q?.startsWith('q=')){
+            p.push('q='+q)
         }
-        if(!fq?.endsWith('fq=')){
+
+        if(fq?.startsWith('fq=')){
             p.push(fq);
+        }else if(!fq?.startsWith('fq=')){
+            p.push('fq='+fq)
         }
+
         url = "${url}?${p.join('&')}".replace(' ','+');
         def result = webService.get(url);
         result = JSON.parse(result);
@@ -213,5 +228,127 @@ class AlaService {
             entry.label = entry.displayname;
             result.push( entry )
         }
+    }
+
+    /**
+     *
+     */
+    def saveQuery(JSONArray clade){
+        def data=[:];
+        data.q = filterQuery(clade,null,'species');
+        return  getQid(data);
+    }
+
+    def getQid(data){
+        def url = grailsApplication.config.qidUrl;
+        def result = webService.postData(url, data);
+        return result;
+    }
+
+    /**
+     * create a filter query
+     */
+    def filterQuery(JSONArray list,op,field){
+        if(!list){
+            return '';
+        }
+        def fq =[];
+        int i;
+        op = op?:' OR ';
+        log.debug(list.toString());
+        for(i = 0; i<list.size(); i++){
+            fq.push("${field}:\"${list[i]}\"");
+        }
+
+        return '('+fq.join(op)+')';
+    }
+
+    /**
+     * get a list resource id and return it in charJSON
+     * @param drid
+     * @return charJSON
+     */
+    def getListCharJson(drid){
+        def url = grailsApplication.config.listUrl;
+        def charJson = [:];
+        def keyValues;
+        url = url.replace('DRID', drid);
+        log.debug(url);
+        keyValues = webService.get(url);
+        keyValues = keyValues?:'[]'
+        keyValues = JSON.parse(keyValues);
+        keyValues.eachWithIndex{ value, i ->
+            log.debug(value);
+            if(!charJson[value.name]){
+                charJson[value.name] = [:]
+            }
+            value.kvpValues?.eachWithIndex{ l, j->
+                log.debug(l);
+                if(l.value?.isInteger()){
+                    l.value = Integer.parseInt(l.value);
+                } else if(l.value?.isDouble()){
+                    l.value = Double.parseDouble(l.value);
+                }
+                charJson[value.name][l.key]= [l.value]
+            }
+        }
+        return charJson;
+    }
+
+    /**
+     * save a csv file into list tool
+     */
+    def createList(CSVReader reader, String name, Integer colIndex, String cookie){
+        def data = [:], ch
+        def result, next, rcount =0, ccount=0, item, row, items, header
+        data['listType'] = 'SPECIES_CHARACTERS'
+        data['listName'] = name
+        data['listItems'] = []
+        data['isPrivate'] = true
+        // first line is header
+        header = reader.readNext();
+//        header.eachWithIndex{it,i->
+//            header[i] = it.replace(' ','_')
+//        }
+        while((next = reader.readNext())!=null){
+            ccount = 0;
+            row= [:]
+            items = []
+            next.each{column->
+                item = [:]
+                if(colIndex!=ccount){
+                    item['key'] = header[ccount];
+                    item['value'] = next[ccount];
+                    items.push(item)
+                }
+                ccount++
+            }
+            row['kvpValues'] = items
+            row['itemName'] = next[colIndex];
+            data['listItems'].push(row);
+            rcount ++;
+        }
+        log.debug(data);
+//        return  data
+        data = data as JSON
+        result = webService.postData('http://lists.ala.org.au/ws/speciesList',data.toString(), ['cookie':cookie], ContentType.JSON);
+        if(result.druid){
+            ch = addCharacterToDB(name, result.druid)
+            result.id = ch.id;
+        }
+        return result
+    }
+
+    def addCharacterToDB(String title, String drid){
+        Owner own = Owner.findByUserId( authService.getUserId()?:-1 );
+        def charList = [
+                'owner': own,
+                'title': title,
+                'drid': drid
+        ]
+        def c = new Characters(charList).save(
+                flush: true
+        )
+        return  c;
     }
 }

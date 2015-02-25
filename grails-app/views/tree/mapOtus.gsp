@@ -13,6 +13,12 @@
 
 <body>
 <div class="container">
+    <legend>Reconcile names with ALA taxonomy</legend>
+    <p style="font-size:14px; max-width: 60em;">Reconcile node names with ALA taxonomy.
+    The system tries to auto match and the result of this operation are on <span class="label">Matched name</span>
+    column. If you think it is wrong, please click on the cell to correct it. You can save your mapping by clicking on
+    <span class="label">Save</span> button. Or, you can proceed to viewing tree by clicking
+    <span class="label label-info">Visualise</span>.</p>
     <div id="myGrid" style="width: 500px;height: 400px">
 
     </div>
@@ -22,7 +28,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" style="padding-top: 10px">
     <div class="control-group">
         <div class="controls">
             <g:form controller="tree" action="saveOtus" method="POST">

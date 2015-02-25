@@ -34,6 +34,9 @@ class WizardController {
             case 'myTrees':
                 redirect(action: 'myTrees')
                 break;
+            case 'myViz':
+                redirect(action: 'myViz')
+                break;
         }
     }
 
@@ -147,6 +150,26 @@ class WizardController {
             flash.message = 'You do not have any trees uploaded.'
         }
         [trees: myTrees, name: name]
+    }
+
+    /**
+     *
+     */
+    def myViz() {
+
+        def owner = userService.registerCurrentUser();
+        def name;
+        if (owner == null) {
+            flash.message = 'Something went wrong while registering you. Are you logged in?'
+            name = 'Your'
+        } else {
+            name = owner.getDisplayName() + "'s"
+        }
+        def myViz = Phylo.findAllByOwner(owner ?: -1)?:[]
+        if (myViz.size() == 0) {
+            flash.message = 'You do not have any trees uploaded.'
+        }
+        [viz: myViz, name: name]
     }
 
     /**

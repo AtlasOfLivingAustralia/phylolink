@@ -22,7 +22,7 @@ doiSearchUrl = "http://search.crossref.org/dois?q=SEARCH&header=true"
 citationParser = "http://freecite.library.brown.edu/citations/create"
 
 //ala webservices
-occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION"
+occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION&flimit=1000000"
 layers = "http://spatial.ala.org.au/ws/layers"
 spatialPortalRoot="http://spatial.ala.org.au"
 regionsUrl = [
@@ -35,6 +35,8 @@ sandboxData = "http://sandbox.ala.org.au/biocache-service/occurrences/search";
 occurrencesSearch = "http://biocache.ala.org.au/ws/occurrences/search"
 autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON"
 bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
+qidUrl = 'http://biocache.ala.org.au/ws/webportal/params'
+listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 
 //opentree configs
 treemachine_address = 'http://phylo:8000'
@@ -190,8 +192,8 @@ facets ='''
 /******* ALA standard config ************/
 headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 security.cas.casServerName = "https://auth.ala.org.au"
-security.cas.uriFilterPattern = "/wizard/.*"
-security.cas.authenticateOnlyIfLoggedInPattern = "/,/treeViewer/.*"
+security.cas.uriFilterPattern = "/wizard/.*,/phylo/.*,/ala/.*,/characters/.*"
+security.cas.authenticateOnlyIfLoggedInPattern = "/"
 security.cas.uriExclusionFilterPattern = "/images.*,/css.*,/js.*"
 security.cas.loginUrl = "${security.cas.casServerName}/cas/login"
 security.cas.logoutUrl = "${security.cas.casServerName}/cas/logout"

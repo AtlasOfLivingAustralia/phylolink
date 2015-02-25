@@ -1,14 +1,19 @@
 package au.org.ala.phyloviz
-
+import au.org.ala.soils2sat.LayerDefinition
+import au.org.ala.soils2sat.LayerTreeNode
 import grails.converters.JSON
-import au.org.ala.soils2sat.LayerTreeNode;
-import au.org.ala.soils2sat.LayerDefinition;
+import org.codehaus.groovy.grails.web.json.JSONObject
+import org.springframework.web.multipart.MultipartHttpServletRequest
 
 class AlaController {
     def webService
     def utilsService
     def layerService
     def alaService
+    def characterService
+
+    static allowedMethods = [saveAsList: 'POST']
+
     def index() {
 
     }
@@ -46,6 +51,21 @@ class AlaController {
             occurrencesResult = this.getOccurrenceRecords( speciesName, layer, region)
             summary.addAll( this.extractFacets( occurrencesResult, speciesName ))
         }
+        return  summary;
+    }
+
+    /**
+     * get intersection with layer and a specified query id.
+     * @param species
+     * @param layer
+     * @param region
+     * @return
+     */
+    def getQidIntersections( qid, layer, region ){
+        def summary = []
+        def occurrencesResult
+        occurrencesResult = this.getOccurrenceRecords( qid, layer, region)
+        summary.addAll( this.extractFacets( occurrencesResult, qid ))
         return  summary;
     }
 
@@ -233,5 +253,95 @@ class AlaController {
         } else {
             render(contentType: 'application/json', text: result as JSON)
         }
+    }
+
+    /**
+     * save params using
+     */
+    def saveQuery(){
+        String list = params.speciesList?:'[]';
+        log.debug(list);
+        def json = JSON.parse(list);
+        def result;
+        if(json){
+            result = alaService.saveQuery(json);
+            result = [qid: result];
+            if(params.callback){
+                render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+            } else {
+                render(contentType: 'application/json', text: result as JSON)
+            }
+        }
+    }
+
+    /**
+     * converts character data stored in list tool into charJSON
+     */
+    def getCharJson(){
+        String drid = params.drid;
+        log.debug(drid)
+        def result = [:];
+        if(drid){
+            result = alaService.getListCharJson(drid);
+        }
+
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    /**
+     * create a list on list tool.
+     * params:
+     * file: csv file
+     * title: name of list
+     * column: column with scientific name
+     */
+    def saveAsList(){
+        def result = [:], id;
+        def file = isMultipartRequest() ? request.getFile('file') : null;
+        def reader, colIndex, colName, title;
+        String cookie = request.getHeader('Cookie');
+        log.debug('cooike: '+cookie);
+        log.debug(isMultipartRequest());
+        log.debug('cookies:'+request.getCookies());
+        JSONObject formParams = JSON.parse(request.getParameter("formParms"));
+        title = formParams['title']
+        colIndex = formParams['column']['id']
+//        colIndex = Integer.parseInt(colIndex);
+        colName  = formParams['column']['displayname']
+        reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
+        result = alaService.createList(reader, title, colIndex, cookie);
+        if(result?.druid){
+            def url = getUrl(result.druid);
+            id = result.id
+            result = [:]
+            result['url'] = url
+            result['title'] = title
+            result['id'] = id;
+        } else {
+            result['error'] = 'error executing function';
+        }
+
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    private boolean isMultipartRequest() {
+        request instanceof MultipartHttpServletRequest
+    }
+
+    /**
+     *
+     * @param druid
+     * @return
+     */
+    def getUrl(druid){
+        return createLink(controller: 'ala', action: 'getCharJson') + '?drid=' + druid;
     }
 }

@@ -31,16 +31,20 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenCentral()
         mavenLocal()
-        mavenRepo "http://nexus.ala.org.au/content/groups/public/"
-        mavenRepo "http://maven.ala.org.au/repository/"
+        mavenRepo ("http://nexus.ala.org.au/content/groups/public/") {
+         updatePolicy 'always'
+        }
     }
 
     dependencies {
-//        compile 'org.elasticsearch:elasticsearch:1.4.0'
         runtime 'postgresql:postgresql:9.1-901.jdbc4'
+        runtime 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
+        runtime 'org.apache.httpcomponents:httpclient:4.3.5'
+        runtime 'org.apache.httpcomponents:httpmime:4.3.5'
     }
 
     plugins {
+        compile ':cache:1.1.1'
         // plugins needed at runtime but not for compilation
         runtime ":hibernate:3.6.10.7" // or ":hibernate4:4.3.4"
         runtime ":database-migration:1.3.8"
@@ -48,10 +52,11 @@ grails.project.dependency.resolution = {
         runtime ":jquery-ui:1.10.4"
         runtime ":csv:0.3.1"
         runtime ":resources:1.2.1"
-        runtime ":ala-web-theme:0.8.3"
+//        runtime ":ala-web-theme:0.8.3"
+        runtime ":ala-bootstrap2:1.3"
+        runtime ":ala-auth:1.0"
 //        compile ":webflow:2.0.8.1"
         // plugins for the build system only
         build ":tomcat:7.0.50"
-
     }
 }

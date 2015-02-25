@@ -15,6 +15,9 @@
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>
     <legend>${name} trees</legend>
+    <p style="font-size:14px; max-width: 60em">List of all trees uploaded by you. You can click
+        <span class="label label-info">open</span> button to view the tree. Or, use
+        <span class="label label-info">back</span> button to go to previous page</p>
     <g:if test="${trees.size() != 0}">
         <table class="table table-hover table-bordered">
             <thead>
