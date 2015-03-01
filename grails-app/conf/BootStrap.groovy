@@ -1,3 +1,4 @@
+import au.org.ala.phyloviz.Characters
 import au.org.ala.phyloviz.Owner
 import au.org.ala.phyloviz.Tree
 import au.org.ala.phyloviz.Owner
@@ -38,6 +39,18 @@ class BootStrap {
             }
         }
 
+        def chars = listCharacters()
+        chars.each{
+            def c = it
+            c.owner = systemUser;
+            def pt = Characters.findByDrid(c.drid)
+            if (!pt) {
+                log.debug( 'adding character' +  c['title'] )
+                pt = new Characters(c).save(flush: true, failOnError: true);
+            } else {
+                log.debug( 'Character already in database' );
+            }
+        }
     }
 
     def destroy = {
@@ -144,5 +157,15 @@ class BootStrap {
         result['expertTree'] = false
         result['created'] = new Date()
         return result
+    }
+
+    def listCharacters(){
+        return [[
+                drid:'dr2116',
+                title:'Acacia Characters'
+        ],[
+                drid:'dr467',
+                title:'Western Australia : Conservation Status / Sensitive Species Lists'
+        ]]
     }
 }

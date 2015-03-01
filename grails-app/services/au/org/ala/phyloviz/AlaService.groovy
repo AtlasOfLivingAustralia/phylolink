@@ -318,20 +318,20 @@ class AlaService {
                 item = [:]
                 if(colIndex!=ccount){
                     item['key'] = header[ccount];
-                    item['value'] = next[ccount];
+                    item['value'] = (next[ccount]?:'undefined').toString();
                     items.push(item)
                 }
                 ccount++
             }
             row['kvpValues'] = items
-            row['itemName'] = next[colIndex];
+            row['itemName'] = next[colIndex]?:'';
             data['listItems'].push(row);
             rcount ++;
         }
         log.debug(data);
 //        return  data
         data = data as JSON
-        result = webService.postData('http://lists.ala.org.au/ws/speciesList',data.toString(), ['cookie':cookie], ContentType.JSON);
+        result = webService.postData(grailsApplication.config.listPost,data.toString(), ['cookie':cookie], ContentType.JSON);
         if(result.druid){
             ch = addCharacterToDB(name, result.druid)
             result.id = ch.id;

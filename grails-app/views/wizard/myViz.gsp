@@ -14,7 +14,7 @@
     <g:if test="${flash.message}">
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>
-    <legend>${name} trees</legend>
+    <legend>${name} Visualisations</legend>
     <p style="font-size:14px; max-width: 60em">List of all visualisation you created. You can click
         on visualisation name to view it. Or, use
         <span class="label label-info">back</span> button to go to previous page</p>

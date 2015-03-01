@@ -1,5 +1,5 @@
 /******* Change this stuff for your project *******/
-appName = 'Phylo Link'
+appName = 'PhyloLink'
 serverName='http://localhost:8080'
 contextPath='/phylolink'
 //security.cas.uriFilterPattern = ''
@@ -37,6 +37,9 @@ autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON
 bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
 qidUrl = 'http://biocache.ala.org.au/ws/webportal/params'
 listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
+//listUrl = "http://lists.nci-simon.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
+listPost = 'http://lists.ala.org.au/ws/speciesList'
+//listPost = 'http://lists.nci-simon.ala.org.au/ws/speciesList'
 
 //opentree configs
 treemachine_address = 'http://phylo:8000'
@@ -314,11 +317,11 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
     production {
-        serverName = 'http://130.56.252.154:8080'
-        contextPath = ''
+        serverName = 'http://ebbe.ala.org.au:8080'
+        contextPath = "/${appName}"
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = false
-        security.cas.contextPath = ""
+        security.cas.contextPath = "/${appName}"
         grails.serverURL = "${serverName}/${appName}"
 //        grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"

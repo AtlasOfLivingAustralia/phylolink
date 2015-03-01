@@ -1,5 +1,8 @@
 modules = {
 
+//    jquery{
+//        resource url:[dir: 'js', file: 'jquery.1.11.2.min.js']
+//    }
     core {
         dependsOn 'jquery'
         resource url: "${grailsApplication.config.ala.baseURL ?: 'http://www.ala.org.au'}/wp-content/themes/ala2011/images/favicon.ico", attrs: [type: 'ico'], disposition: 'head'
@@ -21,11 +24,17 @@ modules = {
         resource url: 'js/knockout-3.0.0.js'
     }
 
+    create{
+        resource url: [dir:'js', file: 'jquery.validate.min.js']
+        resource url: [dir:'js', file: 'additional-methods.min.js']
+    }
+
     application {
         resource url: [dir: 'css', file: "main.css"]
         resource url: [dir: 'css', file: "maingsp.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
         resource url: [dir: "js", file: "jquery-ui.min.js"]
+        resource url: [dir:'js', file: 'jquery.cookie.js']
     }
 
     appSpecific {
@@ -127,5 +136,14 @@ modules = {
         resource url: 'css/nanoscroller.css'
         resource url:'js/overthrow.min.js'
         resource url: 'js/jquery.nanoscroller.min.js'
+    }
+
+    bs3theme{
+        resource url: 'css/themeTruncated.css'
+    }
+
+    contextmenu{
+        resource url: 'js/jquery.contextMenu.js'
+        resource url: 'css/jquery.contextMenu.css'
     }
 }

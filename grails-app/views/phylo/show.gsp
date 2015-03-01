@@ -9,29 +9,42 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <r:require modules="application,leaflet,phylojive,character,map"/>
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu"/>
 </head>
 
 <body>
 <div class="container" id="test">
+    <ul class="breadcrumb">
+        <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
+        <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
+        <li><a href="${createLink(controller: 'wizard',action: 'myViz')}">My Visualisations</a> <span class="divider">/</span></li>
+        <li class="active">A Visualisation</li>
+    </ul>
     <div id="vizTitle"></div>
+
     <div class="row-fluid">
         <div class="span6">
             <div id="info"></div>
         </div>
+
         <div role="tabpanel" id="tabs" class="span6">
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation"  class="active"><a href="#character" aria-controls="home" role="tab" data-toggle="tab">Character</a></li>
-                <li role="presentation"><a href="#map" aria-controls="profile" role="tab" data-toggle="tab" id="mapTab">Map</a></li>
-                <li role="presentation"><a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab" id="habitatTab">Analysis</a></li>
+                <li id="charLi" role="presentation" class="active"><a id="characterTab" href="#character" aria-controls="home" role="tab"
+                                                          data-toggle="tab">Character</a></li>
+                <li role="presentation"><a href="#map" aria-controls="profile" role="tab" data-toggle="tab"
+                                           id="mapTab">Map</a></li>
+                <li role="presentation" ><a   href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
+                                           id="habitatTab">Analysis</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content" style="position: relative">
                 <div role="tabpanel" class="tab-pane active" id="character"></div>
+
                 <div role="tabpanel" class="tab-pane" id="map"></div>
+
                 <div role="tabpanel" class="tab-pane" id="habitat"></div>
             </div>
 
@@ -61,8 +74,9 @@
         },
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
-        charUrl: '/phylolink/ala/getSandboxCharJson?drid=data_resource_uid:drt2783&fields=["phenotype_s"]&key=lineage_ID_s',
-        initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters()?:'[]') as grails.converters.JSON}"/>,
+//        charUrl: '/phylolink/ala/getSandboxCharJson?drid=data_resource_uid:drt2783&fields=["phenotype_s"]&key=lineage_ID_s',
+        initCharacters: <g:message
+        message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
         filterParams: {
             q: '',
             fq:{
@@ -72,21 +86,22 @@
         colorByUrl: '/phylolink/ala/facets',
         edit:${edit},
         id: ${phyloInstance.getId()},
-        title:'<g:message message="${phyloInstance.getTitle().replace('\'','\\\'')}" />',
-        titleUrl: '${createLink(controller: 'phylo', action: 'saveTitle')}'
+        title:'<g:message message="${phyloInstance.getTitle().replace('\'', '\\\'')}"/>',
+        titleUrl: '${createLink(controller: 'phylo', action: 'saveTitle')}',
+        pjId: 'info'
     }
 
     google.load("visualization", "1", {packages: ["corechart"]});
 //    $(document).ready(function(){
-        $( "#tabs" ).tab('show');
+
         var pj = new PJ({
-            width: 500,
+            width: $('#'+config.pjId).width()-10,
             height: 700,
             codeBase: '../..',
             dataType:'json',
             bootstrap: 2,
             url: config.treeUrl,
-            id: 'info',
+            id: config.pjId ,
             format: config.format,
             heading:'vizTitle',
             hData:{
@@ -95,7 +110,12 @@
                 edit: config.edit
             },
             titleUrl: config.titleUrl,
-            edit: config.edit
+            edit: config.edit,
+            saveQuery:{
+                url: '${createLink(controller: 'ala', action: 'saveQuery')}',
+                type: 'POST',
+                dataType: 'JSON'
+            }
         });
 
         var filter = new Filter($.extend(config.filterParams, {
@@ -105,27 +125,33 @@
 
         var character = new Character({
             id: "character",
+            tabId: 'characterTab',
             pj: pj,
             url: config.charUrl,
             dataType:'jsonp',
             height:700,
-            headerHeight:41,
+            headerHeight:55,
             initCharacters:config.initCharacters,
             bootstrap:2,
             doSync: ${edit},
             syncData: {
                 id: ${phyloInstance.getId()}
-            },
-            syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
+    },
+    syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
             charactersList : {
                 url: '${createLink(controller: 'characters', action: 'list')}',
                 type: 'GET',
                 dataType: 'JSON'
             },
-            edit: ${edit}
+            edit: ${edit},
+            upload: {
+                url: "${createLink(controller: 'ala', action: 'saveAsList')}",
+                type: 'POST'
+            }
         });
 var map = new Map({
     id: 'map',
+    tabId:'mapTab',
     pj: pj,
     filter: filter,
     height: 650,
@@ -160,16 +186,33 @@ var map = new Map({
         });
         var habitat = new Habitat({
             id:'habitat',
+            tabId:'habitatTab',
             pj: pj,
             doSync: ${edit},
             syncData: {
                 id: ${phyloInstance.getId()}
-            },
-            height: 700,
-            syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-            initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat()?:'{}') as grails.converters.JSON}"/>,
+    },
+    listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
+    height: 700,
+    syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
+            initialState: <g:message
+        message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
+            graph: {
+            url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
+            type: 'GET',
+            dataType: 'JSON',
+//            title:'Habitat',
+            xAxisContextual: 'Habitat states',
+            xAxisEnvironmental: 'values',
+            yAxis: 'Occurrence count'
+        },
+        saveQuery:{
+            url: '${createLink(controller: 'ala',action: 'saveQuery')}',
+            type: 'POST',
+            dataType: 'JSONP'
+        }
         })
-
+        $( "#tabs" ).tab('show');
         // a fix to display map tiles properly. Without it map is grey colored for majority of area.
         $("body").on("shown.bs.tab", "#mapTab", function() {
             map.invalidateSize();

@@ -17,7 +17,7 @@ hibernate {
 environments {
     development {
         dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+            dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
             url = "jdbc:postgresql://phylo:5432/phylo"
 //            url = "jdbc:h2:file:/data/cache/testDb;MVCC=TRUE"
         }

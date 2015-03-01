@@ -42,6 +42,9 @@
 </div>
 
 <script>
+    var BVP_JS_URLS ={
+        picklistAutocompleteUrl:"${createLink(controller: 'tree', action: 'autocomplete')}"
+    };
     var profileId = 'alaProfile'
     var cache = []
     var renderProfile = function (guid, data) {

@@ -16,6 +16,8 @@ class CharactersController {
         log.debug(id)
         def owner = Owner.findByUserId(id)
         def lists = Characters.findAllByOwner(owner);
+        def slist = Characters.findAllByOwner(Owner.findByUserId(1));
+        lists.addAll(slist);
         log.debug(lists)
         def result = charactersService.getCharUrl(lists);
 
