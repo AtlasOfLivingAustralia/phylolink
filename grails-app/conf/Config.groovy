@@ -336,7 +336,7 @@ log4j = {
         debug 'stdout'
     }
     appenders {
-        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n'), threshold: org.apache.log4j.Level.DEBUG
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n'), threshold: org.apache.log4j.Level.WARN
     }
     debug 'grails.app',
           'au.org.ala.phyloviz.Nexson'

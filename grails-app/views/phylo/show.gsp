@@ -133,6 +133,7 @@
             headerHeight:55,
             initCharacters:config.initCharacters,
             bootstrap:2,
+            sampleCSV:'http://ebbe.ala.org.au/traits.csv',
             doSync: ${edit},
             syncData: {
                 id: ${phyloInstance.getId()}
@@ -160,6 +161,7 @@ var map = new Map({
     query:config.query,
     filterFieldName:'REGNO_s',
     source: config.type,
+    character: character,
     legend:{
         proxy: true,
         proxyUrl: config.proxyUrl,

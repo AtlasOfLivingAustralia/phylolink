@@ -49,12 +49,12 @@
                         %{--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>--}%
                         %{--<strong>Context needed.</strong> Call to action needed to explain why the user will interact with the buttons below. Note: this alert is dismissable.--}%
                     %{--</div>--}%
-
+                    <br/>
                     <div class="button-toolbar row">
-                        <button type="button" class="btn btn-primary btn-lg btn-block span6" onclick="window.location ='${createLink(controller: 'wizard', action: 'start')}'">Start PhyloLink</button>
+                        <button type="button" style="height: 50px" class="btn btn-primary btn-lg btn-block span6" onclick="window.location ='${createLink(controller: 'wizard', action: 'start')}'">Start PhyloLink</button>
                         %{--<button type="button" class="btn btn-default btn-lg btn-block">Phylogenetic Diversity</button>--}%
                     </div>
-
+                    <br/><br/>
 
                     %{--<div class="alert alert-danger alert-dismissible">--}%
                         %{--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>--}%
