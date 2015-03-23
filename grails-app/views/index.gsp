@@ -7,7 +7,7 @@
 <head>
     <title>Phylogenetic Toolbox</title>
     <meta name="layout" content="main"/>
-    <r:require modules="jquery,bs3theme"/>
+    <r:require modules="jquery"/>
     <r:require modules="bugherd"/>
 </head>
 
