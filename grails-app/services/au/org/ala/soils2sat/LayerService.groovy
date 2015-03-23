@@ -1,8 +1,7 @@
 package au.org.ala.soils2sat
-
+import grails.converters.JSON
 import grails.transaction.Transactional
-import grails.converters.JSON;
-import grails.plugin.cache.Cacheable;
+import grails.plugin.cache.Cacheable
 
 @Transactional
 class LayerService {

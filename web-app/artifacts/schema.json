@@ -1,0 +1,168 @@
+{
+    "mappings":{
+        "nexson": {
+            "properties": {
+                "data": {
+                    "properties": {
+                        "nexml": {
+                            "properties": {
+                                "@generator": {
+                                    "type": "string"
+                                },
+                                "@id": {
+                                    "type": "string"
+                                },
+                                "@nexml2json": {
+                                    "type": "string"
+                                },
+                                "@version": {
+                                    "type": "string"
+                                },
+                                "@xmlns": {
+                                    "type":"object",
+                                    "enabled":false
+                                },
+                                "^dc:contributor": {
+                                    "type": "string"
+                                },
+                                "^dc:creator": {
+                                    "type": "string"
+                                },
+                                "^dc:date": {
+                                    "type": "date",
+                                    "format": "dateOptionalTime"
+                                },
+                                "^dc:publisher": {
+                                    "type": "string",
+                                    "index": "not_analyzed"
+                                },
+                                "^dc:title": {
+                                    "type": "string"
+                                },
+                                "^dcterms:bibliographicCitation": {
+                                    "type": "string"
+                                },
+                                "^ot:agents": {
+                                    "type":"object",
+                                    "enabled":false
+                                },
+                                "^ot:candidateTreeForSynthesis": {
+                                    "properties": {
+                                        "candidate": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "^ot:curatorName": {
+                                    "type": "string"
+                                },
+                                "^ot:dataDeposit": {
+                                    "properties": {
+                                        "@href": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "^ot:messages": {
+                                    "type": "object"
+                                },
+                                "^ot:notIntendedForSynthesis": {
+                                    "type": "boolean"
+                                },
+                                "^ot:otusElementOrder": {
+                                    "type": "string"
+                                },
+                                "^ot:studyId": {
+                                    "type": "string"
+                                },
+                                "^ot:studyPublication": {
+                                    "properties": {
+                                        "@href": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "^ot:studyPublicationReference": {
+                                    "type": "string"
+                                },
+                                "^ot:studyYear": {
+                                    "type": "long"
+                                },
+                                "^ot:taxonLinkPrefixes": {
+                                    "properties": {
+                                        "@ubio": {
+                                            "type": "string"
+                                        },
+                                        "@uniprot": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "^ot:treesElementOrder": {
+                                    "type": "string"
+                                },
+                                "^prism:creationDate": {
+                                    "type": "date",
+                                    "format": "dateOptionalTime"
+                                },
+                                "^prism:doi": {
+                                    "type": "string"
+                                },
+                                "^prism:modificationDate": {
+                                    "type": "date",
+                                    "format": "dateOptionalTime"
+                                },
+                                "^prism:publicationDate": {
+                                    "type": "string"
+                                },
+                                "^prism:publicationName": {
+                                    "type": "string"
+                                },
+                                "^prism:section": {
+                                    "type": "string"
+                                },
+                                "^prism:volume": {
+                                    "type": "string"
+                                },
+                                "^skos:changeNote": {
+                                    "type": "string"
+                                },
+                                "^skos:historyNote": {
+                                    "type": "string"
+                                },
+                                "^tb:identifier.study": {
+                                    "type": "string"
+                                },
+                                "^tb:title.study": {
+                                    "type": "string"
+                                },
+                                "^xhtml:license": {
+                                    "properties": {
+                                        "@href": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "otusById": {
+                                    "type":"object",
+                                    "enabled":false
+                                },
+                                "treesById": {
+                                    "type":"object",
+                                    "enabled":false
+                                }
+                            }
+                        }
+                    }
+                },
+                "sha": {
+                    "type": "string"
+                },
+                "versionHistory": {
+                    "type":"object",
+                    "enabled":false
+                }
+            }
+        }
+    }
+}

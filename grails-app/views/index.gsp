@@ -1,122 +1,83 @@
-<!doctype html>
+<%--
+ Created by Temi Varghese on 1/12/2014.
+--%>
+
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
-	<head>
-		<meta name="layout" content="main"/>
-		<title>phylolink | Atlas of Living Australia</title>
-        <link rel="stylesheet" href="${resource(dir: 'css', file: 'index.css')}"/>
-        <style type="text/css">
-        table#trees td, table#trees th {
-            border-left:solid 40px transparent;
-        }
-        table#trees td:first-child, table#trees th:first-child {
-            border-left:0;
-        }
-        </style>
-        <r:require modules="application"/>
-	</head>
-	<body>
-    <div id="content">
-    %{--# JSON support for older browsers (esp. IE7)--}%
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'json2.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'knockout-2.3.0.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'knockout-paged-e4a5770702.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'knockout-bootstrap.min.js')}"></script>
+<head>
+    <title>Phylogenetic Toolbox</title>
+    <meta name="layout" content="main"/>
+    <r:require modules="jquery"/>
+    <r:require modules="bugherd"/>
+</head>
 
-    <script type='text/javascript'>
-        var viewOrEdit = 'VIEW';
-        var findAllStudies_url = "${createLink(controller: "study", action: 'listStudies')}";
-        var searchTreeUrl = findAllStudies_url;
-        var phylesystem_config_url = '{{=phylesystem_config_url}}';
-    </script>
+<body>
 
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'curation-helpers.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'curation-dashboard.js')}"></script>
-    <span style="width:100%">  <input id="nodename" type="text" value="" placeholder="Search for trees with name"/> <a style="margin-bottom: 10px" class="btn" onclick="searchForTrees()">Search</a></span>
-    <div class="row"  Xstyle="position: relative; top: -1em;">
-        <div class="span12"><!-- full width... -->
-            <div class="navbar" style="clear: both;">
-                <div class="navbar-inner">
-                    <form class="navbar-search pull-left">
-                        <input type="text" id="study-list-filter" class="search-query" style="width: 290px;"
-                               placeholder="Filter by reference text, DOI, tag, curator&hellip;"
-                               data-bind="value: viewModel.listFilters.STUDIES.match, valueUpdate: ['afterkeydown', 'input']">
-                    </form>
-                    <ul class="nav" style="padding-left: 1em;">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span data-bind="text: viewModel.listFilters.STUDIES.order">SORT</span>
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu" data-bind="foreach: ['Newest publication first', 'Oldest publication first'] "><!-- , 'Workflow state', 'Completeness'] -->
-                                <li data-bind="css: {'disabled': viewModel.listFilters.STUDIES.order() == $data }">
-                                    <a href="#" data-bind="text: $data, click: function () { viewModel.listFilters.STUDIES.order($data); }">SORT</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
+<h2 class="heading-medium">Application: PhyloLink</h2>
+
+<div class="panel panel-default">
+    <h4>Overview</h4>
+
+    <div class="panel-body">
+
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="word-limit">
+                    <p>
+                        PhyloLink is a collection of tools through which biodiversity can be explored from  a phylogenetic (or tree of life) perspective.
+                    </p>
+
+                    <p>
+                        At the core of these tools is the ability to easily intersect a phylogenetic tree with species occurrence records, environmental data, and species character information.
+                    </p>
+
+                    <p>
+                        The result is powerful ways of combining data to generate flexible and customisable visualisations, profiles and metrics for biodiversity.
+                    </p>
+
+                    <br/>
+
+                    <div class="button-toolbar row-fluid">
+                        <button type="button" style="height: 50px" class="btn btn-primary btn-lg btn-block"
+                                onclick="window.location = '${createLink(controller: 'wizard', action: 'start')}'">Start PhyloLink</button>
+                    </div>
+                    <br/>
+                    <div class="button-toolbar row-fluid">
+                        <button type="button" style="height: 50px" class="btn btn-primary btn-lg btn-block" onclick="window.location ='${createLink(controller: 'ala', action: 'pd')}'">Explore Phylogenetic Diversity</button>
+                    </div>
+                    <br/>
+
+                    <h3 class="heading-small"><a href="#" onclick="$('#whatisPhylo').toggleClass('hide');
+                    return false;">What is Phylogeny?</a></h3>
+
+                    <div id="whatisPhylo" class="hide">
+
+                        <p>
+                            A phylogeny (or a tree of life) is a theory about how organisms are related to one another through evolutionary time. Phylogenies are based on the assumption that more closely related species will be more similar to one another, and they are commonly built using genetic sequences or physical characters. They are often visually represented as trees: the tips of the ever branching tree representing species, and the branches representing ‘evolutionary distance’ (e.g. length of time) from the ancestors from which they evolved.
+                        </p>
+
+                        <p>
+                            The tools intersect species occurrence data with environmental layers and phylogenetic trees, enabling a variety of new perspectives on biodiversity. For example, you can investigate the environmental envelopes occupied by the species of any chosen clade (a group of related organisms sharing a common ancestral node). You can also measure and compare biodiversity for any given area/s in ways that account for both the number of species occurring there, and their evolutionary distinctness from one another, using phylogenetic diversity. The  tools will also allow you to map the spatial distribution of characters (e.g. waxy leaves) across the landscape.
+                        </p>
+                    </div>
+
+                    <div class="well">
+                        <h4 class="heading-xsmall">Collaborators and acknowledgement:</h4>
+
+                        <p class="font-xsmall">These tools are the result of a collaboration between scientists, the creators of PhyloJIVE and the Atlas of Living Australia. The tools have been developed by Temi Varghese, Rebecca Pirzl, Adam Collins, Nick dos Remedios and Dave Martin, with advice from Joe Miller, Craig Moritz, Dan Rosauer and Garry Jolley-Rogers.</p>
+                    </div>
                 </div>
             </div>
 
-            <table class="table table-condensed">
-                <thead>
-                <tr>
-                    <th>Reference (click to view study)</th>
-                    <th>Focal clade</th>
-                    <th>Curator</th>
-                    <th>Trees</th>
-                </tr>
-                </thead>
-                <tbody data-bind="foreach: { data: viewModel.filteredStudies().pagedItems(), as: 'study' }">
-                <tr >
-                    <td data-bind="html: getViewOrEditLinks(study)">&nbsp;</td>
-                    <td data-bind="html: getFocalCladeLink(study)">&nbsp;</td>
-                    <td data-bind="html: getCuratorLink(study)">&nbsp;</td>
-                    <td data-bind="html: createViz( study.trees, '${createLink(controller:"phylo", action:"create")}'  )">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="4" style="border-top: none; padding-top: 0px;">
-                        <div class="full-study-ref" style="display: none; overflow: visible;">
-                            <div Xclass=""
-                                 data-bind="html: study['studyName']">&nbsp;</div>
-                            <div style="Xfont-size: 90%; margin-top: 3px;" data-bind="html: getPubLink(study)">&nbsp;</div>
-
-                            <label style="display: inline-block" data-bind="visible: (study['tag'])">Tags&nbsp;</label>
-                            <div class="bootstrap-tagsinput"
-                                 style="display: inline-block; border: none; margin-bottom: 0; padding: 0 0 4px 0;"
-                                 data-bind="visible: study['tag'] !== ''">
-                                <!-- ko foreach: makeArray(study['tag']) -->
-                                <a class="tag label label-info" style="display: none;"
-                                   href="#" data-bind="text: $data, visible: true"
-                                   onclick="filterByTag($(this).text()); return false;">&nbsp;</a>
-                                <!-- /ko -->
-                                <span style="color: #999; display: none;" data-bind="visible: !(study['tag'])">
-                                    This study has not been tagged.
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div class="pagination pagination-centered pagination-small"
-                 Xdata-bind="if: viewModel.filteredStudies()().length &gt; viewModel.filteredStudies().pagedItems().length">
-                <ul>
-                    <li data-bind="css: { 'disabled': !viewModel.filteredStudies().prev.enabled() }" class="disabled">
-                        <a href="#" onclick="viewModel.filteredStudies().prev(); return false;">&laquo;</a>
-                    </li>
-                    <li data-bind="css: { 'active': (viewModel.filteredStudies().current() === $data) }" class="active">
-                        <a href="#" data-bind="text: $data, click: function() { viewModel.filteredStudies().goToPage($data); return false; }">0</a>
-                    </li>
-                    <li><a class="pagination-spacer" href="#" data-bind="click: function() { viewModel.filteredStudies().goToPage($data); return false; }">&nbsp;</a></li>
-                    <li data-bind="css: { 'disabled': !viewModel.filteredStudies().next.enabled() }" class="disabled">
-                        <a href="#" onclick="viewModel.filteredStudies().next(); return false;">&raquo;</a>
-                    </li>
-                </ul>
+            <div class="span6">
+                <image src="${resource(dir: 'images', file: 'pjscreenshot.png')}"
             </div>
+        </div>
 
-        </div><!-- /div.spanX -->
-    </div><!-- /.row -->
-    </div> <!-- content div -->
-	</body>
+    </div>
+</div>
+
+</div>
+</div>
+</body>
 </html>

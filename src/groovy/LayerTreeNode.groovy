@@ -16,6 +16,7 @@
 package  au.org.ala.soils2sat
 
 class LayerTreeNode {
+//    private static final log = LogFactory( this )
     String label
     List<LayerTreeNode> childFolders = new ArrayList<LayerTreeNode>()
     List<LayerDefinition> layers = new ArrayList<LayerDefinition>()
@@ -37,10 +38,6 @@ class LayerTreeNode {
 
     def dump(int indent = 0) {
         def s = " " * (indent * 2)
-        println s + label
-        layers.each {
-            println s + "  " + it.name + " (layer)"
-        }
         childFolders.each {
             it.dump(indent + 1)
         }

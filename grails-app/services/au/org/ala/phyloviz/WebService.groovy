@@ -14,13 +14,17 @@
  */
 
 package au.org.ala.phyloviz
-
 import grails.converters.JSON
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.RESTClient
+import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.StringBody
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
+
+import static groovyx.net.http.Method.POST
 
 class WebService implements InitializingBean {
 
@@ -28,9 +32,12 @@ class WebService implements InitializingBean {
         JSONObject.NULL.metaClass.asBoolean = { -> false }
     }
 
-    def get(String url) {
+    def get(String url, String cookie) {
         log.debug "GET on " + url
         def conn = new URL(url).openConnection()
+        if(cookie != null){
+            conn.setRequestProperty('Cookie',cookie);
+        }
         try {
             conn.setConnectTimeout(10000)
             conn.setReadTimeout(50000)
@@ -44,6 +51,18 @@ class WebService implements InitializingBean {
             log.debug error.error
             return error as JSON
         }
+    }
+
+    def get(String url){
+        return get(url, null);
+    }
+
+    def getXml( url ){
+        def weather = new RESTClient( url )
+        def resp = weather.get( contentType: groovyx.net.http.ContentType.TEXT,
+                headers : [Accept : 'application/xml'] )
+
+        return resp.data.text
     }
 
     def getJson(String url) {
@@ -123,12 +142,121 @@ class WebService implements InitializingBean {
         }
     }
     
-    def postData(String url, String data) {
+    def postStrData(String url, String data) {
         def uri = new URL(url);
         log.debug(uri.host)
         log.debug(uri.path)
         log.debug(uri.port.toString())
         log.debug(data)
-        this.doJsonPost("http://${uri.host}", uri.path, uri.port.toString(), data)
+        this.doJsonPost("http://${uri.host}", uri.path, uri.port?.toString(), data)
+    }
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
+    def postData( String url, data, head = [:], enc = ContentType.URLENC ){
+        def http = new HTTPBuilder( url )
+        def resp = ''
+//        def response = http.post( body: data,
+//                requestContentType: ContentType.URLENC, headers: header ) { resp, result ->
+////            headers['Accept'] = 'application/json'
+//            log.debug( "POST Success: ${resp.statusLine} ${result}" )
+////            return  result
+////            res =  result
+////            if( res instanceof InputStreamReader ){
+////                BufferedReader rd = new BufferedReader(res);
+////                String line;
+////                def s = ""
+////                while ((line = rd.readLine()) != null) {
+////                    s += line
+////                }
+////                res = s;
+////            }
+//        }
+//        return  response?.text();
+        log.debug('cookie:'+head['cookie']);
+        http.getHeaders()['Cookie']= head['cookie'];
+        def response = http.request( POST){
+//            headers['Set-Cookie'] = head['cookie'];
+            requestContentType = enc;
+            body = data;
+            log.debug(head['cookie'])
+        }
+        def ch;
+        if( response instanceof  StringReader){
+            while((ch = response.read())!= -1){
+                resp += (char)ch;
+            }
+        } else if(response instanceof String ) {
+            resp = response;
+        } else if(response instanceof  java.util.HashMap){
+            resp = response
+        }else {
+            resp = response?.text();
+        }
+        return resp
+    }
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
+    def postData( String url){
+        def http = new HTTPBuilder( url )
+        http.post( body:"" ) { resp, result ->
+//            headers['Accept'] = 'application/json'
+            log.debug( "POST Success: ${resp.statusLine} ${result}" )
+            return  result
+        }
+    }
+
+    def postMultipart(url, multi, String cookie) {
+        def http = new HTTPBuilder(url)
+        def ch, resp ='';
+
+        def response = http.request(POST) { req ->
+            if(cookie){
+                headers.put('Cookie', cookie)
+            }
+            requestContentType = 'multipart/form-data';
+            MultipartEntity entity = new MultipartEntity();
+            entity.addPart('q',new StringBody(multi['q']));
+//            entity.content( new InputStreamReader());
+            req.entity = entity;
+        }
+
+        if( response instanceof  StringReader){
+            while((ch = response.read())!= -1){
+                resp += (char)ch;
+            }
+        } else if(response instanceof String ) {
+            resp = response;
+        } else {
+            resp = response?.text();
+        }
+
+        return resp;
+    }
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
+    def delete( String url){
+        def cl = new RESTClient( url )
+        try {
+            def resp = cl.delete( path:'phylolink')
+            return resp.status == 200
+        } catch ( Exception e){
+            log.debug( 'cannot delete ' + e.getMessage() )
+        }
+
     }
 }

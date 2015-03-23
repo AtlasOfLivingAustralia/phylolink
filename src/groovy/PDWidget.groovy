@@ -1,10 +1,16 @@
 package au.org.ala.phyloviz
+
 import grails.converters.JSON
 import groovy.json.JsonOutput
+import org.apache.commons.logging.LogFactory
+
 /**
  * Created by Temi Varghese on 1/08/2014.
  */
+
 class PDWidget implements WidgetInterface{
+
+    private static final log = LogFactory( this )
     def webService
     def grailsApplication
     def utilsService
@@ -16,6 +22,7 @@ class PDWidget implements WidgetInterface{
     def alaController
     def phyloController
     def dr
+
     PDWidget(config , grailsApplication, webService, utilsService, applicationContext){
         this.webService = webService;
         this.grailsApplication = grailsApplication;
@@ -28,6 +35,7 @@ class PDWidget implements WidgetInterface{
         this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
         this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
     }
+
     PDWidget(config , grailsApplication, webService, utilsService, applicationContext, dr){
         this.webService = webService;
         this.grailsApplication = grailsApplication;
@@ -41,34 +49,33 @@ class PDWidget implements WidgetInterface{
         this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
         this.dr = dr
     }
+
     def getViewFile(){
         return '';
     }
+
     def getInputFile(){
         return '';
     }
+
     def process( data, phylo ){
-        println('pd widgets')
-//        return  this.testData()
-//        this.phyloController.setParams( data )
+
+        log.debug('pd widgets')
         def result = []
         def threads =[]
         def removeTree = (data.removeTree?:true) as Boolean
 
         regions.each{ r->
-//            println( r )
             def th
             th = Thread.start {
                 def speciesList,pd ;
                 speciesList = this.getSpeciesList( r.code );
-                println( r.code )
-//                speciesList = utilsService.convertJsonToArray( speciesList, grailsApplication.config.alaWebServiceMeta['speciesfacet'] )
-                println( 'convert to array ' + r.code)
-                println( speciesList )
+                log.debug( r.code )
+                log.debug( 'convert to array ' + r.code)
+                log.debug( speciesList )
                 pd = this.phyloController.getPDCalc( phylo.treeid, phylo.studyid, null, JsonOutput.toJson( speciesList ) );
                 pd = pd[0]
-                println( 'printing region code')
-//                println( pd )
+                log.debug( 'printing region code')
                 pd['region'] = r.code.split(":")[1];
                 if( removeTree ){
                     pd.remove(grailsApplication.config.treeMeta.treeText)
@@ -78,16 +85,17 @@ class PDWidget implements WidgetInterface{
             threads.push( th );
 
         }
-//        println( result )
         for( def th in threads){
             th.join();
         }
-        println('completed!')
+        log.debug('completed!')
         return result;
     }
+
     def getRegions(){
 
     }
+
     def getSpeciesList( region ){
         def startTime, deltaTime;
         def url = grailsApplication.config.speciesListUrl;
@@ -96,19 +104,19 @@ class PDWidget implements WidgetInterface{
             url = grailsApplication.config.drUrl
         }
         url = url.replaceAll( 'REGION', region.encodeAsURL() )
-        println( url )
+        log.debug( url )
 
         startTime = System.currentTimeMillis()
         def species =  webService.get( url );
         deltaTime = System.currentTimeMillis() - startTime
-        println( "download time: ${deltaTime}")
+        log.debug( "download time: ${deltaTime}")
         startTime = System.currentTimeMillis()
-//        species = utilsService.convertCsvToJson( species, null )
         species = utilsService.convertCsvToArray( species, null, grailsApplication.config.alaWebServiceMeta['speciesfacet'])
         deltaTime = System.currentTimeMillis() - startTime
-        println( "convert time: ${deltaTime}")
+        log.debug( "convert time: ${deltaTime}")
         return  species;
     }
+
     def testData(){
         def test = "\n" +
                 "\n" +

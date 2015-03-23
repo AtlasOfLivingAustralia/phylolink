@@ -1,0 +1,92 @@
+<%@ page import="org.codehaus.groovy.grails.commons.ConfigurationHolder" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="app.version" content="${g.meta(name: 'app.version')}"/>
+    <meta name="app.build" content="${g.meta(name: 'app.build')}"/>
+    <meta name="description" content="Atlas of Living Australia"/>
+    <meta name="author" content="Atlas of Living Australia">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="${resource(dir:"css", file: 'main.css')}"/>
+    <link rel="stylesheet" href="${resource(dir:"css", file: 'maingsp.css')}"/>
+    <link href="http://www.ala.org.au/wp-content/themes/ala2011/images/favicon.ico" rel="shortcut icon"
+          type="image/x-icon"/>
+    <title><g:layoutTitle/></title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<%-- Do not include JS & CSS files here - add them to your app's "application" module (in "Configuration/ApplicationResources.groovy") --%>
+<r:require modules="appSpecific"/>
+    <r:require modules="bootstrap, application" />
+    <r:script disposition='head'>
+        // initialise plugins
+        width = 900;
+        height = 600;
+
+        jQuery(function(){
+            width = $("#vizscreen").width(  );
+            height = $("#vizscreen").height( );
+            height -= $("#nav-site").outerHeight( true );
+            height -= $("#site-header").outerHeight( true );
+            // some random margin coming up
+            height -= 30;
+            $("#vizscreen").height( height)
+
+            // Mobile/desktop toggle
+            // TODO: set a cookie so user's choice is remembered across pages
+            var responsiveCssFile = $("#responsiveCss").attr("href"); // remember set href
+            $(".toggleResponsive").click(function(e) {
+                e.preventDefault();
+                $(this).find("i").toggleClass("icon-resize-small icon-resize-full");
+                var currentHref = $("#responsiveCss").attr("href");
+                if (currentHref) {
+                    $("#responsiveCss").attr("href", ""); // set to desktop (fixed)
+                    $(this).find("span").html("Mobile");
+                } else {
+                    $("#responsiveCss").attr("href", responsiveCssFile); // set to mobile (responsive)
+                    $(this).find("span").html("Desktop");
+                }
+            });
+        });
+    </r:script>
+<r:script disposition="head">
+            var BVP_JS_URLS = {
+                picklistAutocompleteUrl: "${createLink(action:'autocomplete', controller:'PhylogeneticTree')}"
+            };
+</r:script>
+    <r:layoutResources/>
+    <g:layoutHead/>
+</head>
+
+<body class="${pageProperty(name: 'body.class') ?: 'nav-datasets'}" id="${pageProperty(name: 'body.id')}"
+      onload="${pageProperty(name: 'body.onload')}">
+<g:set var="fluidLayout" value="${grailsApplication.config.skin?.fluidLayout}"/>
+<hf:banner logoutUrl="${grailsApplication.config.grails.serverURL}/logout/logout" fluidLayout="${fluidLayout}"/>
+
+<hf:menu fluidLayout="${fluidLayout}"/>
+
+
+<div class="container" id="vizscreen">
+    <g:layoutBody/>
+</div><!--/.container-->
+
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<r:script>
+    var pageTracker = _gat._getTracker("UA-4355440-1");
+    pageTracker._initData();
+    pageTracker._trackPageview();
+
+    // show warning if using IE6
+    if ($.browser.msie && $.browser.version.slice(0,1) == '6') {
+        $('#header').prepend($('<div style="text-align:center;color:red;">WARNING: This page is not compatible with IE6.' +
+                ' Many functions will still work but layout and image transparency will be disrupted.</div>'));
+    }
+</r:script>
+
+<!-- JS resources-->
+<r:layoutResources/>
+
+</body>
+</html>

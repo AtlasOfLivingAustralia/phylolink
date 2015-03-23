@@ -104,3 +104,7 @@ bootstrap 3 additions. 2.3 does not have nice features like panel. adding them h
     background-color: #d9edf7;
     border-color: #bce8f1;
 }
+
+.info{
+    background-color: white;
+}

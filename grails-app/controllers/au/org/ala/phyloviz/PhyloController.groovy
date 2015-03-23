@@ -1,6 +1,5 @@
 package au.org.ala.phyloviz
 import grails.converters.JSON
-import grails.transaction.Transactional
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
@@ -9,12 +8,14 @@ import static org.springframework.http.HttpStatus.*
 /**
  * Created by Temi Varghese on 19/06/2014.
  */
-@Transactional(readOnly = true)
 class PhyloController {
     def webService;
     def metricsService;
     def opentreeService
     def utilsService
+    def userService
+    def treeService
+
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def list(Integer max) {
@@ -23,15 +24,33 @@ class PhyloController {
     }
 
     def show(Phylo phyloInstance) {
-        respond phyloInstance
+        def tree = Tree.findById(phyloInstance.getStudyid());
+        def user = userService.getUser();
+        log.debug("current user: "+user);
+        def userId = userService.getCurrentUserId();
+        if(userId != ""){
+            userId = userId instanceof String?Long.parseLong(userId):userId;
+        }
+
+        Boolean edit = false
+        log.debug("user id : ${userId instanceof String}")
+        log.debug("owner id: ${phyloInstance.getOwner().userId}");
+        if( phyloInstance.getOwner().userId == userId ){
+            edit = true
+            log.debug('editable');
+        }
+
+        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit]
     }
 
     def create() {
         respond new Phylo(params)
     }
 
-    @Transactional
     def save(Phylo phyloInstance) {
+        log.debug('save ')
+        log.debug( params )
+        log.debug( phyloInstance )
         if (phyloInstance == null) {
             notFound()
             return
@@ -57,7 +76,6 @@ class PhyloController {
         respond phyloInstance
     }
 
-    @Transactional
     def update(Phylo phyloInstance) {
         if (phyloInstance == null) {
             notFound()
@@ -80,7 +98,6 @@ class PhyloController {
         }
     }
 
-    @Transactional
     def delete(Phylo phyloInstance) {
 
         if (phyloInstance == null) {
@@ -108,7 +125,11 @@ class PhyloController {
             '*' { render status: NOT_FOUND }
         }
     }
-
+    /**
+     * TODO: Delete this function? not used any more.
+     * @param phyloInstance
+     * @return
+     */
     def getWidgetData(Phylo phyloInstance){
         def species = JSON.parse( params.speciesList );
         def summary = [:], result
@@ -132,6 +153,34 @@ class PhyloController {
             response.setHeader('Content-disposition','attachment; filename=data.csv')
             render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
         } else {
+            render(contentType: 'application/json', text: data as JSON)
+        }
+    }
+
+    /**
+     * INTERSECTION BETWEEN A LAYER AND SPECIES OCCURRENCE
+     * @param phyloInstance
+     * @return
+     */
+    def getHabitat(){
+//        def species = JSON.parse( params.speciesList?:'[]' );
+        def summary = [:], result
+        def region = '';
+        def download = ( params.download?:false ) as Boolean
+        def data = params
+        data.region = region;
+        def dr = ''
+        def widgetObject = new WidgetFactory();
+        widgetObject = widgetObject.createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr);
+//        ContextualWidget widgetObject = new ContextualWidget( data, grailsApplication, webService, utilsService, applicationContext )
+        data = widgetObject.process( data ,  null);
+        log.debug( data )
+        if( download ){
+            response.setHeader('Content-disposition','attachment; filename=data.csv')
+            render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
+        }else if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${data as JSON})")
+        }else {
             render(contentType: 'application/json', text: data as JSON)
         }
     }
@@ -250,7 +299,19 @@ class PhyloController {
         def meta = [:]
         meta = this.getTreeMeta(treeId, studyId, meta)
         meta = noTreeText? this.removeProp( meta , grailsApplication.config.treeMeta.treeText ): meta ;
-        render( contentType: 'application/json', text: meta as JSON )
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})")
+        } else {
+            render(contentType: 'application/json', text: meta as JSON)
+        }
+    }
+
+    public def params(){
+        def url = 'http://biocache.ala.org.au/ws/webportal/params'
+        def ret = webService.postData(url, [fq:params.fq])
+//        def ret = webService.postData(url,'/ws/webportal/params',[fq:params.fq])
+    //        log.debug( "POST return" +ret.readLines() )
+        render ( text: ret.toString() )
     }
 
     /**
@@ -312,6 +373,19 @@ class PhyloController {
         render ( contentType: 'application/json', text: result as JSON)
     }
 
+    def getExpert(){
+        def noTreeText = params.noTreeText?:false;
+        def exp = Tree.findAllWhere(['expertTree':true]);
+        def result = []
+//        log.debug(result);
+        exp.each {tree->
+//            log.debug(tree as JSON)
+            result.push(tree as JSON);
+        }
+        result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
+        render ( contentType: 'application/json', text: result as JSON)
+    }
+
     /**
      *
      * @param meta
@@ -354,5 +428,90 @@ class PhyloController {
         def download =  JSON.parse( params.json )
         response.setHeader('Content-disposition','attachment; filename=data.csv')
         render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV( download ) )
+    }
+
+    /**
+     * save the habitats json string into database
+     * @param phyloInstance
+     * @return
+     */
+    def saveHabitat(Phylo phyloInstance){
+        String habInit = params.json
+        log.debug(habInit);
+        phyloInstance.setHabitat(JSON.parse(habInit).toString());
+        phyloInstance.save(flush: true);
+        render(contentType: 'application/json',text:"{\"message\":\"success\"}");
+    }
+
+    /**
+     * gets habitats json string
+     * @param phyloInstance
+     * @return
+     */
+    def getHabitatInit(Phylo phyloInstance){
+        String meta = JSON.parse( phyloInstance.getHabitat() );
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
+        } else {
+            render(contentType: 'application/json', text: meta as JSON);
+        }
+    }
+
+    /**
+     * save the habitats json string into database
+     * @param phyloInstance
+     * @return
+     */
+    def saveCharacters(Phylo phyloInstance){
+        String charInit = params.json
+        log.debug(charInit);
+        phyloInstance.setCharacters(JSON.parse(charInit).toString());
+        phyloInstance.save(flush: true);
+        render(contentType: 'application/json',text:"{\"message\":\"success\"}");
+    }
+
+    /**
+     * gets habitats json string
+     * @param phyloInstance
+     * @return
+     */
+    def getCharacters(Phylo phyloInstance){
+        String meta = JSON.parse( phyloInstance.getCharacters() );
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
+        } else {
+            render(contentType: 'application/json', text: meta as JSON);
+        }
+    }
+
+    /**
+     * save visualization title to database
+     * @param phyloInstance
+     * @return
+     */
+    def saveTitle(Phylo phyloInstance){
+        def user = Owner.findByUserId(userService.getCurrentUserId())
+        def result = [:]
+        log.debug(user)
+        log.debug(phyloInstance.getOwner()?.userId)
+        if(phyloInstance.getOwner().userId == user.userId){
+            phyloInstance.setTitle(params.title);
+            phyloInstance.save(
+                    flush: true
+            );
+            if (phyloInstance.hasErrors()) {
+                result['error'] = 'An error occurred';
+            } else {
+                result['message'] = 'Successfully saved title';
+            }
+        } else {
+            result['error'] = 'User not recognised'
+        }
+
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})");
+        } else {
+            render(contentType: 'application/json', text: result as JSON);
+        }
     }
 }
