@@ -9,7 +9,12 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 class AlaService {
     def webService
     def grailsApplication
-    def userService
+    def charactersService
+    /**
+     * adding utilsService will cause the program to termiate. I think it is because of cyclical dependencies.
+     * alaService needs utilsService and utilsService needs alaService
+      */
+//    def utilsService
     def authService
 
     def getLsid( names ) {
@@ -241,7 +246,12 @@ class AlaService {
 
     def getQid(data){
         def url = grailsApplication.config.qidUrl;
-        def result = webService.postData(url, data);
+//        data = data as JSON;
+        def payload = "q=${data.q}"
+//        def result = webService.postData(url, data);
+        def result = webService.postData(url, payload,[:],ContentType.URLENC);
+//        log.debug(data.q);
+//        def result = webService.postMultipart(url,data,'');
         return result;
     }
 
@@ -268,30 +278,39 @@ class AlaService {
      * @param drid
      * @return charJSON
      */
-    def getListCharJson(drid){
-        def url = grailsApplication.config.listUrl;
+    def getListCharJson(drid, cookie){
+        def url = grailsApplication.config.listCSV;
         def charJson = [:];
-        def keyValues;
+//        def keyValues;
         url = url.replace('DRID', drid);
-        log.debug(url);
-        keyValues = webService.get(url);
-        keyValues = keyValues?:'[]'
-        keyValues = JSON.parse(keyValues);
-        keyValues.eachWithIndex{ value, i ->
-            log.debug(value);
-            if(!charJson[value.name]){
-                charJson[value.name] = [:]
-            }
-            value.kvpValues?.eachWithIndex{ l, j->
-                log.debug(l);
-                if(l.value?.isInteger()){
-                    l.value = Integer.parseInt(l.value);
-                } else if(l.value?.isDouble()){
-                    l.value = Double.parseDouble(l.value);
-                }
-                charJson[value.name][l.key]= [l.value]
-            }
-        }
+//        log.debug(url);
+//        keyValues = webService.get(url);
+//        keyValues = keyValues?:'[]'
+//        keyValues = JSON.parse(keyValues);
+//        keyValues.eachWithIndex{ value, i ->
+////            log.debug(value);
+//            if(!charJson[value.name]){
+//                charJson[value.name] = [:]
+//            }
+//            value.kvpValues?.eachWithIndex{ l, j->
+////                log.debug(l);
+//                if(l.value?.isInteger()){
+//                    l.value = Integer.parseInt(l.value);
+//                } else if(l.value?.isDouble()){
+//                    l.value = Double.parseDouble(l.value);
+//                }
+//                if(l.value != 'undefined'){
+//                    charJson[value.name][l.key]= [l.value]
+//                } else {
+//                    charJson[value.name][l.key]= []
+//                }
+//
+//            }
+//        }
+//        log.debug(cookie)
+        def csv = webService.get(url,cookie);
+//        log.debug(csv);
+        charJson = charactersService.convertCharCsvToJson(csv,'||');
         return charJson;
     }
 

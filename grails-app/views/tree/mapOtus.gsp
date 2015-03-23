@@ -8,6 +8,7 @@
     <title>Name reconciliation</title>
     <meta name="layout" content="main"/>
     <r:require modules="slickgrid, appSpecific"/>
+    <r:require modules="bugherd"/>
     <jqui:resources theme="darkness"/>
 </head>
 

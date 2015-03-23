@@ -279,10 +279,11 @@ class AlaController {
      */
     def getCharJson(){
         String drid = params.drid;
+        String cookie = request.getHeader('Cookie')
         log.debug(drid)
         def result = [:];
         if(drid){
-            result = alaService.getListCharJson(drid);
+            result = alaService.getListCharJson(drid, cookie);
         }
 
         if(params.callback){
@@ -343,5 +344,19 @@ class AlaController {
      */
     def getUrl(druid){
         return createLink(controller: 'ala', action: 'getCharJson') + '?drid=' + druid;
+    }
+
+    /**
+     * keep session alive
+     */
+    def keepSessionAlive(){
+        render(contentType: 'application/json', text: ['status':'OK'] as JSON)
+    }
+
+    /**
+     * this function just renders a page explaining pd
+     */
+    def pd(){
+
     }
 }

@@ -8,6 +8,7 @@
     <meta name="layout" content="main"/>
     <title>Add tree</title>
     <r:require modules="knockout,jquery-ui,create"/>
+    <r:require modules="bugherd"/>
 </head>
 
 <body>
@@ -23,7 +24,7 @@
             %{--</g:eachError>--}%
         %{--</ul>--}%
     %{--</g:hasErrors>--}%
-    <g:form action="save" class="form-horizontal" method="POST" enctype="multipart/form-data" id="treeSaveFrom">
+    <g:form action="save" class="form-horizontal" method="POST" enctype="multipart/form-data">
         <legend>Upload a tree</legend>
         <p style="font-size:14px">Enter your tree here by filling the form below. Pressing <span class="label label-info">next</span> button will save the tree. Use <span class="label">back</span> button to go to previous page</p>
         <fieldset class="form">
@@ -39,13 +40,6 @@
                 </div>
         </fieldset>
     </g:form>
-    <r:script>
-        $(document).ready(function(){
-            $('#treeSaveFrom').validate({
-
-            });
-        })
-    </r:script>
 </div>
 </body>
 </html>

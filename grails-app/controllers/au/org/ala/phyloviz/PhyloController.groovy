@@ -14,6 +14,7 @@ class PhyloController {
     def opentreeService
     def utilsService
     def userService
+    def treeService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -24,8 +25,13 @@ class PhyloController {
 
     def show(Phylo phyloInstance) {
         def tree = Tree.findById(phyloInstance.getStudyid());
+        def user = userService.getUser();
+        log.debug("current user: "+user);
         def userId = userService.getCurrentUserId();
-        userId = userId instanceof String?Long.parseLong(userId):userId;
+        if(userId != ""){
+            userId = userId instanceof String?Long.parseLong(userId):userId;
+        }
+
         Boolean edit = false
         log.debug("user id : ${userId instanceof String}")
         log.debug("owner id: ${phyloInstance.getOwner().userId}");
@@ -33,6 +39,7 @@ class PhyloController {
             edit = true
             log.debug('editable');
         }
+
         respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit]
     }
 
@@ -362,6 +369,19 @@ class PhyloController {
     def getExpertTrees(){
         def noTreeText = params.noTreeText?:false;
         def result = this.getExpertTreeMeta()
+        result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
+        render ( contentType: 'application/json', text: result as JSON)
+    }
+
+    def getExpert(){
+        def noTreeText = params.noTreeText?:false;
+        def exp = Tree.findAllWhere(['expertTree':true]);
+        def result = []
+//        log.debug(result);
+        exp.each {tree->
+//            log.debug(tree as JSON)
+            result.push(tree as JSON);
+        }
         result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
         render ( contentType: 'application/json', text: result as JSON)
     }

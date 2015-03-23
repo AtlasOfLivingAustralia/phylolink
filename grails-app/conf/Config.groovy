@@ -8,6 +8,7 @@ runWithNoExternalConfig = true
 
 /*** Phylo Link config *******/
 debug = true
+skin.fluidLayout = 1;
 
 //address that resolves doi value
 doiAddress = "http://dx.doi.org/"
@@ -40,11 +41,12 @@ listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 //listUrl = "http://lists.nci-simon.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 listPost = 'http://lists.ala.org.au/ws/speciesList'
 //listPost = 'http://lists.nci-simon.ala.org.au/ws/speciesList'
+listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test'
 
 //opentree configs
-treemachine_address = 'http://phylo:8000'
-oti_address = 'http://phylo:7478'
-ot_address = 'http://phylo:8000'
+treemachine_address = 'http://localhost:8000'
+oti_address = 'http://localhost:7478'
+ot_address = 'http://localhost:8000'
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
 ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
@@ -193,10 +195,10 @@ facets ='''
 
 /** elastic search configs end **/
 /******* ALA standard config ************/
-headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
+//headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 security.cas.casServerName = "https://auth.ala.org.au"
-security.cas.uriFilterPattern = "/wizard/.*,/phylo/.*,/ala/.*,/characters/.*"
-security.cas.authenticateOnlyIfLoggedInPattern = "/"
+security.cas.uriFilterPattern='/(?!phylo|tree|ala).*'
+security.cas.authenticateOnlyIfLoggedInPattern = "/phylo/show/.*,/tree/.*,/ala/.*"
 security.cas.uriExclusionFilterPattern = "/images.*,/css.*,/js.*"
 security.cas.loginUrl = "${security.cas.casServerName}/cas/login"
 security.cas.logoutUrl = "${security.cas.casServerName}/cas/logout"
@@ -307,7 +309,7 @@ environments {
         grails.serverURL = "${serverName}/${appName}"
     }
     test {
-        serverName = 'http://115.146.93.110:8080'
+        serverName = 'http://phylolink-dev.ala.org.au'
         contextPath = ''
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = true
@@ -317,8 +319,8 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
     production {
-        serverName = 'http://ebbe.ala.org.au:8080'
-        contextPath = "/${appName}"
+        serverName = 'http://phylolink.ala.org.au'
+        contextPath = ""
         security.cas.appServerName = serverName
         grails.logging.jul.usebridge = false
         security.cas.contextPath = "/${appName}"

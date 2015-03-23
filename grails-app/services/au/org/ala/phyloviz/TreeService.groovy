@@ -3,6 +3,7 @@ package au.org.ala.phyloviz
 import grails.converters.XML
 import jade.tree.TreeReader
 import org.apache.commons.io.IOUtils
+import org.codehaus.groovy.grails.web.mapping.LinkGenerator
 
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -12,9 +13,10 @@ class TreeService {
     def grailsApplication
     def authService
     def nexsonService
-    def userService
+    def metricsService
     def webService
-//    def utilsService
+
+    LinkGenerator grailsLinkGenerator
 
     def treeInfo(nexson) {
         def result = [:], taxon
@@ -370,5 +372,83 @@ class TreeService {
      */
     def importTB( url ){
         return webService.getXml( url )
+    }
+
+
+    /**
+     *
+     * @param meta
+     * metadata variable to which the result of this function gets added to
+     * @return
+     */
+     def getExpertTreeMeta( meta ) {
+        meta = meta?:[:]
+        Tree.findAllWhere(['expertTree':true]);
+        def trees = grailsApplication.config.expert_trees, i, studyId , treeId, input = [], studyMeta, temp
+        for( i = 0;i < trees.size(); i++ ){
+            if( trees[i][grailsApplication.config.treeMeta.treeText] == null ){
+                studyId = trees[i].studyId?.toString()
+                treeId = trees[i].treeId?.toString()
+                studyMeta = getTreeMeta( treeId, studyId, trees[i] )
+                input.push( studyMeta.clone() )
+            } else {
+                input.push( trees[i].clone() )
+            }
+
+        }
+        meta[ grailsApplication.config.expertTreesMeta.et ] = input
+        return  meta
+    }
+
+    /**
+     * attaches metadata of tree onto given metadata variable
+     * @param treeId
+     * @param studyId
+     * @param meta
+     * @return
+     */
+     def getTreeMeta(String treeId, String studyId, meta){
+        def startTime, deltaTime
+        meta = meta?:[:]
+        meta = getTreeText( treeId, studyId, meta )
+        meta = getViewerUrl(treeId, studyId, meta)
+        meta = opentreeService.getStudyMetadata( studyId, meta )
+        log.debug( meta )
+        def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
+        meta = opentreeService.addTreeMeta(jadetree, meta )
+        return  meta
+    }
+
+    /**
+     * this func creates a url and fetches its newick string
+     * @param treeId
+     * @param studyId
+     * @param meta
+     * @return
+     */
+    def getTreeText(String treeId, String studyId, meta){
+        meta = meta?:[:]
+        def tree = webService.get( opentreeService.getTreeUrlNewick(treeId, studyId) )
+        meta[grailsApplication.config.treeMeta.treeText] = tree;
+        return meta
+    }
+
+    def getViewerUrl(treeId, studyId, meta) {
+        meta = meta ?: [:]
+        meta[grailsApplication.config.treeMeta.treeUrl] =
+                "${grailsLinkGenerator.link(controller: 'viewer', action: 'show', absolute: true)}?studyId=${studyId}&treeId=${treeId}"
+        return meta
+    }
+
+    private def removeProp( Collection meta, String prop){
+        for ( def i = 0 ; i < meta.size(); i++){
+            meta[i]?.remove( prop )
+        }
+        return meta;
+    }
+
+    private def removeProp( HashMap meta , String prop ){
+        meta?.remove( prop )
+        return meta;
     }
 }

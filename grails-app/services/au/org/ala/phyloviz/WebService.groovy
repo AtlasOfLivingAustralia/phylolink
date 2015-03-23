@@ -18,6 +18,8 @@ import grails.converters.JSON
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.RESTClient
+import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.StringBody
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
@@ -30,9 +32,12 @@ class WebService implements InitializingBean {
         JSONObject.NULL.metaClass.asBoolean = { -> false }
     }
 
-    def get(String url) {
+    def get(String url, String cookie) {
         log.debug "GET on " + url
         def conn = new URL(url).openConnection()
+        if(cookie != null){
+            conn.setRequestProperty('Cookie',cookie);
+        }
         try {
             conn.setConnectTimeout(10000)
             conn.setReadTimeout(50000)
@@ -46,6 +51,10 @@ class WebService implements InitializingBean {
             log.debug error.error
             return error as JSON
         }
+    }
+
+    def get(String url){
+        return get(url, null);
     }
 
     def getXml( url ){
@@ -208,12 +217,17 @@ class WebService implements InitializingBean {
 
     def postMultipart(url, multi, String cookie) {
         def http = new HTTPBuilder(url)
-        def ch, resp;
-        def c = [];
+        def ch, resp ='';
 
-        def response = http.request(POST) { multipartRequest ->
-            headers.put('Cookie', cookie)
-            multipartRequest.entity = multi
+        def response = http.request(POST) { req ->
+            if(cookie){
+                headers.put('Cookie', cookie)
+            }
+            requestContentType = 'multipart/form-data';
+            MultipartEntity entity = new MultipartEntity();
+            entity.addPart('q',new StringBody(multi['q']));
+//            entity.content( new InputStreamReader());
+            req.entity = entity;
         }
 
         if( response instanceof  StringReader){
@@ -228,7 +242,6 @@ class WebService implements InitializingBean {
 
         return resp;
     }
-
 
     /**
      * posts data to url. Data is provided in a Map Object.

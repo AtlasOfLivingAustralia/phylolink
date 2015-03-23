@@ -9,6 +9,7 @@
     <meta name="layout" content="main"/>
     %{--<script type="text/javascript" src="${createLinkTo(dir: 'js', file: 'knockout-2.3.0.js')}"/>--}%
     <r:require module="knockout"/>
+    <r:require modules="bugherd"/>
 </head>
 
 <body>

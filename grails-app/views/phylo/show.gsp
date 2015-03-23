@@ -10,16 +10,21 @@
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <r:require modules="application,leaflet,phylojive,character,map,contextmenu"/>
+    <r:require modules="bugherd"/>
 </head>
 
 <body>
-<div class="container" id="test">
-    <ul class="breadcrumb">
-        <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-        <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
-        <li><a href="${createLink(controller: 'wizard',action: 'myViz')}">My Visualisations</a> <span class="divider">/</span></li>
-        <li class="active">A Visualisation</li>
-    </ul>
+%{--padding top since breadcrumb is hidden by the new nav bar--}%
+<div class="container-fluid" style="padding-top: 60px">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard',action: 'myViz')}">My Visualisations</a> </li>
+            </ul>
+        </div>
+    </div>
     <div id="vizTitle"></div>
 
     <div class="row-fluid">
@@ -223,5 +228,6 @@ var map = new Map({
         google.setOnLoadCallback(character.googleChartsLoaded);
         google.setOnLoadCallback(habitat.googleChartsLoaded);
 </r:script>
+<g:render template="keepSessionAlive"/>
 </body>
 </html>

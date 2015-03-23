@@ -26,7 +26,7 @@ class BootStrap {
         }
         log.debug('after getting system username')
         log.debug( 'in bootstrap init func')
-        def trees = [ this.acaciaTree()]//, this.amphibianTree(), this.mammalsTree()]
+        def trees = [ this.acaciaTree(), this.amphibianTree(), this.mammalsTree()]
         trees.each{
             def tree = it
             tree.owner = systemUser;

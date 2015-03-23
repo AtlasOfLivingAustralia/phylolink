@@ -13,6 +13,7 @@
         }
         </style>
         <r:require modules="application"/>
+        <r:require modules="bugherd"/>
 	</head>
 	<body>
     <div id="content">

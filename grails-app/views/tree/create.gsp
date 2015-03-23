@@ -8,6 +8,7 @@
     <meta name="layout" content="main"/>
     <title>Add tree</title>
     <r:require modules="knockout,jquery-ui"/>
+    <r:require modules="bugherd"/>
 </head>
 
 <body>

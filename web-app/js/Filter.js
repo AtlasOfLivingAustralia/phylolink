@@ -93,7 +93,7 @@ var Filter = function(options){
 
     pj.on('click', function (node) {
         that.clearFqName(that.opt.fqVariable);
-        var children = pj.getChildrensName(node);
+        var children = pj.getChildrenName(node);
         var params;
 
         for (i in children) {

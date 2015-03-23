@@ -3,18 +3,18 @@ modules = {
 //    jquery{
 //        resource url:[dir: 'js', file: 'jquery.1.11.2.min.js']
 //    }
-    core {
-        dependsOn 'jquery'
-        resource url: "${grailsApplication.config.ala.baseURL ?: 'http://www.ala.org.au'}/wp-content/themes/ala2011/images/favicon.ico", attrs: [type: 'ico'], disposition: 'head'
-        resource url: [dir: 'js', file: 'html5.js', plugin: "ala-web-theme"], wrapper: { s -> "<!--[if lt IE 9]>$s<![endif]-->" }, disposition: 'head'
-    }
+//    core {
+//        dependsOn 'jquery'
+//        resource url: "${grailsApplication.config.ala.baseURL ?: 'http://www.ala.org.au'}/wp-content/themes/ala2011/images/favicon.ico", attrs: [type: 'ico'], disposition: 'head'
+//        resource url: [dir: 'js', file: 'html5.js', plugin: "ala-web-theme"], wrapper: { s -> "<!--[if lt IE 9]>$s<![endif]-->" }, disposition: 'head'
+//    }
 
-    bootstrap {
-        dependsOn 'core'
-        resource url: [dir: 'js', file: 'bootstrap.js', plugin: 'ala-web-theme', disposition: 'head']
-        resource url: [dir: 'css', file: 'bootstrap.css', plugin: 'ala-web-theme'], attrs: [media: 'screen, projection, print']
-        resource url: [dir: 'css', file: 'bootstrap-responsive.css', plugin: 'ala-web-theme'], attrs: [media: 'screen', id: 'responsiveCss']
-    }
+//    bootstrap {
+//        dependsOn 'core'
+//        resource url: [dir: 'js', file: 'bootstrap.js', plugin: 'ala-web-theme', disposition: 'head']
+//        resource url: [dir: 'css', file: 'bootstrap.css', plugin: 'ala-web-theme'], attrs: [media: 'screen, projection, print']
+//        resource url: [dir: 'css', file: 'bootstrap-responsive.css', plugin: 'ala-web-theme'], attrs: [media: 'screen', id: 'responsiveCss']
+//    }
 
     knockout {
         resource url: 'js/knockout-2.3.0.js',disposition: 'head'
@@ -35,6 +35,10 @@ modules = {
         resource url: [dir: 'css', file: "jquery-ui.css"]
         resource url: [dir: "js", file: "jquery-ui.min.js"]
         resource url: [dir:'js', file: 'jquery.cookie.js']
+    }
+
+    bugherd {
+        resource url:[dir: 'js', file: 'bugherd.js']
     }
 
     appSpecific {
@@ -58,7 +62,6 @@ modules = {
         dependsOn( 'jquery' )
         resource url: [dir: "/jqwidgets/styles", file: "jqx.base.css"],disposition: 'head'
         resource url: [dir: '/jqwidgets', file: 'jqxcore.js'], disposition: 'head'
-
     }
 
     jqxGrid {

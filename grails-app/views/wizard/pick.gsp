@@ -7,6 +7,7 @@
     <meta name="layout" content="main">
     <title>Add Phylogenetic Tree</title>
     <r:require modules="bootstrap"/>
+    <r:require modules="bugherd"/>
 </head>
 
 <body>

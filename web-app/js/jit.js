@@ -8993,7 +8993,7 @@ $jit.Phylo = (function () {
         if (this.graph.nodes.hasOwnProperty(i)) {
           var node = this.graph.nodes[i];
           node.data.character = {};
-          if (node.data.leaf) {
+          if (node.name && node.data.leaf) {
             for (key in speciesHash) {
               if (speciesHash.hasOwnProperty(key)) {
                 var speciesCharacter = speciesHash[key][firstCharacter];

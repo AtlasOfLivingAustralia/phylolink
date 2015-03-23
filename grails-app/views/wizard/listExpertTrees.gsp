@@ -7,6 +7,7 @@
 <head>
     <meta name="layout" content="main"/>
     <title>Expert Trees</title>
+    <r:require modules="bugherd"/>
 </head>
 
 <body>
