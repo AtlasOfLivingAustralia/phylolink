@@ -44,9 +44,9 @@ listPost = 'http://lists.ala.org.au/ws/speciesList'
 listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test'
 
 //opentree configs
-treemachine_address = 'http://localhost:8000'
-oti_address = 'http://localhost:7478'
-ot_address = 'http://localhost:8000'
+treemachine_address = 'http://phylo:8000'
+oti_address = 'http://phylo:7478'
+ot_address = 'http://phylo:8000'
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
 ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
@@ -325,6 +325,9 @@ environments {
         grails.logging.jul.usebridge = false
         security.cas.contextPath = "/${appName}"
         grails.serverURL = "${serverName}/${appName}"
+        treemachine_address = 'http://localhost:8000'
+        oti_address = 'http://localhost:7478'
+        ot_address = 'http://localhost:8000'
 //        grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
