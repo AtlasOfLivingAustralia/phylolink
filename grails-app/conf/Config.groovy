@@ -1,9 +1,35 @@
 /******* Change this stuff for your project *******/
-appName = 'PhyloLink'
-serverName='http://localhost:8080'
-contextPath='/phylolink'
-//security.cas.uriFilterPattern = ''
-runWithNoExternalConfig = true
+def appName = 'phylolink'
+//serverName='http://localhost:8080'
+//contextPath='/phylolink'
+def ENV_NAME = "${appName.toUpperCase()}_CONFIG"
+default_config = "/data/${appName}/config/${appName}-config.properties"
+//runWithNoExternalConfig = true
+
+if(!grails.config.locations || !(grails.config.locations instanceof List)) {
+    grails.config.locations = []
+}
+
+if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
+    println "[${appName}] Including configuration file specified in environment: " + System.getenv(ENV_NAME);
+    grails.config.locations.add "file:" + System.getenv(ENV_NAME)
+} else if(System.getProperty(ENV_NAME) && new File(System.getProperty(ENV_NAME)).exists()) {
+    println "[${appName}] Including configuration file specified on command line: " + System.getProperty(ENV_NAME);
+    grails.config.locations.add "file:" + System.getProperty(ENV_NAME)
+} else if(new File(default_config).exists()) {
+    println "[${appName}] Including default configuration file: " + default_config;
+    grails.config.locations.add "file:" + default_config
+} else {
+    println "[${appName}] No external configuration file defined."
+}
+
+println "[${appName}] (*) grails.config.locations = ${grails.config.locations}"
+
+/******************************************************************************\
+ *  RELOADABLE CONFIG
+ \******************************************************************************/
+reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
+
 /******* End of change this stuff for your project *******/
 
 /*** Phylo Link config *******/
@@ -44,9 +70,6 @@ listPost = 'http://lists.ala.org.au/ws/speciesList'
 listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test'
 
 //opentree configs
-treemachine_address = 'http://phylo:8000'
-oti_address = 'http://phylo:7478'
-ot_address = 'http://phylo:8000'
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
 ot_api = "${ot_address}/api/v1"
 tree_api = "${ot_api}/study/STUDYID/tree/TREEID"
@@ -193,22 +216,13 @@ facets ='''
 }
 '''
 
-/** elastic search configs end **/
-/******* ALA standard config ************/
-//headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
-security.cas.casServerName = "https://auth.ala.org.au"
-security.cas.uriFilterPattern='/(?!phylo|tree|ala).*'
-security.cas.authenticateOnlyIfLoggedInPattern = "/phylo/show/.*,/tree/.*,/ala/.*"
-security.cas.uriExclusionFilterPattern = "/images.*,/css.*,/js.*"
-security.cas.loginUrl = "${security.cas.casServerName}/cas/login"
-security.cas.logoutUrl = "${security.cas.casServerName}/cas/logout"
-security.cas.casServerUrlPrefix = "${security.cas.casServerName}/cas"
-security.cas.bypass = false
-ala.baseURL = "http://www.ala.org.au"
-bie.baseURL = "http://bie.ala.org.au"
-bie.searchPath = "/search"
-auth.admin_role = "ROLE_ADMIN"
+
 grails.project.groupId = au.org.ala // change this to alter the default package name and Maven publishing destination
+
+//localAuthService properties
+auth.userDetailsUrl='http://auth.ala.org.au/userdetails/userDetails/'
+auth.userNamesForIdPath='getUserList'
+auth.userNamesForNumericIdPath='getUserListWithIds'
 
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
@@ -301,35 +315,10 @@ grails.hibernate.osiv.readonly = false
 
 environments {
     development {
-        serverName = 'http://dev.ala.org.au:8080'
-//        server.url = 'http://dev.ala.org.au:8080'
-        security.cas.appServerName = serverName
-        security.cas.contextPath = "/${appName}"
-        grails.logging.jul.usebridge = true
-        grails.serverURL = "${serverName}/${appName}"
     }
     test {
-        serverName = 'http://phylolink-dev.ala.org.au'
-        contextPath = ''
-        security.cas.appServerName = serverName
-        grails.logging.jul.usebridge = true
-        security.cas.contextPath = ""
-        grails.serverURL = "${serverName}/${appName}"
-//        grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
     }
     production {
-        serverName = 'http://phylolink.ala.org.au'
-        contextPath = ""
-        security.cas.appServerName = serverName
-        grails.logging.jul.usebridge = false
-        security.cas.contextPath = "/${appName}"
-        grails.serverURL = "${serverName}/${appName}"
-        treemachine_address = 'http://localhost:8000'
-        oti_address = 'http://localhost:7478'
-        ot_address = 'http://localhost:8000'
-//        grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }
 
