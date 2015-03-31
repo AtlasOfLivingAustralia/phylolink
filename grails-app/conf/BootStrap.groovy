@@ -5,7 +5,7 @@ import au.org.ala.phyloviz.Owner
 
 class BootStrap {
     def opentreeService
-    def skip = false
+    def skip = true
 //    def elasticService
     def grailsApplication
 

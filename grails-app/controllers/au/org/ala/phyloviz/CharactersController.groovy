@@ -6,6 +6,7 @@ class CharactersController {
 
     def userService
     def charactersService
+    def alaService
 
     /**
      *
@@ -35,5 +36,38 @@ class CharactersController {
      */
     def getUrl(druid){
         return createLink(controller: 'ala', action: 'getCharJson') + '?drid=' + druid;
+    }
+
+    /**
+     *
+     */
+    def getKeys(){
+        def drid = params.drid;
+        def result = charactersService.getKeys( drid );
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render  result as JSON;
+        }
+    }
+
+    /**
+     * converts character data stored in list tool into charJSON
+     */
+    def getCharJsonForKeys(){
+        String drid = params.drid;
+        String cookie = request.getHeader('Cookie')
+        String keys = params.keys
+        log.debug(drid)
+        def result
+        if(drid){
+            result = alaService.getCharJsonForKeys(drid, cookie, keys);
+        }
+
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
     }
 }

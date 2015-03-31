@@ -1,5 +1,6 @@
 package au.org.ala.phyloviz
 
+import grails.converters.JSON
 import grails.transaction.Transactional
 
 import java.util.regex.Pattern
@@ -8,6 +9,9 @@ import java.util.regex.Pattern
 class CharactersService {
     def alaService
     def g
+    def webService
+    def grailsApplication
+
     def getCharUrl( ArrayList<Characters> lists ) {
         def result=[]
         lists.each{ list->
@@ -96,4 +100,24 @@ class CharactersService {
         return charMap
     }
 
+    /**
+     *
+     * @param drid -
+     */
+    def getKeys( drid ){
+        def url = grailsApplication.config.listKeys.replace('DRID', drid)
+        def result = [];
+        try{
+            result = webService.get( url );
+            if( result instanceof String){
+                result = JSON.parse(result);
+            }
+        } catch (Exception e ){
+            result = [
+                    error: 'An error occurred',
+                    message: e.message
+            ]
+        }
+        return  result;
+    }
 }

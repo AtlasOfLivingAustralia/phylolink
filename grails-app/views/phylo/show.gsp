@@ -93,7 +93,14 @@
         id: ${phyloInstance.getId()},
         title:'<g:message message="${phyloInstance.getTitle().replace('\'', '\\\'')}"/>',
         titleUrl: '${createLink(controller: 'phylo', action: 'saveTitle')}',
-        pjId: 'info'
+        pjId: 'info',
+        charOnRequest: true,
+        charOnRequestListKeys:"${createLink(controller: 'characters', action: 'getKeys')}",
+        charOnRequestBaseUrl:"${createLink(controller: 'characters', action: 'getCharJsonForKeys')}",
+        charOnRequestParams:{
+            drid:undefined,
+            keys:undefined
+        }
     }
 
     google.load("visualization", "1", {packages: ["corechart"]});
@@ -142,8 +149,8 @@
             doSync: ${edit},
             syncData: {
                 id: ${phyloInstance.getId()}
-    },
-    syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
+            },
+            syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
             charactersList : {
                 url: '${createLink(controller: 'characters', action: 'list')}',
                 type: 'GET',
@@ -153,7 +160,12 @@
             upload: {
                 url: "${createLink(controller: 'ala', action: 'saveAsList')}",
                 type: 'POST'
-            }
+            },
+            charOnRequest: config.charOnRequest,
+            charOnRequestBaseUrl: config.charOnRequestBaseUrl,
+            charOnRequestParams: config.charOnRequestParams,
+            charOnRequestListKeys: config.charOnRequestListKeys
+
         });
 var map = new Map({
     id: 'map',

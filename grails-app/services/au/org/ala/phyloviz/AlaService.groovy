@@ -280,36 +280,23 @@ class AlaService {
      */
     def getListCharJson(drid, cookie){
         def url = grailsApplication.config.listCSV;
-        def charJson = [:];
-//        def keyValues;
+        def charJson;
         url = url.replace('DRID', drid);
-//        log.debug(url);
-//        keyValues = webService.get(url);
-//        keyValues = keyValues?:'[]'
-//        keyValues = JSON.parse(keyValues);
-//        keyValues.eachWithIndex{ value, i ->
-////            log.debug(value);
-//            if(!charJson[value.name]){
-//                charJson[value.name] = [:]
-//            }
-//            value.kvpValues?.eachWithIndex{ l, j->
-////                log.debug(l);
-//                if(l.value?.isInteger()){
-//                    l.value = Integer.parseInt(l.value);
-//                } else if(l.value?.isDouble()){
-//                    l.value = Double.parseDouble(l.value);
-//                }
-//                if(l.value != 'undefined'){
-//                    charJson[value.name][l.key]= [l.value]
-//                } else {
-//                    charJson[value.name][l.key]= []
-//                }
-//
-//            }
-//        }
-//        log.debug(cookie)
         def csv = webService.get(url,cookie);
-//        log.debug(csv);
+        charJson = charactersService.convertCharCsvToJson(csv,'||');
+        return charJson;
+    }
+
+    /**
+     * get a list resource id and return it in charJSON
+     * @param drid
+     * @return charJSON
+     */
+    def getCharJsonForKeys(drid, cookie, keys){
+        def url = grailsApplication.config.listCsvForKeys;
+        def charJson;
+        url = url.replace('DRID', drid).replace('KEYS', keys);
+        def csv = webService.get(url,cookie);
         charJson = charactersService.convertCharCsvToJson(csv,'||');
         return charJson;
     }
