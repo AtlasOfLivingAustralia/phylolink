@@ -6,7 +6,7 @@ import au.org.ala.phyloviz.Owner
 class BootStrap {
     def opentreeService
     def skip = false
-    def overwrite = false
+    def overwrite = true
 //    def elasticService
     def grailsApplication
 
