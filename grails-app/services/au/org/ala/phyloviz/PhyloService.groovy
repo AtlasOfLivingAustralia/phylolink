@@ -13,6 +13,10 @@ class PhyloService {
                 owner: owner
         ])
         viz.save( flush: true )
+        if(!viz.hasErrors()){
+            viz.setTitle('My viz #'+viz.getId())
+            viz.save(flush: true);
+        }
         return viz
     }
 }

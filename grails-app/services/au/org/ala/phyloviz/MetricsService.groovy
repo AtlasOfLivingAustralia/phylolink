@@ -80,7 +80,7 @@ class MetricsService {
      * @return String - processed tree
      */
     def treeProcessing(String tree){
-        return tree.replace('\'', '')
+        return tree.replace('\'', '').replace('_',' ');
     }
 
     def getLeafNames( JadeTree tree ){

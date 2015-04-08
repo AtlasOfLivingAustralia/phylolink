@@ -13,7 +13,7 @@
 </head>
 
 <body>
-<div class="container">
+<div class="container" style="min-height: 700px">
     <span class="nav-collapse collapse">
         %{--Search TreeBASE--}%
         <form class="form-search form-inline">

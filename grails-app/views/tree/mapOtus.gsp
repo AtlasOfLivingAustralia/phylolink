@@ -13,6 +13,7 @@
 </head>
 
 <body>
+<div style="min-height: 700px">
 <div class="container">
     <legend>Reconcile names with ALA taxonomy</legend>
     <p style="font-size:14px; max-width: 60em;">Reconcile node names with ALA taxonomy.
@@ -40,6 +41,7 @@
             </g:form>
         </div>
     </div>
+</div>
 </div>
 
 <script>

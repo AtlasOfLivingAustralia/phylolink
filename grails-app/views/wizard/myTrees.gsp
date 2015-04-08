@@ -11,7 +11,15 @@
 </head>
 
 <body>
-<div class="container">
+<div class="container"  style="min-height: 700px">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
+            </ul>
+        </div>
+    </div>
     <g:if test="${flash.message}">
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>

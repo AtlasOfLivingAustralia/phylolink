@@ -5,7 +5,7 @@ var Character = function (options) {
     // emitter mixin. adding functions that support events.
     new Emitter(this);
     var $ = jQuery;
-    var that = this;
+    var that = this, character = this;
 
     options = $.extend({
         type: 'GET',
@@ -101,6 +101,7 @@ var Character = function (options) {
     var id = options.id;
     var inputId = id + 'autoComplete';
     var pj = options.pj;
+    var characterListLoaded = false;
     var template3 = '\
     <div id="charactermain">\
         <div class="btn btn-xs btn-primary top-buffer offset1" data-bind="click: addCharacter">Add Character to Tree</div>\
@@ -136,7 +137,7 @@ var Character = function (options) {
     var template2 = '\
     <div >\
         <div class="bs-callout" id="uploadCharacters" style="position: relative">\
-        <h4 style="cursor:pointer" id="uploadCharactersTitle">Upload your character data</h4>\
+        <h4 style="cursor:pointer" id="uploadCharactersTitle"><a>Upload your character data</a></h4>\
         <div id="minimizeUpload">\
         <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">\
         <i>You need modern browser such as Google Chrome 40 or Safari 8</i>\
@@ -172,14 +173,14 @@ var Character = function (options) {
     </div>\
     <div id="charactermain">\
         <div class="bs-callout" style="position: relative" id="pickFromList">\
-        <h4>Or, pick a character dataset from the available list:</h4>\
+        <h4><a>Or, pick a character dataset from the available list:</a></h4>\
         <form id="sourceToolbar" class="form-horizontal">\
-        <div class="control-group">\
-        <label class="control-label" for="">List of characters available:</label>\
-        <div class="controls">\
-            <select id="sourceChar" data-bind="options:lists,optionsText:\'title\',value:list,optionsCaption:\'Choose..\', event:{change:loadNewCharacters}" required></select>\
+            <div class="control-group">\
+                <label class="control-label" for="">List of characters available:</label>\
+                <div class="controls">\
+                    <select id="sourceChar" data-bind="options:lists,optionsText:\'title\',value:list,optionsCaption:\'Choose..\', event:{change:loadNewCharacters}" required></select>\
+                </div>\
             </div>\
-        </div>\
         </form>\
     </div>\
     <div class="btn btn-xs btn-primary top-buffer offset4" data-bind="click: addCharacter, visible:list(), attr:{disabled:listLoading()}">Add Character to Tree</div>\
@@ -251,6 +252,8 @@ var Character = function (options) {
             'statechange',
             'moved',
             'edited',
+
+            // when new characters are added to the list.
             'newchar',
             'removed'
         ]
@@ -309,11 +312,11 @@ var Character = function (options) {
             self.emit('statechange');
         }
 
-        self.addNamedCharacter = function (char) {
+        self.addNamedCharacter = function (char, silent) {
             var character = self.addCharacter(char);
             // to hide input tag and to bring label visible.
             self.clearCharacter(character,null)
-            char && self.emit('statechange', self.charlist(),true);
+            !silent && char && self.emit('statechange', self.charlist(),true);
         };
 
         self.isCharacterSelected = function (character) {
@@ -352,7 +355,7 @@ var Character = function (options) {
 
         self.changeName = function (name, char) {
             char.name(name);
-            self.newChar && self.emit('newchar', char.id(), char.name());
+            self.newChar && self.emit('newchar',self.charlist());
             self.newChar = false;
             self.emit('statechange', self.charlist());
         }
@@ -432,6 +435,10 @@ var Character = function (options) {
                 var id = data.id(), charName = data.name(), charJson,
                     node = pj.getSelection(),
                     list;
+                if(!charJson){
+                    return;
+                }
+
                 if(node){
                     list = pj.getChildrenName(node);
                     charJson = that.charJsonSubset(list);
@@ -564,13 +571,45 @@ var Character = function (options) {
     }
 
     //get charJson
-    this.setCharJson = function (char) {
+    this.setCharJson = function (char, keepSelection) {
+        var remove = !keepSelection;
         options.characterloaded = false;
         charJson = char;
-        characterList = this.getCharList(charJson);
-        view.removeAllCharacters();
+        if(!options.charOnRequest){
+            characterList = this.getCharList(charJson);
+        }
+
+        remove && view.removeAllCharacters();
         options.characterloaded = true;
-        this.emit('setcharacters')
+        this.emit('setcharacters', view.charlist())
+    }
+
+    /**
+     * set keys as a list of characters
+     * @param charList an array of character list
+     */
+
+    this.setCharList = function( list ){
+        characterList = list;
+        view.removeAllCharacters();
+        this.setCharacterListLoaded(true);
+        this.emit('setcharacterlist');
+    }
+
+    /**
+     *
+     */
+    this.getCharListFromUrl = function(url, params){
+        this.setCharacterListLoaded(false);
+        var that = this
+        $.ajax({
+            url: url,
+            data: params,
+            success: function (data) {
+                that.setCharList(data);
+                this.setCharacterListLoaded(true);
+            }
+        })
     }
 
     this.getCharList = function (char) {
@@ -599,6 +638,81 @@ var Character = function (options) {
             pj.drawTreeWithoutCharacters()
         }
         that.emit('treecolored');
+    }
+
+    /**
+     * get charjson for the list of characters specified
+     * @param keys - array of string
+     */
+    this.getCharJsonForKey = function( keys ){
+        var params = options.charOnRequestParams, that = this;
+        params.keys = keys.join(',');
+        $.ajax({
+            url: options.charOnRequestBaseUrl,
+            data: params,
+            success: function(data){
+                var charjson = that.charJsonMerge(charJson, data);
+                that.setCharJson( charjson, true );
+            }
+        })
+    }
+
+    /**
+     * merge the second charjson to the first charjson
+     */
+    this.charJsonMerge = function(first, second){
+        if( !second ){
+            return first;
+        } else if(!first){
+            return second;
+        }
+
+        var species, char;
+        for(species in second){
+            if(!first[species]){
+                first[species] = second[species];
+            } else {
+                for(char in second[species]){
+                    if(!first[species][char]){
+                        first[species][char] = second[species][char];
+                    } else {
+                        $.merge(first[species][char], second[species][char]);
+                    }
+                }
+            }
+        }
+
+        return first;
+    }
+
+    /**
+     *
+     */
+    this.checkCharJson = function(selected){
+        if(!selected){
+            that.colorTreeWithCharacter()
+            return;
+        }
+        var present = false, notPresent = [], key;
+        for(var species in charJson){
+            for(var i=0;i<selected.length; i++){
+                key = selected[i];
+                if( !(key in charJson[species]) ){
+                    notPresent.push(key);
+                }
+            }
+            break;
+        }
+
+        if(!charJson){
+            notPresent = selected;
+        }
+
+        if(notPresent.length == 0){
+            that.colorTreeWithCharacter(selected)
+        } else {
+            that.getCharJsonForKey(notPresent)
+        }
     }
 
     this.chartHover = function () {
@@ -674,7 +788,12 @@ var Character = function (options) {
         return result;
     }
 
+    /**
+     * refreshes all character charts.
+     * @param node
+     */
     this.updateCharts = function(node){
+        node = node || pj.getSelection();
         var chars = view.characters();
         var i, data;
         data = pj.getChildrenName(node);
@@ -683,19 +802,52 @@ var Character = function (options) {
         }
     }
 
+    /**
+     * if character loading is async then refresh chart.
+     * note: this function is called when setcharacters event is fired.
+     */
+    this.showChartCharOnRequest = function(){
+        if(options.charOnRequest){
+            this.updateCharts()
+        }
+    }
+
+    this.getCharacterListLoaded = function(){
+        return characterListLoaded;
+    }
+
+    this.setCharacterListLoaded = function(flag){
+        return characterListLoaded = !!flag;
+    }
+
     this.initCharacters = function(){
-        var char, flag = false;
-        // make sure tree and character data are loaded.
-        if(options.initCharacters.characters && pj.isTreeLoaded() && that.isCharacterLoaded()){
-            while( char = options.initCharacters.characters.shift()) {
-                view.addNamedCharacter(char.name);
-                flag = true;
-            }
-            // click selection again otherwise, this will not reflect the character color on map.
-            if( flag ){
-                if(pj.getSelection()){
-                    pj.clickNode(pj.getSelection().id);
+        var char, flag = false, chars;
+        if( options.initCharacters.characters  && options.initCharacters.characters.length ){
+            if(options.charOnRequest ){
+                if( character.getCharacterListLoaded()){
+                    chars = [];
+                    while( char = options.initCharacters.characters.shift()) {
+                        chars.push(char.name);
+                        view.addNamedCharacter(char.name, true);
+                    }
+
+                    chars.length && character.getCharJsonForKey(chars);
                 }
+            } else {
+                // make sure tree and character data are loaded.
+                if( pj.isTreeLoaded() && that.isCharacterLoaded()){
+                    while( char = options.initCharacters.characters.shift()) {
+                        view.addNamedCharacter(char.name);
+                        flag = true;
+                    }
+                    // click selection again otherwise, this will not reflect the character color on map.
+                    if( flag ){
+                        if(pj.getSelection()){
+                            pj.clickNode(pj.getSelection().id);
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -819,24 +971,32 @@ var Character = function (options) {
     }
 
     this.loadCharacterFromUrl = function(url, select){
-        view.listLoading(true)
-        var spinner = new Spinner(options.spinner);
-        spinner.spin();
-        $('#sourceToolbar').append(spinner.el)
-        $('#charactermain .btn-xs').append(spinner.el)
-        $.ajax({
-            url: url,
-            success: function (data) {
-                view.listLoading(false);
-                spinner.stop();
-                that.setCharJson(data);
-                select && view.list(select);
-            },
-            error: function(){
-                view.listLoading(false);
-                spinner.stop();
-            }
-        })
+        var drid, params = options.charOnRequestParams;
+        if(!options.charOnRequest){
+            view.listLoading(true)
+            var spinner = new Spinner(options.spinner);
+            spinner.spin();
+            $('#sourceToolbar').append(spinner.el)
+            $('#charactermain .btn-xs').append(spinner.el)
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    view.listLoading(false);
+                    spinner.stop();
+                    that.setCharJson(data);
+                    select && view.list(select);
+                },
+                error: function(){
+                    view.listLoading(false);
+                    spinner.stop();
+                }
+            })
+        } else if(options.charOnRequest){
+            drid = url.match(/[^\d=]+\d+/g);
+            params.drid = drid.length && drid[0];
+            this.getCharListFromUrl(options.charOnRequestListKeys, params);
+        }
+
     }
 
     this.startSpinner = function(){
@@ -853,6 +1013,7 @@ var Character = function (options) {
     }
 
     options.characterloaded = false;
+
     /**
      * load character from url or from provided list.
      */
@@ -957,11 +1118,14 @@ var Character = function (options) {
     /**
      * adding event listeners
      */
-    view.on('statechange', this.colorTreeWithCharacter)
+    view.on('newchar', this.checkCharJson)
 //    view.on('newchar', this.addChart)
     pj.on('click', this.updateCharts);
+    this.on('setcharacterlist',this.initCharacters)
     this.on('setcharacters',this.initCharacters)
-//    this.on('setcharacters',this.colorTreeWithCharacter)
+    view.on('statechange',this.colorTreeWithCharacter)
+    this.on('setcharacters',this.colorTreeWithCharacter)
+    this.on('setcharacters', this.showChartCharOnRequest)
 
     pj.on('treeloaded', this.initCharacters);
 //    pj.on('treeloaded',this.colorTreeWithCharacter)

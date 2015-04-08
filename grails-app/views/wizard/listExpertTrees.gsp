@@ -12,7 +12,15 @@
 
 <body>
 
-<div class="container">
+<div class="container"  style="min-height: 700px">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
+            </ul>
+        </div>
+    </div>
     <legend>Choose from a list of expert recommended trees</legend>
     <p style="font-size:14px; max-width: 60em">List of expert recommended trees. You can click
         <span class="label label-info">open</span> button to create a visualisation. Or, use

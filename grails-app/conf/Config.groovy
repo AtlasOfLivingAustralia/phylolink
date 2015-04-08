@@ -68,6 +68,7 @@ listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 listPost = 'http://lists.ala.org.au/ws/speciesList'
 //listPost = 'http://lists.nci-simon.ala.org.au/ws/speciesList'
 listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test'
+listsPermUrl = 'http://lists.ala.org.au/speciesListItem/list/DRID'
 
 //opentree configs
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"

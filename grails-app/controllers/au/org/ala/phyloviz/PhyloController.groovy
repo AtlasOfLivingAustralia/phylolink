@@ -234,12 +234,12 @@ class PhyloController {
         def treeId, studyId, tree, speciesList
         def noTreeText = params.noTreeText?:false;
         noTreeText = noTreeText.toBoolean()
-        treeId = params.treeId?.toString()
-        studyId = params.studyId?.toString()
-        tree = params.newick;
-        speciesList = params.speciesList
+        treeId = params.treeId?.toString()?:''
+        studyId = params.studyId?.toString()?:''
+        tree = params.newick?:'';
+        speciesList = params.speciesList?:'[]'
         try {
-            def result = this.getPDCalc(treeId, studyId, tree, speciesList)
+            def result = treeService.getPDCalc(treeId, studyId, tree, speciesList)
             result = noTreeText ? this.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
             render(contentType: 'application/json', text: result as JSON)
         } catch (Exception e){
@@ -247,48 +247,6 @@ class PhyloController {
             log.debug( e.stackTrace )
             log.debug('breaking');
         }
-    }
-
-    def getPDCalc( String treeId, String studyId, String tree, String speciesList){
-        def startTime, deltaTime
-        def treeUrl, type, i,pd, sList;
-        def studyMeta = [:], result =[], trees = [], input =[]
-        type = tree?"tree":treeId?"gettree":"besttrees"
-        switch (type){
-            case 'tree':
-                studyMeta [grailsApplication.config.treeMeta.treeText]=tree
-                studyMeta [ grailsApplication.config.studyMetaMap.name ]= message(code: 'phylo.userTreeName', default: 'User tree' )
-                studyMeta = opentreeService.addTreeMeta(metricsService.getJadeTree( tree ), studyMeta )
-                input.push( studyMeta )
-                break;
-            case 'gettree':
-                studyMeta = this.getTreeMeta(treeId, studyId, null )
-                input.push( studyMeta )
-                break;
-            case 'besttrees':
-                startTime = System.currentTimeMillis()
-                input = this.getExpertTreeMeta();
-                deltaTime = System.currentTimeMillis() - startTime
-                log.debug( "time elapse: ${deltaTime}")
-                input = input[grailsApplication.config.expertTreesMeta.et]
-                break;
-        }
-        sList = new JsonSlurper().parseText( speciesList )
-
-        for( i = 0; i < input.size(); i++){
-            studyMeta = [:]
-            log.debug( input[i] );
-            input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
-            // calculate pd
-            pd = metricsService.pd( input[i][grailsApplication.config.treeMeta.treeText], sList )
-                input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
-            // merge the variables
-            pd.each {k,v->
-                input[i][k]=v
-            }
-            result.push( input[i] )
-        }
-        return  result;
     }
 
     def getTree(){
@@ -314,25 +272,6 @@ class PhyloController {
         render ( text: ret.toString() )
     }
 
-    /**
-     * attaches metadata of tree onto given metadata variable
-     * @param treeId
-     * @param studyId
-     * @param meta
-     * @return
-     */
-    private def getTreeMeta(String treeId, String studyId, meta){
-        def startTime, deltaTime
-        meta = meta?:[:]
-        meta = this.getTreeText( treeId, studyId, meta )
-        meta = utilsService.getViewerUrl(treeId, studyId, meta)
-        meta = opentreeService.getStudyMetadata( studyId, meta )
-        log.debug( meta )
-        def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
-        meta = opentreeService.addTreeMeta(jadetree, meta )
-        return  meta
-    }
-
     private def removeProp( Collection meta, String prop){
         for ( def i = 0 ; i < meta.size(); i++){
             meta[i]?.remove( prop )
@@ -346,20 +285,6 @@ class PhyloController {
     }
 
     /**
-     * this func creates a url and fetches its newick string
-     * @param treeId
-     * @param studyId
-     * @param meta
-     * @return
-     */
-    private def getTreeText(String treeId, String studyId, meta){
-        meta = meta?:[:]
-        def tree = webService.get( opentreeService.getTreeUrlNewick(treeId, studyId) )
-        meta[grailsApplication.config.treeMeta.treeText] = tree;
-        return meta
-    }
-
-    /**
      * webservice that returns trees recommended by experts
      * @return a json
      * {
@@ -368,46 +293,8 @@ class PhyloController {
      */
     def getExpertTrees(){
         def noTreeText = params.noTreeText?:false;
-        def result = this.getExpertTreeMeta()
-        result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
+        def result = treeService.getExpertTrees();
         render ( contentType: 'application/json', text: result as JSON)
-    }
-
-    def getExpert(){
-        def noTreeText = params.noTreeText?:false;
-        def exp = Tree.findAllWhere(['expertTree':true]);
-        def result = []
-//        log.debug(result);
-        exp.each {tree->
-//            log.debug(tree as JSON)
-            result.push(tree as JSON);
-        }
-        result[grailsApplication.config.expertTreesMeta.et] = noTreeText ? this.removeProp(result[grailsApplication.config.expertTreesMeta.et] , grailsApplication.config.treeMeta.treeText ):result[grailsApplication.config.expertTreesMeta.et]
-        render ( contentType: 'application/json', text: result as JSON)
-    }
-
-    /**
-     *
-     * @param meta
-     * metadata variable to which the result of this function gets added to
-     * @return
-     */
-    private def getExpertTreeMeta( meta ) {
-        meta = meta?:[:]
-        def trees = grailsApplication.config.expert_trees, i, studyId , treeId, input = [], studyMeta, temp
-        for( i = 0;i < trees.size(); i++ ){
-            if( trees[i][grailsApplication.config.treeMeta.treeText] == null ){
-                studyId = trees[i].studyId?.toString()
-                treeId = trees[i].treeId?.toString()
-                studyMeta = this.getTreeMeta( treeId, studyId, trees[i] )
-                input.push( studyMeta.clone() )
-            } else {
-                input.push( trees[i].clone() )
-            }
-
-        }
-        meta[ grailsApplication.config.expertTreesMeta.et ] = input
-        return  meta
     }
 
     /**
@@ -418,10 +305,6 @@ class PhyloController {
         def meta = [:]
         def result = this.getStudiesMeta( meta );
         render ('contentType':'application/json', text: result as JSON )
-    }
-
-    private def getStudiesMeta( meta ){
-
     }
 
     def download(){

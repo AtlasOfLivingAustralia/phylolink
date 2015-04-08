@@ -8,13 +8,16 @@ import java.util.regex.Pattern
 class CharactersService {
     def alaService
     def g
+    def grailsApplication
+
     def getCharUrl( ArrayList<Characters> lists ) {
         def result=[]
         lists.each{ list->
             result.push([
                 'url': getUrl(list.drid),
                 'title':list.title,
-                'id': list.id
+                'id': list.id,
+                'listurl': grailsApplication.config.listsPermUrl.replace('DRID', list.drid)
             ]);
         }
         return result
