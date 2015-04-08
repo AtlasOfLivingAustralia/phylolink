@@ -463,14 +463,17 @@ class TreeService {
      * get expert trees from database
      * return: an array of expert trees
      */
-    public def getExpertTrees(){
+    public def getExpertTrees(noTreeText){
         def exp = Tree.findAllWhere(['expertTree':true]);
         ConvertTreeToObject cv = new ConvertTreeToObject();
-        def result = [], obj;
+        def result = [];
         exp.each { tree ->
-            obj = cv.convert(tree)
+            def obj = cv.convert(tree)
             obj = opentreeService.addTreeMeta(metricsService.getJadeTree(
                     tree[grailsApplication.config.treeMeta.treeText] ), obj);
+            if(noTreeText){
+                obj.remove(grailsApplication.config.treeMeta.treeText)
+            }
             result.push(obj);
         }
        return result;
@@ -502,10 +505,9 @@ class TreeService {
                 break;
             case 'besttrees':
                 startTime = System.currentTimeMillis()
-                input = this.getExpertTrees();
+                input = this.getExpertTrees(false);
                 deltaTime = System.currentTimeMillis() - startTime
                 log.debug( "time elapse: ${deltaTime}")
-                input = input[grailsApplication.config.expertTreesMeta.et]
                 break;
         }
 
@@ -529,4 +531,5 @@ class TreeService {
 
         return  result;
     }
+
 }

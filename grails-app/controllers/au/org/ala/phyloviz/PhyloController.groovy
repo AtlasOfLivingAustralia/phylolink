@@ -10,8 +10,6 @@ import static org.springframework.http.HttpStatus.*
  */
 class PhyloController {
     def webService;
-    def metricsService;
-    def opentreeService
     def utilsService
     def userService
     def treeService
@@ -232,15 +230,14 @@ class PhyloController {
 
     def getPD( ){
         def treeId, studyId, tree, speciesList
-        def noTreeText = params.noTreeText?:false;
-        noTreeText = noTreeText.toBoolean()
+        Boolean noTreeText = params.noTreeText?Boolean.parseBoolean(params.noTreeText):false;
         treeId = params.treeId?.toString()?:''
         studyId = params.studyId?.toString()?:''
         tree = params.newick?:'';
         speciesList = params.speciesList?:'[]'
         try {
             def result = treeService.getPDCalc(treeId, studyId, tree, speciesList)
-            result = noTreeText ? this.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
+            result = noTreeText ? treeService.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
             render(contentType: 'application/json', text: result as JSON)
         } catch (Exception e){
             log.debug( e.message )
@@ -255,8 +252,8 @@ class PhyloController {
         def noTreeText = params.noTreeText?:false;
         noTreeText = noTreeText.toBoolean()
         def meta = [:]
-        meta = this.getTreeMeta(treeId, studyId, meta)
-        meta = noTreeText? this.removeProp( meta , grailsApplication.config.treeMeta.treeText ): meta ;
+        meta = treeService.getTreeMeta(treeId, studyId, meta)
+        meta = noTreeText? treeService.removeProp( meta , grailsApplication.config.treeMeta.treeText ): meta ;
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})")
         } else {
@@ -267,21 +264,7 @@ class PhyloController {
     public def params(){
         def url = 'http://biocache.ala.org.au/ws/webportal/params'
         def ret = webService.postData(url, [fq:params.fq])
-//        def ret = webService.postData(url,'/ws/webportal/params',[fq:params.fq])
-    //        log.debug( "POST return" +ret.readLines() )
         render ( text: ret.toString() )
-    }
-
-    private def removeProp( Collection meta, String prop){
-        for ( def i = 0 ; i < meta.size(); i++){
-            meta[i]?.remove( prop )
-        }
-        return meta;
-    }
-
-    private def removeProp( HashMap meta , String prop ){
-        meta?.remove( prop )
-        return meta;
     }
 
     /**
@@ -292,8 +275,8 @@ class PhyloController {
      * }
      */
     def getExpertTrees(){
-        def noTreeText = params.noTreeText?:false;
-        def result = treeService.getExpertTrees();
+        Boolean noTreeText = params.noTreeText?Boolean.parseBoolean(params.noTreeText):false;
+        def result = treeService.getExpertTrees(noTreeText);
         render ( contentType: 'application/json', text: result as JSON)
     }
 
