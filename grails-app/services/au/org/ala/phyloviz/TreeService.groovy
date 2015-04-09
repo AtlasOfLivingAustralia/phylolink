@@ -419,9 +419,22 @@ class TreeService {
              temp = to.convert(trees[i]);
              temp = opentreeService.addTreeMeta(metricsService.getJadeTree(
                      trees[i][grailsApplication.config.treeMeta.treeText] ), temp);
+             getViewerUrl(null,trees[i].getId(), temp);
              result.push( temp )
          }
          return  result
+    }
+
+    /**
+     * get a tree for an id.
+     * @param id
+     * @return
+     */
+    def getTree( Integer id){
+        Tree tree = Tree.findById(id);
+        ConvertTreeToObject to = new ConvertTreeToObject();
+        tree = to.convert(tree);
+        return tree
     }
 
     /**
@@ -447,14 +460,14 @@ class TreeService {
         return meta
     }
 
-    private def removeProp( Collection meta, String prop){
+    def removeProp( Collection meta, String prop){
         for ( def i = 0 ; i < meta.size(); i++){
             meta[i]?.remove( prop )
         }
         return meta;
     }
 
-    private def removeProp( HashMap meta , String prop ){
+    def removeProp( HashMap meta , String prop ){
         meta?.remove( prop )
         return meta;
     }
@@ -471,6 +484,7 @@ class TreeService {
             def obj = cv.convert(tree)
             obj = opentreeService.addTreeMeta(metricsService.getJadeTree(
                     tree[grailsApplication.config.treeMeta.treeText] ), obj);
+            getViewerUrl(null,tree.getId(),obj);
             if(noTreeText){
                 obj.remove(grailsApplication.config.treeMeta.treeText)
             }
@@ -532,4 +546,12 @@ class TreeService {
         return  result;
     }
 
+    /**
+     * can the current user access the tree
+     * @param id
+     * @return
+     */
+    def canAccess(id){
+        return true;
+    }
 }

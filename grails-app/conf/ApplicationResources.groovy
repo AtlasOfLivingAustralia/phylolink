@@ -113,7 +113,8 @@ modules = {
     }
 
     phylojive {
-        dependsOn('bootstrap','emitter')
+        dependsOn('bootstrap','emitter','knockout3')
+        resource url: 'js/spin.min.v2.0.1.js'
         resource url: 'css/PhyloJive.css', disposition: 'head'
         resource url: 'js/jsphylosvg-min.js', disposition: 'head'
         resource url: 'js/jit.js', disposition: 'head'

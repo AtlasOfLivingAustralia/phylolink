@@ -284,4 +284,12 @@ class TreeController {
         }
     }
 
+    def download(Tree tree){
+        response.setHeader("Content-disposition", "attachment;filename=tree.txt")
+        if( tree && treeService.canAccess()){
+            render( contentType: 'text/plain', text:tree.getTree());
+        } else {
+            render(contentType: 'text/plain', fileName:'tree.txt', text: 'An error occurred or you are not authorized to access this tree.');
+        }
+    }
 }

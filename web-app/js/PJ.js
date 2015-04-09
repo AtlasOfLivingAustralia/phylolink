@@ -951,6 +951,11 @@ var PJ = function (params) {
                     getTree(obj.url, setTree, obj)
                 }
                 break;
+            default :
+                // if no format is given, then get it from url. remember the url should provide tree and format.
+                if (obj.url) {
+                    getTree(obj.url, setTree, obj)
+                }
         }
 
         if (dataObject) {
