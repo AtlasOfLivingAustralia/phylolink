@@ -84,7 +84,6 @@
 <r:script disposition="defer">
     var config ={
         type:'ala',
-        proxyUrl: '/phylolink/ala/jsonp',
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${studyId}&treeid=${treeId}",
         format: undefined,
         edit:false,

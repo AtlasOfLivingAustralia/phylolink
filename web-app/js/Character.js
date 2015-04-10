@@ -144,7 +144,7 @@ var Character = function (options) {
         <label class="control-label">Choose a CSV file*:</label>\
         <div class="controls">\
         <input id="csvFile" type="file" name="file" value="Upload" accept=".csv" required/>\
-        <label><a data-bind="attr{href:sampleCSV}">Download sample CSV file from here.</a></label    >\
+        <label><a data-bind="attr{href:sampleCSV}" target="_blank">Download sample CSV file from here.</a></label    >\
         </div>\
         </div>\
     <div class="control-group">\

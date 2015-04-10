@@ -52,9 +52,8 @@
             </div>
             <div class="control-group">
                 <div class="controls">
-                    <div name="back" class="btn" onclick="window.location = '/phylolink'"><i
+                    <div name="back" class="btn" onclick="window.location = '${createLink(uri:'/')}'"><i
                             class="icon icon-arrow-left"></i> Back</div>
-                    %{--<input type="submit" value="Next" class="btn btn-primary right"/>--}%
                     <button type="submit" class="btn btn-primary" value="Next"><i
                             class="icon icon-white icon-arrow-right"></i> Next</button>
                 </div>
