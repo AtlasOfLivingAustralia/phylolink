@@ -30,7 +30,6 @@ modules = {
     }
 
     application {
-        resource url: [dir: 'css', file: "main.css"]
         resource url: [dir: 'css', file: "maingsp.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
         resource url: [dir: "js", file: "jquery-ui.min.js"]

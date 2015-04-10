@@ -48,7 +48,12 @@
                         href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
                         target="_blank">${tree.getExpertTreeTaxonomy()}</a></td>
                 <td style="justify: center">
-                    <div class="btn btn-small" onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'"><i class="icon-ok"></i> Open</div>
+                    <div class="btn btn-small btn-primary"
+                         onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
+                        <i class="icon icon-ok"></i> Open</div>
+                    <a
+                            href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
+                            class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
                 </td>
             </tr>
             <tr>

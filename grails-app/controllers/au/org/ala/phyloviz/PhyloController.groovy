@@ -349,35 +349,4 @@ class PhyloController {
             render(contentType: 'application/json', text: meta as JSON);
         }
     }
-
-    /**
-     * save visualization title to database
-     * @param phyloInstance
-     * @return
-     */
-    def saveTitle(Phylo phyloInstance){
-        def user = Owner.findByUserId(userService.getCurrentUserId())
-        def result = [:]
-        log.debug(user)
-        log.debug(phyloInstance.getOwner()?.userId)
-        if(phyloInstance.getOwner().userId == user.userId){
-            phyloInstance.setTitle(params.title);
-            phyloInstance.save(
-                    flush: true
-            );
-            if (phyloInstance.hasErrors()) {
-                result['error'] = 'An error occurred';
-            } else {
-                result['message'] = 'Successfully saved title';
-            }
-        } else {
-            result['error'] = 'User not recognised'
-        }
-
-        if(params.callback){
-            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})");
-        } else {
-            render(contentType: 'application/json', text: result as JSON);
-        }
-    }
 }

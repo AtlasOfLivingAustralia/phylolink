@@ -16,6 +16,7 @@ class TreeService {
     def nexsonService
     def metricsService
     def webService
+    def userService
 
     LinkGenerator grailsLinkGenerator
 
@@ -553,5 +554,26 @@ class TreeService {
      */
     def canAccess(id){
         return true;
+    }
+
+    def saveTitle(Phylo phyloInstance, title){
+        def user = Owner.findByUserId(userService.getCurrentUserId())
+        def result = [:]
+        log.debug(user)
+        log.debug(phyloInstance.getOwner()?.userId)
+        if(phyloInstance.getOwner()?.userId == user.userId){
+            phyloInstance.setTitle(title);
+            phyloInstance.save(
+                    flush: true
+            );
+            if (phyloInstance.hasErrors()) {
+                result['error'] = 'An error occurred';
+            } else {
+                result['message'] = 'Successfully saved title';
+            }
+        } else {
+            result['error'] = 'User not recognised'
+        }
+        return result;
     }
 }

@@ -15,7 +15,7 @@
 
 <body>
 %{--padding top since breadcrumb is hidden by the new nav bar--}%
-<div class="container-fluid" style="padding-top: 60px">
+<div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -92,7 +92,7 @@
         edit:${edit},
         id: ${phyloInstance.getId()},
         title:'<g:message message="${phyloInstance.getTitle().replace('\'', '\\\'')}"/>',
-        titleUrl: '${createLink(controller: 'phylo', action: 'saveTitle')}',
+        titleUrl: '${createLink(controller: 'restrictedmethods', action: 'saveTitle')}',
         pjId: 'info'
     }
 

@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<div class="container-fluid" style="padding-top: 60px">
+<div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
