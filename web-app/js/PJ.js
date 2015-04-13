@@ -951,6 +951,11 @@ var PJ = function (params) {
                     getTree(obj.url, setTree, obj)
                 }
                 break;
+            default :
+                // if no format is given, then get it from url. remember the url should provide tree and format.
+                if (obj.url) {
+                    getTree(obj.url, setTree, obj)
+                }
         }
 
         if (dataObject) {
@@ -1039,7 +1044,7 @@ var start, stop
         }
 
         var data = config.hData;
-        var template = "<div data-bind=' click: $root.select' style='cursor:pointer;'><h1 title='Click title to edit it' data-bind='text: title'></h1></div>"+
+        var template = "<div data-bind=' click: $root.select' style='cursor:pointer;'><h1 style='color:#C44D34' title='Click title to edit it' data-bind='text: title'></h1></div>"+
             "<div data-bind='visible: $root.clicked()' style='padding-bottom: 10px'>"+
             "New title for this visualisation: <input data-bind='value: title, event:{blur:$root.clearClick, change:$root.sync}'></div>"
         var titleDom = $('#'+config.heading).html(template);
