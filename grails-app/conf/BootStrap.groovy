@@ -5,7 +5,8 @@ import au.org.ala.phyloviz.Owner
 
 class BootStrap {
     def opentreeService
-    def skip = true
+    def skip = false
+    def overwrite = false
 //    def elasticService
     def grailsApplication
 
@@ -13,6 +14,7 @@ class BootStrap {
         if(skip){
             return
         }
+
         log.debug('checking for system user name')
         def systemUser = Owner.findByDisplayName("System")
         if (!systemUser) {
@@ -34,7 +36,13 @@ class BootStrap {
             if (!pt) {
                 log.debug( 'adding tree' +  tree['title'] )
                 pt = new Tree(tree).save(flush: true, failOnError: true);
-            } else {
+            } else if(overwrite) {
+                it.each{key,value->
+                    pt[key]=value;
+                }
+                pt.save(flush: true);
+            }else
+             {
                 log.debug( 'tree already in database' )
             }
         }
@@ -44,7 +52,7 @@ class BootStrap {
             def c = it
             c.owner = systemUser;
             def pt = Characters.findByDrid(c.drid)
-            if (!pt) {
+            if (!pt ) {
                 log.debug( 'adding character' +  c['title'] )
                 pt = new Characters(c).save(flush: true, failOnError: true);
             } else {
@@ -58,12 +66,12 @@ class BootStrap {
 
     def acaciaTree() {
         log.debug('loading acacia tree')
-        def result = [:], filename = 'acacia.nexml'
+        def result = [:], filename = 'acacia.newick'
         def file =  grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
-        result['nexson'] = opentreeService.convertNexmlToNexson(result.tree)
+        result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
         result['nexson'] = result['nexson'].toString();
-        result['year'] = '2011'
+        result['year'] = 2011
         result['hide'] = false
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
         result['reference'] = 'Miller, J. T., Murphy, D. J., Brown, G. K., Richardson, D. M. and González-Orozco,' +
@@ -73,22 +81,22 @@ class BootStrap {
         result['expertTree'] = true
         result['expertTreeTaxonomy'] = 'Acacia'
         result['expertTreeLSID']= 'urn:lsid:biodiversity.org.au:apni.taxon:295861'
-        result['treeFormat'] = 'nexml'
+        result['treeFormat'] = 'newick'
         result['created'] = new Date()
         return result
     }
 
     def mammalsTree(){
         log.debug('adding mammals tree to map object')
-        def result = [:], filename = 'mammals.nexml'
+        def result = [:], filename = 'mammals.newick'
         def file =grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         log.debug('mammals tree' + result['tree'])
-        result['treeFormat'] = 'nexml'
-        result['nexson'] = opentreeService.convertNexmlToNexson(result.tree)
+        result['treeFormat'] = 'newick'
+        result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
         result['nexson'] = result['nexson'].toString();
         log.debug(result['nexson'])
-        result['year'] = '2009'
+        result['year'] = 2009
         result['hide'] = false
         result['doi'] = ''
         result['title'] = 'Mammals – Fritz et al 2009'
@@ -104,14 +112,14 @@ class BootStrap {
 
     def amphibianTree(){
         log.debug('loading amphibians tree')
-        def result = [:], filename = 'amp.nexml'
+        def result = [:], filename = 'amp.newick'
         def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         log.debug('amphibians tree' + result['tree'])
-        result['treeFormat'] = 'nexml'
-        result['nexson'] = opentreeService.convertNexmlToNexson(result.tree)
+        result['treeFormat'] = 'newick'
+        result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
         result['nexson'] = result['nexson'].toString();
-        result['year'] = '2011'
+        result['year'] = 2011
         result['hide'] = false
         result['doi'] = ''
         result['title'] = 'Amphibians (global) – Pyron & Wiens 2011'
@@ -163,9 +171,6 @@ class BootStrap {
         return [[
                 drid:'dr2116',
                 title:'Acacia Characters'
-        ],[
-                drid:'dr467',
-                title:'Western Australia : Conservation Status / Sensitive Species Lists'
         ]]
     }
 }

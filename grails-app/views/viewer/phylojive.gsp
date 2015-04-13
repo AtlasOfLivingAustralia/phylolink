@@ -1,124 +1,113 @@
 <%--
   Created by IntelliJ IDEA.
-  User: nick
-  Date: 8/08/12
-  Time: 2:37 PM
-  To change this template use File | Settings | File Templates.
+  User: temi
+  Date: 09/04/2015
 --%>
-<%@ page import="groovy.json.StringEscapeUtils; org.codehaus.groovy.grails.commons.ConfigurationHolder; grails.converters.JSON" contentType="text/html;charset=UTF-8" %>
 <html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta name="layout" content="main"/>
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'PhyloJive.css')}" type="text/css" media="screen" />
-    <link rel="stylesheet" href="${resource(dir: 'css/colorbox', file: 'colorbox.css')}" type="text/css" media="screen" />
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery.contextMenu.css')}" type="text/css" media="screen" />
-
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jit.js')}"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery.colorbox-min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery.contextMenu.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jsphylosvg-min.js')}"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'phylolink.js')}"></script>
-    <!--[if IE]><script language="javascript" type="text/javascript" src="${resource(dir: 'js', file: 'excanvas.js')}"></script><![endif]-->
-    <script type="text/javascript">
-        var tree = '', nexml = '', characters =[];
-        $(document).ready(function() {
-            var url = ""; //used
-            $('#loadingMsg') .hide()  // hide it initially
-            .ajaxStart(function() {
-                $(this).show();
-            })
-            .ajaxStop(function() {
-                $(this).hide();
-            });
-            // check if tree has to be downloaded from an url
-            if( tree || nexml ){
-                init_phylojive(tree, characters, url, nexml);
-            } else {
-                var treeurl = "${createLink(controller: 'phylo', action: 'getTree')}?studyId=${studyId}&treeId=${treeId}";
-
-                $.ajax({
-                    url: treeurl
-                }).done(function( data ){
-                    tree = data.tree
-                    // smits parser does not like quotes in label. It goes into infinite loop.
-                    tree = tree.replace(/\'/g, '');
-                    // sometimes opentree interface returns something like "[pre-ingroup-marker]"
-                    tree = tree.replace(/\[[^\]]+]/g,'');
-                    init_phylojive(tree, characters, url);
-                });
-            }
-        });
-
-        function init_phylojive(tree, characters, url, nexml) {
-
-            phylogenyExplorer_init({
-                width: width || 900,
-                height: height || 600,
-                tree: tree,
-                nexml: nexml,
-                branchMultiplier: 0.1,
-                charServiceUrl: url,
-                character: characters,
-                attribution:'',
-                toolWidget: "tabs", // tabs || accordion
-                codeBase: "${resource(dir: 'images')}",
-                hideInput: true,
-                mapParams: "&fq=data_provider_uid:dp36",
-                presentClade: function(clade) {
-                    var tmpl = st.config.tmpl, nodeList = [], node, html, split;
-                    for (var i = 0;
-                         ((i < clade.length) & (i < 30)); i++) {
-                        node = {}
-                        node.name = clade[i].name;
-                        node.plus = clade[i].name.replace(/\s+/g, '+');
-                        split = node.name.split(/\s+/);
-                        if (split.length > 1) {
-                            node.genus = split[0];
-                            node.species = split[1];
-                        } else {
-                            node.species = split[0];
-                        }
-                        node.rel = node.species + '' + i;
-                        node.index = i;
-                        nodeList.push(node);
-                    }
-                    if (tmpl) {
-                        tmpl = _.template(tmpl);
-                        html = tmpl({
-                            nodeList: nodeList
-                        });
-                    } else {
-
-                    }
-                    return html;
-
-                }
-            });
-            st.config.initCharacter = false;
-        } // end init_phylojive
-
-        function objLength(obj) {
-            var L=0;
-            $.each(obj, function(i, elem) {
-                L++;
-            });
-            return L;
-        }
-
-    </script>
+    <title><g:message code="viewer.show"/></title>
+    <r:require modules="application,phylojive,contextmenu,bugherd"/>
 </head>
+
 <body>
-<div id="content">
-    <div>
-        <h2 id="loadingMsg" >Loading Tree...</h2>
-        <div id="section">
-            <div id="infovis"></div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+                <li><a href="${createLink(uri: '/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="vizTitle"></div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            <div id="info"></div>
+        </div>
+        <div class="span6">
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th colspan="2">Tree metadata</th>
+                </tr>
+                <tr>
+                    <td>Title:</td>
+                    <td>${tree.getTitle()}</td>
+                </tr>
+                <tr>
+                    <td>Reference:</td>
+                    <td>${tree.getReference()}</td>
+                </tr>
+                <tr>
+                    <td>Year:</td>
+                    <td>${tree.getYear()}</td>
+                </tr>
+                <g:if test="${tree.getDoi()!= null}">
+                    <tr>
+                        <td>Doi:</td>
+                        <td>${tree.getDoi()}</td>
+                    </tr>
+                </g:if>
+                </tbody>
+            </table>
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th colspan="2">Actions</th>
+                </tr>
+                <tr>
+                    <td>
+                        Download tree:
+                    </td>
+                    <td>
+                        <a class="btn" href="${createLink(controller: 'tree', action: 'download')}?id=${studyId}"><i class="icon icon-download"></i> Download</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Link tree with data:
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" href="${createLink(controller: 'wizard', action: 'visualize')}?id=${studyId}">
+                            <i class="icon icon-arrow-right"></i> Visualise with Phylolink</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<r:script disposition="defer">
+    var config ={
+        type:'ala',
+        treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${studyId}&treeid=${treeId}",
+        format: undefined,
+        edit:false,
+        title:"${tree.getTitle()}",
+        titleUrl: undefined,
+        pjId: 'info'
+    }
+        var pj = new PJ({
+            width: $('#'+config.pjId).width()-10,
+            height: 700,
+            codeBase: '../..',
+            dataType:'json',
+            bootstrap: 2,
+            url: config.treeUrl,
+            id: config.pjId ,
+            format: config.format,
+            heading:'vizTitle',
+            hData:{
+                title: config.title,
+                edit: config.edit
+            },
+            titleUrl: config.titleUrl,
+            edit: config.edit
+        });
+</r:script>
 </body>
 </html>

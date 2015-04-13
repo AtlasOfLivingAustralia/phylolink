@@ -18,7 +18,8 @@ class CharactersService {
             result.push([
                 'url': getUrl(list.drid),
                 'title':list.title,
-                'id': list.id
+                'id': list.id,
+                'listurl': grailsApplication.config.listsPermUrl.replace('DRID', list.drid)
             ]);
         }
         return result

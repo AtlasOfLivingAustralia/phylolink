@@ -30,7 +30,6 @@ modules = {
     }
 
     application {
-        resource url: [dir: 'css', file: "main.css"]
         resource url: [dir: 'css', file: "maingsp.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
         resource url: [dir: "js", file: "jquery-ui.min.js"]
@@ -113,7 +112,8 @@ modules = {
     }
 
     phylojive {
-        dependsOn('bootstrap','emitter')
+        dependsOn('bootstrap','emitter','knockout3')
+        resource url: 'js/spin.min.v2.0.1.js'
         resource url: 'css/PhyloJive.css', disposition: 'head'
         resource url: 'js/jsphylosvg-min.js', disposition: 'head'
         resource url: 'js/jit.js', disposition: 'head'

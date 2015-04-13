@@ -12,7 +12,15 @@
 
 <body>
 
-<div class="container">
+<div class="container"  style="min-height: 700px">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
+            </ul>
+        </div>
+    </div>
     <legend>Choose from a list of expert recommended trees</legend>
     <p style="font-size:14px; max-width: 60em">List of expert recommended trees. You can click
         <span class="label label-info">open</span> button to create a visualisation. Or, use
@@ -40,7 +48,12 @@
                         href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
                         target="_blank">${tree.getExpertTreeTaxonomy()}</a></td>
                 <td style="justify: center">
-                    <div class="btn btn-small" onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'"><i class="icon-ok"></i> Open</div>
+                    <div class="btn btn-small btn-primary"
+                         onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
+                        <i class="icon icon-ok"></i> Open</div>
+                    <a
+                            href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
+                            class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
                 </td>
             </tr>
             <tr>

@@ -13,12 +13,15 @@ class OpentreeService {
     def getStudyMetadata( id, addMeta ) {
         def i
         addMeta = addMeta?:[:]
-        def url = grailsApplication.config['studyMeta']
-        url = url.replaceAll( 'STUDYID', id.toString() )
-        log.debug ( url )
-        def meta = webService.getJson( url )
-        def result
-        result = this.mapStudyFields( meta, addMeta )
+//        def url = grailsApplication.config['studyMeta']
+//        url = url.replaceAll( 'STUDYID', id.toString() )
+//        log.debug ( url )
+//        def meta = webService.getJson( url )
+        ConvertTreeToObject cv = new ConvertTreeToObject();
+        Tree t = Tree.findById(id);
+        def result = cv.convert(t);
+//        def result
+//        result = this.mapStudyFields( meta, addMeta )
         // do some processing now
         result = this.getAuthor( result );
         return result
@@ -135,9 +138,9 @@ class OpentreeService {
         return this.convertToNexson( nexml, 'nexml' )
     }
 
-//    def convertNewickToNexson( newick ){
-//        return this.convertToNexson( newick, 'newick' )
-//    }
+    def convertNewickToNexson( newick ){
+        return this.convertToNexson( newick, 'newick' )
+    }
 
     def convertToNexson( tree, format){
         def url = grailsApplication.config['to_nexson'];

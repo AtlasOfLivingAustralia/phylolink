@@ -15,7 +15,7 @@
 
 <body>
 %{--padding top since breadcrumb is hidden by the new nav bar--}%
-<div class="container-fluid" style="padding-top: 60px">
+<div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -70,7 +70,7 @@
                 case 'ala': return config.biocacheLegend;
             }
         },
-        proxyUrl: '/phylolink/ala/jsonp',
+        proxyUrl: '${createLink(controller: 'ala', action: 'jsonp')}',
         layer: function(){
             switch (config.type){
                 case 'sandbox': return config.sandboxLayer;
@@ -79,7 +79,6 @@
         },
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
-//        charUrl: '/phylolink/ala/getSandboxCharJson?drid=data_resource_uid:drt2783&fields=["phenotype_s"]&key=lineage_ID_s',
         initCharacters: <g:message
         message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
         filterParams: {
@@ -88,11 +87,11 @@
 
             }
         },
-        colorByUrl: '/phylolink/ala/facets',
+        colorByUrl: '${createLink(controller: 'ala', action: 'facets')}',
         edit:${edit},
         id: ${phyloInstance.getId()},
         title:'<g:message message="${phyloInstance.getTitle().replace('\'', '\\\'')}"/>',
-        titleUrl: '${createLink(controller: 'phylo', action: 'saveTitle')}',
+        titleUrl: '${createLink(controller: 'restrictedmethods', action: 'saveTitle')}',
         pjId: 'info',
         charOnRequest: true,
         charOnRequestListKeys:"${createLink(controller: 'characters', action: 'getKeys')}",
@@ -145,7 +144,7 @@
             headerHeight:55,
             initCharacters:config.initCharacters,
             bootstrap:2,
-            sampleCSV:'http://ebbe.ala.org.au/traits.csv',
+            sampleCSV:'${resource(dir: 'artifacts', file: 'traits.csv')}',
             doSync: ${edit},
             syncData: {
                 id: ${phyloInstance.getId()}

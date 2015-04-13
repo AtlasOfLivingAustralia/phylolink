@@ -1,6 +1,7 @@
 package au.org.ala.phyloviz
 
 import grails.converters.XML
+import groovy.json.JsonSlurper
 import jade.tree.TreeReader
 import org.apache.commons.io.IOUtils
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
@@ -15,6 +16,7 @@ class TreeService {
     def nexsonService
     def metricsService
     def webService
+    def userService
 
     LinkGenerator grailsLinkGenerator
 
@@ -394,8 +396,8 @@ class TreeService {
             } else {
                 input.push( trees[i].clone() )
             }
-
         }
+
         meta[ grailsApplication.config.expertTreesMeta.et ] = input
         return  meta
     }
@@ -407,16 +409,33 @@ class TreeService {
      * @param meta
      * @return
      */
-     def getTreeMeta(String treeId, String studyId, meta){
-        def startTime, deltaTime
-        meta = meta?:[:]
-        meta = getTreeText( treeId, studyId, meta )
-        meta = getViewerUrl(treeId, studyId, meta)
-        meta = opentreeService.getStudyMetadata( studyId, meta )
-        log.debug( meta )
-        def jadetree = metricsService.getJadeTree( meta[grailsApplication.config.treeMeta.treeText] )
-        meta = opentreeService.addTreeMeta(jadetree, meta )
-        return  meta
+     def getTreeMeta(String treeId, String studyId){
+         Integer id = Integer.parseInt(studyId)
+         Tree [] trees = Tree.findById(id)
+         List result = [];
+         Integer i
+         Object temp
+         ConvertTreeToObject to = new ConvertTreeToObject();
+         for( i = 0;i < trees.size(); i++ ){
+             temp = to.convert(trees[i]);
+             temp = opentreeService.addTreeMeta(metricsService.getJadeTree(
+                     trees[i][grailsApplication.config.treeMeta.treeText] ), temp);
+             getViewerUrl(null,trees[i].getId(), temp);
+             result.push( temp )
+         }
+         return  result
+    }
+
+    /**
+     * get a tree for an id.
+     * @param id
+     * @return
+     */
+    def getTree( Integer id){
+        Tree tree = Tree.findById(id);
+        ConvertTreeToObject to = new ConvertTreeToObject();
+        tree = to.convert(tree);
+        return tree
     }
 
     /**
@@ -428,7 +447,9 @@ class TreeService {
      */
     def getTreeText(String treeId, String studyId, meta){
         meta = meta?:[:]
-        def tree = webService.get( opentreeService.getTreeUrlNewick(treeId, studyId) )
+        log.debug(studyId);
+        studyId = Integer.parseInt(studyId);
+        String tree = Tree.findById(studyId).tree;
         meta[grailsApplication.config.treeMeta.treeText] = tree;
         return meta
     }
@@ -440,15 +461,119 @@ class TreeService {
         return meta
     }
 
-    private def removeProp( Collection meta, String prop){
+    def removeProp( Collection meta, String prop){
         for ( def i = 0 ; i < meta.size(); i++){
             meta[i]?.remove( prop )
         }
         return meta;
     }
 
-    private def removeProp( HashMap meta , String prop ){
+    def removeProp( HashMap meta , String prop ){
         meta?.remove( prop )
         return meta;
+    }
+
+    /**
+     * get expert trees from database
+     * return: an array of expert trees
+     */
+    public def getExpertTrees(noTreeText){
+        def exp = Tree.findAllWhere(['expertTree':true]);
+        ConvertTreeToObject cv = new ConvertTreeToObject();
+        def result = [];
+        exp.each { tree ->
+            def obj = cv.convert(tree)
+            obj = opentreeService.addTreeMeta(metricsService.getJadeTree(
+                    tree[grailsApplication.config.treeMeta.treeText] ), obj);
+            getViewerUrl(null,tree.getId(),obj);
+            if(noTreeText){
+                obj.remove(grailsApplication.config.treeMeta.treeText)
+            }
+            result.push(obj);
+        }
+       return result;
+    }
+
+    /**
+     * this function calculated pd for a supplied tree.
+     * @param treeId
+     * @param studyId
+     * @param tree
+     * @param speciesList
+     * @return
+     */
+    def getPDCalc( String treeId, String studyId, String tree, String speciesList){
+        def startTime, deltaTime
+        def treeUrl, type, i,pd, sList;
+        def studyMeta = [:], result =[], trees = [], input =[]
+        type = tree?"tree":studyId?"gettree":"besttrees"
+        switch (type){
+            case 'tree':
+                studyMeta [grailsApplication.config.treeMeta.treeText]=tree
+                studyMeta [ grailsApplication.config.studyMetaMap.name ]= message(code: 'phylo.userTreeName', default: 'User tree' )
+                studyMeta = opentreeService.addTreeMeta(metricsService.getJadeTree( tree ), studyMeta )
+                input.push( studyMeta )
+                break;
+            case 'gettree':
+                studyMeta = this.getTreeMeta(treeId, studyId )
+                input= studyMeta;
+                break;
+            case 'besttrees':
+                startTime = System.currentTimeMillis()
+                input = this.getExpertTrees(false);
+                deltaTime = System.currentTimeMillis() - startTime
+                log.debug( "time elapse: ${deltaTime}")
+                break;
+        }
+
+        sList = new JsonSlurper().parseText( speciesList )
+        for( i = 0; i < input.size(); i++){
+            studyMeta = [:]
+            log.debug( input[i] );
+            input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
+
+            // calculate pd
+            pd = metricsService.pd( input[i][grailsApplication.config.treeMeta.treeText], sList )
+            input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
+
+            // merge the variables
+            pd.each {k,v->
+                input[i][k]=v
+            }
+
+            result.push( input[i] )
+        }
+
+        return  result;
+    }
+
+    /**
+     * can the current user access the tree
+     * @param id
+     * @return
+     */
+    def canAccess(id){
+        return true;
+    }
+
+    def saveTitle(Phylo phyloInstance, title){
+        def user = Owner.findByUserId(userService.getCurrentUserId())
+        def result = [:]
+        log.debug(user)
+        log.debug(phyloInstance.getOwner()?.userId)
+        if(phyloInstance.getOwner()?.userId == user.userId){
+            phyloInstance.setTitle(title);
+            phyloInstance.save(
+                    flush: true
+            );
+            if (phyloInstance.hasErrors()) {
+                result['error'] = 'An error occurred';
+            } else {
+                result['message'] = 'Successfully saved title';
+            }
+        } else {
+            result['error'] = 'User not recognised'
+        }
+        return result;
     }
 }
