@@ -89,7 +89,7 @@ var Habitat = function (c) {
             }' +
             '</style>' +
             '<div id="habitatMain">' +
-            '<div class="btn btn-primary" data-bind="click:addHabitat">Plot profile</div>' +
+            '<div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i> Plot profile</div>' +
             '<div data-bind="sortable:{data:habitats, afterMove: $root.onMove}">' +
             '<div class="item top-buffer">' +
             '<div class="label label-default" data-bind="visible: !$root.isHabitatSelected($data)">\
@@ -427,6 +427,17 @@ var Habitat = function (c) {
                 koObj.$root.newChar = true;
             });
             input.focus();
+            $("#"+config.id).scroll(function(e){
+                if( input.is(':visible')){
+                    $('.ui-autocomplete').position({
+                        my: "left top",
+                        at: "left bottom",
+                        collision: "none",
+                        of: input,
+                        within: '#'+config.id
+                    });
+                }
+            });
         },
         update: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('update function');

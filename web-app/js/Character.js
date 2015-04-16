@@ -97,14 +97,15 @@ var Character = function (options) {
             }
         }]
     }, options);
-    var spinner = new Spinner(options.spinner);
+    var spinner = new Spinner(options.spinner), spinners=[];
     var id = options.id;
-    var inputId = id + 'autoComplete';
+    var inputId = id + 'autoComplete', uploadTitleId = 'uploadCharactersTitle',
+        minUploadId = 'minimizeUpload';
     var pj = options.pj;
     var characterListLoaded = false;
     var template3 = '\
     <div id="charactermain">\
-        <div class="btn btn-xs btn-primary top-buffer offset1" data-bind="click: addCharacter">Add Character to Tree</div>\
+        <div class="btn btn-xs btn-primary top-buffer offset1" data-bind="click: addCharacter"><i class="icon icon-plus-sign"></i> Add Character to Tree</div>\
         <div class="container" data-bind="sortable: {data:characters, afterMove: $root.onMove}">\
             <div class="item top-buffer" title="You can drag or edit this item">\
                 <div data-bind="visible: !$root.isCharacterSelected($data), attr:{class: $root.characterClass($data)}">\
@@ -137,8 +138,8 @@ var Character = function (options) {
     var template2 = '\
     <div >\
         <div class="bs-callout" id="uploadCharacters" style="position: relative">\
-        <h4 style="cursor:pointer" id="uploadCharactersTitle"><a>Upload your character data</a></h4>\
-        <div id="minimizeUpload">\
+        <h4 style="cursor:pointer" id="uploadCharactersTitle" data-bind="click: onClick"><i class="icon icon-chevron-down"></i> <a>Upload your character data</a></h4>\
+        <div id="minimizeUpload" style="display:none">\
         <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">\
         <i>You need modern browser such as Google Chrome 40 or Safari 8</i>\
         <div class="control-group">\
@@ -183,7 +184,7 @@ var Character = function (options) {
             </div>\
         </form>\
     </div>\
-    <div class="btn btn-xs btn-primary top-buffer offset4" data-bind="click: addCharacter, visible:list(), attr:{disabled:listLoading()}">Add Character to Tree</div>\
+    <div class="btn btn-xs btn-primary top-buffer offset4" data-bind="click: addCharacter, visible:list(), attr:{disabled:listLoading()}"><i class="icon-white icon-plus-sign"></i> Add Character to Tree</div>\
     <div data-bind="sortable: {data:characters, afterMove: $root.onMove}">\
             <div class="item top-buffer" title="You can drag or edit this item">\
                 <div data-bind="visible: !$root.isCharacterSelected($data), attr:{class: $root.characterClass($data)}">\
@@ -306,10 +307,10 @@ var Character = function (options) {
             return character;
         };
 
-        self.removeAllCharacters = function(){
+        self.removeAllCharacters = function(silent){
             self.characters.removeAll();
             self.selectedCharacter(null);
-            self.emit('statechange');
+            !silent && self.emit('statechange');
         }
 
         self.addNamedCharacter = function (char, silent) {
@@ -395,6 +396,25 @@ var Character = function (options) {
             self.list(list)
             $("#sourceChar").trigger('change');
         }
+
+        /**
+         * give a list of characters to this function to check if it they are in the selected character list
+         * and return an array of models of characters found.
+         * @param keys
+         * @returns {Array}
+         */
+        self.searchCharacters = function(keys){
+            var selected = [], i, char = self.characters(), key;
+            for (i = 0; i < char.length; i++) {
+                for(key in keys){
+                    if(keys[key] == char[i].name()){
+                        selected.push(char[i]);
+                        break;
+                    }
+                }
+            }
+            return selected;
+        }
     };
 
     ko.bindingHandlers.visibleAndSelect = {
@@ -416,6 +436,17 @@ var Character = function (options) {
                 koObj.$root.newChar = true;
             });
             input.focus();
+            $("#"+options.id).scroll(function(e){
+                if( input.is(':visible')){
+                    $('.ui-autocomplete').position({
+                        my: "left top",
+                        at: "left bottom",
+                        collision: "none",
+                        of: input,
+                        within: '#'+options.id
+                    });
+                }
+            });
         },
         update: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('update function');
@@ -432,7 +463,7 @@ var Character = function (options) {
     ko.bindingHandlers.addChart = {
         update: function (el, valueAccessor, innerFn, data, koObj) {
             if (valueAccessor()) {
-                var id = data.id(), charName = data.name(), charJson,
+                var id = data.id(), charName = data.name(), charJs,
                     node = pj.getSelection(),
                     list;
                 if(!charJson){
@@ -441,10 +472,10 @@ var Character = function (options) {
 
                 if(node){
                     list = pj.getChildrenName(node);
-                    charJson = that.charJsonSubset(list);
+                    charJs = that.charJsonSubset(list);
                 }
 
-                var temp = that.getCharArray(charName,charJson)
+                var temp = that.getCharArray(charName,charJs)
                 if(temp == undefined || temp.length == 0){
                     return;
                 }
@@ -471,14 +502,26 @@ var Character = function (options) {
         this.message = ko.observable();
         this.alertId = '#uploadMessage';
         this.sampleCSV = options.sampleCSV;
+
+        this.onClick = function(model, e){
+            var obj = $('#'+minUploadId)
+            obj.toggle();
+            if(!obj.is(':visible')){
+                $('#'+uploadTitleId +' i').addClass('icon-chevron-down');
+                $('#'+uploadTitleId+' i').removeClass('icon-chevron-up');
+            } else {
+                $('#'+uploadTitleId+' i').removeClass('icon-chevron-down');
+                $('#'+uploadTitleId+' i').addClass('icon-chevron-up');
+            }
+        }
     }
 
     var upload = new UploadViewModel();
     ko.applyBindings(upload, document.getElementById('uploadCharacters'));
-    $('#minimizeUpload').hide()
-    $('#uploadCharactersTitle').click(function(){
-        $('#minimizeUpload').toggle('hide');
-    })
+//    $('#minimizeUpload').hide()
+//    $('#uploadCharactersTitle').click(function(){
+//        $('#minimizeUpload').toggle('hide');
+//    })
     /**
      * transform data to be able to be displayed by chart. i.e. convert qualitative character to term frequency
      * to display as histogram.
@@ -607,7 +650,7 @@ var Character = function (options) {
             data: params,
             success: function (data) {
                 that.setCharList(data);
-                this.setCharacterListLoaded(true);
+                that.setCharacterListLoaded(true);
             }
         })
     }
@@ -647,12 +690,14 @@ var Character = function (options) {
     this.getCharJsonForKey = function( keys ){
         var params = options.charOnRequestParams, that = this;
         params.keys = keys.join(',');
+        this.emit('asynccharjsonstart',keys);
         $.ajax({
             url: options.charOnRequestBaseUrl,
             data: params,
             success: function(data){
                 var charjson = that.charJsonMerge(charJson, data);
                 that.setCharJson( charjson, true );
+                that.emit('asynccharjsonset',keys);
             }
         })
     }
@@ -867,7 +912,7 @@ var Character = function (options) {
     }
 
     this.save = function () {
-        if (!options.doSync) {
+        if (!(options.doSync && this.getCharacterListLoaded()) ) {
             return;
         }
 
@@ -999,13 +1044,13 @@ var Character = function (options) {
 
     }
 
-    this.startSpinner = function(){
-        if(!spinner.el){
-            spinner = new  Spinner(options.spinner);
-        }
-
+    this.startSpinner = function(id, opt){
+        var option  = opt || options.spinner,
+            option = $.extend({},option), spinner;
+        spinner = new  Spinner(option);
         spinner.spin();
         $('#'+id).append(spinner.el)
+        return spinner;
     }
 
     this.stopSpinner = function(){
@@ -1085,6 +1130,32 @@ var Character = function (options) {
             }
         }
     }
+
+    this.onAsyncCharJsonStart = function(keys){
+        var chars, id, name, opt = options.spinner;
+        opt.position = 'relative';
+        chars = view.searchCharacters(keys);
+
+        for(var i in chars){
+            id = chars[i].id();
+            name = chars[i].name();
+            if(!spinners[name]){
+                spinners[name] = []
+            }
+
+            spinners[name].push(this.startSpinner(id, opt))
+        }
+    };
+
+    this.onAsyncCharJsonFinish = function( chars ){
+        var spin;
+        for(var i in chars){
+            while(spin = spinners[chars[i]].pop()){
+                spin.stop();
+            }
+        }
+    };
+
 //    $('#'+options.id).on('show',initPopover);
     $("body").on("show.bs.tab", "#"+options.tabId, function() {
         initPopover();
@@ -1112,7 +1183,16 @@ var Character = function (options) {
      * when charjson is set. fired by setCharJson function. handle this event when user provides a set of characters
      * to be initialized at start.
      */
-        'setcharacters'
+        'setcharacters',
+    /**
+     * fired when the system requests charjson asynchronously.
+     */
+        'asynccharjsonstart',
+
+    /**
+     * fired when asynchronous charjson request finishes.
+     */
+        'asynccharjsonfinish'
     ]
 
     /**
@@ -1126,6 +1206,8 @@ var Character = function (options) {
     view.on('statechange',this.colorTreeWithCharacter)
     this.on('setcharacters',this.colorTreeWithCharacter)
     this.on('setcharacters', this.showChartCharOnRequest)
+    this.on('asynccharjsonstart', this.onAsyncCharJsonStart);
+    this.on('asynccharjsonfinish', this.onAsyncCharJsonFinish)
 
     pj.on('treeloaded', this.initCharacters);
 //    pj.on('treeloaded',this.colorTreeWithCharacter)

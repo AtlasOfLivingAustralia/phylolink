@@ -42,6 +42,8 @@
                                            id="mapTab">Map</a></li>
                 <li role="presentation" ><a   href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="habitatTab">Analysis</a></li>
+                <li role="presentation" ><a   href="#help" aria-controls="profile" role="tab" data-toggle="tab"
+                                          id="helpTab">Help</a></li>
             </ul>
 
             <!-- Tab panes -->
@@ -51,6 +53,22 @@
                 <div role="tabpanel" class="tab-pane" id="map"></div>
 
                 <div role="tabpanel" class="tab-pane" id="habitat"></div>
+                <div role="tabpanel" class="tab-pane" id="help">
+                    <iframe width="100%" height="315"
+                            src="https://www.youtube.com/embed/_fN3Nn159Tw" frameborder="0" allowfullscreen>
+                    </iframe>
+                    &nbsp;
+                    <table class="table table-bordered">
+                        <tbody>
+                            <th>
+                                How to use phylolink?
+                            </th>
+                            <tr>
+                                <td>Speaker</td><td>Joseph Miller</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </div>

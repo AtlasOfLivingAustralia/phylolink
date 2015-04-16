@@ -64,12 +64,12 @@ autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON
 bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
 qidUrl = 'http://biocache.ala.org.au/ws/webportal/params'
 //listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
-listUrl = "http://lists.nci-simon.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
+listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 //listPost = 'http://lists.ala.org.au/ws/speciesList'
-listPost = 'http://lists.nci-simon.ala.org.au/ws/speciesList'
+listPost = 'http://lists.ala.org.au/ws/speciesList'
 listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test'
-listCsvForKeys = 'http://lists.nci-simon.ala.org.au/ws/speciesListItems/byKeys?druid=DRID&keys=KEYS&format=csv'
-listKeys = 'http://lists.nci-simon.ala.org.au/ws/speciesListItems/keys?druid=DRID'
+listCsvForKeys = 'http://lists.ala.org.au/ws/speciesListItems/byKeys?druid=DRID&keys=KEYS&format=csv'
+listKeys = 'http://lists.ala.org.au/ws/speciesListItems/keys?druid=DRID'
 listsPermUrl = 'http://lists.ala.org.au/speciesListItem/list/DRID'
 
 //opentree configs
