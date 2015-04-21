@@ -1,10 +1,8 @@
 package au.org.ala.phyloviz
 import grails.converters.JSON
 import groovy.json.JsonBuilder
-import groovy.json.JsonSlurper
 
 import static org.springframework.http.HttpStatus.*
-
 /**
  * Created by Temi Varghese on 19/06/2014.
  */
@@ -13,6 +11,7 @@ class PhyloController {
     def utilsService
     def userService
     def treeService
+    def phyloService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -349,4 +348,11 @@ class PhyloController {
             render(contentType: 'application/json', text: meta as JSON);
         }
     }
+
+//    /**
+//     * start page for phylolink
+//     */
+//    def startPage(){
+//        render(view: '/index',model:[ demoId: phyloService.getDemoId() ]);
+//    }
 }

@@ -35,8 +35,10 @@
                         The result is powerful ways of combining data to generate flexible and customisable visualisations, profiles and metrics for biodiversity.
                     </p>
 
+                    <p>
+                        View an example demonstration <a href="${createLink(controller: 'phylo',action: 'show')}/${demoId}"> here</a>. Or, view screencast on how to view phylolink <a href="#myModal" role="button"  data-toggle="modal">here</a>.
+                    </p>
                     <br/>
-
                     <div class="button-toolbar row-fluid">
                         <button type="button" style="height: 40px" class="btn btn-primary btn-lg btn-block"
                                 onclick="window.location = '${createLink(controller: 'wizard', action: 'start')}'">Start Phylolink</button>
@@ -64,6 +66,16 @@
 </div>
 
 </div>
+</div>
+<div id="myModal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>How to use phylolink?</h3>
+    </div>
+    <div class="modal-body">
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/_fN3Nn159Tw" frameborder="0" allowfullscreen="">
+        </iframe>
+    </div>
 </div>
 </body>
 </html>
