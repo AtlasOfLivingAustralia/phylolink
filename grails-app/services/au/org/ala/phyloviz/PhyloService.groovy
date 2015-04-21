@@ -19,4 +19,11 @@ class PhyloService {
         }
         return viz
     }
+
+    def getDemoId(){
+        def demo = Phylo.findByTitle('Phylolink Demo');
+        if(demo){
+            return demo.getId();
+        }
+    }
 }

@@ -1,7 +1,9 @@
 import au.org.ala.phyloviz.Characters
 import au.org.ala.phyloviz.Owner
+import au.org.ala.phyloviz.Phylo
 import au.org.ala.phyloviz.Tree
-import au.org.ala.phyloviz.Owner
+import au.org.ala.phyloviz.Visualization
+import sun.awt.X11.Visual
 
 class BootStrap {
     def opentreeService
@@ -59,6 +61,10 @@ class BootStrap {
                 log.debug( 'Character already in database' );
             }
         }
+
+        //create demo
+        this.guestAccount();
+        this.createDemo();
     }
 
     def destroy = {
@@ -172,5 +178,41 @@ class BootStrap {
                 drid:'dr2116',
                 title:'Acacia Characters'
         ]]
+    }
+
+    def guestAccount(){
+        def guest = Owner.findByDisplayName("Guest")
+        if (!guest) {
+            guest = new Owner(
+                    userId: 2,
+                    displayName: "Guest",
+                    email: "phylolink@ala.org.au",
+                    created: new Date(),
+                    role: "user"
+            ).save(flush: true, failOnError: true)
+        }
+        return guest
+    }
+
+    def createDemo(){
+        def guest = Owner.findByDisplayName("Guest");
+        def tree = Tree.findByTitle('Acacia – Miller et al 2012');
+        if( !tree || !guest){
+            return ;
+        }
+
+        def demo = Phylo.findByTitle('Phylolink Demo');
+        if(!demo){
+            demo = new Phylo( [
+                    title: 'Phylolink Demo',
+                    characters: '{"listLoading":false,"selectedCharacter":null,"count":3,"events":["statechange","moved","edited","newchar","removed"],"edit":true,"newChar":true,"list":{"id":5,"title":"Acacia Characters","listurl":"http://lists.ala.org.au/speciesListItem/list/dr2116","url":"/ala/getCharJson?drid=dr2116"},"_callbacks":{"statechange":[null,null],"newchar":[null]},"lists":[{"id":5,"title":"Acacia Characters","listurl":"http://lists.ala.org.au/speciesListItem/list/dr2116","url":"/ala/getCharJson?drid=dr2116"}],"characters":[{"id":"charChart-2","name":"Inflorescence_arrangement"},{"id":"charChart-1","name":"annual_mean_rad"}]}',
+                    habitat: '{"habitats":[{"id":"habitat-1","yAxis":"Occurrence count","name":"el790","xAxis":"%","displayName":"WorldClim: Temperature - isothermality"},{"id":"habitat-2","yAxis":"Occurrence count","name":"el1010","xAxis":"degrees C","displayName":"2030A1BMk35M: Temperature - coldest month min"}],"count":3,"newChar":true,"selectedHabitat":{"id":"habitat-2","yAxis":"Occurrence count","name":"el1010","xAxis":"degrees C","displayName":"2030A1BMk35M: Temperature - coldest month min"},"_callbacks":{"moved":[null],"removed":[null],"changed":[null,null]}}',
+                    owner : guest   ,
+                    studyid: tree.getId().toString(),
+                    treeid: '1',
+                    viz: ['viz':'PhyloJive']
+            ]).save(flush: true, failOnError: true);
+        }
+        return demo
     }
 }

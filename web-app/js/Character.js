@@ -97,7 +97,7 @@ var Character = function (options) {
             }
         }]
     }, options);
-    var spinner = new Spinner(options.spinner), spinners=[];
+    var spinner = new Spinner(options.spinner), spinners={};
     var id = options.id;
     var inputId = id + 'autoComplete', uploadTitleId = 'uploadCharactersTitle',
         minUploadId = 'minimizeUpload';
