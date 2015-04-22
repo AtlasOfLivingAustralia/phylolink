@@ -349,10 +349,10 @@ class PhyloController {
         }
     }
 
-//    /**
-//     * start page for phylolink
-//     */
-//    def startPage(){
-//        render(view: '/index',model:[ demoId: phyloService.getDemoId() ]);
-//    }
+    /**
+     * start page for phylolink
+     */
+    def startPage(){
+        render(view: '/index',model:[ demoId: phyloService.getDemoId() ]);
+    }
 }
