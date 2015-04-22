@@ -7,6 +7,7 @@ import sun.awt.X11.Visual
 
 class BootStrap {
     def opentreeService
+    def utilsService
     def skip = false
     def overwrite = false
 //    def elasticService
@@ -63,7 +64,7 @@ class BootStrap {
         }
 
         //create demo
-        this.guestAccount();
+        utilsService.guestAccount();
         this.createDemo();
     }
 
@@ -178,20 +179,6 @@ class BootStrap {
                 drid:'dr2116',
                 title:'Acacia Characters'
         ]]
-    }
-
-    def guestAccount(){
-        def guest = Owner.findByDisplayName("Guest")
-        if (!guest) {
-            guest = new Owner(
-                    userId: 2,
-                    displayName: "Guest",
-                    email: "phylolink@ala.org.au",
-                    created: new Date(),
-                    role: "user"
-            ).save(flush: true, failOnError: true)
-        }
-        return guest
     }
 
     def createDemo(){

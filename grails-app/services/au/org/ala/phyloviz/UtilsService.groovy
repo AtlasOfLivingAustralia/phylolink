@@ -284,4 +284,22 @@ class UtilsService {
     def getCSVReaderForCSVFileUpload(CommonsMultipartFile file, char separator) {
         new CSVReader(new InputStreamReader(file.getInputStream()), separator)
     }
+
+    /**
+     * create guest account or retrieve the guest account
+     * @return
+     */
+    def guestAccount(){
+        def guest = Owner.findByDisplayName("Guest")
+        if (!guest) {
+            guest = new Owner(
+                    userId: 2,
+                    displayName: "Guest",
+                    email: "phylolink@ala.org.au",
+                    created: new Date(),
+                    role: "user"
+            ).save(flush: true, failOnError: true)
+        }
+        return guest
+    }
 }

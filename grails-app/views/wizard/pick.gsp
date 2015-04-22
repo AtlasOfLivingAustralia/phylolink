@@ -45,6 +45,7 @@
                             </div>
                             <div class="span5">
                                 <label class="radio"><input type="radio" name="options" value="myViz" required=""> My visualisations</label>
+                                <label class="radio"><input type="radio" name="options" value="demo" required=""> Example demonstrations</label>
                             </div>
                         </div>
                     %{--</g:radioGroup>--}%

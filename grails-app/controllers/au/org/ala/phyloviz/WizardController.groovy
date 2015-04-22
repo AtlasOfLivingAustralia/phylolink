@@ -5,6 +5,7 @@ class WizardController {
     def phyloService
     def userService
     def authService
+    def utilsService
 
     static allowedMethods = [pickMethod: 'POST', save: 'POST']
 
@@ -36,6 +37,9 @@ class WizardController {
                 break;
             case 'myViz':
                 redirect(action: 'myViz')
+                break;
+            case 'demo':
+                redirect(action: 'demo')
                 break;
         }
     }
@@ -167,7 +171,7 @@ class WizardController {
         }
         def myViz = Phylo.findAllByOwner(owner ?: -1)?:[]
         if (myViz.size() == 0) {
-            flash.message = 'You do not have any trees uploaded.'
+            flash.message = 'You have not created any visualisations.'
         }
         [viz: myViz, name: name]
     }
@@ -189,5 +193,21 @@ class WizardController {
         log.debug( params.tree )
         params.treeFormat = 'nexml'
         forward( action: 'save', params: params)
+    }
+
+    /**
+     * demo
+     */
+    def demo(){
+        def owner = utilsService.guestAccount();
+        def name;
+        if (owner == null) {
+            flash.message = 'No demonstration visualisations found.'
+        }
+        def myViz = Phylo.findAllByOwner(owner ?: -1)?:[]
+        if (myViz.size() == 0) {
+            flash.message = 'You do not have any trees uploaded.'
+        }
+        render(view:'myViz', model: [viz: myViz, name: 'Demonstration'])
     }
 }
