@@ -39,8 +39,8 @@ class WebService implements InitializingBean {
             conn.setRequestProperty('Cookie',cookie);
         }
         try {
-            conn.setConnectTimeout(10000)
-            conn.setReadTimeout(50000)
+            conn.setConnectTimeout(180000)
+            conn.setReadTimeout(180000)
             return conn.content.text
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= \${url}."]
@@ -70,8 +70,8 @@ class WebService implements InitializingBean {
         def conn = new URL(url).openConnection()
 
         try {
-            conn.setConnectTimeout(60000)
-            conn.setReadTimeout(50000)
+            conn.setConnectTimeout(180000)
+            conn.setReadTimeout(180000)
             def json = conn.content.text
             return JSON.parse(json)
         } catch (ConverterException e) {

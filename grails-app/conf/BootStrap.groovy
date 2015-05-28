@@ -178,6 +178,9 @@ class BootStrap {
         return [[
                 drid:'dr2116',
                 title:'Acacia Characters'
+        ],[
+                drid:'dr2324',
+                title:'Mammal traits'
         ]]
     }
 
