@@ -146,6 +146,14 @@ class OpentreeService {
         def url = grailsApplication.config['to_nexson'];
         log.debug( url )
         def data = [:]
+
+        // error saving tree with blank space in scientific name. BH-73
+        switch (format){
+            case 'newick':
+                tree = tree?.replace(' ','_');
+                break;
+        }
+
         data['content'] = tree
         data['output'] = 'nexson'
         data['inputFormat'] = format
