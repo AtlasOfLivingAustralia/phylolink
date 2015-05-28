@@ -65,10 +65,10 @@ L.Control.Legend = L.Control.extend({
     },
     view : undefined,
     html: '<div>\
-                   <div class="legend-short btn btn-xs" style="margin: 5px;" data-bind="html:icon"></div>\
-                   <div class="legend-full leaflet-control-layers-overlays" style="margin:5px; display: none">\
+                   <div class="legend-short btn btn-xs" style="margin: 5px; display: none" data-bind="html:icon"></div>\
+                   <div class="legend-full leaflet-control-layers-overlays" style="margin:5px;">\
                         <div class="pull-right close" style="padding-left:10px; border: 0;">&times;</div>\
-                        <!--<label>Legend</label>-->\
+                        <label><strong>Legend</strong></label>\
                         <div style="overflow:auto; max-height:400px; width: 120px;">\
                             <table class="legendTable"><tbody  data-bind="foreach: legends">\
                                 <tr><td><i class="legendColour" data-bind="attr:{style:style}"></i><span class="legendItemName" data-bind="text: name"></span></td></tr>\
