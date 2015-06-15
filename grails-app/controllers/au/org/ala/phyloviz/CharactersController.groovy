@@ -7,13 +7,14 @@ class CharactersController {
     def userService
     def charactersService
     def alaService
+    def authService
 
     /**
      *
      * @return
      */
     def list(){
-        def id = userService.getCurrentUserId()
+        def id = authService.getUserId()
         log.debug(id)
         def owner = Owner.findByUserId(id)
         def lists = Characters.findAllByOwner(owner);
