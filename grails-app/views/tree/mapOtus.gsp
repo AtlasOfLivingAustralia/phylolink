@@ -6,7 +6,7 @@
 <html>
 <head>
     <title>Name reconciliation</title>
-    <meta name="layout" content="main"/>
+    <meta name="layout" content="mapotu"/>
     <r:require modules="slickgrid, appSpecific"/>
     <r:require modules="bugherd"/>
     <jqui:resources theme="darkness"/>

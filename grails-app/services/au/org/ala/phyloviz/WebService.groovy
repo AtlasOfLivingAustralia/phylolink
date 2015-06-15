@@ -17,9 +17,9 @@ package au.org.ala.phyloviz
 import grails.converters.JSON
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
 import org.apache.http.entity.mime.MultipartEntity
-import org.apache.http.entity.mime.content.StringBody
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
@@ -89,7 +89,7 @@ class WebService implements InitializingBean {
         }
     }
 
-    def doJsonPost(String url, String path, String port, String postBody) {
+    def doJsonPost(String url, String path, String port, String postBody, String cookie) {
         log.debug "postBody = " + postBody
         def http = new HTTPBuilder(url)
         http.request(groovyx.net.http.Method.POST, groovyx.net.http.ContentType.JSON) {
@@ -97,9 +97,13 @@ class WebService implements InitializingBean {
             if (port) {
                 uri.port = port as int
             }
-            body = postBody
-            requestContentType = ContentType.URLENC
 
+            if(cookie){
+                headers['Cookie'] = cookie;
+            }
+
+            body = postBody
+            requestContentType = ContentType.JSON
             response.success = { resp, json ->
                 log.debug "bulk lookup = " + json
                 return json
@@ -111,7 +115,18 @@ class WebService implements InitializingBean {
                 return error
             }
         }
+    }
 
+    /**
+     * do json post with cookie data provided
+     * @param url
+     * @param path
+     * @param port
+     * @param postBody
+     * @return
+     */
+    def doJsonPost(String url, String path, String port, String postBody) {
+        doJsonPost(url, path, port, postBody, null);
     }
 
     def doPost(String url, String path, String port, String postBody) {
@@ -142,13 +157,13 @@ class WebService implements InitializingBean {
         }
     }
     
-    def postStrData(String url, String data) {
+    def postStrData(String url, String data, String cookie) {
         def uri = new URL(url);
         log.debug(uri.host)
         log.debug(uri.path)
         log.debug(uri.port.toString())
         log.debug(data)
-        this.doJsonPost("http://${uri.host}", uri.path, uri.port?.toString(), data)
+        this.doJsonPost("http://${uri.host}", uri.path, uri.port?.toString(), data, cookie)
     }
 
     /**
@@ -160,27 +175,9 @@ class WebService implements InitializingBean {
     def postData( String url, data, head = [:], enc = ContentType.URLENC ){
         def http = new HTTPBuilder( url )
         def resp = ''
-//        def response = http.post( body: data,
-//                requestContentType: ContentType.URLENC, headers: header ) { resp, result ->
-////            headers['Accept'] = 'application/json'
-//            log.debug( "POST Success: ${resp.statusLine} ${result}" )
-////            return  result
-////            res =  result
-////            if( res instanceof InputStreamReader ){
-////                BufferedReader rd = new BufferedReader(res);
-////                String line;
-////                def s = ""
-////                while ((line = rd.readLine()) != null) {
-////                    s += line
-////                }
-////                res = s;
-////            }
-//        }
-//        return  response?.text();
         log.debug('cookie:'+head['cookie']);
         http.getHeaders()['Cookie']= head['cookie'];
         def response = http.request( POST){
-//            headers['Set-Cookie'] = head['cookie'];
             requestContentType = enc;
             body = data;
             log.debug(head['cookie'])
@@ -209,7 +206,6 @@ class WebService implements InitializingBean {
     def postData( String url){
         def http = new HTTPBuilder( url )
         http.post( body:"" ) { resp, result ->
-//            headers['Accept'] = 'application/json'
             log.debug( "POST Success: ${resp.statusLine} ${result}" )
             return  result
         }
@@ -225,22 +221,17 @@ class WebService implements InitializingBean {
             }
             requestContentType = 'multipart/form-data';
             MultipartEntity entity = new MultipartEntity();
-            entity.addPart('q',new StringBody(multi['q']));
-//            entity.content( new InputStreamReader());
+            entity.addPart('myFile',multi['myFile']);
             req.entity = entity;
-        }
 
-        if( response instanceof  StringReader){
-            while((ch = response.read())!= -1){
-                resp += (char)ch;
+            response.'302' = { r ->
+                Map <String, List> loc = [:];
+                HttpResponseDecorator.HeadersDecorator headers = r.getHeaders();
+                loc['location']= headers['Location'];
+                log.debug( r );
+                return loc;
             }
-        } else if(response instanceof String ) {
-            resp = response;
-        } else {
-            resp = response?.text();
         }
-
-        return resp;
     }
 
     /**

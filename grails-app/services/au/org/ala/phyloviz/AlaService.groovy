@@ -10,6 +10,8 @@ class AlaService {
     def webService
     def grailsApplication
     def charactersService
+    def sandboxService
+
     /**
      * adding utilsService will cause the program to termiate. I think it is because of cyclical dependencies.
      * alaService needs utilsService and utilsService needs alaService
@@ -356,5 +358,36 @@ class AlaService {
                 flush: true
         )
         return  c;
+    }
+
+    /**
+     * function that calls respective function to upload data
+     */
+    def uploadData(String type, String title, String scName, File file, String cookie){
+        def result;
+
+        switch( type ){
+            case 'character':
+                charactersService.upload(title, scName, file);
+                break;
+            case 'occurrence':
+                if(file == null){
+                    String loc = '/Users/var03f/Documents/phylojive/pauls data/Hbinoei.csv';
+                    file = new File(loc);
+                }
+
+                if(title == null){
+                    title = 'test data';
+                }
+
+                if(scName == null){
+                    scName = 'sample ID';
+                }
+
+                result = sandboxService.upload(file, title, scName);
+                break;
+        }
+
+        return result;
     }
 }

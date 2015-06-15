@@ -1,3 +1,5 @@
+def alaBaseUrl = "https://www.ala.org.au"
+
 modules = {
 
 //    jquery{
@@ -9,12 +11,19 @@ modules = {
 //        resource url: [dir: 'js', file: 'html5.js', plugin: "ala-web-theme"], wrapper: { s -> "<!--[if lt IE 9]>$s<![endif]-->" }, disposition: 'head'
 //    }
 
-//    bootstrap {
-//        dependsOn 'core'
-//        resource url: [dir: 'js', file: 'bootstrap.js', plugin: 'ala-web-theme', disposition: 'head']
-//        resource url: [dir: 'css', file: 'bootstrap.css', plugin: 'ala-web-theme'], attrs: [media: 'screen, projection, print']
-//        resource url: [dir: 'css', file: 'bootstrap-responsive.css', plugin: 'ala-web-theme'], attrs: [media: 'screen', id: 'responsiveCss']
-//    }
+    bootstrapApp {
+        dependsOn 'core', 'font-awesome'
+        resource url:alaBaseUrl + '/commonui-bs2/css/bootstrap.min.css', attrs:[media:'all']
+        resource url:alaBaseUrl + '/commonui-bs2/css/bootstrap-responsive.min.css', attrs:[media:'all']
+        resource url:alaBaseUrl + '/commonui-bs2/css/ala-styles.css', attrs:[media:'all']
+        resource url:alaBaseUrl + '/commonui-bs2/js/bootstrap.js'
+    }
+
+    core {
+        dependsOn 'jquery'
+        resource url:[plugin: 'ala-bootstrap2', dir: 'js',file:'html5.js'], wrapper: { s -> "<!--[if lt IE 9]>$s<![endif]-->" }
+        resource url:alaBaseUrl + '/commonui-bs2/js/application.js'
+    }
 
     knockout {
         resource url: 'js/knockout-2.3.0.js',disposition: 'head'

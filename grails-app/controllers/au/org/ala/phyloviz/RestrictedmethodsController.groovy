@@ -20,4 +20,5 @@ class RestrictedmethodsController {
             render(contentType: 'application/json', text: result as JSON);
         }
     }
+
 }

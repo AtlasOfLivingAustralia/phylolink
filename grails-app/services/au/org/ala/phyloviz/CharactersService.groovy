@@ -2,6 +2,7 @@ package au.org.ala.phyloviz
 
 import grails.converters.JSON
 import grails.transaction.Transactional
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 import java.util.regex.Pattern
 
@@ -120,5 +121,41 @@ class CharactersService {
             ]
         }
         return  result;
+    }
+
+    /**
+     * upload data set to list tool
+     */
+    def upload(){
+        def result = [:], id;
+        def file = isMultipartRequest() ? request.getFile('file') : null;
+        def reader, colIndex, colName, title;
+        String cookie = request.getHeader('Cookie');
+        log.debug('cooike: '+cookie);
+        log.debug(isMultipartRequest());
+        log.debug('cookies:'+request.getCookies());
+        JSONObject formParams = JSON.parse(request.getParameter("formParms"));
+        title = formParams['title']
+        colIndex = formParams['column']['id']
+//        colIndex = Integer.parseInt(colIndex);
+        colName  = formParams['column']['displayname']
+        reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
+        result = alaService.createList(reader, title, colIndex, cookie);
+        if(result?.druid){
+            def url = getUrl(result.druid);
+            id = result.id
+            result = [:]
+            result['url'] = url
+            result['title'] = title
+            result['id'] = id;
+        } else {
+            result['error'] = 'error executing function';
+        }
+
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
     }
 }

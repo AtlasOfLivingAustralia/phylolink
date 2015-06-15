@@ -4,6 +4,7 @@ import au.org.ala.soils2sat.LayerTreeNode
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 class AlaController {
     def webService
@@ -12,7 +13,7 @@ class AlaController {
     def alaService
     def characterService
 
-    static allowedMethods = [saveAsList: 'POST']
+    static allowedMethods = [saveAsList: 'POST', uploadData: 'POST']
 
     def index() {
 
@@ -358,5 +359,24 @@ class AlaController {
      */
     def pd(){
 
+    }
+
+    /**
+     * upload data
+     */
+    def uploadData(){
+        def result;
+        String type = params.type?:'occurrence';
+        String title = params.title;
+        String scientificName = params.scientificName;
+        String cookie = request.getHeader('Cookie')
+        // TODO: get file and store it.
+        CommonsMultipartFile file = request.getFile('myFile');
+        FileInputStream is = file.getInputStream();
+        def path = is.path;
+        File tempFile = new File(path);
+
+        result = alaService.uploadData(type, title, scientificName, tempFile, cookie);
+        render(contentType: 'application/json', text: result as JSON);
     }
 }

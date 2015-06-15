@@ -33,6 +33,7 @@ reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
 /******* End of change this stuff for your project *******/
 
 /*** Phylo Link config *******/
+sandboxUrl = "http://sandbox1.ala.org.au"
 debug = true
 skin.fluidLayout = 1;
 

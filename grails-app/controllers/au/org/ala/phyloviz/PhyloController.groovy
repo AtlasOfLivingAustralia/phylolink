@@ -12,6 +12,7 @@ class PhyloController {
     def userService
     def treeService
     def phyloService
+    def authService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -22,9 +23,9 @@ class PhyloController {
 
     def show(Phylo phyloInstance) {
         def tree = Tree.findById(phyloInstance.getStudyid());
-        def user = userService.getUser();
-        log.debug("current user: "+user);
-        def userId = userService.getCurrentUserId();
+//        def user = userService.getUser();
+//        log.debug("current user: "+user);
+        def userId = authService.getUserId();
         if(userId != ""){
             userId = userId instanceof String?Long.parseLong(userId):userId;
         }
@@ -197,7 +198,7 @@ class PhyloController {
             }
         }
         if( result.size() != 0 ){
-            result.add(0, ['Character','Occurrences'])
+            result.add(0,   ['Character','Occurrences'])
         } else {
             result.push( ['Character','Occurrences'] );
             result.push( ['',0] );

@@ -16,7 +16,6 @@ class TreeService {
     def nexsonService
     def metricsService
     def webService
-    def userService
 
     LinkGenerator grailsLinkGenerator
 
@@ -557,7 +556,15 @@ class TreeService {
     }
 
     def saveTitle(Phylo phyloInstance, title){
-        def user = Owner.findByUserId(userService.getCurrentUserId())
+        String userId = authService.getUserId();
+        Owner user;
+
+        if( userId ){
+            user = Owner.findByUserId(userId)
+        } else {
+            return [ 'message' : 'Cannot find your user details on system. Contact adminstrator.' ];
+        }
+
         def result = [:]
         log.debug(user)
         log.debug(phyloInstance.getOwner()?.userId)
