@@ -297,7 +297,7 @@ class AlaService {
     def getCharJsonForKeys(drid, cookie, keys){
         def url = grailsApplication.config.listCsvForKeys;
         def charJson;
-        url = url.replace('DRID', drid).replace('KEYS', keys);
+        url = url.replace('DRID', drid).replace('KEYS', keys).replaceAll(' ','+');
         def csv = webService.get(url,cookie);
         charJson = charactersService.convertCharCsvToJson(csv,'||');
         return charJson;
