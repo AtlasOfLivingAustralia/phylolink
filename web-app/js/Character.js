@@ -505,14 +505,15 @@ var Character = function (options) {
 
         this.onClick = function(model, e){
             var obj = $('#'+minUploadId)
-            obj.toggle();
-            if(!obj.is(':visible')){
-                $('#'+uploadTitleId +' i').addClass('icon-chevron-down');
-                $('#'+uploadTitleId+' i').removeClass('icon-chevron-up');
-            } else {
-                $('#'+uploadTitleId+' i').removeClass('icon-chevron-down');
-                $('#'+uploadTitleId+' i').addClass('icon-chevron-up');
-            }
+            obj.toggle('hide', function(){
+                if(!obj.is(':visible')){
+                    $('#'+uploadTitleId +' i').addClass('icon-chevron-down');
+                    $('#'+uploadTitleId+' i').removeClass('icon-chevron-up');
+                } else {
+                    $('#'+uploadTitleId+' i').removeClass('icon-chevron-down');
+                    $('#'+uploadTitleId+' i').addClass('icon-chevron-up');
+                }
+            });
         }
     }
 

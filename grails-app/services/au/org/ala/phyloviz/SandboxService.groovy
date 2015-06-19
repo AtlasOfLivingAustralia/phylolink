@@ -140,4 +140,25 @@ class SandboxService {
 
         post.getResponseBodyAsString()
     }
+
+    /**
+     *
+     */
+    def findListByAlaId( alaId ){
+        def result = [];
+        def url = grailsApplication.config.collectoryUrl;
+        if(alaId){
+            url = url.replace('ALAID', alaId);
+            result = webService.getJson(url);
+        }
+        result;
+    }
+
+    /**
+     * check status of uploaded file
+     */
+    def checkStatus(uid){
+        def url = grailsApplication.config.sandboxUrl + "/ws/upload/status/${uid}.json";
+        webService.get(url);
+    }
 }

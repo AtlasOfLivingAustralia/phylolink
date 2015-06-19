@@ -370,13 +370,15 @@ class AlaController {
         String title = params.title;
         String scientificName = params.scientificName;
         String cookie = request.getHeader('Cookie')
-        // TODO: get file and store it.
-        CommonsMultipartFile file = request.getFile('myFile');
-        FileInputStream is = file.getInputStream();
-        def path = is.path;
-        File tempFile = new File(path);
 
+        CommonsMultipartFile file = request.getFile('file');
+        File tempFile = utilsService.getFileFromCommonsMultipartFile(file);
         result = alaService.uploadData(type, title, scientificName, tempFile, cookie);
-        render(contentType: 'application/json', text: result as JSON);
+        if( result.error ){
+            render(status: 405, contentType: 'application/json', text: result as JSON);
+        } else{
+            render(contentType: 'application/json', text: result as JSON);
+        }
+
     }
 }

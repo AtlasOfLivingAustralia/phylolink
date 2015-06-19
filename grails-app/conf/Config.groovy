@@ -33,7 +33,12 @@ reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
 /******* End of change this stuff for your project *******/
 
 /*** Phylo Link config *******/
+
+// TODO: move this config to file in data directory.
 sandboxUrl = "http://sandbox1.ala.org.au"
+collectoryUrl = "http://collectory-dev.ala.org.au/ws/tempDataResource?alaId=ALAID"
+// end of config to move
+
 debug = true
 skin.fluidLayout = 1;
 

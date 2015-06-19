@@ -371,17 +371,16 @@ class AlaService {
                 charactersService.upload(title, scName, file);
                 break;
             case 'occurrence':
-                if(file == null){
-                    String loc = '/Users/var03f/Documents/phylojive/pauls data/Hbinoei.csv';
-                    file = new File(loc);
+                if(file == null || !file.exists()){
+                    return ['error':'File not found.', 'message':'Did you click a file to upload?']
                 }
 
-                if(title == null){
-                    title = 'test data';
+                if(title == null|| title.isEmpty()){
+                    return ['error':'No title provided', 'message':'Please give a title to upload']
                 }
 
-                if(scName == null){
-                    scName = 'sample ID';
+                if(scName == null || scName.isEmpty() ){
+                    return ['error':'No species name or otu number provided', 'message':'Please select from the list provided.']
                 }
 
                 result = sandboxService.upload(file, title, scName);

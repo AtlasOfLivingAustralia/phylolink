@@ -9,7 +9,7 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <r:require modules="application,leaflet,phylojive,character,map,contextmenu"/>
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records"/>
     <r:require modules="bugherd"/>
 </head>
 
@@ -36,24 +36,31 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li id="charLi" role="presentation" class="active"><a id="characterTab" href="#character" aria-controls="home" role="tab"
+                <li id="charLi" role="presentation" class=""><a id="characterTab" href="#character" aria-controls="home" role="tab"
                                                           data-toggle="tab">Character</a></li>
                 <li role="presentation"><a href="#map" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="mapTab">Map</a></li>
                 <li role="presentation" ><a   href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="habitatTab">Analysis</a></li>
-                <li role="presentation" ><a   href="#help" aria-controls="profile" role="tab" data-toggle="tab"
+                <li role="presentation" class="active"><a   href="#records" aria-controls="profile" role="tab" data-toggle="tab"
+                                              id="recordsTab">Occurrences</a></li>
+                <li role="presentation"><a   href="#help" aria-controls="profile" role="tab" data-toggle="tab"
                                           id="helpTab">Help</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content" style="position: relative">
-                <div role="tabpanel" class="tab-pane active" id="character"></div>
+                <div role="tabpanel" class="tab-pane" id="character"></div>
 
                 <div role="tabpanel" class="tab-pane" id="map"></div>
 
                 <div role="tabpanel" class="tab-pane" id="habitat"></div>
-                <div role="tabpanel" class="tab-pane" id="help">
+
+                <div role="tabpanel" class="tab-pane active" id="records">
+                    <div id="recordsForm"></div>
+                </div>
+
+            <div role="tabpanel" class="tab-pane" id="help">
                     <iframe width="100%" height="315"
                             src="https://www.youtube.com/embed/_fN3Nn159Tw" frameborder="0" allowfullscreen>
                     </iframe>
@@ -247,7 +254,16 @@ var map = new Map({
             type: 'POST',
             dataType: 'JSONP'
         }
-        })
+        });
+
+        var records = new Records({
+            id: 'recordsForm',
+            templateUrl: '${createLink(controller: 'artifacts', action:'recordsTemplate.html')}',
+            uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}',
+            indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
+            sampleFile: "${createLink(controller: 'artifacts', action:'occurrenceRecords.csv')}"
+        });
+
         $( "#tabs" ).tab('show');
         // a fix to display map tiles properly. Without it map is grey colored for majority of area.
         $("body").on("shown.bs.tab", "#mapTab", function() {

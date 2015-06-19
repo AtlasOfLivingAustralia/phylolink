@@ -26,4 +26,8 @@ class ViewerController {
             render( text: [ error: 'studyId not found'] as JSON);
         }
     }
+
+    def recordsOccurrenceForm(){
+
+    }
 }

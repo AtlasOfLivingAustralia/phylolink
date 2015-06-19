@@ -302,4 +302,19 @@ class UtilsService {
         }
         return guest
     }
+
+    /**
+     * gets a file class instance for a file sent via post.
+     * Params - CommonsMultipartFile - file instance returned by request object.
+     */
+    def getFileFromCommonsMultipartFile( file ){
+        def is = file.getInputStream(), path = null;
+        if( is instanceof FileInputStream){
+            path = is.path;
+        } else if( is instanceof ByteArrayInputStream ){
+            path = file.getFileItem()?.tempFile?.path;
+        }
+
+        return new File(path);
+    }
 }

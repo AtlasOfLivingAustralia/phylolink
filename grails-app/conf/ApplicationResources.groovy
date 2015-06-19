@@ -31,6 +31,7 @@ modules = {
 
     knockout3 {
         resource url: 'js/knockout-3.0.0.js'
+        resource url: 'js/knockout-custom-bindings.js'
     }
 
     create{
@@ -136,6 +137,11 @@ modules = {
         resource url: 'js/knockout-sortable.min.js'
         resource url: 'js/Character.js'
         resource url: 'css/PhyloJive.css'
+    }
+
+    records {
+        dependsOn('knockout3','emitter')
+        resource url: 'js/Records.js'
     }
 
     map{
