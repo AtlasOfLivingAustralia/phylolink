@@ -1,0 +1,27 @@
+/**
+ * Created by Temi Varghese on 19/06/15.
+ */
+package au.org.ala.phyloviz;
+
+class ConvertSandbox extends ConvertDomainObject {
+    ConvertSandbox() {
+        prop = [
+                'id'            : 'id',
+                'drid'          : 'drid',
+                'scientificName': 'scientificName',
+                'serverInstance': 'instanceUrl',
+                'title'         : 'title'
+        ]
+    }
+
+    def convert(obj){
+        def result = convert(obj, [:]);
+        return addProperties(result);
+    }
+
+    def addProperties(obj){
+        obj['layerUrl'] = obj['instanceUrl'] + "/ws/webportal/wms/reflect";
+        obj['type'] = 'sandbox';
+        return obj;
+    }
+}

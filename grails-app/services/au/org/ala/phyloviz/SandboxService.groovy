@@ -1,4 +1,5 @@
 package au.org.ala.phyloviz
+
 import grails.converters.JSON
 import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.NameValuePair
@@ -19,16 +20,16 @@ class SandboxService {
      * @param scName
      * @return
      */
-    def upload(File file, String title, String scName){
+    def upload(File file, String title, String scName) {
         //upload and get drid
         def result;
         def headers = "scientific name,lineage ID,Location,Latitude,Longitude,phenotype"
         def preview, dr;
         def serverInstance = grailsApplication.config.sandboxUrl;
         def alaId = authService.getUserId();
-        def owner = Owner.findByUserId( alaId );
-        if(owner== null){
-            return ['error':'Unrecognised user', message: 'User is not registered on Phylolink.'];
+        def owner = Owner.findByUserId(alaId);
+        if (owner == null) {
+            return ['error': 'Unrecognised user', message: 'User is not registered on Phylolink.'];
         }
 
         // read header
@@ -39,27 +40,28 @@ class SandboxService {
 
         FileBody fbody = new FileBody(file);
         String uUrl = "${serverInstance}/datacheck/upload/uploadFile";
-        result = webService.postMultipart(uUrl, ['myFile':fbody], null);
-        preview = getFileId( result.location );
-        if(preview.fileId == null){
-            return ['error':'Failed to upload file.',
-                    'message':'Failed uploading file to sandbox. Contact administrator.']
+        result = webService.postMultipart(uUrl, ['myFile': fbody], null);
+        preview = getFileId(result.location);
+        if (preview.fileId == null) {
+            return ['error'  : 'Failed to upload file.',
+                    'message': 'Failed uploading file to sandbox. Contact administrator.']
         }
 
-        result =  uploadToSandbox( preview.fileId, title, headers, "false" );
+        result = uploadToSandbox(preview.fileId, title, headers, "false");
         //update database
-        if(!result.error){
+        if (!result.error) {
             dr = new Sandbox([
-                'title': title,
-                'scientificName': scName,
-                'drid': result.uid,
-                'serverInstance': serverInstance,
-                'owner': owner
+                    'title'         : title,
+                    'scientificName': scName,
+                    'drid'          : result.uid,
+                    'serverInstance': serverInstance,
+                    'owner'         : owner,
+                    'status'        : true
             ]);
 
             dr.save(flush: true);
-            if(dr.hasErrors()){
-                return ['error':"Failed to create an entry into database for dataresource ${result.uid}." + dr.errors]
+            if (dr.hasErrors()) {
+                return ['error': "Failed to create an entry into database for dataresource ${result.uid}." + dr.errors]
             } else {
                 result.message = 'Saved data into sandbox and database';
             }
@@ -73,11 +75,11 @@ class SandboxService {
      * @param location url eg: 'Location: http://sandbox1.ala.org.au/datacheck/upload/preview/1433916778370?fn=Hbinoei.csv'
      * @return ['fileId':'123']
      */
-    def getFileId(url){
-        if(url){
+    def getFileId(url) {
+        if (url) {
             def id = (url =~ /\/(\d+)\?/)
-            if( id.hasGroup()){
-                return ['fileId':id[0][1]];
+            if (id.hasGroup()) {
+                return ['fileId': id[0][1]];
             }
         }
     }
@@ -85,12 +87,12 @@ class SandboxService {
     /**
      * upload file to sandbox
      */
-    def uploadToSandbox(String id, String title, String headers, String firstLineIsData){
+    def uploadToSandbox(String id, String title, String headers, String firstLineIsData) {
         def sandboxUrl = grailsApplication.config.sandboxUrl
         String url = "${sandboxUrl}/ws/upload/post";
 
         def result;
-        result = uploadFile( url, csvFileUrl(id), id, headers, title, 'COMMA', firstLineIsData, '');
+        result = uploadFile(url, csvFileUrl(id), id, headers, title, 'COMMA', firstLineIsData, '');
         JSON.parse(result);
     }
 
@@ -99,7 +101,7 @@ class SandboxService {
      * @param fileId
      * @return String
      */
-    def csvFileUrl(String fileId){
+    def csvFileUrl(String fileId) {
         def biocache = grailsApplication.config.sandboxUrl;
         return "${biocache}/datacheck/upload/serveFile?fileId=${fileId}";
     }
@@ -114,7 +116,7 @@ class SandboxService {
      * @return response as string
      */
     def uploadFile(String url, String csvUrl, String fileId, String headers, String datasetName, String separator,
-                   String firstLineIsData, String customIndexedFields){
+                   String firstLineIsData, String customIndexedFields) {
 
         NameValuePair[] nameValuePairs = new NameValuePair[7]
         nameValuePairs[0] = new NameValuePair("csvZippedUrl", csvUrl)
@@ -142,12 +144,12 @@ class SandboxService {
     }
 
     /**
-     *
+     * lists
      */
-    def findListByAlaId( alaId ){
+    def findListByAlaId(alaId) {
         def result = [];
         def url = grailsApplication.config.collectoryUrl;
-        if(alaId){
+        if (alaId) {
             url = url.replace('ALAID', alaId);
             result = webService.getJson(url);
         }
@@ -157,8 +159,58 @@ class SandboxService {
     /**
      * check status of uploaded file
      */
-    def checkStatus(uid){
+    def checkStatus(uid) {
         def url = grailsApplication.config.sandboxUrl + "/ws/upload/status/${uid}.json";
         webService.get(url);
+    }
+
+    def getDataresourceInfo(String druid, String ownerId, String source) {
+        def owner
+        if (ownerId) {
+            owner = Owner.findByUserId(ownerId);
+        }
+
+        if (!owner) {
+            return ['error': 'You are not logged in. Please log in.']
+        }
+
+        if (!source) {
+            source = grailsApplication.config.sandboxUrl;
+        }
+
+        def s = Sandbox.findAll {
+            drid == druid && owner == owner && serverInstance == source
+        }.get(0);
+        return new ConvertSandbox().convert(s);
+    }
+
+    def getAllDataresourceInfo(String userId){
+        def owner;
+        if (userId) {
+            owner = Owner.findByUserId(userId);
+        }
+
+        def status = true;
+
+        if (!owner) {
+            return ['error': 'You are not logged in. Please log in.']
+        }
+
+        def s = Sandbox.findAll {
+            owner == owner && status == status
+        };
+        def result = [], cs =  new ConvertSandbox();
+        s.each{ item ->
+            result.push(cs.convert(item))
+        }
+        return result;
+    }
+
+    /**
+     * get qid url for sandbox instance provided
+     *
+     */
+    def getQidUrl(String sandboxInstance){
+        "${sandboxInstance}/ws/webportal/params";
     }
 }

@@ -19,12 +19,14 @@
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
-                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard',action: 'myViz')}">My Visualisations</a> </li>
+                <li><a href="${createLink(uri: '/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span
+                        class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'myViz')}">My Visualisations</a></li>
             </ul>
         </div>
     </div>
+
     <div id="vizTitle"></div>
 
     <div class="row-fluid">
@@ -36,16 +38,18 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li id="charLi" role="presentation" class=""><a id="characterTab" href="#character" aria-controls="home" role="tab"
-                                                          data-toggle="tab">Character</a></li>
+                <li id="charLi" role="presentation" class=""><a id="characterTab" href="#character" aria-controls="home"
+                                                                role="tab"
+                                                                data-toggle="tab">Character</a></li>
                 <li role="presentation"><a href="#map" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="mapTab">Map</a></li>
-                <li role="presentation" ><a   href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
+                <li role="presentation"><a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="habitatTab">Analysis</a></li>
-                <li role="presentation" class="active"><a   href="#records" aria-controls="profile" role="tab" data-toggle="tab"
-                                              id="recordsTab">Occurrences</a></li>
-                <li role="presentation"><a   href="#help" aria-controls="profile" role="tab" data-toggle="tab"
-                                          id="helpTab">Help</a></li>
+                <li role="presentation" class="active"><a href="#records" aria-controls="profile" role="tab"
+                                                          data-toggle="tab"
+                                                          id="recordsTab">Occurrences</a></li>
+                <li role="presentation"><a href="#help" aria-controls="profile" role="tab" data-toggle="tab"
+                                           id="helpTab">Help</a></li>
             </ul>
 
             <!-- Tab panes -->
@@ -60,19 +64,19 @@
                     <div id="recordsForm"></div>
                 </div>
 
-            <div role="tabpanel" class="tab-pane" id="help">
+                <div role="tabpanel" class="tab-pane" id="help">
                     <iframe width="100%" height="315"
                             src="https://www.youtube.com/embed/_fN3Nn159Tw" frameborder="0" allowfullscreen>
                     </iframe>
                     &nbsp;
                     <table class="table table-bordered">
                         <tbody>
-                            <th>
-                                How to use phylolink?
-                            </th>
-                            <tr>
-                                <td>Speaker</td><td>Joseph Miller</td>
-                            </tr>
+                        <th>
+                            How to use phylolink?
+                        </th>
+                        <tr>
+                            <td>Speaker</td><td>Joseph Miller</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -84,10 +88,10 @@
 
 <r:script disposition="defer">
     var config ={
-        type:'ala',
-        sandboxLayer: 'http://sandbox.ala.org.au/biocache-service/webportal/wms/reflect',
+        type:'sandbox',
+        sandboxLayer: 'http://sandbox1.ala.org.au/ws/webportal/wms/reflect',
         biocacheLayer: 'http://biocache.ala.org.au/ws/ogc/wms/reflect',
-        sandboxLegend: 'http://sandbox.ala.org.au/ala-hub/occurrence/legend',
+        sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'http://biocache.ala.org.au/occurrence/legend',
         legendUrl: function(){
             switch (config.type){
@@ -150,7 +154,13 @@
             saveQuery:{
                 url: '${createLink(controller: 'ala', action: 'saveQuery')}',
                 type: 'POST',
-                dataType: 'JSON'
+                dataType: 'JSON',
+                data: {
+                    speciesList: undefined,
+                    dataLocationType: undefined, // 'ala' or 'sandbox'
+                    instanceUrl: undefined, // 'http://sandbox.ala.org.au',
+                    drid: undefined // drt121
+                }
             }
         });
 
@@ -173,8 +183,8 @@
             doSync: ${edit},
             syncData: {
                 id: ${phyloInstance.getId()}
-            },
-            syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
+    },
+    syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
             charactersList : {
                 url: '${createLink(controller: 'characters', action: 'list')}',
                 type: 'GET',
@@ -250,7 +260,7 @@ var map = new Map({
             yAxis: 'Occurrence count'
         },
         saveQuery:{
-            url: '${createLink(controller: 'ala',action: 'saveQuery')}',
+            url: '${createLink(controller: 'ala', action: 'saveQuery')}',
             type: 'POST',
             dataType: 'JSONP'
         }
@@ -258,10 +268,14 @@ var map = new Map({
 
         var records = new Records({
             id: 'recordsForm',
-            templateUrl: '${createLink(controller: 'artifacts', action:'recordsTemplate.html')}',
+            templateUrl: '${createLink(controller: 'artifacts', action: 'recordsTemplate.html')}',
             uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}',
             indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
-            sampleFile: "${createLink(controller: 'artifacts', action:'occurrenceRecords.csv')}"
+            sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
+            dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}",
+            dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}',
+            map : map,
+            pj: pj
         });
 
         $( "#tabs" ).tab('show');

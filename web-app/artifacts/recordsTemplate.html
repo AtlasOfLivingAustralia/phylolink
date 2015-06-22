@@ -61,7 +61,8 @@
             <div class="control-group">
                 <label class="control-label" for="">List of records available:</label>
                 <div class="controls">
-                    <select id="sourceCharRecords" data-bind="options:lists,optionsText:'title',value:list,optionsCaption:'Choose..', event:{change:loadNewRecords}" required></select>
+                    <select id="sourceCharRecords" data-bind="options:lists,optionsText:'title',value:selectedValue,
+                    optionsCaption:'Choose..', event:{change: drChanged}" required></select>
                 </div>
             </div>
         </form>

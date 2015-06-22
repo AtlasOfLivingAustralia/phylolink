@@ -1263,6 +1263,13 @@ var start, stop
     }
 
     /**
+     * clear qid.
+     */
+    this.clearQid = function(){
+        qid = undefined;
+    }
+
+    /**
      * gets node id from url hash
      */
     this.getNodeFromUrl = function(){
@@ -1331,18 +1338,18 @@ var start, stop
     }
 
     this.saveQuery = function(node, names, dontSave){
+        var params = config.saveQuery.data;
         if(config.doSaveQuery){
             if(!dontSave){
                 qid = undefined;
             }
             this.emit('savequerybegin')
+            params.speciesList= JSON.stringify(names);
             var obj = $.ajax({
                 url: config.saveQuery.url,
                 type: config.saveQuery.type,
                 dataType: config.saveQuery.dataType,
-                data:{
-                    speciesList: JSON.stringify(names)
-                },
+                data:params,
                 success: function(q){
                     if(!dontSave){
                         qid = q.qid;
@@ -1357,6 +1364,13 @@ var start, stop
             });
             return obj;
         }
+    }
+
+    this.setSaveQueryParams = function(type, instance, drid){
+        config.saveQuery.data.speciesList= undefined;
+        config.saveQuery.data.dataLocationType = type || 'ala';
+        config.saveQuery.data.instanceUrl = instance;
+        config.saveQuery.data.drid = drid;
     }
 
     /**

@@ -11,7 +11,8 @@ class AlaController {
     def utilsService
     def layerService
     def alaService
-    def characterService
+    def sandboxService
+    def authService
 
     static allowedMethods = [saveAsList: 'POST', uploadData: 'POST']
 
@@ -261,11 +262,15 @@ class AlaController {
      */
     def saveQuery(){
         String list = params.speciesList?:'[]';
+        String dataLocationType = params.dataLocationType?:'ala';
+        String serverInstance = params.instanceUrl;
+        String matchingCol = params.matchingCol;
+        String drid = params.drid;
         log.debug(list);
         def json = JSON.parse(list);
         def result;
         if(json){
-            result = alaService.saveQuery(json);
+            result = alaService.saveQuery(json, dataLocationType, serverInstance, drid, matchingCol);
             result = [qid: result];
             if(params.callback){
                 render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
@@ -380,5 +385,18 @@ class AlaController {
             render(contentType: 'application/json', text: result as JSON);
         }
 
+    }
+
+    /**
+     * get a list of data resources for the user in Sandbox. It also includes ala record.
+     */
+    def getRecordsList(){
+        def userId = authService.getUserId();
+        def result = alaService.getRecordsList(userId);
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render( text: result as JSON, contentType: 'application/json');
+        }
     }
 }

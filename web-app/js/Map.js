@@ -122,8 +122,6 @@ function Map(options) {
             collapsed: false
         },
         onAdd: function (map) {
-            // create the control container with a particular class name
-            //var $controlToAdd = $('.colourbyTemplate').clone();
             var container = L.DomUtil.create('div', 'leaflet-control-layers');
             var $container = $(container);
             $container.attr("id", "recordLayerControl");
@@ -206,7 +204,6 @@ function Map(options) {
     colorBy.on('change', function(val){
         env.colormode = val;
         that.updateMap();
-//        legendCtrl.options.urlParams.cm = val;
         that.updateLegend();
         that.updateLayersEnv();
     });
@@ -225,31 +222,27 @@ function Map(options) {
     map.addControl(legendCtrl);
 
     pj.on('click', function (node,list,ajax) {
-        var update = function(){
-            // color mode reset
-            colorBy.updateData([]);
-
-            // color mode reload
-//        colorBy.updateUrl(filter.format(colorBy.url));
-            that.updateColorBy();
-
-            // set env variable
-            // set legend variables
-            // reload legend
-            that.updateLegend();
-
-            // update map
-            that.updateMap();
-        }
 
         if(ajax){
-            ajax.then(update,function(){
+            ajax.then(that.update,function(){
                 console.log('failed to save query')
             })
         } else {
-            update();
+            that.update();
         }
     });
+
+    this.update = function(){
+        // color mode reset
+        colorBy.updateData([]);
+        that.updateColorBy();
+
+        // reload legend
+        that.updateLegend();
+
+        // update map
+        that.updateMap();
+    }
 
     this.updateColorBy = function( f ){
         f = f || filter;
@@ -288,9 +281,7 @@ function Map(options) {
         var params =[];
         var data = options.legend.urlParams;
         data.cm = colorBy.getValue() || '';
-//        data.q = f.getQuery();
         data.q = pj.getQid(true);
-//        var url = f.format(options.legend.baseUrl)
         var url = options.legend.baseUrl
         if( data.cm ){
             if(options.legend.proxy){
@@ -315,9 +306,6 @@ function Map(options) {
                 }
             });
         }
-//        else {
-//            legendCtrl.legend(legendCtrl.options.defaultData);
-//        }
     };
 
     this.updateMap = function(f){
@@ -405,14 +393,6 @@ function Map(options) {
                 name: data[color].name
             });
 
-//            for(var i =0;i < data[color].length;i++){
-//                result.push({
-//                    red: rgb[0],
-//                    green: rgb[1],
-//                    blue:rgb[2],
-//                    name: data[color][i]
-//                });
-//            }
         }
         return result;
     }
@@ -440,18 +420,17 @@ function Map(options) {
         }
     }
 
+    this.setLayerUrl = function(url){
+        options.layer = url;
+        this.update();
+    }
+
     options.character && options.character.on('treecolored',function() {
         // color mode reset
         colorBy.updateData([]);
 
         // color mode reload
         that.updateColorBy();
-
-        // set env variable
-        // set legend variables
-        // reload legend
-//        that.updateLegend();
-
         that.updateMap();
     })
     pj.on('savequerybegin', function(){
@@ -460,8 +439,5 @@ function Map(options) {
     pj.on('savequeryend', function(){
         that.endSpinner();
     })
-//    this.updateEnv();
-//    that.updateMap();
-//    this.updateColorBy();
-//    this.updateLegend();
+
 }

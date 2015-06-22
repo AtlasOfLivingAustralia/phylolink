@@ -13,15 +13,23 @@ var Records = function (c) {
             toggleId: 'minimizeUploadRecords',
             uploadMessageId: 'uploadMessage',
             messageDelay: 5000,
-            sampleFile: undefined
+            sampleFile: undefined,
+            dataresrouceInfoUrl:undefined,
+            drListId:'recordsmain',
+            dataresourceListUrl:undefined,
+            pj: undefined,
+            map: undefined
         }, c),
         records = this;
 
-    var Model = function (opt) {
-        this.title = ko.observable(opt.title);
-        this.scName = ko.observable(opt.scName);
-        this.drid = ko.observable(opt.drid);
-        this.instanceUrl = ko.observable(opt.instanceUrl);
+    var DataresourceModel = function (opt) {
+        this.id = ko.observable(opt.id || null);
+        this.title = ko.observable(opt.title||'');
+        this.scName = ko.observable(opt.scName||'');
+        this.drid = ko.observable(opt.drid||undefined);
+        this.instanceUrl = ko.observable(opt.instanceUrl||'');
+        this.layerUrl = ko.observable(opt.layerUrl||'');
+        this.type = ko.observable(opt.type||'');
     };
 
     var FormModel = function (opt) {
@@ -135,13 +143,33 @@ var Records = function (c) {
 
     }
 
-    var SourceViewModel = function () {
+    var DataresourceViewModel = function () {
         var self = this;
-        this.list = ko.observableArray([]);
-        this.addSource = function (src) {
-            this.list.push(new Model(src));
+        this.lists = ko.observableArray([]);
+        this.selectedValue = ko.observable();
+
+        /**
+         * add a new data resource
+         * @param src
+         */
+        this.addDataresource = function (src, select) {
+            var dr = new DataresourceModel(src)
+            this.lists.push(dr);
+            if(select){
+                this.selectedValue(dr);
+                records.updateMap();
+            }
         }
 
+        this.addDataresources = function (drs) {
+            for(var i = 0; i < drs.length; i++){
+                this.addDataresource(drs[i]);
+            }
+        }
+
+        this.drChanged = function(){
+            records.updateMap();
+        }
     };
 
     var uploadData = new FormModel({
@@ -155,6 +183,7 @@ var Records = function (c) {
     });
 
     var viewModel = new FormViewModel(uploadData);
+    var dataresourceViewModel = new DataresourceViewModel();
 
     this.showForm = function () {
         var that = this;
@@ -174,8 +203,12 @@ var Records = function (c) {
     }
 
     this.init = function () {
-        var formObj = document.getElementById(config.uploadCalloutId);
+        var formObj = document.getElementById(config.uploadCalloutId),
+            listObj = document.getElementById(config.drListId);
         ko.applyBindings(viewModel, formObj);
+        ko.applyBindings(dataresourceViewModel, listObj);
+
+        records.getAllDataresources();
     }
 
     /**
@@ -219,7 +252,7 @@ var Records = function (c) {
                             viewModel.indexingProgress(undefined);
                             viewModel.resetForm();
                         },config.messageDelay);
-                        records.addSource();
+                        records.findDataresourceInfo(config.uid, records.addDataresource);
                         return;
                     case 'FAILED':
                     default :
@@ -237,6 +270,51 @@ var Records = function (c) {
                 viewModel.resetForm();
             }
         });
+    }
+
+    /**
+     * adds a data resource to the list of data resources. exposes this functionality to outside world.
+     */
+    this.addDataresource = function(dr, select){
+        select= select || false;
+        dataresourceViewModel.addDataresource(dr, select);
+    }
+
+    /**
+     * get the config parameters for recently uploaded
+     */
+    this.findDataresourceInfo = function(druid, callback){
+        var that = this;
+        $.ajax({
+            url: config.dataresrouceInfoUrl,
+            data:{
+                druid: druid
+            },
+            success: function(data){
+                if(callback){
+                    callback.apply(that, [data, true]);
+                }
+            }
+        })
+    }
+
+    this.getAllDataresources = function(){
+        var that = this;
+        $.ajax({
+            url: config.dataresourceListUrl,
+            success:function(data){
+                dataresourceViewModel.addDataresources(data);
+            }
+        })
+    }
+
+    this.updateMap = function(){
+        var sel = dataresourceViewModel.selectedValue();
+        var layer = sel.layerUrl(),
+            instanceUrl = sel.instanceUrl();
+        config.pj.clearQid();
+        config.pj.setSaveQueryParams(sel.type(), instanceUrl, sel.drid());
+        config.map.setLayerUrl(layer);
     }
 
     this.showForm();

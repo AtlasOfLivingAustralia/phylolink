@@ -93,6 +93,15 @@ find_all_studies_postdata = [ "includeTreeMetadata":true,"verbose":true ]
 search_postdata = ["property":"ot:originalLabel","value":'',"verbose":true]
 //opentree configs end
 
+alaDataresourceInfo = [
+        'id':0,
+        'drid':null,
+        'scientificName':'taxon_name',
+        'instanceUrl':'http://biocache.ala.org.au',
+        'title':'Atlas of Living Australia (All data)',
+        'layerUrl': 'http://biocache.ala.org.au/ws/ogc/wms/reflect',
+        'type':'ala'
+]
 
 // ala web service meta
 layersMeta=[

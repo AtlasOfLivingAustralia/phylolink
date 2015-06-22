@@ -19,6 +19,9 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
+import org.apache.commons.httpclient.HttpClient
+import org.apache.commons.httpclient.NameValuePair
+import org.apache.commons.httpclient.methods.PostMethod
 import org.apache.http.entity.mime.MultipartEntity
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -181,6 +184,10 @@ class WebService implements InitializingBean {
             requestContentType = enc;
             body = data;
             log.debug(head['cookie'])
+            response.'500' = { r ->
+                log.debug(r);
+                return [error:'Internal server problem'];
+            }
         }
         def ch;
         if( response instanceof  StringReader){
@@ -249,5 +256,20 @@ class WebService implements InitializingBean {
             log.debug( 'cannot delete ' + e.getMessage() )
         }
 
+    }
+
+    /**
+     * pass a named value pair and url, to get the post response as string.
+     * @param url
+     * @param nameValuePairs
+     * @return
+     */
+    def postNameValue(String url, NameValuePair[] nameValuePairs ){
+        def post = new PostMethod(url)
+        post.setRequestBody(nameValuePairs)
+
+        def http = new HttpClient()
+        http.executeMethod(post)
+        return post.getResponseBodyAsString();
     }
 }

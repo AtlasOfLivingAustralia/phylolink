@@ -6,8 +6,11 @@ class Sandbox {
     String scientificName
     String serverInstance
     Owner owner
-
+    Boolean status
     static constraints = {
 
+    }
+    static mapping = {
+        status defaultValue: false
     }
 }
