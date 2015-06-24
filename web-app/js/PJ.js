@@ -129,6 +129,7 @@ var PJ = function (params) {
          * save query flags
          */
         doSaveQuery: true,
+        runSaveQuery: false, // boolean
         saveQuery:{
             url: 'http://dev.ala.org.au:8080/phylolink/ala/saveQuery',
             type: 'POST',
@@ -262,75 +263,11 @@ var PJ = function (params) {
 
             onClick: function (node, eventInfo, e) {
                 var leafs,names,queryObj, canvas;
-                //console.log("debug",node, eventInfo, e);
-                if (false && node) {
-                    selectedClade = [];
+                e = e || {};
+                eventInfo = eventInfo || {};
 
-                    var expand = $jit.id('expand');
-                    var pos = st.labels.getLabel(node.id);
-                    var setRoot = $jit.id('setRoot');
-                    var rotate = $jit.id('rotate');
-                    var select = $jit.id('selectClade');
-                    var loc = parseInt(pos.style.left.replace(/px/, ''), 10) + 100;
-                    var locy = parseInt(pos.style.top.replace(/px/, ''), 10) + 40;
-
-                    // re-root the tree.
-                    if (setRoot.checked) {
-                        var id = node.id;
-                        st.setRoot(id, 'animate');
-                        st.root = id;
-                    }
-
-                    // rotate node
-                    if (rotate.checked) {
-                        st.computePositions(st.graph.getNode(st.root), 'start');
-                        if (typeof node.data.rotate === "undefined") {
-                            node.data.rotate = false;
-                        }
-                        node.data.rotate = !node.data.rotate;
-                        st.computePositions(st.graph.getNode(st.root), 'end');
-                        st.fx.animate({
-                            modes: ['linear', 'node-property:alpha'],
-                            onComplete: function () {
-                            }
-                        });
-                    }
-
-                    // action for
-                    if (expand.checked) {
-                        st.setCollapsed(node);
-                        var level = st.nodesExpCol(node);
-                        if (level) {
-                            st.zoomIndex = level;
-                        }
-                        st.computePositions(st.graph.getNode(st.root), '');
-                        st.plot();
-                    }
-
-                    // select clade and display it on the popup window
-                    if (select.checked) {
-                        st.clickedNode = node;
-                        node.eachSubgraph(function (elem) {
-                            if (elem.data.leaf) {
-                                if (leafs) {
-                                    leafs += "<li>" + elem.name + "</li>";
-                                } else {
-                                    leafs = "<li>" + elem.name + "</li>";
-                                }
-                                selectedClade.push(elem);
-                            }
-                        });
-
-                        popup.style.display = 'inline';
-                        popup.style.top = locy + 'px';
-                        popup.style.left = loc + 'px';
-                        popupText.innerHTML = st.config.presentClade(selectedClade);
-                        st.config.onPresentClade();
-                        st.plot();
-                    }
-                } else if (node) {
+                if (node) {
                     // Trigger the contextMenu to popup
-                    //console.log("tips", st.tips);
                     if (st.tips.config.enable) st.tips.hide(false); // hide the tip so it doesn't cover the context menu
                     if(e.which == 3){
                         //right click
@@ -342,12 +279,14 @@ var PJ = function (params) {
                     } else {
                         //left click
                         st.clickedNode = node;
-//                    redraw()
                         st.plot()
                         console.log(node);
                         pj.setNodeToUrl(node.id);
                         names = pj.getChildrenName(node);
-                        queryObj = pj.saveQuery(node, names);
+                        if(config.runSaveQuery){
+                            queryObj = pj.saveQuery(node, names);
+                        }
+
                         node && self.emit('click', node, names, queryObj);
                     }
                 }
@@ -1299,29 +1238,9 @@ var start, stop
      */
     this.clickNode = function(id){
         var node = st.graph.getNode(id);
-        var pos = node.getPos(),
-            p = st.canvas.getPos(),
-            offx = st.canvas.translateOffsetX,
-            offy = st.canvas.translateOffsetY,
-            x,y;
-        if( !node.data.leaf){
-            x = p.x + offx + pos.x+5;
-            y = p.y + offy + pos.y+3;
-            console.log(x+":"+y);
-            var evt = document.createEvent('MouseEvent');
-            evt.initMouseEvent("mousedown", true, true, window,
-                0, 0, 0, x, y, false, false, false, false, 0, null);
-            st.canvas.canvases[0].canvas.dispatchEvent(evt);
-
-            evt = document.createEvent('MouseEvent');
-            evt.initMouseEvent("mouseup", true, true, window,
-                0, 0, 0, x, y, false, false, false, false, 0, null);
-            st.canvas.canvases[0].canvas.dispatchEvent(evt);
-        } else {
-            $('#'+node.id).click();
-        }
         st.clickedNode = node
         st.plot()
+        config.Events.onClick(node);
     }
 
     /**
@@ -1366,11 +1285,29 @@ var start, stop
         }
     }
 
+    /**
+     * used to set parameters sent when calling saveQuery function. This is used by Records.js.
+     * @param type
+     * @param instance
+     * @param drid
+     */
     this.setSaveQueryParams = function(type, instance, drid){
         config.saveQuery.data.speciesList= undefined;
         config.saveQuery.data.dataLocationType = type || 'ala';
         config.saveQuery.data.instanceUrl = instance;
         config.saveQuery.data.drid = drid;
+    }
+
+    /**
+     * change runSaveQuery flag
+     * @param flag
+     */
+    this.setSaveQueryFlag = function(flag){
+        config.runSaveQuery = flag;
+    }
+
+    this.getSaveQueryFlag = function(){
+        return config.runSaveQuery ;
     }
 
     /**
@@ -1428,6 +1365,14 @@ var start, stop
             }
         });
         return result;
+    }
+
+    /**
+     * click on selected node again
+     */
+    this.clickSelectedNode = function(){
+        var nodeId = this.getSelection();
+        this.clickNode(nodeId.id);
     }
 
     /**
@@ -1537,6 +1482,7 @@ var start, stop
         }
     }
     this.on('treeloaded',initPopover);
+
 
     $(window).on('hashchange',function(){
         if(!config.setNodeToUrlFlag){
