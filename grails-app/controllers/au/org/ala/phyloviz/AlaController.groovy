@@ -238,13 +238,12 @@ class AlaController {
 
     def facets(){
         def drid = params.drid
-//        def json = webService.get('http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:drt2783');
-//        json = JSON.parse(json);
         def source = params.source;
+        def baseUrl = params.serverInstance;
         def result ;
         switch (source){
             case 'sandbox':
-                result = alaService.getSandboxFacets(params.q, params.fq);
+                result = alaService.getSandboxFacets(baseUrl, params.q, params.fq);
                 break;
             case 'ala':
                 result = alaService.getAlaFacets(params.q, params.fq);
@@ -317,7 +316,6 @@ class AlaController {
         JSONObject formParams = JSON.parse(request.getParameter("formParms"));
         title = formParams['title']
         colIndex = formParams['column']['id']
-//        colIndex = Integer.parseInt(colIndex);
         colName  = formParams['column']['displayname']
         reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
         result = alaService.createList(reader, title, colIndex, cookie);

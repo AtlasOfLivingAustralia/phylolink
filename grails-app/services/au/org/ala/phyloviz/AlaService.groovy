@@ -36,13 +36,12 @@ class AlaService {
         return result?.taxonConcept;
     }
 
-    def getSandboxCharJson(drid, key, fields) {
-        def url = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=DRID"
-        url = url.replace('DRID', drid);
+    def getSandboxCharJson(baseUrl, drid, key, fields) {
+        def url = "${baseUrl}/ws/occurrences/search?q=${drid}"
         def facet = [], keys = [], result = [:], fq = [];
         def fieldFacet = '';
 
-        def dynamicFields = getDynamicFacets(drid);
+        def dynamicFields = getDynamicFacets(baseUrl, drid);
         def fieldsAll = getFields();
         dynamicFields.addAll(fieldsAll);
         dynamicFields = inverse(dynamicFields)
@@ -93,7 +92,7 @@ class AlaService {
     }
 
     def getFacetElements(keyValues) {
-        def results = [[fieldName: '', displayName: 'None']], temp;
+        def results = [], temp;
         keyValues = keyValues?.facetResults;
         keyValues?.eachWithIndex { value, index ->
             temp = ['name': value.fieldName]
@@ -104,9 +103,8 @@ class AlaService {
         return results;
     }
 
-    def getDynamicFacets(drid) {
-        def url = "http://sandbox.ala.org.au/biocache-service/upload/dynamicFacets?q=DRID";
-        url = url.replace('DRID', drid);
+    def getDynamicFacets(baseUrl, drid) {
+        def url = "${baseUrl}/ws/upload/dynamicFacets?q=${drid}";
         def facets = webService.get(url);
         facets = JSON.parse(facets);
         def result = [];
@@ -156,8 +154,8 @@ class AlaService {
         return output
     }
 
-    def getSandboxPoints(q, fq) {
-        def url = grailsApplication.config['sandboxData'];
+    def getSandboxPoints(baseUrl, q, fq) {
+        def url = "${baseUrl}/ws/occurrences/search";
         def p = [];
         if (!q?.endsWith('q=')) {
             p.push(q)
@@ -177,26 +175,31 @@ class AlaService {
         return result;
     }
 
-    def getSandboxFacets(q, fq) {
-        def result = getSandboxPoints(q, fq)
+    def getSandboxFacets(baseUrl, q, fq) {
+        def result = getSandboxPoints(baseUrl, q, fq)
         result = getFacetElements(result);
-        def dFacets = getDynamicFacets(q);
+        def dFacets = getDynamicFacets(baseUrl, q);
         return result.plus(dFacets);
     }
 
     def getAlaPoints(q, fq) {
         def url = grailsApplication.config['occurrencesSearch'];
         def p = [];
-        if (q?.startsWith('q=')) {
-            p.push(q)
-        } else if (!q?.startsWith('q=')) {
-            p.push('q=' + q)
-        }
+        if(!( q == 'q=' || q == '')){
 
-        if (fq?.startsWith('fq=')) {
-            p.push(fq);
-        } else if (!fq?.startsWith('fq=')) {
-            p.push('fq=' + fq)
+            if (q?.startsWith('q=')) {
+                p.push(q)
+            } else if (!q?.startsWith('q=')) {
+                p.push('q=' + q)
+            }
+
+            if (fq?.startsWith('fq=')) {
+                p.push(fq);
+            } else if (!fq?.startsWith('fq=')) {
+                p.push('fq=' + fq)
+            }
+        } else {
+            p.push('q='+fq?.replaceFirst('fq=',''));
         }
 
         url = "${url}?${p.join('&')}".replace(' ', '+');

@@ -37,6 +37,7 @@ L.Control.Select = L.Control.extend({
     Model: function(data){
         this.displayName = ko.observable(data.displayName);
         this.name = ko.observable(data.name);
+        this.type = ko.observable(data.type || 'facets');
     },
     viewModel: undefined,
     initialize: function ( options) {
@@ -78,7 +79,6 @@ L.Control.Select = L.Control.extend({
         ko.applyBindings(this.viewModel,container);
 
         $(container).find('select').on('change',function(){
-//            that.options && that.options.onChange(that.getValue());
             that.emit('change', that.getValue());
         });
     },
@@ -87,7 +87,6 @@ L.Control.Select = L.Control.extend({
         for(var i in data){
             this.viewModel.facets.push(new this.Model(data[i]))
         }
-//        this.options.onChange(this.getValue());
     },
     updateUrl:function(url){
         var that = this;
@@ -107,6 +106,7 @@ L.Control.Select = L.Control.extend({
 
     setValue:function(val){
         $(this.el).find('select').val(val);
+        this.emit('change');
     }
 });
 

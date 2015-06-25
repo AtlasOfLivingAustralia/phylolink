@@ -583,4 +583,26 @@ class TreeService {
         }
         return result;
     }
+
+    /**
+     * get current owner
+     */
+    def getCurrentOwner(){
+        def id = authService.getUserId()
+        Owner.findByUserId(id)
+    }
+
+    def search(String q){
+        def owner = getCurrentOwner();
+        def result = []
+        def cv = new ConvertTreeToObject();
+        def trees = Tree.withCriteria {
+            ilike('tree',"%${q}%") && ( eq('expertTree', true) || eq('owner', owner));
+        }
+
+        trees.each{tree->
+            result.push(cv.convert(tree));
+        }
+        return result;
+    }
 }

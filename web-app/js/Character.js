@@ -1157,6 +1157,15 @@ var Character = function (options) {
         }
     };
 
+    this.getSelectedCharacters = function(){
+        var list = view.characters(),
+            result = [];
+        list.forEach(function(item){
+            result.push(ko.toJS(item));
+        });
+        return result
+    }
+
 //    $('#'+options.id).on('show',initPopover);
     $("body").on("show.bs.tab", "#"+options.tabId, function() {
         initPopover();

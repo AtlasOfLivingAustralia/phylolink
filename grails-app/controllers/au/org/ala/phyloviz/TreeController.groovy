@@ -9,15 +9,15 @@ class TreeController {
     def utilsService
     def opentreeService
     def treeService
-    def stackTrace = true
     def authService
     def alaService
     def nexsonService
     def userService
     def webService
 
+    Boolean stackTrace = true
     def index() {
-//        render (view: 'index')
+
     }
 
     def create() {
@@ -235,14 +235,14 @@ class TreeController {
      * @return
      */
     def search(){
-//        def result = elasticService.searchDoc(null, null, params )
-//        def tResult = elasticService.transformSearch( result )
-//        log.debug( tResult );
-//        render( view: 'search', model: [
-//                results: tResult,
-//                params: params,
-//                facetsList: ['Publisher','Expert Trees']
-//        ])
+        def q = params.q;
+        def result;
+        result = treeService.search(q);
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render(contentType: 'application/json', text: result as JSON)
+        }
     }
 
     /**

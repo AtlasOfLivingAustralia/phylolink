@@ -18,9 +18,23 @@ var Records = function (c) {
             drListId:'recordsmain',
             dataresourceListUrl:undefined,
             pj: undefined,
-            map: undefined
+            map: undefined,
+            selectResourceOnInit: true,
+            initResourceId: -1
         }, c),
-        records = this;
+        records = new Emitter(this),
+        pj = config.pj,
+        map = config.map;
+
+    var Events = [
+    /**
+     * fired when data resource list is loaded successfully.
+     */
+        'resourcelistloaded'
+    ]
+
+    // map instance uses this for colorby and other operations. passing this instance as soon as possible.
+    map.setRecords(this);
 
     var DataresourceModel = function (opt) {
         this.id = ko.observable(opt.id || null);
@@ -170,6 +184,12 @@ var Records = function (c) {
         this.drChanged = function(){
             records.updateMap();
         }
+
+        this.findResourceById = function(id){
+            return ko.utils.arrayFirst(this.lists(), function(item){
+                return id === item.id();
+            });
+        }
     };
 
     var uploadData = new FormModel({
@@ -207,8 +227,10 @@ var Records = function (c) {
             listObj = document.getElementById(config.drListId);
         ko.applyBindings(viewModel, formObj);
         ko.applyBindings(dataresourceViewModel, listObj);
-
-        records.getAllDataresources();
+        this.on('resourcelistloaded',function(flag){
+            pj.setSaveQueryFlag(flag);
+        });
+        records.getAllDataresources( );
     }
 
     /**
@@ -298,23 +320,76 @@ var Records = function (c) {
         })
     }
 
+    /**
+     * get list of data resources from provided url.
+     */
     this.getAllDataresources = function(){
         var that = this;
         $.ajax({
             url: config.dataresourceListUrl,
             success:function(data){
+                records.emit('resourcelistloaded');
                 dataresourceViewModel.addDataresources(data);
+                records.selectADataresource();
             }
         })
     }
 
+    /**
+     * select a data resource on init
+     * todo: change this
+     */
+    this.selectADataresource = function(){
+        var flag = config.selectResourceOnInit,
+            id = config.initResourceId,
+            dr,
+            selected = dataresourceViewModel.selectedValue();
+        if(!(selected && selected.type())){
+            if(flag){
+                dr = dataresourceViewModel.findResourceById(id);
+                dataresourceViewModel.selectedValue(dr);
+                records.updateMap();
+            }
+        }
+    }
+
+    /**
+     * get the properties of selected data resource
+     */
+    this.getDataresource = function(){
+        var dr = dataresourceViewModel.selectedValue();
+        return ko.toJS(dr);
+    }
+
+    /**
+     * called when a new data resource is selected
+     */
     this.updateMap = function(){
         var sel = dataresourceViewModel.selectedValue();
         var layer = sel.layerUrl(),
             instanceUrl = sel.instanceUrl();
-        config.pj.clearQid();
-        config.pj.setSaveQueryParams(sel.type(), instanceUrl, sel.drid());
-        config.map.setLayerUrl(layer);
+        pj.clearQid();
+        pj.setSaveQueryParams(sel.type(), instanceUrl, sel.drid());
+        map.setDataSource(sel.type());
+        // saving query to server is only done when this flag is set. otherwise, query parameters are sent on
+        // all get request.
+        if(!pj.getSaveQueryFlag()){
+            pj.setSaveQueryFlag(true)
+        }
+        map.setLayerUrl(layer);
+        pj.clickSelectedNode();
+    }
+
+    /**
+     * checks if data resource has been loaded.
+     * @returns {boolean}
+     */
+    this.isDRLoaded = function(){
+        var drProp = records && records.getDataresource();
+        if(!drProp){
+            return false;
+        }
+        return true
     }
 
     this.showForm();

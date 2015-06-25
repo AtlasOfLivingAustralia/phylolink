@@ -86,9 +86,13 @@
     </div>
 </div>
 
+<script id="templateOccurrence" type="text/html">
+    <g:render template="occurrence"></g:render>
+</script>
+
 <r:script disposition="defer">
     var config ={
-        type:'sandbox',
+        type:'ala',
         sandboxLayer: 'http://sandbox1.ala.org.au/ws/webportal/wms/reflect',
         biocacheLayer: 'http://biocache.ala.org.au/ws/ogc/wms/reflect',
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
@@ -132,150 +136,153 @@
     }
 
     google.load("visualization", "1", {packages: ["corechart"]});
-//    $(document).ready(function(){
 
-        var pj = new PJ({
-            width: $('#'+config.pjId).width()-10,
-            height: 700,
-            codeBase: '../..',
-            dataType:'json',
-            bootstrap: 2,
-            url: config.treeUrl,
-            id: config.pjId ,
-            format: config.format,
-            heading:'vizTitle',
-            hData:{
-                id:config.id,
-                title: config.title,
-                edit: config.edit
-            },
-            titleUrl: config.titleUrl,
-            edit: config.edit,
-            saveQuery:{
-                url: '${createLink(controller: 'ala', action: 'saveQuery')}',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {
-                    speciesList: undefined,
-                    dataLocationType: undefined, // 'ala' or 'sandbox'
-                    instanceUrl: undefined, // 'http://sandbox.ala.org.au',
-                    drid: undefined // drt121
-                }
-            }
-        });
-
-        var filter = new Filter($.extend(config.filterParams, {
-            pj: pj,
-            fqVariable:'species'
-        }));
-
-        var character = new Character({
-            id: "character",
-            tabId: 'characterTab',
-            pj: pj,
-            url: config.charUrl,
-            dataType:'jsonp',
-            height:700,
-            headerHeight:55,
-            initCharacters:config.initCharacters,
-            bootstrap:2,
-            sampleCSV:'${resource(dir: 'artifacts', file: 'traits.csv')}',
-            doSync: ${edit},
-            syncData: {
-                id: ${phyloInstance.getId()}
-    },
-    syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
-            charactersList : {
-                url: '${createLink(controller: 'characters', action: 'list')}',
-                type: 'GET',
-                dataType: 'JSON'
-            },
-            edit: ${edit},
-            upload: {
-                url: "${createLink(controller: 'ala', action: 'saveAsList')}",
-                type: 'POST'
-            },
-            charOnRequest: config.charOnRequest,
-            charOnRequestBaseUrl: config.charOnRequestBaseUrl,
-            charOnRequestParams: config.charOnRequestParams,
-            charOnRequestListKeys: config.charOnRequestListKeys
-
-        });
-var map = new Map({
-    id: 'map',
-    tabId:'mapTab',
-    pj: pj,
-    filter: filter,
-    height: 650,
-    width: $('#tab-content').width(),
-    layer:config.layer(),
-    query:config.query,
-    filterFieldName:'REGNO_s',
-    source: config.type,
-    character: character,
-    legend:{
-        proxy: true,
-        proxyUrl: config.proxyUrl,
-        baseUrl: config.legendUrl(),
-        dataType:'jsonp',
-        urlParams:{
-            cm:undefined,
-            type:'application/json'
+    var pj = new PJ({
+        width: $('#'+config.pjId).width()-10,
+        height: 700,
+        codeBase: '../..',
+        dataType:'json',
+        bootstrap: 2,
+        url: config.treeUrl,
+        id: config.pjId ,
+        format: config.format,
+        heading:'vizTitle',
+        hData:{
+            id:config.id,
+            title: config.title,
+            edit: config.edit
         },
-        icon:'<i class="icon icon-list"></i> <label style="display: inline-block">Legend</label>'
-            },
-            env: {
-                'colormode': undefined,
-                'name': 'circle',
-                'size': 4,
-                'opacity': 0.8,
-                'color': 'df4a21'
-            },
-            colorBy: {
-                url: config.colorByUrl,
-                dataType:'jsonp',
-                drid: config.drid
-            }
-        });
-        var habitat = new Habitat({
-            id:'habitat',
-            tabId:'habitatTab',
-            pj: pj,
-            doSync: ${edit},
-            syncData: {
-                id: ${phyloInstance.getId()}
-    },
-    listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
-    height: 700,
-    syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-            initialState: <g:message
-        message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
-            graph: {
-            url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
-            type: 'GET',
-            dataType: 'JSON',
-//            title:'Habitat',
-            xAxisContextual: 'Habitat states',
-            xAxisEnvironmental: 'values',
-            yAxis: 'Occurrence count'
-        },
+        titleUrl: config.titleUrl,
+        edit: config.edit,
+        runSaveQuery: false,
         saveQuery:{
             url: '${createLink(controller: 'ala', action: 'saveQuery')}',
             type: 'POST',
-            dataType: 'JSONP'
+            dataType: 'JSON',
+            data: {
+                speciesList: undefined,
+                dataLocationType: undefined, // 'ala' or 'sandbox'
+                instanceUrl: undefined, // 'http://sandbox.ala.org.au',
+                drid: undefined // drt121
+            }
         }
+    });
+
+    var filter = new Filter($.extend(config.filterParams, {
+        pj: pj,
+        fqVariable:'species'
+    }));
+
+    var character = new Character({
+        id: "character",
+        tabId: 'characterTab',
+        pj: pj,
+        url: config.charUrl,
+        dataType:'jsonp',
+        height:700,
+        headerHeight:55,
+        initCharacters:config.initCharacters,
+        bootstrap:2,
+        sampleCSV:'${resource(dir: 'artifacts', file: 'traits.csv')}',
+        doSync: ${edit},
+        syncData: {
+            id: ${phyloInstance.getId()}
+        },
+        syncUrl: "${createLink(controller: 'phylo', action: 'saveCharacters')}",
+        charactersList : {
+            url: '${createLink(controller: 'characters', action: 'list')}',
+            type: 'GET',
+            dataType: 'JSON'
+        },
+        edit: ${edit},
+        upload: {
+            url: "${createLink(controller: 'ala', action: 'saveAsList')}",
+            type: 'POST'
+        },
+        charOnRequest: config.charOnRequest,
+        charOnRequestBaseUrl: config.charOnRequestBaseUrl,
+        charOnRequestParams: config.charOnRequestParams,
+        charOnRequestListKeys: config.charOnRequestListKeys
+
+    });
+    var map = new Map({
+        id: 'map',
+        tabId:'mapTab',
+        pj: pj,
+        filter: filter,
+        height: 650,
+        width: $('#tab-content').width(),
+        layer:config.layer(),
+        query:config.query,
+        filterFieldName:'REGNO_s',
+        source: config.type,
+        character: character,
+        colorByCharacters: true,
+        legend:{
+            proxy: true,
+            proxyUrl: config.proxyUrl,
+            baseUrl: config.legendUrl(),
+            defaultValue: 'taxon_name',
+            dataType:'jsonp',
+            urlParams:{
+                cm:undefined,
+                type:'application/json'
+            },
+            icon:'<i class="icon icon-list"></i> <label style="display: inline-block">Legend</label>'
+        },
+        env: {
+            'colormode': undefined,
+            'name': 'circle',
+            'size': 4,
+            'opacity': 0.8,
+            'color': 'df4a21'
+        },
+        colorBy: {
+            url: config.colorByUrl,
+            drid: config.drid
+        }
+    });
+
+    var habitat = new Habitat({
+        id:'habitat',
+        tabId:'habitatTab',
+        pj: pj,
+        doSync: ${edit},
+        syncData: {
+            id: ${phyloInstance.getId()}
+        },
+        listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
+        height: 700,
+        syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
+                initialState: <g:message
+            message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
+                graph: {
+                url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
+                type: 'GET',
+                dataType: 'JSON',
+                xAxisContextual: 'Habitat states',
+                xAxisEnvironmental: 'values',
+                yAxis: 'Occurrence count'
+            },
+            saveQuery:{
+                url: '${createLink(controller: 'ala', action: 'saveQuery')}',
+                type: 'POST',
+                dataType: 'JSONP'
+            }
         });
 
         var records = new Records({
             id: 'recordsForm',
-            templateUrl: '${createLink(controller: 'artifacts', action: 'recordsTemplate.html')}',
+            template: $('#templateOccurrence').html(),
             uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}',
             indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
             sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
             dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}",
             dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}',
             map : map,
-            pj: pj
+            pj: pj,
+            selectResourceOnInit: true,
+            initResourceId: -1
         });
 
         $( "#tabs" ).tab('show');

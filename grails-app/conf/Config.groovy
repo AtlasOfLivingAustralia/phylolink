@@ -94,7 +94,7 @@ search_postdata = ["property":"ot:originalLabel","value":'',"verbose":true]
 //opentree configs end
 
 alaDataresourceInfo = [
-        'id':0,
+        'id':-1,
         'drid':null,
         'scientificName':'taxon_name',
         'instanceUrl':'http://biocache.ala.org.au',

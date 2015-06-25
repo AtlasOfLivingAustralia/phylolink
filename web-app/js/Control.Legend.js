@@ -93,8 +93,6 @@ L.Control.Legend = L.Control.extend({
             .on(container, 'mousedown dblclick', L.DomEvent.stopPropagation)
             .on(container, 'click', L.DomEvent.stop)
             .on(container,'mousewheel',L.DomEvent.stopPropagation)
-//            .on(input, 'click', fn, this)
-//            .on(input, 'click', this._refocusOnMap, this);
         return container;
     },
 
@@ -121,18 +119,6 @@ L.Control.Legend = L.Control.extend({
         ko.applyBindings(this.view,container);
     },
 
-    update: function (data) {
-        var that = this;
-        this.options.createUrl && this.options.createUrl.apply(this);
-        $.ajax({
-            url: this.options.url,
-            data:data,
-            dataType:this.options.dataType,
-            success:function(data){
-                that.legend(data);
-            }
-        });
-    },
     legend: function(data){
         var that = this;
         var newData = ko.utils.arrayMap(data, function(d){
@@ -140,9 +126,6 @@ L.Control.Legend = L.Control.extend({
         });
         this.view.legends.removeAll();
         this.view.legends.push.apply(this.view.legends, newData);
-//        for(var i = 0; i<data.length; i++){
-//            this.view.legends.push( new this.model(data[i]));
-//        }
     }
 });
 

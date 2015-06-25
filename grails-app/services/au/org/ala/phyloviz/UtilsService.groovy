@@ -18,6 +18,7 @@ class UtilsService {
     def webService
     def alaService
     def treeService
+    def authService
 
     def log = LogFactory.getLog(getClass())
     LinkGenerator grailsLinkGenerator
@@ -317,4 +318,6 @@ class UtilsService {
 
         return new File(path);
     }
+
+
 }
