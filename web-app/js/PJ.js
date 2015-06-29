@@ -708,11 +708,6 @@ var PJ = function (params) {
         infovis = jQuery('#' + id)[0];
 
         parent = infovis.parentNode;
-//        parent.replaceChild(jitcontainer, infovis);
-
-//        centerJitContainer.appendChild(infovis);
-//        jitcontainer.appendChild(centerJitContainer);
-//        jitcontainer.appendChild(rightJitContainer);
 
         popup = $E('div', {
             'id': 'popup',
@@ -731,7 +726,6 @@ var PJ = function (params) {
                 'text-align': 'left'
             }
         });
-//        jQuery(popup).html(popupHTML);
         centerJitContainer.appendChild(popup);
         jQuery(popup).resizable({
             maxHeight: 450,
@@ -1311,59 +1305,134 @@ var start, stop
     }
 
     /**
+     * get the color coding of character to make legends in map tab
+     * @param char
+     * @returns {*}
+     */
+    this.getLegendForCharacter = function(char){
+        var lg = this.getPJLegendData(char)
+        return this.formatPJLegendData(lg);
+    }
+
+    this.hexToRgb = function (hex) {
+        hex = hex.replace('#', '');
+        var rgb = hex.match(/../g);
+        for (var i = 0; i < rgb.length; i++) {
+            rgb[i] = parseInt(rgb[i], 16);
+        }
+        return rgb;
+    }
+
+    this.formatPJLegendData = function(data){
+        if(!data){
+            return;
+        }
+
+        var result = [],
+            lg,
+            color,
+            hex,
+            rgb;
+
+        for( var name in data){
+            color = data[name].color;
+            if(color.match('#')){
+                rgb = this.hexToRgb(color);
+            } else {
+                rgb = this.hexToRgb( colourNameToHex(color) );
+            }
+
+            result.push({
+                name: name,
+                red: rgb[0],
+                green: rgb[1],
+                blue: rgb[2]
+            });
+        }
+
+        return result;
+    }
+
+    /**
+     * get legend data from pj.
+     * @param char
+     * @returns {*}
+     */
+    this.getPJLegendData = function(char){
+        if(!char){
+            return;
+        };
+
+        var state = st.colorCoding[char];
+        if(!state){
+            state = st.colorCodingQuali[char];
+        }
+
+        return state;
+    }
+
+    this.getQuantCharacterState = function(val, char){
+        var quant = this.getLegendForCharacter(char),
+            name,
+            range;
+
+        for(var i =0; i< quant.length; i++){
+            name = quant[i].name;
+            range = name && name.match(/\d+\.*\d*/g);
+            if(range.length){
+                range[0] = Number.parseFloat(range[0]);
+                range[1] = Number.parseFloat(range[1]);
+            }
+
+            if(val >=range[0] && val < range[1]){
+                return name;
+            }
+        }
+
+        return;
+    };
+
+    /**
      * group species by color of character. this function returns an object with hex color as key and
      * array of species list as value.
      */
-    this.groupByCharacter = function(addEmpty, addNone){
+    this.groupByCharacter = function(char, addEmpty, addNone){
         var node = this.getSelection();
-        var result = {}, temp, div, color, rgb, hex, cat;
+        var result = {},
+            legend,
+            state,
+            i,
+            name;
         node && node.eachSubgraph(function(n){
             if(n.data.leaf){
-                div = $($('#'+ n.id).find('div')[0])
-                cat = div.attr('title');
-                if(cat){
-                    cat = cat && cat.split(/\s+:\s+/g);
-                    cat = cat.length && cat[1];
-                }
-
-                color = div.css('background-color');
-                rgb = color || '';
-                rgb = rgb.match(/\b\d+\b/g);
-                if(rgb.length && ( $.inArray(div.attr('class'), ['star','box','quant','circle','square'])!= -1) ){
-                    hex = pj.toHex(rgb[0],rgb[1],rgb[2])
-                    if(!result[hex]){
-                        result[hex] = {
-                            name: cat,
-                            list:[]
+                state = n.data.character[char]
+                for(i = 0; i < state.length; i++){
+                    name = state[i];
+                    switch (typeof name){
+                        case 'number':
+                            name = pj.getQuantCharacterState(name,char);
+                            break;
+                    }
+                    if(!result[name]){
+                        result[name] = {
+                            list : []
                         }
                     }
 
-                    result[hex].list.push(n.name);
-                } else if(rgb.length && ( $.inArray(div.attr('class'), ['empty']) != -1)){
-                    if(addEmpty){
-                        if(!result['#ffffff']){
-                            result['#ffffff'] = {
-                                name: 'Character unknown',
-                                list: []
-                            }
-                        }
-
-                        result['#ffffff'].list.push(n.name);
-                    }
-                } else {
-                    if(addNone){
-                        if(!result['#000000']){
-                            result['#000000'] = {
-                                name: 'No data',
-                                list: []
-                            }
-                        }
-
-                        result['#000000'].list.push(n.name);
-                    }
+                    result[name].list.push(n.name);
                 }
             }
         });
+
+        legend = this.getLegendForCharacter(char);
+        for(var i = 0; i<legend.length; i++){
+            state = legend[i]
+            if(result[state.name]){
+                result[this.toHex(state.red, state.green, state.blue)] = result[state.name];
+                delete result[state.name];
+            }
+        }
+
         return result;
     }
 

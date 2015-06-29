@@ -27,12 +27,13 @@ L.Control.Select = L.Control.extend({
      */
     _select:null,
     _html:' <table style="height: 30px;"><tbody><tr><td><label style="display: inline-block" data-bind="text:text"></label>\
-            <div style="display: inline-block"><select data-bind="foreach: facets">\
-            <option data-bind="text: displayName, attr:{value:name}"></option>\
-           <\select></div></td></tr></tbody></table>',
+            <div style="display: inline-block">\
+        <select data-bind="options:facets,optionsText:\'displayName\',optionsCaption:\'Choose..\',value:selectedValue"></select>' +
+        '</div></td></tr></tbody></table>',
     ViewModel:function(){
-        this.facets = ko.observableArray([]);
+        this.facets = ko.observableArray();
         this.text = ko.observable();
+        this.selectedValue = ko.observable();
     },
     Model: function(data){
         this.displayName = ko.observable(data.displayName);
@@ -82,12 +83,17 @@ L.Control.Select = L.Control.extend({
             that.emit('change', that.getValue());
         });
     },
+
     updateData:function(data){
+        var defval = this.defaultValue;
         this.viewModel.facets.removeAll();
         for(var i in data){
             this.viewModel.facets.push(new this.Model(data[i]))
         }
+
+        defval && this.setValue(defval);
     },
+
     updateUrl:function(url){
         var that = this;
         url = url || this.options.url;
@@ -100,6 +106,7 @@ L.Control.Select = L.Control.extend({
             }
         });
     },
+
     getValue : function(){
        return $(this.el).find('select').val();
     },
@@ -107,6 +114,14 @@ L.Control.Select = L.Control.extend({
     setValue:function(val){
         $(this.el).find('select').val(val);
         this.emit('change');
+    },
+
+    getSelection: function(){
+      return this.viewModel.selectedValue();
+    },
+
+    getSelectState: function(){
+        return ko.toJS(this.getSelection());
     }
 });
 

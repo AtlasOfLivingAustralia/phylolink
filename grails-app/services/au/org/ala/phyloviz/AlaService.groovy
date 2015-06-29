@@ -410,4 +410,37 @@ class AlaService {
         result.addAll( sandboxService.getAllDataresourceInfo(userId) );
         result
     }
+
+    /**
+     * two sources to get legends - ala and sandbox. This method queries appropriate sources.
+     * @param source
+     * @param q
+     * @param fq
+     * @param type
+     * @param cm
+     * @return
+     */
+    List getLegends(String source, String q, String fq, String type, String cm, String instanceUrl){
+        List result = [];
+        String url;
+        List params = [];
+        type = type?:'application/json';
+        switch (source){
+            case 'sandbox':
+                String legendSandbox = grailsApplication.config.legendSandbox;
+                legendSandbox = legendSandbox.replace('INSTANCEURL', instanceUrl);
+                url = legendSandbox;
+                break;
+            case 'ala':
+                url = grailsApplication.config.legendAla;
+                break;
+        }
+
+        params.push("cm=${cm}");
+        params.push("type=${type}");
+        params.push("q=${q}");
+        params.push("fq=${fq}");
+        url = "${url}?${params.join('&')}";
+        result = webService.getJson(url) as List;
+    }
 }

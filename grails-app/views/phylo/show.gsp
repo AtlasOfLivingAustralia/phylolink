@@ -221,14 +221,24 @@
         legend:{
             proxy: true,
             proxyUrl: config.proxyUrl,
-            baseUrl: config.legendUrl(),
-            defaultValue: 'taxon_name',
+            baseUrl: "${createLink(controller: 'ala', action: 'getLegends')}",
             dataType:'jsonp',
             urlParams:{
                 cm:undefined,
-                type:'application/json'
+                type:'application/json',
+                fq: undefined,
+                q: undefined,
+                source: undefined,
+                instanceUrl: undefined
             },
-            icon:'<i class="icon icon-list"></i> <label style="display: inline-block">Legend</label>'
+            icon:'<i class="icon icon-list"></i> <label style="display: inline-block">Legend</label>',
+            defaultValue: [{
+                red: 223,
+                green: 74,
+                blue: 33,
+                hex: 'df4a21',
+                name: 'All records'
+            }]
         },
         env: {
             'colormode': undefined,
@@ -239,7 +249,8 @@
         },
         colorBy: {
             url: config.colorByUrl,
-            drid: config.drid
+            drid: config.drid,
+            defaultValue: 'taxon_name'
         }
     });
 
@@ -254,45 +265,45 @@
         listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-                initialState: <g:message
+        initialState: <g:message
             message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
-                graph: {
-                url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
-                type: 'GET',
-                dataType: 'JSON',
-                xAxisContextual: 'Habitat states',
-                xAxisEnvironmental: 'values',
-                yAxis: 'Occurrence count'
-            },
-            saveQuery:{
-                url: '${createLink(controller: 'ala', action: 'saveQuery')}',
-                type: 'POST',
-                dataType: 'JSONP'
-            }
-        });
+        graph: {
+            url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
+            type: 'GET',
+            dataType: 'JSON',
+            xAxisContextual: 'Habitat states',
+            xAxisEnvironmental: 'values',
+            yAxis: 'Occurrence count'
+        },
+        saveQuery:{
+            url: '${createLink(controller: 'ala', action: 'saveQuery')}',
+            type: 'POST',
+            dataType: 'JSONP'
+        }
+    });
 
-        var records = new Records({
-            id: 'recordsForm',
-            template: $('#templateOccurrence').html(),
-            uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}',
-            indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
-            sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
-            dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}",
-            dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}',
-            map : map,
-            pj: pj,
-            selectResourceOnInit: true,
-            initResourceId: -1
-        });
+    var records = new Records({
+        id: 'recordsForm',
+        template: $('#templateOccurrence').html(),
+        uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}',
+        indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
+        sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
+        dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}",
+        dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}',
+        map : map,
+        pj: pj,
+        selectResourceOnInit: true,
+        initResourceId: -1
+    });
 
-        $( "#tabs" ).tab('show');
-        // a fix to display map tiles properly. Without it map is grey colored for majority of area.
-        $("body").on("shown.bs.tab", "#mapTab", function() {
-            map.invalidateSize();
-        });
+    $( "#tabs" ).tab('show');
+    // a fix to display map tiles properly. Without it map is grey colored for majority of area.
+    $("body").on("shown.bs.tab", "#mapTab", function() {
+        map.invalidateSize();
+    });
 
-        google.setOnLoadCallback(character.googleChartsLoaded);
-        google.setOnLoadCallback(habitat.googleChartsLoaded);
+    google.setOnLoadCallback(character.googleChartsLoaded);
+    google.setOnLoadCallback(habitat.googleChartsLoaded);
 </r:script>
 <g:render template="keepSessionAlive"/>
 </body>

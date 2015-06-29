@@ -28,6 +28,7 @@ function Map(options) {
             'opacity': 0.8,
             'color': 'df4a21'
         },
+
         showCharacterOnMap: true,
         /**
          * used to add selected characters to color by options
@@ -96,12 +97,30 @@ function Map(options) {
         lmap.invalidateSize(false);
     };
 
+    /**
+     * this function simplifies access to the value of the current color by selection
+     */
+    this.getColorByValue = function(){
+        var select = colorBy.getSelectState();
+        if(select){
+            return select.name;
+        }
+    };
+
+    /**
+     * returns colorby value when facets are  selected. otherwise, undefined.
+     * Biocache services with otherwise through error.
+     */
+    this.getColorMode = function(){
+        var select = colorBy.getSelectState();
+        if(select && select.type == 'facets'){
+            return select.name;
+        }
+    };
+
     this.getEnv = function () {
         var str = []
-        env['colormode'] = colorBy.getValue();
-        if (env['colormode'] == 'None') {
-            env['colormode'] = undefined;
-        }
+        env['colormode'] = this.getColorMode();
         for (var i in env) {
             if (env[i] && !( (i == 'color') && env['colormode'])) {
                 str.push(i + ':' + env[i]);
@@ -213,14 +232,17 @@ function Map(options) {
 
     var colorBy = new L.Control.Select({
         position: 'topright',
-        url: options.facetUrl
+        url: options.facetUrl,
+        defaultValue: options.colorBy.defaultValue
     });
+
     colorBy.on('change', function (val) {
         env.colormode = val;
         that.updateMap();
         that.updateLegend();
         that.updateLayersEnv();
     });
+
     var legendCtrl = new L.Control.Legend(options.legend);
     // initializing
     env.colormode = legendCtrl.options.urlParams.cm = colorBy.getValue();
@@ -318,39 +340,64 @@ function Map(options) {
             return;
         }
 
-        f = f || filter;
-        var that = this;
-        var params = [];
-        var data = options.legend.urlParams;
-
-
-        data.cm = colorBy.getValue() || '';
-        data.q = pj.getQid(true);
-        var url = options.legend.baseUrl
-        if (data.cm) {
-            if (options.legend.proxy) {
-                data.cm && params.push('cm=' + data.cm);
-                data.type && params.push('type=' + data.type);
-                data.q && params.push('q=' + data.q);
-                if (url.split(/\?/g).length > 1) {
-                    url = url + '&' + params.join('&');
-                } else {
-                    url = url + '?' + params.join('&');
-                }
-                data = {};
-                url = options.legend.proxyUrl + '?url=' + encodeURIComponent(url);
+        var cby = colorBy.getSelection();
+        if(cby){
+            switch ( cby.type()){
+                case 'character':
+                    this.showLegendsWithCharacter();
+                    break;
+                case 'facets':
+                    this.showLegendWithFacets();
+                    break;
             }
+        } else {
+            this.showLegendDefault();
+        }
 
+    };
+
+    /**
+     * this function will get legends by querying the webservice.
+     */
+    this.showLegendWithFacets = function(){
+        var data = $.extend({}, options.legend.urlParams),
+            url = options.legend.baseUrl,
+            dr = records.getDataresource() || {},
+            cby = colorBy.getSelection();
+        data.cm = cby.name() || '';
+        data.q = pj.getQid(true);
+        data.source = dr.type;
+        data.instanceUrl = dr.instanceUrl;
+        // if query id is not present.
+        if(!data.q){
+            data.q = filter.formatQuery();
+            data.fq = filter.formatFq();
+        }
+
+        // if cm is not defined, this url will produce an error.
+        if (data.cm) {
             $.ajax({
                 url: url,
                 data: data,
-                dataType: options.legend.dataType,
                 success: function (data) {
                     legendCtrl.legend(data);
                 }
             });
         }
-    };
+    }
+
+    /**
+     * show legends using character data
+     */
+    this.showLegendsWithCharacter = function(){
+        var sel = colorBy.getSelection()
+            char = sel.name();
+        legendCtrl.legend(pj.getLegendForCharacter(char));
+    }
+
+    this.showLegendDefault = function(){
+        legendCtrl.legend( options.legend.defaultValue);
+    }
 
     this.updateMap = function (f) {
         // do not execute if records tab has not loaded data resource.
@@ -359,63 +406,68 @@ function Map(options) {
         }
 
         var qid = pj.getQid(true),
-            groups, i, list, ajax, ldata = [], cm, spinner;
-        var query = filter.format(options.layer)
-        if (qid) {
-            query = options.layer + '?q=' + qid
-        }
-        f = f || filter;
-        cm = colorBy.getValue();
+            cm = colorBy.getSelectState(),
+            url,
+            type,
+            dr = records.getDataresource();
+
         this.removeLayers();
-        // only if query exist add layer. otherwise, the whole atlas data gets added.
-        if (options.showCharacterOnMap && ( !cm || (cm == 'None' ))) {
-            spinner = new Spinner(options.spinner)
-            spinner.spin();
-            $('#' + options.id).append(spinner.el)
-            groups = pj.groupByCharacter(true, true);
-            for (i in groups) {
-                list = groups[i].list;
-                if (list.length) {
-                    ajax = pj.saveQuery(undefined, list, true);
-                    ajax.color = i;
-                    ajax.then(function (q, status, ajx) {
-                        var qid = 'qid:' + q.qid;
-                        var query = options.layer + '?q=' + qid;
-                        var layer = L.tileLayer.wms(query, {
-                            format: 'image/png',
-                            transparent: true,
-                            attribution: "PhyloLink",
-                            bgcolor: "0x000000"
-                        });
-                        console.log(layer);
-
-                        layers.push(layer);
-                        options.env.colormode = undefined;
-                        // passing color to use in updateEnv method
-                        layer.color = options.env.color = ajx.color.replace('#', '');
-                        that.updateEnv(layer);
-                        lmap.addLayer(layer)
-                        spinner.stop();
-                    })
-
-                    //update legend with the colors
-                    legendCtrl.legend(that.makeLegend(groups));
-                }
-            }
-        } else if (f.getQuery() || f.getFq() || (options.source != 'ala')) {
-            console.log(query);
-            layer = L.tileLayer.wms(query, {
-                format: 'image/png',
-                transparent: true,
-                attribution: "PhyloLink",
-                bgcolor: "0x000000"
-            });
-            layers.push(layer);
-            that.updateLayersEnv();
-            lmap.addLayer(layer);
-            that.updateLegend()
+        url = dr.layerUrl;
+        type = cm && cm.type || 'facets';
+        switch (type){
+            case 'character':
+                this.mapWithCharacter(url, cm.name);
+                break;
+            case 'facets':
+            default :
+                this.mapWithFacets(url);
+                break;
         }
     };
+
+    this.mapWithFacets = function(query){
+        query += '?q=' + pj.getQid(true);
+        var layer = L.tileLayer.wms(query, {
+            format: 'image/png',
+            transparent: true,
+            attribution: "PhyloLink",
+            bgcolor: "0x000000"
+        });
+        layers.push(layer);
+        options.env.color = options.legend.defaultValue[0].hex;
+        this.updateEnv(layer);
+        lmap.addLayer(layer);
+    }
+
+    this.mapWithCharacter = function(query, char){
+        var groups = pj.groupByCharacter(char, true, true),
+            list,
+            that = this;
+        for (i in groups) {
+            list = groups[i].list;
+            if (list.length) {
+                ajax = pj.saveQuery(undefined, list, true);
+                ajax.color = i;
+                ajax.then(function (q, status, ajx) {
+                    var qid = 'qid:' + q.qid;
+                    var q = query + '?q=' + qid;
+                    var layer = L.tileLayer.wms(q, {
+                        format: 'image/png',
+                        transparent: true,
+                        attribution: "PhyloLink",
+                        bgcolor: "0x000000"
+                    });
+
+                    layers.push(layer);
+                    options.env.colormode = undefined;
+                    // passing color to use in updateEnv method
+                    layer.color = options.env.color = ajx.color.replace('#', '');
+                    that.updateEnv(layer);
+                    lmap.addLayer(layer)
+                });
+            }
+        }
+    }
 
     this.removeLayers = function () {
         var i;

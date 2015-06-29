@@ -212,6 +212,11 @@ class AlaController {
         }
     }
 
+    /**
+     * deprecated
+     * todo: remove this function.
+     * @return
+     */
     def jsonp(){
         // do not use decodeUrl function since it converts + to whitespace.
         def url = params.url
@@ -391,6 +396,25 @@ class AlaController {
     def getRecordsList(){
         def userId = authService.getUserId();
         def result = alaService.getRecordsList(userId);
+        if(params.callback){
+            render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+        } else {
+            render( text: result as JSON, contentType: 'application/json');
+        }
+    }
+
+    /**
+     * two sources to get legends - ala and sandbox. This method queries appropriate sources.
+     * @return
+     */
+    def getLegends(){
+        String source = params.source;
+        String cm = params.cm;
+        String type = params.type;
+        String q = params.q;
+        String fq = params.fq;
+        String instanceUrl = params.instanceUrl;
+        def result = alaService.getLegends(source, q, fq, type, cm, instanceUrl);
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
