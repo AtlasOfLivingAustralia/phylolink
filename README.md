@@ -21,6 +21,7 @@ Create an entry into hosts file.
 ```
 Save the config file as ```phylolink-config.properties``` in directory ```/data/phylolink/config/```.
 
+Install postgres on your local machine. create role with password and database according to the information given in ```phylolink-config.properties```. 
 ## Installing on virtual machine
 ```
 ansible-playbook phylolink.yml -i inventories/vagrant/phylolink-vagrant --sudo --private-key ~/.vagrant.d/insecure_private_key -u vagrant
