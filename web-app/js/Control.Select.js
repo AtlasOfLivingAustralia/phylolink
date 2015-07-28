@@ -97,6 +97,7 @@ L.Control.Select = L.Control.extend({
 
         if (defval) {
             this.viewModel.selectedValue(defval);
+            this.emit('change');
         }
     },
 

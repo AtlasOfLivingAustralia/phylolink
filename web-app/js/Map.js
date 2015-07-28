@@ -559,8 +559,7 @@ function Map(options) {
             }
         }
         colorBy.updateData(data);
-        colorBy.setValue(selectedValue);
-    }
+    };
 
     /**
      * convert character to colorby option
