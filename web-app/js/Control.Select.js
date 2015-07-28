@@ -28,7 +28,7 @@ L.Control.Select = L.Control.extend({
     _select:null,
     _html:' <table style="height: 30px;"><tbody><tr><td><label style="display: inline-block" data-bind="text:text"></label>\
             <div style="display: inline-block">\
-        <select data-bind="options:facets,optionsText:\'displayName\',optionsCaption:\'Choose..\',value:selectedValue"></select>' +
+        <select data-bind="options:facets,optionsText:\'displayName\',optionsCaption:\'Choose...\',value:selectedValue"></select>' +
         '</div></td></tr></tbody></table>',
     ViewModel:function(){
         this.facets = ko.observableArray();
@@ -85,13 +85,19 @@ L.Control.Select = L.Control.extend({
     },
 
     updateData:function(data){
-        var defval = this.defaultValue;
+        var defval = null;
         this.viewModel.facets.removeAll();
         for(var i in data){
-            this.viewModel.facets.push(new this.Model(data[i]))
+            var modelValue = new this.Model(data[i]);
+            this.viewModel.facets.push(modelValue);
+            if (data[i].name === this.options.defaultValue) {
+                defval = modelValue;
+            }
         }
 
-        defval && this.setValue(defval);
+        if (defval) {
+            this.viewModel.selectedValue(defval);
+        }
     },
 
     updateUrl:function(url){
