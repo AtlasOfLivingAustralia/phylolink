@@ -7,6 +7,7 @@ import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.web.UrlMappingsUnitTestMixin
+import org.codehaus.groovy.grails.web.mapping.UrlMappings
 import spock.lang.Specification
 
 //import au.org.ala.UrlMappings
