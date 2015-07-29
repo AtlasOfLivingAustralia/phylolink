@@ -8,14 +8,18 @@
             <td>Title:</td>
             <td>${tree.getTitle()}</td>
         </tr>
+        <g:if test="${tree.getReference()!= null}">
         <tr>
             <td>Reference:</td>
             <td>${tree.getReference()}</td>
         </tr>
+        </g:if>
+        <g:if test="${tree.getYear()!= null}">
         <tr>
             <td>Year:</td>
             <td>${tree.getYear()}</td>
         </tr>
+        </g:if>
         <g:if test="${tree.getDoi()!= null}">
             <tr>
                 <td>Doi:</td>
