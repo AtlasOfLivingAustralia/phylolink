@@ -329,9 +329,7 @@ var PJ = function (params) {
                 else {
                     name = " unnamed";
                 }
-                //name = name + "<strong> click</strong> for ";
                 if (node.data.leaf) { // end taxon
-                    //    name = name + "for linked data";
                 } else { //clade
                     if (name) {
                         name = "Inner Node:" + name;
@@ -398,7 +396,6 @@ var PJ = function (params) {
             style.display = 'inline';
 
             style.color = node.data.$color;
-            //         if (node.data.color)
             var boxes = '';
             var first = st.config.firstCharacter;
             var shapes = ['box', 'star', 'triangle'],
@@ -407,7 +404,6 @@ var PJ = function (params) {
             boxes = '';
 
             for (i = 0; i < list.length; i += 1) {
-                //           for ( char in node.data.character )
                 char = list[i];
                 values = node.data.character[char];
                 if (values && values.length > 0 && typeof values[0] !== 'undefined') {
@@ -469,7 +465,6 @@ var PJ = function (params) {
         onBeforePlotNode: function (node) {
             //add some color to the nodes in the path between the
             //root node and the selected node.
-            //       if (!node.data.leaf) {
             var result = true,
                 char;
             if (!node.data.leaf) {
@@ -539,9 +534,8 @@ var PJ = function (params) {
             //             remove labels of non-leaf nodes
             if (!node.data.leaf) {
                 dom.style.display = 'none';
-                //         dom.innerHTML = node.data.leaves + ' Taxa';
             }
-            //    // show label for the last visible node in the clade
+            // show label for the last visible node in the clade
             dom.style.display = node.data.display || 'block';
             if (alignName) {
                 jQuery('#' + dom.id + ' .quant').addClass('quantAlign');
@@ -631,7 +625,6 @@ var PJ = function (params) {
         }
 
         opt.codeBase = opt.codeBase || '';
-//        var popupHTML = '<div id="popup-close" style="position:relative; width:100%; background-color:lightblue"><a href="#" onclick="this.parentNode.parentNode.style.display=\'none\';" onmouseover="this.style.cursor=\'pointer\';" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="popup-text"></div>';
         var navHTML2 = '<div style="position:relative">' +
             '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">'+
             '<div class="input-append">'+
@@ -679,18 +672,12 @@ var PJ = function (params) {
             id = typeof (opt.injectInto) == 'string' ? opt.injectInto : opt.injectInto.id,
             infovis, parent, popup, navigation, menu, border;
 
-        //  this function is losing its meaning by adding this. just for now.
-        //     var popupContainer = document.getElementById('center-jitcontainer');
-        //     var popup = $jit.id('popup');
-        //     popup.style.display = 'none';
         border = opt.width * 100 / 90;
         jitcontainer = $E('div', {
             'id': 'jitcontainer',
             'className': 'clearfix',
             'style': {
                 'position': 'relative'
-//                'width': border + 'px',
-//                'height': ((opt.height + 55 + border / 20)) + 'px'
             }
         });
 
@@ -720,8 +707,6 @@ var PJ = function (params) {
                 'position': 'absolute',
                 'left': '50px',
                 'top': '90px',
-                //'width': '250px',
-                //'height': '170px',
                 'overflow': 'auto',
                 'text-align': 'left'
             }
@@ -902,9 +887,6 @@ var PJ = function (params) {
             // if zoomIndex is not set, the rendering will go crazy. make sure zoomIndex is set when a node is clicked
             st.zoomIndex = st.graph.depth.length;
             st.plot();
-//            if(id!== undefined){
-//                pj.clickNode(id);
-//            }
             pj.on('treeloaded', function(){
                 id && pj.clickNode(id);
             })
@@ -921,35 +903,18 @@ var PJ = function (params) {
         if (st.character) {
             st.colorCharacter() || '';
         }
-////            jQuery('#legendBody').html(html);
-//            legendElem.style.display = 'inline';
-//        } else {
-//            legendElem.style.display = 'none';
-//        }
 var start, stop
         start = new Date();
         for (i in st.graph.nodes) {
             if (st.graph.nodes.hasOwnProperty(i)) {
                 node = st.graph.nodes[i];
-                //         if( node.data.leaf ) {
                 label = jQuery('#' + node.id)[0];
                 label && st.config.onCreateLabel(label, node);
-                //         }
             }
         }
         stop = new Date();
         console.log('elapsed time')
         console.log( stop - start );
-        //optional: make a translation of the tree
-        //emulate a click on the root node.
-//        var currentZoom = st.zoomIndex;
-//        st.onClick(st.root);
-//        alert("pre-fitScreen, zoom = " + st.zoomIndex);
-//        console.log("st", st);
-//        st.fitScreen();
-//        st.zoomIndex = currentZoom;
-//        if (currentZoom) st.zoom(currentZoom);
-//        alert("post-fitScreen, zoom = " + st.zoomIndex);
     }
 
     var setTitle = function( config){
@@ -1092,12 +1057,10 @@ var start, stop
             yTranslate = $(element).css('top').replace('px','');
             yTranslate = yTranslate?parseInt(yTranslate):0;
             st.canvas.translate(0, -yTranslate);
-//            jQuery(element).click();
         }
     };
 
     this.colorTreeWithCharacter = function (charJson, selected) {
-//        this.clearCharacters()
         st.character = charJson;
         st.config.initCharacter = false;
         st.config.firstCharacter = st.firstCharacter = selected[0];
@@ -1137,10 +1100,6 @@ var start, stop
         var root = this.getRoot(),
             node = this.getNodeById(root);
         node.eachSubgraph(function(n){
-//            console.log(n)
-//            n.data.character = {};
-//            n.data.colorCharacter = [];
-//            n.data.color={};
             n.eachAdjacency(function(adj){
                 adj.setData('color','#000');
             })
@@ -1476,7 +1435,6 @@ var start, stop
     }
     jQuery.contextMenu({
         selector: '#' + config.injectInto + " canvas",
-//        selector:"#main",
         trigger: 'none',
         autoHide: false,
         build: function ($trigger, e) {
