@@ -951,17 +951,6 @@ var start, stop
         ko.applyBindings(model, titleDom[0]);
     }
 
-    // add this class to make the labels disappear outside the bounds of canvas
-    $('#' + config.injectInto).addClass('infovis');
-
-    console.log('before jit initialized')
-    console.log(config)
-    st = new $jit.Phylo(config);
-    navigation(config)
-    setTree(config)
-    setTitle(config);
-    console.log('after jit initialized')
-
     this.st = st;
 
     this.setTree = function (tree, format, url) {
@@ -1517,4 +1506,16 @@ var start, stop
         }
         config.setNodeToUrlFlag = false;
     })
+
+
+    // add this class to make the labels disappear outside the bounds of canvas
+    $('#' + config.injectInto).addClass('infovis');
+
+    console.log('before jit initialized')
+    console.log(config)
+    st = new $jit.Phylo(config);
+    navigation(config)
+    setTree(config)
+    setTitle(config);
+    console.log('after jit initialized')
 };
