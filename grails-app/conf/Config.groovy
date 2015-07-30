@@ -57,6 +57,8 @@ citationParser = "http://freecite.library.brown.edu/citations/create"
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION&flimit=1000000"
 layers = "http://spatial.ala.org.au/ws/layers"
+fields = "http://spatial.ala.org.au/ws/fields"
+layerMetadata = "http://spatial.ala.org.au/layers-service/layers/view/more/"
 spatialPortalRoot="http://spatial.ala.org.au"
 regionsUrl = [
         "state": "http://regions.ala.org.au/regions/regionList?type=states",
@@ -352,8 +354,7 @@ log4j = {
     appenders {
         console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n'), threshold: org.apache.log4j.Level.WARN
     }
-    debug 'grails.app',
-          'au.org.ala.phyloviz.Nexson'
+    debug 'au.org.ala.phyloviz.Nexson'
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
