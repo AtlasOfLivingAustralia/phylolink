@@ -600,17 +600,7 @@ function Map(options) {
          */
         self.downloadMapData = function () {
             var qid = pj.getQid(true);
-            var drProp = records && records.getDataresource();
-            var url = null;
-
-            switch (drProp.type) {
-                case 'sandbox':
-                    url = config.sandboxOccurrenceDownload;
-                    break;
-                case 'ala':
-                    url = config.biocacheOccurrenceDownload;
-                    break;
-            }
+            var url = records.getDataresource().instanceUrl;
 
             var email = self.downloadViewModel.email();
             if (email === undefined) {

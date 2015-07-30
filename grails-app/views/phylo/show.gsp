@@ -108,7 +108,6 @@
         biocacheLayer: 'http://biocache.ala.org.au/ws/ogc/wms/reflect',
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'http://biocache.ala.org.au/occurrence/legend',
-        sandboxOccurrenceDownload: 'http://sandbox1.ala.org.au/ws/occurrences/index/download',
         biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
         downloadReasonsUrl: 'http://logger.ala.org.au/service/logger/reasons',
         legendUrl: function(){
@@ -293,7 +292,6 @@
             dataType: 'JSONP'
         },
         downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
-        sandboxOccurrenceDownload: 'http://sandbox1.ala.org.au/ws/occurrences/index/download',
         biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download'
     });
 

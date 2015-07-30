@@ -215,7 +215,6 @@ var Habitat = function (c) {
         self.count = ko.observable(1);
 
         self.downloadViewModel = new utils.OccurrenceDownloadViewModel();
-        //ko.applyBindings(self.downloadViewModel, document.getElementById("plotOccurrenceDownloadModal"));
 
         /**
          *
