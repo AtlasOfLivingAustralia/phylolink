@@ -53,5 +53,31 @@ var utils={
            $( sel ).remove();
         });
         modal.modal( options )
+    },
+
+    getDownloadReasons: function() {
+        var downloadReasons = ko.observableArray();
+        $.ajax({
+            url: config.downloadReasonsUrl,
+            dataType: "JSONP",
+            success: function (data) {
+                for (var i in data) {
+                    downloadReasons.push(new utils.SelectItem(data[i].id, data[i].name));
+                }
+            }
+        });
+
+        return downloadReasons;
+    },
+
+    OccurrenceDownloadViewModel: function() {
+        this.downloadReasons = utils.getDownloadReasons();
+        this.email = ko.observable();
+        this.reason = ko.observable();
+    },
+
+    SelectItem: function(id, name) {
+        this.id = ko.observable(id);
+        this.displayName = ko.observable(name);
     }
-}
+};
