@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import grails.transaction.Transactional
+import net.sf.json.JSONArray
 import net.sf.json.JSONObject
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
@@ -76,25 +77,17 @@ class UtilsService {
      * assuming json param will be an array of objects. and all object will have the same number of properties
      * @param json[[a :'1',b:'2'],[a:'3',b:'4']]
      */
-    def convertJSONtoCSV(json) {
+    def convertJSONtoCSV(List json) {
         if (json.size() == 0) {
             return
         }
         ByteArrayOutputStream bytes = new ByteArrayOutputStream()
-        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(bytes))
-        def header = []
-        // simple header
-        json[1]?.each { k, v ->
-            header.push(k)
+        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(bytes), ',' as char, '"' as char)
+
+        json.each {
+            csvWriter.writeNext(it as String[])
         }
-        csvWriter.writeNext(header as String[])
-        json.eachWithIndex { prop, index ->
-            def row = []
-            for (def i = 0; i < header.size(); i++) {
-                row.push(prop[header[i]])
-            }
-            csvWriter.writeNext(row as String[])
-        }
+
         csvWriter.flush()
         def csv = bytes.toString("UTF-8")
         csvWriter.close()

@@ -370,3 +370,7 @@ bootstrap callout
 .bs-callout-info h4 {
     color: #5bc0de;
 }
+
+.small {
+    font-size: 12px;
+}

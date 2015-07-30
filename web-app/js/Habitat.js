@@ -29,7 +29,7 @@ var Habitat = function (c) {
         dataType: 'JSONP',
         googleChartsLoaded: false,
         delayedChartCall: [],
-        chartWidth: 400,
+        chartWidth: '100%',
         chartHeight: 200,
         headerHeight:60,
         /**
@@ -104,11 +104,17 @@ var Habitat = function (c) {
             '</div>' +
             '</div>' +
             '</div>' +
+            '<div class="text-right">\
+                <a id="downloadPlotDataLink" class="btn btn-link" data-toggle="modal" href="#plotOccurrenceDownloadModal" data-bind="visible: habitats().length > 0"><i class="fa fa-download"></i>&nbsp;Download source data</a>\
+            </div>'+
             '<div data-bind="sortable: {data:habitats, afterMove: $root.onMove}">\
                 <div class="top-buffer panel panel-default" style="position: relative">\
                     <div class="panel-heading" data-bind="text: displayName"></div>\
                     <div class="panel-body" >\
-                        <div data-bind="attr:{id: id}, addHabitatChart: !$root.isHabitatSelected($data)" style="width: 100%; height: 200px;"></div>\
+                        <div data-bind="attr:{id: id}, addHabitatChart: !$root.isHabitatSelected($data)"></div>\
+                        <div class="text-right">\
+                            <button type="button" class="btn btn-link small" data-bind="click: $root.downloadSummaryCsv, visible: !loading()"><i class="fa fa-download"></i>&nbsp;Download summary data</button>\
+                        </div>\
                     </div>\
                 </div>\
             </div>' +
@@ -121,7 +127,7 @@ var Habitat = function (c) {
             </div>'
     }, c);
     var pj = config.pj, hab = this, id = config.id;
-    $('#' + config.id).html(config.template);
+    $('#' + config.id + 'Inner').html(config.template);
     /**
      * stores query id for a node.
      */
@@ -150,6 +156,11 @@ var Habitat = function (c) {
         this.id = ko.observable(c.id);
         this.xAxis = ko.observable(c.xAxis);
         this.yAxis = ko.observable(c.yAxis);
+        this.loading = ko.observable(false);
+
+        this.email = ko.observable();
+        this.reason = ko.observable();
+
         var frequency;
         var spinner = new Spinner({
             top: '50%',
@@ -161,7 +172,7 @@ var Habitat = function (c) {
         };
         this.getFrequency = function () {
             return frequency;
-        }
+        };
         this.startLoading = function () {
             if (!spinner || !spinner.el) {
                 spinner = new Spinner({
@@ -170,13 +181,15 @@ var Habitat = function (c) {
                     className: 'loader'
                 });
             }
+            this.loading(true);
             spinner.spin();
             $('#' + this.id()).parent().append(spinner.el);
         };
         this.stopLoading = function () {
             spinner.stop();
+            this.loading(false);
         };
-    }
+    };
     var HabitatViewModel = function () {
         new Emitter(this);
         var self = this;
@@ -196,10 +209,13 @@ var Habitat = function (c) {
          *  initialization flag - boolean
          */
             'changed'
-        ]
+        ];
         self.habitats = ko.observableArray();
         self.selectedHabitat = ko.observable();
         self.count = ko.observable(1);
+
+        self.downloadViewModel = new utils.OccurrenceDownloadViewModel();
+        //ko.applyBindings(self.downloadViewModel, document.getElementById("plotOccurrenceDownloadModal"));
 
         /**
          *
@@ -227,7 +243,6 @@ var Habitat = function (c) {
         self.addHabitat = function () {
             var habitat = new Habitat({name: '', displayName: '', id: 'habitat-' + self.count()});
             self.count(self.count() + 1);
-            console.log("count:" + self.count());
             self.selectedHabitat(habitat);
             self.habitats.push(habitat);
         };
@@ -282,11 +297,8 @@ var Habitat = function (c) {
             self.selectedHabitat().xAxis(xaxis);
             self.selectedHabitat().yAxis(config.graph.yAxis);
             self.emit('changed', self.selectedHabitat());
-        }
+        };
 
-        /**
-         *
-         */
         self.updateChart = function(habitat, list){
             var data = {
                 speciesList: JSON.stringify(list),
@@ -294,13 +306,13 @@ var Habitat = function (c) {
             };
             if(config.doSaveQuery){
                 self.saveQuery(data).then(function(qid){
-                    var data = {q:"qid:"+qid}
+                    var data = {q:"qid:"+qid};
                     self.updateChartDirect(habitat, data);
                 });
             } else {
                 self.updateChartDirect(habitat, data);
             }
-        }
+        };
 
         self.saveQuery = function(params){
             return $.ajax({
@@ -314,9 +326,6 @@ var Habitat = function (c) {
             })
         };
 
-        /**
-         *
-         */
         self.updateChartDirect = function (habitat, params) {
             var id = habitat.id();
             habitat.startLoading();
@@ -343,11 +352,7 @@ var Habitat = function (c) {
                     habitat.stopLoading();
                 }
             });
-
-            /**
-             *
-             */
-        }
+        };
 
         /**
          * google chart options. sets x & y axis title.
@@ -367,7 +372,7 @@ var Habitat = function (c) {
                 }
             };
             return c;
-        }
+        };
 
         /**
          *
@@ -380,7 +385,7 @@ var Habitat = function (c) {
                 data = {
                     q : qid,
                     config: habitat.name()
-                }
+                };
                 self.updateChartDirect(habitat, data);
             } else {
                 list = pj.getChildrenName(pj.getSelection());
@@ -390,7 +395,7 @@ var Habitat = function (c) {
                 };
                 self.updateChartDirect(habitat, data);
             }
-        }
+        };
 
         /**
          * handler when list is reordered.
@@ -398,7 +403,55 @@ var Habitat = function (c) {
         self.onMove = function () {
             self.emit('moved');
         };
-    }
+
+        /**
+         * Downloads the faceted source data for the selected plot in CSV format
+         * @param habitat The model of the selected plot
+         */
+        self.downloadSummaryCsv = function (habitat) {
+            var qid = pj.getQid(true);
+
+            $.ajax({
+                url: config.downloadUrl,
+                type: 'GET',
+                data: {
+                    q: qid,
+                    config: habitat.name()
+                },
+                success: function (csv) {
+                    var uri = 'data:application/csv;charset=UTF-8,' + encodeURIComponent(csv);
+                    $("<a style='display: none' href='" + uri + "' download='data.csv'>download data</a>").appendTo('body')[0].click()
+                }
+            });
+        };
+
+        /**
+         * Downloads the source occurrence records for all plots
+         */
+        self.downloadOccurrenceData = function () {
+            var qid = pj.getQid(true);
+
+            var fields = ['taxon_name'];
+            for (var i = 0; i < view.habitats().length; i++) {
+                fields.push(view.habitats()[i].name());
+            }
+
+            var email = self.downloadViewModel.email();
+            if (email === undefined) {
+                email = '';
+            }
+
+            var url = config.biocacheOccurrenceDownload
+                + "?q=qid:" + qid
+                + "&reasonTypeId=" + self.downloadViewModel.reason().id()
+                + "&email=" + email
+                + "&fields=" + fields.join(",");
+
+            $("<a style='display: none' href='" + url + "' download='data.zip'>download data</a>").appendTo('body')[0].click();
+            $(".closeDownloadModal").filter(":visible").click();
+        };
+    };
+
     ko.bindingHandlers.select = {
         init: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('init visible and select handler');
