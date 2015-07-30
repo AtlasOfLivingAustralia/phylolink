@@ -868,7 +868,7 @@ var Character = function (options) {
 
     this.initCharacters = function(){
         var char, flag = false, chars;
-        if( options.initCharacters.characters  && options.initCharacters.characters.length ){
+        if( options.initCharacters && options.initCharacters.characters  && options.initCharacters.characters.length ){
             if(options.charOnRequest ){
                 if( character.getCharacterListLoaded()){
                     chars = [];
@@ -1063,7 +1063,7 @@ var Character = function (options) {
     /**
      * load character from url or from provided list.
      */
-    if(options.initCharacters.list){
+    if(options.initCharacters && options.initCharacters.list){
         view.addNewSource(options.initCharacters.list);
     }else if (options.url) {
         $.ajax({
