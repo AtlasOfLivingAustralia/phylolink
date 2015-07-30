@@ -600,8 +600,7 @@ function Map(options) {
          */
         self.downloadMapData = function () {
             var qid = pj.getQid(true);
-            var url = records.getDataresource().instanceUrl;
-
+            var url = records.getDataresource().instanceUrl + "/ws/occurrences/index/download";
             var email = self.downloadViewModel.email();
             if (email === undefined) {
                 email = '';
