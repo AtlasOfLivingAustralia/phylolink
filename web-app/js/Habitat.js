@@ -411,7 +411,7 @@ var Habitat = function (c) {
             var qid = pj.getQid(true);
 
             $.ajax({
-                url: config.downloadUrl,
+                url: config.downloadSummaryUrl,
                 type: 'GET',
                 data: {
                     q: qid,
@@ -430,7 +430,7 @@ var Habitat = function (c) {
         self.downloadOccurrenceData = function () {
             var qid = pj.getQid(true);
 
-            var fields = ['taxon_name'];
+            var fields = [];
             for (var i = 0; i < view.habitats().length; i++) {
                 fields.push(view.habitats()[i].name());
             }
@@ -444,7 +444,7 @@ var Habitat = function (c) {
                 + "?q=qid:" + qid
                 + "&reasonTypeId=" + self.downloadViewModel.reason().id()
                 + "&email=" + email
-                + "&fields=" + fields.join(",");
+                + "&extra=" + fields.join(",");
 
             $("<a style='display: none' href='" + url + "' download='data.zip'>download data</a>").appendTo('body')[0].click();
             $(".closeDownloadModal").filter(":visible").click();
