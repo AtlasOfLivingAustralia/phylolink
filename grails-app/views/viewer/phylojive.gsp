@@ -87,7 +87,7 @@
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${studyId}&treeid=${treeId}",
         format: undefined,
         edit:false,
-        title:"${tree.getTitle()}",
+        title:"${raw(tree.getTitle())}",
         titleUrl: undefined,
         pjId: 'info'
     }
