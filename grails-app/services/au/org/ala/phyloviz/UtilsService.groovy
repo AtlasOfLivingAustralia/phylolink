@@ -3,12 +3,9 @@ package au.org.ala.phyloviz
 import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
-import grails.transaction.Transactional
-import net.sf.json.JSONArray
 import net.sf.json.JSONObject
 import org.apache.commons.logging.LogFactory
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
@@ -354,20 +351,26 @@ class UtilsService {
                 data = data.tail()
             }
 
+            // if the data is faceted, then the values are in the first cell and the count is in the second
+            // if the data is not faceted, then the categories are in the first cell and the values rae in the second
+            int dataIndex = faceted ? 0 : 1
+
             if (data.find { !(it instanceof List) || it.size() != 2 } != null) {
                 throw new IllegalArgumentException("Data must be a list of tuples")
             }
             summary.sampleSize = faceted ? data.sum { it[1] } : data.size()
 
-            def firstNonEmpty = data.find { it[1] != null }
+            List firstNonEmpty = data.find { it[dataIndex] != null }
 
-            summary.numeric = firstNonEmpty[faceted ? 0 : 1] instanceof Number
+            summary.numeric = firstNonEmpty[dataIndex] instanceof Number
 
             if (summary.numeric) {
                 DescriptiveStatistics stats = new DescriptiveStatistics()
                 data.each { tuple ->
+                    // Faceted data groups the data by value, with the first cell being the value and the second the count
+                    // To calculate the stats, we need to expand this data, adding a value for each instance in the faceted data
                     (1..(faceted ? tuple[1] : 1)).each {
-                        stats.addValue(tuple[faceted ? 0 : 1])
+                        stats.addValue(tuple[dataIndex])
                     }
                 }
 

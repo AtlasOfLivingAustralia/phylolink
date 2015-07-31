@@ -8,7 +8,23 @@ import spock.lang.Specification
 class UtilsServiceSpec extends Specification {
 
     UtilsService service = new UtilsService()
-    UtilsService service = new UtilsService()
+
+    def "convertJSONtoCSV should return null when given an empty JSON array"() {
+        when:
+        def result = service.convertJSONtoCSV([] as JSON)
+
+        then:
+        result == null
+    }
+
+    def "convertJSONtoCSV should convert a JSON array to a byte array representation of the matching CSV format"() {
+        when:
+        def result = service.convertJSONtoCSV([[a: '1', b: '2'], [a: '3', b: '4']] as JSON)
+
+        then:
+        result == "a,b,\n1,2\n3,4".bytes
+    }
+
 
     def "statisticSummary should return a map with sampleSize == 0 if given a null OR empty list"() {
         when:
@@ -24,12 +40,6 @@ class UtilsServiceSpec extends Specification {
         result == [sampleSize: 0]
     }
 
-    def "convertJSONtoCSV should return null when given an empty JSON array"() {
-        when:
-        def result = service.convertJSONtoCSV([] as JSON)
-
-        then:
-        result == null
     def "statisticSummary should throw an illegal argument exception if the list is not a list of tuples"() {
         when:
         service.statisticSummary([1,2,3,4])
@@ -57,15 +67,9 @@ class UtilsServiceSpec extends Specification {
         notThrown IllegalArgumentException
     }
 
-    def "convertJSONtoCSV should convert a JSON array to a byte array representation of the matching CSV format"() {
-        when:
-        def result = service.convertJSONtoCSV([[a :'1',b:'2'],[a:'3',b:'4']] as JSON)
-
-        then:
-        result == "a,b,\n1,2\n3,4".bytes
     def "statisticSummary should calculate the most and least frequent items as the item occurring most/least often in the list when faceted = false"() {
         when:
-        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", -1], ["a", 55], ["c", 1231], ["a", 4], ["e", 99]])
+        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", -1], ["a", 55], ["c", 1231], ["a", 4], ["e", 99]], false, false)
 
         then:
         result.mostFrequent == [count: 3, items: ["a"]]
@@ -74,7 +78,7 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should calculate the most and least frequent items as the item with the largest total value in the list when faceted = true"() {
         when:
-        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 1], ["a", 55], ["c", 1231], ["a", 4], ["e", 99]], true)
+        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 1], ["a", 55], ["c", 1231], ["a", 4], ["e", 99]], true, false)
 
         then:
         result.mostFrequent == [count: 1232, items: ["c"]]
@@ -83,13 +87,13 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should consider faceted data as numeric if the FIRST cell of the tuple is a number"() {
         when:
-        Map result = service.statisticSummary([[1, 1]], true)
+        Map result = service.statisticSummary([[1, 1]], true, false)
 
         then:
         result.numeric
 
         when:
-        result = service.statisticSummary([["aa", 1]], true)
+        result = service.statisticSummary([["aa", 1]], true, false)
 
         then:
         !result.numeric
@@ -97,13 +101,13 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should consider non-faceted data as numeric if the SECOND cell of the tuple is a number"() {
         when:
-        Map result = service.statisticSummary([[1, 1]])
+        Map result = service.statisticSummary([[1, 1]], false, false)
 
         then:
         result.numeric
 
         when:
-        result = service.statisticSummary([[1, "aa"]])
+        result = service.statisticSummary([[1, "aa"]], false, false)
 
         then:
         !result.numeric
@@ -111,7 +115,7 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should return the total sample size as the sum of all facet counts when faceted = true"() {
         when:
-        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 3], ["a", 4], ["c", 5], ["a", 6], ["e", 7]], true)
+        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 3], ["a", 4], ["c", 5], ["a", 6], ["e", 7]], true, false)
 
         then:
         result.sampleSize == 28
@@ -119,7 +123,7 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should return the total sample size as the count of tuples when faceted = false"() {
         when:
-        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 3], ["a", 4], ["c", 5], ["a", 6], ["e", 7]])
+        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 3], ["a", 4], ["c", 5], ["a", 6], ["e", 7]], false, false)
 
         then:
         result.sampleSize == 7
@@ -127,7 +131,7 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should return sampleSize, mostFrequent, leastFrequent when the data is not numeric"() {
         when:
-        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 3], ["a", 4], ["c", 5], ["a", 6], ["e", 7]], true)
+        Map result = service.statisticSummary([["a", 1], ["b", 2], ["c", 3], ["a", 4], ["c", 5], ["a", 6], ["e", 7]], true, false)
 
         then:
         result.size() == 4
@@ -139,7 +143,7 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should return sampleSize, mostFrequent, leastFrequent, min, max, mean, median, standardDeviation when the data is numeric"() {
         when:
-        Map result = service.statisticSummary([[1, 1], [2, 2], [3, 3], [4, 4]], true)
+        Map result = service.statisticSummary([[1, 1], [2, 2], [3, 3], [4, 4]], true, false)
 
         then:
         result.size() == 9
@@ -156,15 +160,29 @@ class UtilsServiceSpec extends Specification {
 
     def "statisticSummary should expand faceted numeric data sets when calculating the statistic summary"() {
         when:
-        Map result = service.statisticSummary([[2, 2], [3, 3], [4, 4]], true)
+        Map result = service.statisticSummary([[2, 2], [3, 3], [4, 4]], true, false)
 
         then:
         result.mean == 3.222 // 29 / 5, where 29 is the expanded data: 2, 2, 3, 3, 3, 4, 4, 4, 4
 
         when:
-        result = service.statisticSummary([[2, 2], [3, 3], [4, 4]])
+        result = service.statisticSummary([[2, 2], [3, 3], [4, 4]], false, false)
 
         then:
         result.mean == 3 // 9 / 3
+    }
+
+    def "statisticSummary should ignore the first tuple in the list if firstTupleIsHeading is TRUE"() {
+        when:
+        Map result = service.statisticSummary([[2, 2], [3, 3], [4, 4]], false, true)
+
+        then:
+        result.sampleSize == 2 // ignore the first tuple
+
+        when:
+        result = service.statisticSummary([[2, 2], [3, 3], [4, 4]], false, false)
+
+        then:
+        result.sampleSize == 3
     }
 }
