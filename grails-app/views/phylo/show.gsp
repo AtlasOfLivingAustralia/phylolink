@@ -67,8 +67,7 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="habitat">
-                    <div id="habitatInner"></div>
-                    <g:render template="occurrenceDownloadPopup" model="[dialogId: 'plotOccurrenceDownloadModal', clickAction: '$root.downloadOccurrenceData', viewModel: '$root.downloadViewModel']"></g:render>
+                    <g:render template="plots"></g:render>
                 </div>
 
                 <div role="tabpanel" class="tab-pane active" id="records">

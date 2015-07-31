@@ -1,3 +1,10 @@
+/**
+ *
+ * This code is used by the Analysis tab in the UI. The HTML is in the _plots.gsp template.
+ *
+ */
+
+
 var Habitat = function (c) {
     var $ = jQuery;
     new Emitter(this);
@@ -73,61 +80,10 @@ var Habitat = function (c) {
                 html: 'true',
                 content : 'Select an environmental layer like precipitation to graph the profile of a species'
             }
-        }],
-        template: '<style>' +
-            '.ui-autocomplete {\
-            max-height: 200px;\
-            overflow-y: auto;   /* prevent horizontal scrollbar */\
-            overflow-x: hidden; /* add padding to account for vertical scrollbar */\
-            z-index:1000 !important;\
-            }\
-            .ellipselabel {\
-              white-space: nowrap;\
-              max-width: 220px;\
-              overflow: hidden;              /* "overflow" value must be different from "visible" */\
-              text-overflow: ellipsis;\
-            }' +
-            '</style>' +
-            '<div id="habitatMain">' +
-            '<div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i> Plot profile</div>' +
-            '<div data-bind="sortable:{data:habitats, afterMove: $root.onMove}">' +
-            '<div class="item top-buffer">' +
-            '<div class="label label-default" data-bind="visible: !$root.isHabitatSelected($data)">\
-                <i class="icon-white icon-resize-vertical" aria-hidden="true" style="cursor: move"></i>\
-                <div class="ellipselabel" style="color: #ffffff;display:inline-block;cursor: pointer\
-                " href="#" data-bind="text: displayName, click: $root.selectedHabitat"></div>\
-                <i class="icon-white icon-remove" data-bind="click: $root.removeHabitat" \
-                       style="cursor: pointer"></i>\
-            </div>' +
-            '<div data-bind="select: $root.isHabitatSelected($data)">' +
-            '<input data-bind="value: displayName, event:{blur: $root.clearHabitat}"/>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="text-right">\
-                <a id="downloadPlotDataLink" class="btn btn-link" data-toggle="modal" href="#plotOccurrenceDownloadModal" data-bind="visible: habitats().length > 0"><i class="fa fa-download"></i>&nbsp;Download source data</a>\
-            </div>'+
-            '<div data-bind="sortable: {data:habitats, afterMove: $root.onMove}">\
-                <div class="top-buffer panel panel-default" style="position: relative">\
-                    <div class="panel-heading" data-bind="text: displayName"></div>\
-                    <div class="panel-body" >\
-                        <div data-bind="attr:{id: id}, addHabitatChart: !$root.isHabitatSelected($data)"></div>\
-                        <div class="text-right">\
-                            <button type="button" class="btn btn-link small" data-bind="click: $root.downloadSummaryCsv, visible: !loading()"><i class="fa fa-download"></i>&nbsp;Download summary data</button>\
-                        </div>\
-                    </div>\
-                </div>\
-            </div>' +
-            '</div>'+
-            '<div class="alert top-buffer">\
-                <button type="button" class="close" data-dismiss="alert">&times;</button>\
-                <h4>Note</h4><p>You can click on <i>Plot profile</i> button to find out the environmental \
-                characteristics like precipitation, temperature etc. of a clade. You can pick the environmental parameter \
-                from the drop down list, or filter the list by typing into the input box.</p>\
-            </div>'
+        }]
     }, c);
     var pj = config.pj, hab = this, id = config.id;
-    $('#' + config.id + 'Inner').html(config.template);
+
     /**
      * stores query id for a node.
      */
@@ -156,10 +112,18 @@ var Habitat = function (c) {
         this.id = ko.observable(c.id);
         this.xAxis = ko.observable(c.xAxis);
         this.yAxis = ko.observable(c.yAxis);
+        this.sampleSize = ko.observable();
+        this.leastFrequent = ko.observable();
+        this.leastFrequentCount = ko.observable();
+        this.mostFrequent = ko.observable();
+        this.mostFrequentCount = ko.observable();
+        this.min = ko.observable();
+        this.max = ko.observable();
+        this.mean = ko.observable();
+        this.median = ko.observable();
+        this.standardDeviation = ko.observable();
+        this.numeric = ko.observable();
         this.loading = ko.observable(false);
-
-        this.email = ko.observable();
-        this.reason = ko.observable();
 
         var frequency;
         var spinner = new Spinner({
@@ -190,6 +154,7 @@ var Habitat = function (c) {
             this.loading(false);
         };
     };
+
     var HabitatViewModel = function () {
         new Emitter(this);
         var self = this;
@@ -337,6 +302,30 @@ var Habitat = function (c) {
                 success: function (temp) {
                     habitat.stopLoading();
                     var data = temp.data;
+
+                    var len = Math.min(5, temp.statisticSummary.leastFrequent.items.length) + 1;
+                    var leastFrequent = temp.statisticSummary.leastFrequent.items.slice(0, len - 1).join(", ");
+                    if (temp.statisticSummary.leastFrequent.items.length > 5) {
+                        leastFrequent += ", ..."
+                    }
+                    len = Math.min(5, temp.statisticSummary.mostFrequent.items.length) + 1;
+                    var mostFrequent = temp.statisticSummary.mostFrequent.items.slice(0, len - 1).join(", ");
+                    if (temp.statisticSummary.mostFrequent.items.length > 5) {
+                        mostFrequent += ", ..."
+                    }
+
+                    habitat.sampleSize(temp.statisticSummary.sampleSize);
+                    habitat.leastFrequent(leastFrequent);
+                    habitat.leastFrequentCount(temp.statisticSummary.leastFrequent.count);
+                    habitat.mostFrequent(mostFrequent);
+                    habitat.mostFrequentCount(temp.statisticSummary.mostFrequent.count);
+                    habitat.numeric(temp.statisticSummary.numeric);
+                    habitat.min(temp.statisticSummary.min);
+                    habitat.max(temp.statisticSummary.max);
+                    habitat.mean(temp.statisticSummary.mean);
+                    habitat.median(temp.statisticSummary.median);
+                    habitat.standardDeviation(temp.statisticSummary.standardDeviation);
+
                     habitat.setFrequency(data);
                     if (data == undefined || data.length == 0) {
                         hab.columnchart(id, [
@@ -449,6 +438,11 @@ var Habitat = function (c) {
             $("<a style='display: none' href='" + url + "' download='data.zip'>download data</a>").appendTo('body')[0].click();
             $(".closeDownloadModal").filter(":visible").click();
         };
+
+        self.togglePanel = function(data, event, panelId, toggleId) {
+            $('#' + panelId).toggleClass('show hide');
+            $('#' + toggleId).toggleClass('fa-angle-double-down fa-angle-double-up');
+        }
     };
 
     ko.bindingHandlers.select = {
@@ -535,7 +529,6 @@ var Habitat = function (c) {
         if(saveQuery){
             saveQuery.then(function(qid){
                 var data = {q:pj.getQid(true)}
-                console.log(data)
                 for (i = 0; i < habitats.length; i++) {
                     data.config = habitats[i].name();
                     view.updateChartDirect(habitats[i], data);
@@ -563,7 +556,6 @@ var Habitat = function (c) {
         }
 
         var data = ko.toJSON(view);
-        console.log(data);
         console.log(view.count());
         var sync = $.extend({}, config.syncData);
         sync.json = data;

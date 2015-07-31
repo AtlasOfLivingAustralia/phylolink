@@ -131,9 +131,8 @@ class PhyloController {
      * @return
      */
     def getHabitat() {
-        def summary = [:], result
         def region = '';
-        def download = (params.download ?: false) as Boolean
+        def download = ( params.download?:false ) as Boolean
         def data = params
         data.region = region;
         def dr = ''
@@ -141,6 +140,7 @@ class PhyloController {
         widgetObject = widgetObject.createWidget(data, grailsApplication, webService, utilsService, applicationContext, dr);
 
         data = widgetObject.process(data, null);
+        data.statisticSummary = utilsService.statisticSummary(data.data, true)
         log.debug(data)
         if (download) {
             response.setHeader('Content-disposition', 'attachment; filename=data.csv')
