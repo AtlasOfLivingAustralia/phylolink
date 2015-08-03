@@ -5,7 +5,7 @@ class Tree {
     static belongsTo = [Owner]
     Integer id
     String reference
-    int year
+    Integer year
     String treeFormat
     String title
     String tag
@@ -18,10 +18,11 @@ class Tree {
     String expertTreeTaxonomy
     String expertTreeLSID
     String expertTreeID
+    String notes
     static constraints = {
         tree(nullable: false, widget: 'textarea')
-        year(nullable: false)
-        reference(nullable: false, widget: 'textarea')
+        year(nullable: true)
+        reference(nullable: true, widget: 'textarea')
         title(nullable: false, widget: 'textarea')
         treeFormat(nullable: false)
         tag(nullable: true)
@@ -32,12 +33,14 @@ class Tree {
         expertTreeTaxonomy(nullable: true)
         expertTreeLSID(nullable: true)
         expertTreeID(nullable: true)
+        notes(nullable: true, widget: 'textarea')
     }
 
     static mapping = {
         nexson type: "text"
         tree type: "text"
         reference type: 'text'
+        notes type: "text"
     }
 
 //    def beforeValidate(){

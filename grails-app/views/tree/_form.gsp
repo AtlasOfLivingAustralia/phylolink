@@ -26,7 +26,7 @@
     <label class="control-label" for="reference">Publication citation</label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'reference', 'error')}">
-        <g:textArea name="reference" class="span8" value="${tree?.reference}" required=""
+        <g:textArea name="reference" class="span8" value="${tree?.reference}"
         placeholder="Miller, J. T., Murphy, D. J., Brown, G. K., Richardson, D. M. and González-Orozco,C. E. (2011), The evolution and phylogenetic placement of invasive Australian Acacia species. Diversity and Distributions, 17: 848–860. doi: 10.1111/j.1472-4642.2011.00780.x"/>
     </div>
 </div>
@@ -57,6 +57,15 @@
     %{--<div id="doiField" class="span4">--}%
 
     %{--</div>--}%
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="notes">Notes</label>
+
+    <div class="controls ${hasErrors(bean: tree, field: 'notes', 'error')}">
+        <g:textArea name="notes" class="span8" value="${tree?.notes}"
+                    placeholder=""/>
+    </div>
 </div>
 
 <div class="control-group">
