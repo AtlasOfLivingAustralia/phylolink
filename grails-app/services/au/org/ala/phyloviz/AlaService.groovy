@@ -1,5 +1,4 @@
 package au.org.ala.phyloviz
-
 import au.com.bytecode.opencsv.CSVReader
 import grails.converters.JSON
 import grails.transaction.Transactional
@@ -14,6 +13,10 @@ class AlaService {
     def charactersService
     def sandboxService
     def authService
+    
+    def allLayersMaxAge = 0
+    def allLayersCached = []
+    
     /**
      * //    def utilsService
      * adding utilsService will cause the program to termiate. I think it is because of cyclical dependencies.
@@ -217,24 +220,31 @@ class AlaService {
      * get all layers in spatial portal
      */
     def getAllLayers() {
-        def result = []
-        def url = grailsApplication.config.layers
-        def data = JSON.parse(webService.get(url))
-        def code;
-        data.eachWithIndex { def entry, int i ->
-            code = '';
-            switch (entry.type) {
-                case grailsApplication.config.layersMeta.cl:
-                    code = 'cl';
-                    break;
-                case grailsApplication.config.layersMeta.env:
-                    code = 'el';
-                    break;
+        if (allLayersCached.size() == 0 || System.currentTimeMillis() > allLayersMaxAge) {
+            def result = []
+            def layers = JSON.parse(webService.get(grailsApplication.config.layers))
+            def fields = JSON.parse(webService.get(grailsApplication.config.fields))
+
+            fields.eachWithIndex { def entry, int i ->
+                if (entry.indb && entry.defaultlayer && entry.enabled) {
+                    //find layer
+                    layers.each {
+                        if (entry.spid.equals(String.valueOf(it.id)) && it.enabled) {
+                            it.id = entry.id
+                            it.label = it.displayname
+                            it.url = grailsApplication.config.layerMetadata + it.name
+                            result.push(it)
+                        }
+                    }
+                }
             }
-            entry.id = code + entry.id;
-            entry.label = entry.displayname;
-            result.push(entry)
+            if (result.size() > 0) allLayersCached = result
+            
+            //refresh in an hour
+            allLayersMaxAge = System.currentTimeMillis() + 60*60*1000
         }
+        
+        allLayersCached
     }
 
     /**

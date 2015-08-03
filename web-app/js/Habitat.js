@@ -38,6 +38,7 @@ var Habitat = function (c) {
         delayedChartCall: [],
         chartWidth: '100%',
         chartHeight: 200,
+        chartAreaHeight: 100,
         headerHeight:60,
         /**
          * sync flag
@@ -110,6 +111,13 @@ var Habitat = function (c) {
         this.name = ko.observable(c.name);
         this.displayName = ko.observable(c.displayName);
         this.id = ko.observable(c.id);
+        this.id_metadata = ko.observable(c.id_metadata);
+        this.mdDescription = ko.observable(c.description);
+        this.mdNotes = ko.observable(c.notes);
+        this.mdMin = ko.observable(c.environmentalvaluemin);
+        this.mdMax = ko.observable(c.environmentalvaluemax);
+        this.mdUnits = ko.observable(c.environmentalvalueunits);
+        this.mdUrl = ko.observable(c.url);
         this.xAxis = ko.observable(c.xAxis);
         this.yAxis = ko.observable(c.yAxis);
         this.sampleSize = ko.observable();
@@ -193,6 +201,15 @@ var Habitat = function (c) {
 
             for (var i in habitats) {
                 temp = habitats[i];
+                
+                //var rename catch
+                if (temp.description === undefined) temp.description = temp.mdDescription
+                if (temp.notes === undefined) temp.notes = temp.mdNotes
+                if (temp.url === undefined) temp.url = temp.mdUrl
+                if (temp.environmentalvaluemax === undefined) temp.environmentalvaluemax = temp.mdMax
+                if (temp.environmentalvaluemin === undefined) temp.environmentalvaluemin = temp.mdMin
+                if (temp.environmentalvalueunits === undefined) temp.environmentalvalueunits = temp.mdUnits
+                
                 habitat = new Habitat(temp);
                 self.habitats.push(habitat);
                 self.emit('changed', habitat, true);
@@ -205,7 +222,9 @@ var Habitat = function (c) {
          * add a habitat to list
          */
         self.addHabitat = function () {
-            var habitat = new Habitat({name: '', displayName: '', id: 'habitat-' + self.count()});
+            var habitat = new Habitat({name: '', displayName: '', id: 'habitat-' + self.count(), 
+                id_metadata: 'habitat-metadata-' + self.count(), description: '', url: '',
+                environmentalvaluemin: '', environmentalvaluemax: '', environmentalvalueunits: '', notes: ''});
             self.count(self.count() + 1);
             self.selectedHabitat(habitat);
             self.habitats.push(habitat);
@@ -260,6 +279,12 @@ var Habitat = function (c) {
             self.selectedHabitat().name(data.value);
             self.selectedHabitat().xAxis(xaxis);
             self.selectedHabitat().yAxis(config.graph.yAxis);
+            self.selectedHabitat().mdDescription(data.description);
+            self.selectedHabitat().mdNotes(data.notes);
+            self.selectedHabitat().mdMin(data.environmentalvaluemin);
+            self.selectedHabitat().mdMax(data.environmentalvaluemax);
+            self.selectedHabitat().mdUnits(data.environmentalvalueunits);
+            self.selectedHabitat().mdUrl(data.url);
             self.emit('changed', self.selectedHabitat());
         };
 
@@ -334,6 +359,7 @@ var Habitat = function (c) {
                         ]);
                         return;
                     }
+                    
                     hab.columnchart(id, data, view.getOptions(habitat));
                 },
                 error: function () {
@@ -351,6 +377,7 @@ var Habitat = function (c) {
             var c = {
                 width: $('#'+config.id+' .panel-body:first').width() ||config.chartWidth,
                 height: config.chartHeight,
+                chartArea: { top: 10 },
                 legend: { position: 'none' },
                 vAxis: {
                     title: habitat.yAxis()
@@ -359,6 +386,11 @@ var Habitat = function (c) {
                     title: habitat.xAxis()
                 }
             };
+            if (typeof habitat.getFrequency()[1][0] !== 'number') {
+                c.chartArea.height = config.chartAreaHeight
+            } else {
+                c.chartArea.height = config.chartHeight - 40
+            }
             return c;
         };
 
@@ -505,12 +537,7 @@ var Habitat = function (c) {
                 if (temp == undefined || temp.length == 0) {
                     return;
                 }
-                // check if values are string or numeric
-                if (typeof temp[0][1] === 'number') {
-                    hab.histogram(id, temp, view.getOptions(data));
-                } else {
-                    hab.columnchart(id, temp, view.getOptions(data));
-                }
+                hab.columnchart(id, temp, view.getOptions(data));
 //                google.visualization.events.addListener(chart, 'onmouseover', that.chartHover);
             }
         }
