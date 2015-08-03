@@ -109,7 +109,7 @@ class UserService {
 
         if (userId) {
             // check if user is in app DB, if not create it on the fly
-            def owner = Owner.findByUserId(userId)
+            def owner = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
             if ( owner == null) {
                 log.debug('before save')
                 Owner user = new Owner()

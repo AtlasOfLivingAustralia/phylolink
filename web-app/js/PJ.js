@@ -70,6 +70,11 @@ var PJ = function (params) {
     var self = new Emitter(this);
     var pj = this;
     var qid, prevSearch;
+    
+    this.selectedDr = ko.observable('')
+    this.selectedClade = ko.observable('all')
+    this.selectedCladeNumber = ko.observable(-1)
+    
     //adding support functions for event handling
     this.events = [
     /**
@@ -1285,10 +1290,10 @@ var start, stop
      * @param instance
      * @param drid
      */
-    this.setSaveQueryParams = function(type, instance, drid){
+    this.setSaveQueryParams = function(type, biocacheServiceUrl, drid){
         config.saveQuery.data.speciesList= undefined;
         config.saveQuery.data.dataLocationType = type || 'ala';
-        config.saveQuery.data.instanceUrl = instance;
+        config.saveQuery.data.biocacheServiceUrl = biocacheServiceUrl;
         config.saveQuery.data.drid = drid;
     }
 

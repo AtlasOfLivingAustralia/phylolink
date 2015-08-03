@@ -334,16 +334,18 @@ var Habitat = function (c) {
         self.updateChart = function(habitat, list){
             var data = {
                 speciesList: JSON.stringify(list),
-                config: habitat.name()
+                config: habitat.name(),
+                biocacheServiceUrl: pj.records.getDataresource().biocacheServiceUrl
             };
             if(config.doSaveQuery){
                 self.saveQuery(data).then(function(qid){
-                    var data = {q:"qid:"+qid}
+                    var data = {q:"qid:"+qid, biocacheServiceUrl:records.getDataresource().biocacheServiceUrl}
                     self.updateChartDirect(habitat, data);
                 });
             } else {
                 self.updateChartDirect(habitat, data);
             }
+            updateCladeInfo(list)
         }
 
         self.saveQuery = function(params){
@@ -430,7 +432,8 @@ var Habitat = function (c) {
             if( qid ){
                 data = {
                     q : qid,
-                    config: habitat.name()
+                    config: habitat.name(),
+                    biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
                 }
                 self.updateChartDirect(habitat, data);
             } else {
@@ -441,6 +444,7 @@ var Habitat = function (c) {
                 };
                 self.updateChartDirect(habitat, data);
             }
+            updateCladeInfo(list)
         }
 
         /**
@@ -522,13 +526,24 @@ var Habitat = function (c) {
         view.refreshHabitat(habitat);
     });
 
+    updateCladeInfo = function(list) {
+        if (list.length == 0) {
+            pj.selectedClade('All taxa selected')
+            pj.selectedCladeNumber(-1)
+        } else {
+            pj.selectedClade('' + list.length + ' taxa selected')
+            pj.selectedCladeNumber(list.length)
+        }
+    }
+
     this.refresh = function (node, list, saveQuery) {
         var habitats = view.habitats();
         var i, data;
 
         if(saveQuery){
             saveQuery.then(function(qid){
-                var data = {q:pj.getQid(true)}
+                var data = {q:pj.getQid(true),
+                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl}
                 console.log(data)
                 for (i = 0; i < habitats.length; i++) {
                     data.config = habitats[i].name();
@@ -542,13 +557,14 @@ var Habitat = function (c) {
             for (i = 0; i < habitats.length; i++) {
                 data = {
                     speciesList: JSON.stringify(list),
-                    config: habitats[i].name()
+                    config: habitats[i].name(),
+                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl
                 };
 
                 view.updateChartDirect(habitats[i], data);
             }
         }
-
+        updateCladeInfo(list)
     };
 
     this.save = function () {

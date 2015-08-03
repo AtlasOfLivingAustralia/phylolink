@@ -36,8 +36,14 @@ reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
 
 // TODO: move this config to file in data directory.
 sandboxUrl = "http://sandbox1.ala.org.au"
-collectoryUrl = "http://collectory-dev.ala.org.au/ws/tempDataResource?alaId=ALAID"
+sandboxCollectoryUrl = "http://collectory-dev.ala.org.au/ws/tempDataResource?alaId=ALAID"
+sandboxBiocacheServiceUrl = "http://sandbox1.ala.org.au/ws"
+sandboxHubUrl = "http://sandbox1.ala.org.au/ala-hub"
+biocacheServiceUrl = "http://biocache.ala.org.au/ws"
+biocacheHubUrl = "http://biocache.ala.org.au/"
 // end of config to move
+
+biocache.maxBooleanClauses=1024
 
 debug = true
 skin.fluidLayout = 1;
@@ -55,7 +61,7 @@ doiSearchUrl = "http://search.crossref.org/dois?q=SEARCH&header=true"
 citationParser = "http://freecite.library.brown.edu/citations/create"
 
 //ala webservices
-occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION&flimit=1000000"
+occurrences = "BIOCACHE_SERVICE/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION&flimit=1000000"
 layers = "http://spatial.ala.org.au/ws/layers"
 fields = "http://spatial.ala.org.au/ws/fields"
 layerMetadata = "http://spatial.ala.org.au/layers-service/layers/view/more/"
@@ -64,13 +70,12 @@ regionsUrl = [
         "state": "http://regions.ala.org.au/regions/regionList?type=states",
         "ibra": "http://regions.ala.org.au/regions/regionList?type=ibras"
 ];
-speciesListUrl = "http://biocache.ala.org.au/ws/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
+speciesListUrl = "BIOCACHE_SERVICE/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
-sandboxData = "http://sandbox.ala.org.au/biocache-service/occurrences/search";
-occurrencesSearch = "http://biocache.ala.org.au/ws/occurrences/search"
+occurrencesSearch = "BIOCACHE_SERVICE/occurrences/search"
 autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON"
 bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
-qidUrl = 'http://biocache.ala.org.au/ws/webportal/params'
+qidUrl = 'BIOCACHE_SERVICE/webportal/params'
 //listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 //listPost = 'http://lists.ala.org.au/ws/speciesList'
@@ -79,8 +84,7 @@ listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&act
 listCsvForKeys = 'http://lists.ala.org.au/ws/speciesListItems/byKeys?druid=DRID&keys=KEYS&format=csv'
 listKeys = 'http://lists.ala.org.au/ws/speciesListItems/keys?druid=DRID'
 listsPermUrl = 'http://lists.ala.org.au/speciesListItem/list/DRID'
-legendSandbox = "INSTANCEURL/ala-hub/occurrence/legend"
-legendAla = 'http://biocache.ala.org.au/occurrence/legend'
+legendAla = 'BIOCACHE_HUB/occurrence/legend'
 
 //opentree configs
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
@@ -101,9 +105,10 @@ alaDataresourceInfo = [
         'id':-1,
         'drid':null,
         'scientificName':'taxon_name',
-        'instanceUrl':'http://biocache.ala.org.au',
+        'biocacheServiceUrl':'${biocacheServiceUrl}',
+        'biocacheHubUrl':'${biocacheHubUrl}',
         'title':'Atlas of Living Australia (All data)',
-        'layerUrl': 'http://biocache.ala.org.au/ws/ogc/wms/reflect',
+        'layerUrl': 'http://biocache.ala.org.au/ws/webportal/wms/reflect',
         'type':'ala'
 ]
 

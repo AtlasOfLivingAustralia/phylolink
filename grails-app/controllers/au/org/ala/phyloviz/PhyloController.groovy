@@ -32,13 +32,13 @@ class PhyloController {
 
         Boolean edit = false
         log.debug("user id : ${userId instanceof String}")
-        log.debug("owner id: ${phyloInstance.getOwner().userId}");
-        if( phyloInstance.getOwner().userId == userId ){
+        log.debug("owner id: ${phyloInstance.getOwner()?.userId}");
+        if( phyloInstance.getOwner()?.userId == userId ){
             edit = true
             log.debug('editable');
         }
 
-        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit]
+        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid()]
     }
 
     def create() {

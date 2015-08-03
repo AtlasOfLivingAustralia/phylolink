@@ -22,7 +22,8 @@ class TreeController {
 
     def create() {
         userService.registerCurrentUser()
-        def user = Owner.findByUserId( authService.getUserId()?:-1 )
+        def userId = authService.getUserId()
+        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         if( user ){
             params.user = user
             [ tree: new Tree( params ) ]

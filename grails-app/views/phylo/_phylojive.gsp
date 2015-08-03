@@ -171,7 +171,7 @@
                 %{--},--}%
                 %{--dataType:"html"--}%
             %{--});--}%
-            wms= L.tileLayer.wms("http://biocache.ala.org.au/ws/mapping/wms/reflect?q="+fq, {
+            wms= L.tileLayer.wms("${grailsApplication.config.biocacheServiceUrl}/webportal/wms/reflect?q="+fq, {
                 layers: 'ALA:occurrences',
                 format: 'image/png',
                 transparent: true,

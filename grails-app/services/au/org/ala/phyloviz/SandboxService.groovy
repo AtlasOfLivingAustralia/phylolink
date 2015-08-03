@@ -20,14 +20,14 @@ class SandboxService {
      * @param scName
      * @return
      */
-    def upload(File file, String title, String scName) {
+    def upload(File file, String title, String scName, String phyloId) {
         //upload and get drid
         def result;
         def headers = "scientific name,lineage ID,Location,Latitude,Longitude,phenotype"
         def preview, dr;
         def serverInstance = grailsApplication.config.sandboxUrl;
         def alaId = authService.getUserId();
-        def owner = Owner.findByUserId(alaId);
+        def owner = alaId != null ? Owner.findByUserId(alaId) : Owner.findByDisplayName('Guest')
         if (owner == null) {
             return ['error': 'Unrecognised user', message: 'User is not registered on Phylolink.'];
         }
@@ -55,8 +55,11 @@ class SandboxService {
                     'scientificName': scName,
                     'drid'          : result.uid,
                     'serverInstance': serverInstance,
+                    'biocacheServiceUrl' : grailsApplication.config.sandboxBiocacheServiceUrl,
+                    'biocacheHubUrl' : grailsApplication.config.sandboxHubUrl,
                     'owner'         : owner,
-                    'status'        : true
+                    'status'        : true,
+                    'phyloId'       : phyloId
             ]);
 
             dr.save(flush: true);
@@ -88,8 +91,8 @@ class SandboxService {
      * upload file to sandbox
      */
     def uploadToSandbox(String id, String title, String headers, String firstLineIsData) {
-        def sandboxUrl = grailsApplication.config.sandboxUrl
-        String url = "${sandboxUrl}/ws/upload/post";
+        def sandboxBiocacheServiceUrl = grailsApplication.config.sandboxBiocacheServiceUrl
+        String url = "${sandboxBiocacheServiceUrl}/upload/post";
 
         def result;
         result = uploadFile(url, csvFileUrl(id), id, headers, title, 'COMMA', firstLineIsData, '');
@@ -137,7 +140,7 @@ class SandboxService {
         log.debug(post.getResponseBodyAsString())
 
         //reference the UID caches
-        def get = new GetMethod(grailsApplication.config.sandboxUrl + "/ws/cache/refresh")
+        def get = new GetMethod(grailsApplication.config.sandboxBiocacheServiceUrl + "/cache/refresh")
         http.executeMethod(get)
 
         post.getResponseBodyAsString()
@@ -148,7 +151,7 @@ class SandboxService {
      */
     def findListByAlaId(alaId) {
         def result = [];
-        def url = grailsApplication.config.collectoryUrl;
+        def url = grailsApplication.config.sandboxCollectoryUrl;
         if (alaId) {
             url = url.replace('ALAID', alaId);
             result = webService.getJson(url);
@@ -156,39 +159,67 @@ class SandboxService {
         result;
     }
 
+    def findByDrtId(drtId) {
+        def result = [];
+        def url = grailsApplication.config.sandboxCollectoryUrl.replace("?alaId=ALAID", '/' + drtId);
+        result = webService.getJson(url);
+        result;
+    }
+
     /**
      * check status of uploaded file
      */
     def checkStatus(uid) {
-        def url = grailsApplication.config.sandboxUrl + "/ws/upload/status/${uid}.json";
+        def url = grailsApplication.config.sandboxBiocacheServiceUrl + "/upload/status/${uid}.json";
         webService.get(url);
     }
 
-    def getDataresourceInfo(String druid, String ownerId, String source) {
-        def owner
-        if (ownerId) {
-            owner = Owner.findByUserId(ownerId);
-        }
+    def getDataresourceInfo(String druid, String ownerId, String biocacheServiceUrl, String biocacheHubUrl, String phyloId) {
+        def owner = ownerId != null ? Owner.findByUserId(ownerId) : Owner.findByDisplayName("Guest")
 
         if (!owner) {
             return ['error': 'You are not logged in. Please log in.']
         }
 
-        if (!source) {
-            source = grailsApplication.config.sandboxUrl;
+        if (!biocacheServiceUrl) {
+            biocacheServiceUrl = grailsApplication.config.sandboxBiocacheServiceUrl;
         }
 
+        if (!biocacheHubUrl) {
+            biocacheHubUrl = grailsApplication.config.sandboxBiocacheHubUrl;
+        }
+        
         def s = Sandbox.findAll {
-            drid == druid && owner == owner && serverInstance == source
-        }.get(0);
-        return new ConvertSandbox().convert(s);
+            drid == druid && owner == owner && serverInstance == biocacheServiceUrl
+        }
+        
+        if (s.size() > 0) {
+            return new ConvertSandbox().convert(s.get(0));
+        } else {
+            //not found in Sandbox, use default sandbox
+            def d = findByDrtId(druid)
+            def dr = new Sandbox([
+                    'title'         : d.name,
+                    'scientificName': 'undefined',
+                    'drid'          : druid,
+                    'serverInstance': grailsApplication.config.sandboxBiocacheServiceUrl,
+                    'biocacheServiceUrl': grailsApplication.config.sandboxBiocacheServiceUrl,
+                    'biocacheHubUrl': grailsApplication.config.sandboxHubUrl,
+                    'owner'         : owner,
+                    'status'        : true,
+                    'phyloId'       : phyloId
+            ]);
+
+            dr.save(flush: true);
+            if (dr.hasErrors()) {
+                return ['error': "Failed to create an entry into database for dataresource ${druid}." + dr.errors]
+            }
+            return new ConvertSandbox().convert(dr);
+        }
     }
 
     def getAllDataresourceInfo(String userId){
-        def owner;
-        if (userId) {
-            owner = Owner.findByUserId(userId);
-        }
+        def owner = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
 
         def status = true;
 
@@ -201,7 +232,29 @@ class SandboxService {
         };
         def result = [], cs =  new ConvertSandbox();
         s.each{ item ->
-            result.push(cs.convert(item))
+            def c = cs.convert(item)
+            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
+            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl) c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
+            result.push(c)
+        }
+        return result;
+    }
+
+    /**
+     * get sandbox uploads for Guest and phyloId
+     */
+    def getAllDataresourceInfoByPhyloId(String phyloId){
+        def status = true;
+
+        def s = Sandbox.findAll {
+            owner == Owner.findByDisplayName("Guest") && status == status && phyloId == phyloId
+        };
+        def result = [], cs =  new ConvertSandbox();
+        s.each{ item ->
+            def c = cs.convert(item)
+            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
+            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl) c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
+            result.push(c)
         }
         return result;
     }
@@ -210,7 +263,7 @@ class SandboxService {
      * get qid url for sandbox instance provided
      *
      */
-    def getQidUrl(String sandboxInstance){
-        "${sandboxInstance}/ws/webportal/params";
+    def getQidUrl(String biocacheServiceUrl){
+        "${biocacheServiceUrl}/webportal/params";
     }
 }

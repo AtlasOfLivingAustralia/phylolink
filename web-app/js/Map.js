@@ -13,7 +13,7 @@ function Map(options) {
         type: 'GET',
         dataType: 'json',
         headerHeight: 0,
-        wms: 'http://biocache.ala.org.au/ws/webportal/wms/reflect',
+        wms: '${grailsApplication.config.biocacheServiceUrl}/webportal/wms/reflect',
         //flag to check if character has been loaded
         characterloaded: false,
         spinner: {
@@ -28,6 +28,7 @@ function Map(options) {
             'opacity': 0.8,
             'color': 'df4a21'
         },
+        spUrl: undefined,
 
         showCharacterOnMap: true,
         /**
@@ -128,6 +129,13 @@ function Map(options) {
         }
         return str.join(';');
     };
+    
+    this.setSpUrl = function (q) {
+        var ws = '&ws=' + records.getDataresource().biocacheHubUrl
+        var bs = '&bs=' + records.getDataresource().biocacheServiceUrl
+        
+        options.spUrl.url(options.spUrl.baseUrl + '?' + q + ws + bs)
+    }
 
     this.updateEnv = function (l) {
         l = l || layer
@@ -299,7 +307,7 @@ function Map(options) {
                 data = {
                     source: 'sandbox',
                     q: qid,
-                    serverInstance: drProp.instanceUrl
+                    biocacheServiceUrl: drProp.biocacheServiceUrl
                 }
                 if(!qid){
                     data.q = 'q=data_resource_uid:' + drProp.drid;
@@ -310,7 +318,7 @@ function Map(options) {
                 data = {
                     source: 'ala',
                     q: qid,
-                    serverInstance: drProp.instanceUrl
+                    biocacheServiceUrl: drProp.biocacheServiceUrl
                 }
                 if(!qid){
                     data.q = f.formatQuery(),
@@ -367,7 +375,7 @@ function Map(options) {
         data.cm = cby.name() || '';
         data.q = pj.getQid(true);
         data.source = dr.type;
-        data.instanceUrl = dr.instanceUrl;
+        data.biocacheHubUrl = dr.biocacheHubUrl;
         // if query id is not present.
         if(!data.q){
             data.q = filter.formatQuery();
@@ -437,12 +445,15 @@ function Map(options) {
         options.env.color = options.legend.defaultValue[0].hex;
         this.updateEnv(layer);
         lmap.addLayer(layer);
+        this.setSpUrl('&ly.1=' + 'Phylolink' + '&ly.1.s=' + parseInt('0x' + options.env.color) + '&ly.1.q=' + pj.getQid(true))
     }
 
     this.mapWithCharacter = function(query, char){
         var groups = pj.groupByCharacter(char, true, true),
             list,
             that = this;
+        var spUrl = ''
+        var c = 1
         for (i in groups) {
             list = groups[i].list;
             if (list.length) {
@@ -464,9 +475,12 @@ function Map(options) {
                     layer.color = options.env.color = ajx.color.replace('#', '');
                     that.updateEnv(layer);
                     lmap.addLayer(layer)
+                    spUrl += '&ly.' + c + '=' + list[0] + '&ly.' + c + '.s=' + parseInt('0x' + layer.color) + '&ly.' + c + '.q=' + qid
+                    c = c + 1
                 });
             }
         }
+        this.setSpUrl(spUrl)
     }
 
     this.removeLayers = function () {

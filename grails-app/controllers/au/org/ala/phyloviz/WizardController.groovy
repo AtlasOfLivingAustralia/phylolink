@@ -50,7 +50,8 @@ class WizardController {
 
     def create() {
         userService.registerCurrentUser()
-        def user = Owner.findByUserId(authService.getUserId() ?: -1)
+        def userId = authService.getUserId()
+        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         log.debug('creating form for user: ' + authService.getUserId())
         if (user) {
             def tree = new Tree(params);

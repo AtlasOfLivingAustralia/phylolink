@@ -15,6 +15,7 @@ var Character = function (options) {
         delayedChartCall:[],
         chartWidth:400,
         chartHeight:200,
+        chartAreaHeight:100,
         // flag to show upload character interface
         edit: true,
         //flag to check if character has been loaded
@@ -140,6 +141,7 @@ var Character = function (options) {
         <div class="bs-callout" id="uploadCharacters" style="position: relative">\
         <h4 style="cursor:pointer" id="uploadCharactersTitle" data-bind="click: onClick"><i class="icon icon-chevron-down"></i> <a>Upload your character data</a></h4>\
         <div id="minimizeUpload" style="display:none">\
+        <div id="csvFormUnavailable" class="alert-error"><i>Login to enable character upload.</i></div>\
         <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">\
         <i>You need modern browser such as Google Chrome 40 or Safari 8</i>\
         <div class="control-group">\
@@ -566,8 +568,8 @@ var Character = function (options) {
             var opt = {
                 width: width,
                 height: height,
-                title: 'characters',
                 legend: { position: 'none' },
+                chartArea: { top: 10 },
                 vAxis: {
                     title: options.graph.yAxis
                 },
@@ -596,8 +598,8 @@ var Character = function (options) {
             var opt = {
                 width: width,
                 height: height,
-                title: 'characters',
                 legend: { position: 'none' },
+                chartArea: { top: 10, chartAreaHeight: options.chartAreaHeight },
                 vAxis: {
                     title: options.graph.yAxis
                 },
@@ -1079,7 +1081,7 @@ var Character = function (options) {
     }
 
     // load characters list
-    if( options.edit && options.charactersList.url ){
+    if( options.charactersList.url ){
         var flag = false
         $.ajax({
             url: options.charactersList.url,
@@ -1239,9 +1241,12 @@ var Character = function (options) {
             that.uploadCharacter();
             return false;
         });
+
+        $("#csvFormUnavailable").hide();
     } else {
-        $("#uploadCharacters").hide();
-        $("#pickFromList").hide();
+        //$("#uploadCharacters").hide();
+       // $("#pickFromList").hide();
+        $("#csvForm").hide();
         $('#charactermain .alert').hide();
     }
 };
