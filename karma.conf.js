@@ -46,13 +46,13 @@ module.exports = function (config) {
             'web-app/thirdparty/knockout-sortable.min.js',
             'web-app/thirdparty/jquery.contextMenu.js',
             'web-app/thirdparty/emitter.js',
+            'web-app/js/utils.js',
             'web-app/js/Control.Checkbox.js',
             'web-app/js/Control.Legend.js',
             'web-app/js/Control.Loading.js',
             'web-app/js/Control.Select.js',
             'web-app/js/Control.Slider.js',
             'web-app/js/Character.js',
-            'web-app/js/utils.js',
             'web-app/js/PJ.js',
             'web-app/js/Filter.js',
             'web-app/js/Habitat.js',
@@ -92,7 +92,7 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome','Firefox','PhantomJS','Safari'],
+        browsers: ['PhantomJS', 'Chrome','Firefox'],
 
 
         // Continuous Integration mode
