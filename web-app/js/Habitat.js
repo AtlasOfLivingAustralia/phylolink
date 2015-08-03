@@ -475,6 +475,16 @@ var Habitat = function (c) {
             $('#' + panelId).toggleClass('show hide');
             $('#' + toggleId).toggleClass('fa-angle-double-down fa-angle-double-up');
         }
+
+        /**
+         * code added by adam to toggle layer information
+         * @param i
+         */
+        self.showInfo = function (koObj, e) {
+            var i = e.target;
+            var t = $("div[name=\'" + i.id + "\'")[0];
+            if (t.style.display === "none") t.style.display = "block"; else t.style.display = "none";
+        }
     };
 
     ko.bindingHandlers.select = {

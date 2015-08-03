@@ -30,7 +30,4 @@
         </tbody>
     </table>
 
-    <div class="text-right">
-        <button type="button" class="btn btn-link" data-bind="click: $root.downloadSummaryCsv, visible: !loading()"><i class="fa fa-download"></i>&nbsp;Download plot data</button>
-    </div>
 </div>
