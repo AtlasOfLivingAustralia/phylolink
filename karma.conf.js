@@ -54,7 +54,6 @@ module.exports = function (config) {
             'web-app/js/Control.Slider.js',
             'web-app/js/Character.js',
             'web-app/js/PJ.js',
-            'web-app/js/Filter.js',
             'web-app/js/Habitat.js',
             'web-app/js/Records.js',
             'web-app/js/Map.js',

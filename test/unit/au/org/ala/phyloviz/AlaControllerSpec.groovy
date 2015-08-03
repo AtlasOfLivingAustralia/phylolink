@@ -1,4 +1,4 @@
-package phylolink
+package au.org.ala.phyloviz
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -6,8 +6,8 @@ import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(RestrictedmethodsController)
-class RestrictedmethodsControllerSpec extends Specification {
+@TestFor(AlaController)
+class AlaControllerSpec extends Specification {
 
     def setup() {
     }
@@ -16,5 +16,6 @@ class RestrictedmethodsControllerSpec extends Specification {
     }
 
     void "test something"() {
+
     }
 }

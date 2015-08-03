@@ -19,13 +19,12 @@ before_script:
 - npm install karma-jasmine
 - npm install karma-coverage
 - npm install karma-phantomjs-launcher
-- npm install karma-firefox-launcher
 - mkdir -p ~/.grails; wget -q -O ~/.grails/settings.groovy https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_settings_new.groovy
 - MAVEN_REPO="ala-repo-snapshot"; grep '^app\.version=' ./application.properties |
   grep -q "\-SNAPSHOT"; if [ "$?" = "1" ]; then MAVEN_REPO="ala-repo-release"; fi;
 script:
-- node_modules/karma/bin/karma start karma.conf.js --single-run --browsers Firefox,PhantomJS
-- grails clean && grails refresh-dependencies --non-interactive && grails prod war --non-interactive && grails prod maven-deploy --repository=$MAVEN_REPO --non-interactive
+- node_modules/karma/bin/karma start karma.conf.js --single-run --browsers PhantomJS
+- grails clean && grails refresh-dependencies --non-interactive && grails test-app --non-interactive && grails prod war --non-interactive && grails prod maven-deploy --repository=$MAVEN_REPO --non-interactive
 env:
   global:
   - secure: hPmG2SGmylGFsb/C5sBxJlAFt/GFLa1Ncg/PU7q8oBvVwu3GXkH4QRO4a6Jl7yTsNw/hEG4UZp/WFd+BfzCmo3oKvUWSIvQrweAKzNEiiVKArOw3LFJ8+CMiPhkfhMg3CXurDm/fzUkl5getSz00Me2WdPk3obG+nKY39rGpoBQ=
