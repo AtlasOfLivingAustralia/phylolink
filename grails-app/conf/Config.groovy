@@ -59,6 +59,8 @@ citationParser = "http://freecite.library.brown.edu/citations/create"
 //ala webservices
 occurrences = "http://biocache.ala.org.au/ws/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION&flimit=1000000"
 layers = "http://spatial.ala.org.au/ws/layers"
+fields = "http://spatial.ala.org.au/ws/fields"
+layerMetadata = "http://spatial.ala.org.au/layers-service/layers/view/more/"
 spatialPortalRoot="http://spatial.ala.org.au"
 regionsUrl = [
         "state": "http://regions.ala.org.au/regions/regionList?type=states",
@@ -359,6 +361,7 @@ log4j = {
             }
         }
     }
+
     root {
         // change the root logger to my tomcatLog file
         error 'tomcatLog'

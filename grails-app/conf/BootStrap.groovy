@@ -2,8 +2,6 @@ import au.org.ala.phyloviz.Characters
 import au.org.ala.phyloviz.Owner
 import au.org.ala.phyloviz.Phylo
 import au.org.ala.phyloviz.Tree
-import au.org.ala.phyloviz.Visualization
-import sun.awt.X11.Visual
 
 class BootStrap {
     def opentreeService

@@ -66,6 +66,9 @@
                             <a href="${tree.getDoi()}">${tree.getDoi()}</a>
                         </div>
                     </g:if>
+                    <g:if test="${tree.notes}">
+                        <div><i>${tree.getNotes()}</i></div>
+                    </g:if>
                 </td>
             </tr>
         </g:each>

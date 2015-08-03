@@ -48,6 +48,8 @@
                 <li role="presentation" class="active"><a href="#records" aria-controls="profile" role="tab"
                                                           data-toggle="tab"
                                                           id="recordsTab">Occurrences</a></li>
+                <li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"
+                                       id="metadataTab">Metadata</a></li>
                 <li role="presentation"><a href="#help" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="helpTab">Help</a></li>
             </ul>
@@ -73,6 +75,10 @@
 
                 <div role="tabpanel" class="tab-pane active" id="records">
                     <div id="recordsForm"></div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="metadata">
+                    <g:render template="metadata"></g:render>
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="help">

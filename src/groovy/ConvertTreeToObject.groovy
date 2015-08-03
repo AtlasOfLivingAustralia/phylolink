@@ -15,7 +15,8 @@ class ConvertTreeToObject {
             'doi':'doi',
             'numberOfLeaves':'numberOfLeaves',
             'numberOfInternalNodes':'numberOfInternalNodes',
-            'treeId':'treeId'
+            'treeId':'treeId',
+            'notes':'notes'
     ]
     public convert(Tree source, target){
         prop.each { key, value ->
