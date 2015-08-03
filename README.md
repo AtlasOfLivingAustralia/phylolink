@@ -1,4 +1,4 @@
-### phylolink   [![Build Status](https://travis-ci.org/AtlasOfLivingAustralia/phylolink.svg?branch=master)](https://travis-ci.org/AtlasOfLivingAustralia/phylolink)
+### phylolink   [![Build Status](https://travis-ci.org/AtlasOfLivingAustralia/phylolink.svg?branch=unittest)](https://github.com/AtlasOfLivingAustralia/phylolink/tree/unittest)
 
 ## Installing for development purposes
 
