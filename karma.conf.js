@@ -57,6 +57,7 @@ module.exports = function (config) {
             'web-app/js/Habitat.js',
             'web-app/js/Records.js',
             'web-app/js/Map.js',
+	    'web-app/js/Filter.js',
             'test/js/dependencies.js',
             'test/js/specs/*.js'
         ],
