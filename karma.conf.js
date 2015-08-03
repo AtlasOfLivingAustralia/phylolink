@@ -52,6 +52,7 @@ module.exports = function (config) {
             'web-app/js/Control.Select.js',
             'web-app/js/Control.Slider.js',
             'web-app/js/Character.js',
+            'web-app/js/utils.js',
             'web-app/js/PJ.js',
             'web-app/js/Filter.js',
             'web-app/js/Habitat.js',
