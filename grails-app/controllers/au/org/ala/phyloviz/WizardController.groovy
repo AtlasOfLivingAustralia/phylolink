@@ -183,7 +183,7 @@ class WizardController {
         if (myViz.size() == 0) {
             flash.message = 'You have not created any visualisations.'
         }
-        [viz: myViz, name: name]
+        [viz: myViz, name: name, isDemonstration: false]
     }
 
     /**
@@ -218,6 +218,6 @@ class WizardController {
         if (myViz.size() == 0) {
             flash.message = 'You do not have any trees uploaded.'
         }
-        render(view:'myViz', model: [viz: myViz, name: 'Demonstration'])
+        render(view:'myViz', model: [viz: myViz, name: 'Demonstration', isDemonstration: true])
     }
 }
