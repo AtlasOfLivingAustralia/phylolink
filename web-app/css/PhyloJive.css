@@ -461,3 +461,7 @@ bootstrap callout
 .hide {
     display: none;
 }
+
+input[type="radio"][disabled], label[class="radio"][disabled]  {
+    color: #d3d3d3;
+}

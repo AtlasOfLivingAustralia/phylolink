@@ -57,15 +57,18 @@
 </div>
 <div id="recordsmain">
     <div class="bs-callout" style="position: relative" id="pickFromListRecords">
-        <h4><a>Or, pick a records dataset from the available list:</a></h4>
-        <form id="sourceToolbarRecords" class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="">List of records available:</label>
-                <div class="controls">
-                    <select id="sourceCharRecords" data-bind="options:lists,optionsText:'title',value:selectedValue,
-                    optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+        <div class="pull-left" ><h4><a>Or, pick a records dataset from the available list:</a></h4></div>
+        <div class="pull-right">
+            <form id="sourceToolbarRecords" >
+                <div class="control-group">
+                    <!--label class="control-label" for="">List of records available:</label-->
+                    <div class="controls">
+                        <select id="sourceCharRecords" data-bind="options:lists,optionsText:'title',value:selectedValue,
+                        optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+        <div >&nbsp;</div>
     </div>
 </div>

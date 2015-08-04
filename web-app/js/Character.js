@@ -176,15 +176,14 @@ var Character = function (options) {
     </div>\
     <div id="charactermain">\
         <div class="bs-callout" style="position: relative" id="pickFromList">\
-        <h4><a>Or, pick a character dataset from the available list:</a></h4>\
-        <form id="sourceToolbar" class="form-horizontal">\
+        <div class="pull-left"><h4><a>Or, pick a character dataset from the available list:</a></h4></div>\
+        <div class="pull-right"><form id="sourceToolbar">\
             <div class="control-group">\
-                <label class="control-label" for="">List of characters available:</label>\
                 <div class="controls">\
                     <select id="sourceChar" data-bind="options:lists,optionsText:\'title\',value:list,optionsCaption:\'Choose..\', event:{change:loadNewCharacters}" required></select>\
                 </div>\
             </div>\
-        </form>\
+        </form></div><div>&nbsp;</div>\
     </div>\
     <div class="btn btn-xs btn-primary top-buffer offset4" data-bind="click: addCharacter, visible:list(), attr:{disabled:listLoading()}"><i class="icon-white icon-plus-sign"></i> Add Character to Tree</div>\
     <div data-bind="sortable: {data:characters, afterMove: $root.onMove}">\

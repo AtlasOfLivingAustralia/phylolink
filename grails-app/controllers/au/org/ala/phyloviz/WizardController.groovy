@@ -45,7 +45,16 @@ class WizardController {
     }
 
     def start() {
-        render(view: '/wizard/pick', contentType: 'text/html')
+        def userId = authService.getUserId()
+        
+        //number of trees for this user
+        def numberOfTrees = userId != null ? myTrees().trees.size() : 0
+        
+        //number of visualisations for this user
+        def numberOfVisualisations = userId != null ? myViz().viz.size() : 0
+        
+        render(view: '/wizard/pick', contentType: 'text/html', 
+                model: [numberOfTrees: numberOfTrees, numberOfVisualisations: numberOfVisualisations, loggedIn: userId != null])
     }
 
     def create() {
