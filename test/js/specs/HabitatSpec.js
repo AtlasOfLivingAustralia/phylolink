@@ -19,7 +19,7 @@ describe("Habitat tests", function () {
 
     });
 
-    it("should initialise only the given nubmer of habitats", function () {
+    it("should initialise only the given number of habitats", function () {
         var list = {
             habitats: [{
                 displayName: "a",

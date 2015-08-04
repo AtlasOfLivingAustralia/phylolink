@@ -56,7 +56,9 @@
 
             <!-- Tab panes -->
             <div class="tab-content" style="position: relative">
-                <div role="tabpanel" class="tab-pane" id="character"></div>
+                <div role="tabpanel" class="tab-pane" id="character">
+                    <g:render template="character"></g:render>
+                </div>
 
                 <div role="tabpanel" class="tab-pane" id="mapTabContent">
                     <div id="map"></div>
