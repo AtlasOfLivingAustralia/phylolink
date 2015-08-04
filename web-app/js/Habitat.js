@@ -112,14 +112,14 @@ var Habitat = function (c) {
         this.displayName = ko.observable(c.displayName);
         this.id = ko.observable(c.id);
         this.id_metadata = ko.observable(c.id_metadata);
-        this.mdDescription = ko.observable(c.description);
-        this.mdNotes = ko.observable(c.notes);
-        this.mdMin = ko.observable(c.environmentalvaluemin);
-        this.mdMax = ko.observable(c.environmentalvaluemax);
-        this.mdUnits = ko.observable(c.environmentalvalueunits);
-        this.mdUrl = ko.observable(c.url);
-        this.xAxis = ko.observable(c.xAxis);
-        this.yAxis = ko.observable(c.yAxis);
+        this.mdDescription = ko.observable(c.description||'');
+        this.mdNotes = ko.observable(c.notes||'');
+        this.mdMin = ko.observable(c.environmentalvaluemin||'');
+        this.mdMax = ko.observable(c.environmentalvaluemax||'');
+        this.mdUnits = ko.observable(c.environmentalvalueunits||'');
+        this.mdUrl = ko.observable(c.url||'');
+        this.xAxis = ko.observable(c.xAxis||'');
+        this.yAxis = ko.observable(c.yAxis||'');
         this.sampleSize = ko.observable();
         this.leastFrequent = ko.observable();
         this.leastFrequentCount = ko.observable();
@@ -592,14 +592,11 @@ var Habitat = function (c) {
             return;
         }
 
-        var data = ko.toJSON(view);
-        console.log(view.count());
-        var sync = $.extend({}, config.syncData);
-        sync.json = data;
+        var data = hab.currentState();
         $.ajax({
             url: config.syncUrl,
             type: config.syncType,
-            data: sync,
+            data: data,
             success: function (data) {
                 console.log('saved!');
             },
@@ -663,6 +660,23 @@ var Habitat = function (c) {
             delay[0].apply(delay[1], delay[2]);
         }
     }
+
+    /**
+     * returns data that is used to save the current state of this tab
+     */
+    this.currentState = function(){
+        var data = ko.toJSON(view);
+        var sync = $.extend({}, config.syncData);
+        sync.json = data;
+        return sync;
+    };
+
+    /**
+     * getter function accessing view model
+     */
+    this.setHabitats = function(data){
+        data && view.initialize(data);
+    };
 
     function initPopover(){
         var pops = config.popOver, i,id;
