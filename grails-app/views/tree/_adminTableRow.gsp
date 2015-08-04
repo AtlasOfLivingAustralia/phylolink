@@ -2,6 +2,12 @@
     <td width="40%">
         <div>
             <div class="btn btn-link" onclick="showInfo('${tree.id}')">
+                <g:if test="${tree.expertTree}">
+                    <span class="fa fa-mortar-board" title="Expert recommended tree">&nbsp;&nbsp;</span>
+                </g:if>
+                <g:else>
+                    <span class="fa fa-users" title="Public tree">&nbsp;&nbsp;</span>
+                </g:else>
                 ${tree.getTitle()}
                 <i class="icon-info-sign" title="Show more information"></i>
             </div>
