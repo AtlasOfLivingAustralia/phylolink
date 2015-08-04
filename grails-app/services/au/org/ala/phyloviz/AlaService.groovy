@@ -96,11 +96,14 @@ class AlaService {
 
     def getFacetElements(keyValues) {
         def results = [], temp;
+
+        Map fields = getFields().collectEntries { [(it.name): it] }
+
         keyValues = keyValues?.facetResults;
         keyValues?.eachWithIndex { value, index ->
             temp = ['name': value.fieldName]
             log.debug(value.fieldName)
-            temp.displayName = formatDynamicFacetName(temp);
+            temp.displayName = fields[value.fieldName]?.description ?: formatDynamicFacetName(temp);
             results.push(temp);
         }
         return results;
