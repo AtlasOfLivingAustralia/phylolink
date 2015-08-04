@@ -17,8 +17,9 @@ before_install:
 - gvm install grails $GRAILS_VERSION || true
 before_script:
 - npm install karma@0.12.37
-- npm install karma-jasmine karma-firefox-launcher karma-phantomjs-launcher --save-dev
+- npm install karma-jasmine karma-chrome-launcher --save-dev
 - npm install karma-coverage
+- npm install karma-firefox-launcher karma-phantomjs-launcher
 - mkdir -p ~/.grails; wget -q -O ~/.grails/settings.groovy https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_settings_new.groovy
 - MAVEN_REPO="ala-repo-snapshot"; grep '^app\.version=' ./application.properties |
   grep -q "\-SNAPSHOT"; if [ "$?" = "1" ]; then MAVEN_REPO="ala-repo-release"; fi;
