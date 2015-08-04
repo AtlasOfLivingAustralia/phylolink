@@ -2,15 +2,6 @@ def alaBaseUrl = "https://www.ala.org.au"
 
 modules = {
 
-//    jquery{
-//        resource url:[dir: 'js', file: 'jquery.1.11.2.min.js']
-//    }
-//    core {
-//        dependsOn 'jquery'
-//        resource url: "${grailsApplication.config.ala.baseURL ?: 'http://www.ala.org.au'}/wp-content/themes/ala2011/images/favicon.ico", attrs: [type: 'ico'], disposition: 'head'
-//        resource url: [dir: 'js', file: 'html5.js', plugin: "ala-web-theme"], wrapper: { s -> "<!--[if lt IE 9]>$s<![endif]-->" }, disposition: 'head'
-//    }
-
     bootstrapApp {
         dependsOn 'core', 'font-awesome'
         resource url:alaBaseUrl + '/commonui-bs2/css/bootstrap.min.css', attrs:[media:'all']
@@ -58,10 +49,6 @@ modules = {
     form {
         resource url: [dir: "thirdparty", file: 'knockout-2.3.0.js'],disposition: 'head'
     }
-
-//    chart{
-//        resource url: 'https://www.google.com/jsapi', disposition: 'head'
-//    }
 
     emitter{
         resource url: 'thirdparty/emitter.js'
