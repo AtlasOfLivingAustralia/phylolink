@@ -268,7 +268,8 @@
             url: config.colorByUrl,
             drid: config.drid,
             defaultValue: 'taxon_name'
-        }
+        },
+        downloadReasonsUrl: config.downloadReasonsUrl
     });
 
     var habitat = new Habitat({
@@ -297,7 +298,8 @@
             dataType: 'JSONP'
         },
         downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
-        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download'
+        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
+        downloadReasonsUrl: config.downloadReasonsUrl
     });
 
     var records = new Records({

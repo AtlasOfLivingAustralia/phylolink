@@ -30,7 +30,7 @@ class TreeServiceSpec extends Specification {
         def nexml
         when:
         log.debug('just a test')
-        nexml = ( new File('artifacts/ot_13.nexml.txt') ).text
+        nexml = ( new File('web-app/artifacts/ot_13.nexml.txt') ).text
         then:
         service.isNexml( nexml ) == true
     }
@@ -40,7 +40,7 @@ class TreeServiceSpec extends Specification {
         def nexml
         when:
         log.debug('just a test')
-        nexml = ( new File('artifacts/Rpl35_1Kite_cdsRC.ph.nex') ).text
+        nexml = ( new File('web-app/artifacts/Rpl35_1Kite_cdsRC.ph.nex') ).text
         then:
         service.isNexus( nexml ) == true
     }
@@ -48,33 +48,16 @@ class TreeServiceSpec extends Specification {
         given:
         def tree = this.loadNexml()
         when:
-        service.opentreeService = opentreeControl.createMock()
-//        service.grailsApplication = grailsApplication
+//        service.opentreeService = opentreeControl.createMock()
         def format = service.guessFormat( tree.text )
         then:
         assert format == tree['format']
     }
-    void "test getTreeMeta"(){
-        given:
-        log.debug( 'running testMeta')
-        def treeMeta = this.loadNexml2();
-        when:
-        service.opentreeService = opentreeControl.createMock()
-        service.opentreeService.webService = mockFor(WebService, true).createMock()
-        def meta = service.getTreeMeta( treeMeta.text )
-        then:
-        assert meta['title'] == treeMeta['title']
-//        assert meta['doi'] == treeMeta['doi']
-        assert meta['year'] == treeMeta['year']
-        assert meta['version'] == treeMeta['version']
-        assert meta['citation'] == treeMeta['citation']
-        assert meta['format'] == treeMeta['format']
-    }
 
     Map loadNexml(){
         def result = [:], filename = 'ot_13.nexml.txt'
-        result['version'] = '1.2.1'
-        def file = new File( 'artifacts/' + filename )
+        result['version'] = '0.0.0'
+        def file = new File( 'web-app/artifacts/' + filename )
         result['text'] = file.text
         result['year'] = '2014'
         result['doi'] = '10.1086/676505'
@@ -86,8 +69,8 @@ class TreeServiceSpec extends Specification {
     }
     Map loadNexml2(){
         def result = [:], filename = 'ot_29.nexml.txt'
-        result['version'] = '1.2.1'
-        def file = new File( 'artifacts/' + filename )
+        result['version'] = '0.0.0'
+        def file = new File( 'web-app/artifacts/' + filename )
         result['text'] = file.text
         result['year'] = '2011'
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'

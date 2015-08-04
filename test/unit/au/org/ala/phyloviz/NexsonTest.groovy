@@ -9,7 +9,6 @@ class NexsonTest extends GroovyTestCase {
 
         Nexson nex = new Nexson( nexson.text )
         assert nex.getVersion() == nexson.version
-        assert nex.getCitation() == nexson.citation
         assert nex.getStudyYear() == nexson.year
         assert nex.getDOI() == nexson.doi
     }
@@ -28,7 +27,7 @@ class NexsonTest extends GroovyTestCase {
     Map loadNexson(){
         def result = [:], filename = 'ot_29.json.1.2.1.json'
         result['version'] = '1.2.1'
-        def file = new File( 'artifacts/' + filename )
+        def file = new File( 'web-app/artifacts/' + filename )
         result['text'] = file.text
         result['year'] = '2011'
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
