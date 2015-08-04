@@ -2,8 +2,7 @@ import au.org.ala.phyloviz.Characters
 import au.org.ala.phyloviz.Owner
 import au.org.ala.phyloviz.Phylo
 import au.org.ala.phyloviz.Tree
-import au.org.ala.phyloviz.Visualization
-import sun.awt.X11.Visual
+import grails.util.Environment
 
 class BootStrap {
     def opentreeService
@@ -15,7 +14,13 @@ class BootStrap {
 
     def init = { servletContext ->
         if(skip){
-            return
+            return;
+        }
+
+        // since bootstrap loads expert trees and expert tree requires curator app on web2py, we cannot
+        // proceed further as it will break the test on travis.
+        if(Environment.current == Environment.TEST) {
+            return ;
         }
 
         log.debug('checking for system user name')
