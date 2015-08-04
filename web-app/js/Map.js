@@ -614,13 +614,15 @@ function Map(options) {
          */
         self.downloadMapData = function () {
             var qid = pj.getQid(true);
-            var url = records.getDataresource().instanceUrl + "/ws/occurrences/index/download";
+            var url = records.getDataresource().biocacheServiceUrl + "/occurrences/index/download";
             var email = self.downloadViewModel.email();
             if (email === undefined) {
                 email = '';
             }
+            console.log('url')
+            console.log(url)
 
-            url = url + "?q=qid:" + qid + "&reasonTypeId=" + self.downloadViewModel.reason().id() + "&email=" + email;
+            url = url + "?q=" + qid + "&reasonTypeId=" + self.downloadViewModel.reason().id() + "&email=" + email;
 
             $("<a style='display: none' href='" + url + "' download='data.zip'>download data</a>").appendTo('body')[0].click();
             $(".closeDownloadModal").filter(":visible").click();
@@ -629,6 +631,7 @@ function Map(options) {
 
     this.downloadViewModel = new utils.OccurrenceDownloadViewModel();
     this.mapViewModel = new this.MapViewModel(this.downloadViewModel);
+    this.mapViewModel.spUrl = options.spUrl
 
     this.initialiseBindings = function () {
         ko.applyBindings(this.mapViewModel, document.getElementById("mapControls"));

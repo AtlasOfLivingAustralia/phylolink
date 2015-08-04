@@ -72,7 +72,7 @@ var PJ = function (params) {
     var qid, prevSearch;
     
     this.selectedDr = ko.observable('')
-    this.selectedClade = ko.observable('all')
+    this.selectedClade = ko.observable('')
     this.selectedCladeNumber = ko.observable(-1)
     
     //adding support functions for event handling

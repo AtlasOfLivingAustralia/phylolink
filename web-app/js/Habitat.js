@@ -201,7 +201,7 @@ var Habitat = function (c) {
 
             for (var i in habitats) {
                 temp = habitats[i];
-                
+
                 //var rename catch
                 if (temp.description === undefined) temp.description = temp.mdDescription
                 if (temp.notes === undefined) temp.notes = temp.mdNotes
@@ -209,7 +209,7 @@ var Habitat = function (c) {
                 if (temp.environmentalvaluemax === undefined) temp.environmentalvaluemax = temp.mdMax
                 if (temp.environmentalvaluemin === undefined) temp.environmentalvaluemin = temp.mdMin
                 if (temp.environmentalvalueunits === undefined) temp.environmentalvalueunits = temp.mdUnits
-                
+
                 habitat = new Habitat(temp);
                 self.habitats.push(habitat);
                 self.emit('changed', habitat, true);
@@ -222,7 +222,7 @@ var Habitat = function (c) {
          * add a habitat to list
          */
         self.addHabitat = function () {
-            var habitat = new Habitat({name: '', displayName: '', id: 'habitat-' + self.count(), 
+            var habitat = new Habitat({name: '', displayName: '', id: 'habitat-' + self.count(),
                 id_metadata: 'habitat-metadata-' + self.count(), description: '', url: '',
                 environmentalvaluemin: '', environmentalvaluemax: '', environmentalvalueunits: '', notes: ''});
             self.count(self.count() + 1);
@@ -291,16 +291,18 @@ var Habitat = function (c) {
         self.updateChart = function(habitat, list){
             var data = {
                 speciesList: JSON.stringify(list),
-                config: habitat.name()
+                config: habitat.name(),
+                biocacheServiceUrl: pj.records.getDataresource().biocacheServiceUrl
             };
             if(config.doSaveQuery){
                 self.saveQuery(data).then(function(qid){
-                    var data = {q:"qid:"+qid};
+                    var data = {q:"qid:"+qid, biocacheServiceUrl:records.getDataresource().biocacheServiceUrl};
                     self.updateChartDirect(habitat, data);
                 });
             } else {
                 self.updateChartDirect(habitat, data);
             }
+            updateCladeInfo(list)
         };
 
         self.saveQuery = function(params){
@@ -359,7 +361,7 @@ var Habitat = function (c) {
                         ]);
                         return;
                     }
-                    
+
                     hab.columnchart(id, data, view.getOptions(habitat));
                 },
                 error: function () {
@@ -404,7 +406,8 @@ var Habitat = function (c) {
             if( qid ){
                 data = {
                     q : qid,
-                    config: habitat.name()
+                    config: habitat.name(),
+                    biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
                 };
                 self.updateChartDirect(habitat, data);
             } else {
@@ -415,6 +418,7 @@ var Habitat = function (c) {
                 };
                 self.updateChartDirect(habitat, data);
             }
+            updateCladeInfo(list)
         };
 
         /**
@@ -461,8 +465,8 @@ var Habitat = function (c) {
                 email = '';
             }
 
-            var url = config.biocacheOccurrenceDownload
-                + "?q=qid:" + qid
+            var url = records.getDataresource().biocacheServiceUrl + '/occurrences/index/download'
+                + "?q=" + qid
                 + "&reasonTypeId=" + self.downloadViewModel.reason().id()
                 + "&email=" + email
                 + "&extra=" + fields.join(",");
@@ -559,13 +563,24 @@ var Habitat = function (c) {
         view.refreshHabitat(habitat);
     });
 
+    updateCladeInfo = function(list) {
+        if (list.length == 0) {
+            pj.selectedClade('All taxa selected')
+            pj.selectedCladeNumber(-1)
+        } else {
+            pj.selectedClade('' + list.length + ' taxa selected')
+            pj.selectedCladeNumber(list.length)
+        }
+    }
+
     this.refresh = function (node, list, saveQuery) {
         var habitats = view.habitats();
         var i, data;
 
         if(saveQuery){
             saveQuery.then(function(qid){
-                var data = {q:pj.getQid(true)}
+                var data = {q:pj.getQid(true),
+                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl}
                 for (i = 0; i < habitats.length; i++) {
                     data.config = habitats[i].name();
                     view.updateChartDirect(habitats[i], data);
@@ -578,13 +593,14 @@ var Habitat = function (c) {
             for (i = 0; i < habitats.length; i++) {
                 data = {
                     speciesList: JSON.stringify(list),
-                    config: habitats[i].name()
+                    config: habitats[i].name(),
+                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl
                 };
 
                 view.updateChartDirect(habitats[i], data);
             }
         }
-
+        updateCladeInfo(list)
     };
 
     this.save = function () {
@@ -707,7 +723,7 @@ var Habitat = function (c) {
     /**
      * initialize the selected charts.
      */
-        config.initialState && view.initialize(config.initialState);
+    config.initialState && view.initialize(config.initialState);
 
     //set style
     $('#' + id).css('max-height', config.height - config.headerHeight);
