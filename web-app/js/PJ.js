@@ -640,7 +640,7 @@ var PJ = function (params) {
         var navHTML2 = '<div style="position:relative">' +
             '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">'+
             '<div class="input-append">'+
-            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree">'+
+            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="clearPlaceholder(this)">'+
             '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>'+
             '</div></div>'+
             '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +

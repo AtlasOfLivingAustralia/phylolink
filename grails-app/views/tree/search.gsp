@@ -166,7 +166,8 @@
                                 <div class="input-append">
                                     <g:textField class="filterinput input-medium" data-target="project"
                                                  title="Type a few characters to restrict the list." name="projects"
-                                                 placeholder="filter"/>
+                                                 placeholder="filter"
+                                                 onfocus="clearPlaceholder(this)"/>
                                     <button type="button" class="btn clearFilterBtn"
                                             title="clear"><i class="icon-remove"></i></button>
                                 </div>

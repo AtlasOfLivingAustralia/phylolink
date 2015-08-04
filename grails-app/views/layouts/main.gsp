@@ -13,6 +13,7 @@
 
     <%-- Do not include JS & CSS files here - add them to your app's "application" module (in "Configuration/ApplicationResources.groovy") --%>
     <r:require modules="bootstrap"/>
+    <r:require modules="util"/>
 
     <r:layoutResources/>
     <g:layoutHead />

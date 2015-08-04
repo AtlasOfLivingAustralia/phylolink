@@ -154,7 +154,7 @@ var Character = function (options) {
     <div class="control-group">\
         <label class="control-label" for="inputPassword">Title*:</label>\
         <div class="controls">\
-            <input type="text" id="title" data-bind="value: title" placeholder="My acacia characters" required>\
+            <input type="text" id="title" data-bind="value: title" placeholder="My acacia characters" required onfocus="clearPlaceholder(this)">\
             </div>\
         </div>\
     <div class="control-group">\
