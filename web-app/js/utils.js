@@ -55,10 +55,10 @@ var utils={
         modal.modal( options )
     },
 
-    getDownloadReasons: function() {
+    getDownloadReasons: function(url) {
         var downloadReasons = ko.observableArray();
         $.ajax({
-            url: config.downloadReasonsUrl,
+            url: url,
             dataType: "JSONP",
             success: function (data) {
                 for (var i in data) {
@@ -70,8 +70,8 @@ var utils={
         return downloadReasons;
     },
 
-    OccurrenceDownloadViewModel: function() {
-        this.downloadReasons = utils.getDownloadReasons();
+    OccurrenceDownloadViewModel: function(url) {
+        this.downloadReasons = utils.getDownloadReasons(url);
         this.email = ko.observable();
         this.reason = ko.observable();
     },
