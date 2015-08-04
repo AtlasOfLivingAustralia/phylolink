@@ -41,6 +41,9 @@ class WizardController {
             case 'demo':
                 redirect(action: 'demo')
                 break;
+            case 'treeAdmin':
+                redirect(controller: "tree", action: 'treeAdmin')
+                break;
         }
     }
 
@@ -175,6 +178,8 @@ class WizardController {
         }
         [viz: myViz, name: name]
     }
+
+
 
     /**
      * displays a ui to search TreeBASE

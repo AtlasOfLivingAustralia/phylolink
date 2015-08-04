@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.*
 /**
  * Created by Temi Varghese on 19/06/2014.
  */
-class PhyloController {
+class PhyloController extends BaseController {
     def webService;
     def utilsService
     def userService
@@ -328,8 +328,7 @@ class PhyloController {
 
     def downloadMapData() {
         if (!params.qid) {
-            response.status = SC_BAD_REQUEST
-            response.sendError(SC_BAD_REQUEST, "qid is a required parameter")
+            badRequest "qid is a required parameter"
         } else {
             def data = webService.get("${grailsApplication.config.biocache.occurrence.download.url}?q=qid:${params.qid}")
 

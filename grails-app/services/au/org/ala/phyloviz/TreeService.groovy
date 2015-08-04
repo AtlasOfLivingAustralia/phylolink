@@ -477,20 +477,43 @@ class TreeService {
      * return: an array of expert trees
      */
     public def getExpertTrees(noTreeText){
-        def exp = Tree.findAllWhere(['expertTree':true]);
+        convertTreesToObjects(Tree.findAllByExpertTree(true), !noTreeText)
+    }
+
+    List<Tree> getPublicTrees() {
+        Tree.findAllByHide(false)?.sort { it.title?.toLowerCase() }
+    }
+
+    Tree toggleExpertTree(treeId, expertTreeTaxonomy = null, expertTreeLsid = null, expertTreeId = null) {
+        Tree tree = Tree.findById(treeId)
+
+        tree.expertTree = !tree.expertTree
+        tree.expertTreeTaxonomy = expertTreeTaxonomy
+        tree.expertTreeID = expertTreeId
+        tree.expertTreeLSID = expertTreeLsid
+
+        tree.save(flush: true)
+
+        tree
+    }
+
+    private convertTreesToObjects(List<Tree> trees, boolean includeTreeText = true) {
         ConvertTreeToObject cv = new ConvertTreeToObject();
-        def result = [];
-        exp.each { tree ->
-            def obj = cv.convert(tree)
-            obj = opentreeService.addTreeMeta(metricsService.getJadeTree(
-                    tree[grailsApplication.config.treeMeta.treeText] ), obj);
-            getViewerUrl(null,tree.getId(),obj);
-            if(noTreeText){
-                obj.remove(grailsApplication.config.treeMeta.treeText)
+
+        List treeObjects = trees.collect {
+            Map treeObject = cv.convert(it)
+            treeObject = opentreeService.addTreeMeta(metricsService.getJadeTree(it[grailsApplication.config.treeMeta.treeText]), treeObject);
+
+            getViewerUrl(null, it.getId(), treeObject);
+
+            if (!includeTreeText) {
+                treeObject.remove(grailsApplication.config.treeMeta.treeText)
             }
-            result.push(obj);
+
+            treeObject
         }
-       return result;
+
+        treeObjects
     }
 
     /**
