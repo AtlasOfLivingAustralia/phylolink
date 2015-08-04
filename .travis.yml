@@ -16,6 +16,8 @@ before_install:
   's/^app\.grails\.version=//g'`
 - gvm install grails $GRAILS_VERSION || true
 before_script:
+- "export DISPLAY=:99.0"
+- "sudo sh -e /etc/init.d/xvfb start"
 - npm install karma@0.12.37
 - npm install karma-jasmine karma-chrome-launcher --save-dev
 - npm install karma-coverage
@@ -24,7 +26,7 @@ before_script:
 - MAVEN_REPO="ala-repo-snapshot"; grep '^app\.version=' ./application.properties |
   grep -q "\-SNAPSHOT"; if [ "$?" = "1" ]; then MAVEN_REPO="ala-repo-release"; fi;
 script:
-- node_modules/karma/bin/karma start karma.conf.js --single-run --browsers PhantomJS
+- node_modules/karma/bin/karma start karma.conf.js --single-run --browsers Firefox,PhantomJS
 - grails clean && grails refresh-dependencies --non-interactive && grails test-app --non-interactive && grails prod war --non-interactive && grails prod maven-deploy --repository=$MAVEN_REPO --non-interactive
 env:
   global:
