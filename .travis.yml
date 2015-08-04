@@ -16,8 +16,8 @@ before_install:
   's/^app\.grails\.version=//g'`
 - gvm install grails $GRAILS_VERSION || true
 before_script:
-- "export DISPLAY=:99.0"
-- "sudo sh -e /etc/init.d/xvfb start"
+- export DISPLAY=:99.0
+- sudo sh -e /etc/init.d/xvfb start
 - npm install karma@0.12.37
 - npm install karma-jasmine karma-chrome-launcher --save-dev
 - npm install karma-coverage
