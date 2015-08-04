@@ -2,6 +2,7 @@ package au.org.ala.phyloviz
 import grails.converters.JSON
 import groovy.json.JsonBuilder
 
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST
 import static org.springframework.http.HttpStatus.*
 /**
  * Created by Temi Varghese on 19/06/2014.
@@ -123,62 +124,30 @@ class PhyloController {
             '*' { render status: NOT_FOUND }
         }
     }
-    /**
-     * TODO: Delete this function? not used any more.
-     * @param phyloInstance
-     * @return
-     */
-    def getWidgetData(Phylo phyloInstance){
-        def species = JSON.parse( params.speciesList );
-        def summary = [:], result
-        log.debug( 'wid' )
-        log.debug( params.wid );
-        def widget = phyloInstance.widgets?.getAt( Integer.parseInt(params.wid) );
-        def layer = widget.config
-        def name = widget.displayname
-        def region = phyloInstance.regionName;
-        def regionType = phyloInstance.regionType? phyloInstance.regionType : 'state' ;
-        def download = ( params.download?:false ) as Boolean
-        region = region? "${regionType}:\"${region.replaceAll(' ', '+')}\"" : '';
-        def data = widget
-        data.region = region;
-        def dr = phyloInstance.dataResource
-        log.debug( widget)
-        def widgetObject = WidgetFactory.createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr)
-        data = widgetObject.process( params , phyloInstance )
-        log.debug( data )
-        if( download ){
-            response.setHeader('Content-disposition','attachment; filename=data.csv')
-            render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
-        } else {
-            render(contentType: 'application/json', text: data as JSON)
-        }
-    }
 
     /**
      * INTERSECTION BETWEEN A LAYER AND SPECIES OCCURRENCE
      * @param phyloInstance
      * @return
      */
-    def getHabitat(){
-//        def species = JSON.parse( params.speciesList?:'[]' );
-        def summary = [:], result
+    def getHabitat() {
         def region = '';
         def download = ( params.download?:false ) as Boolean
         def data = params
         data.region = region;
         def dr = ''
         def widgetObject = new WidgetFactory();
-        widgetObject = widgetObject.createWidget( data, grailsApplication, webService, utilsService, applicationContext, dr);
-//        ContextualWidget widgetObject = new ContextualWidget( data, grailsApplication, webService, utilsService, applicationContext )
-        data = widgetObject.process( data ,  null);
-        log.debug( data )
-        if( download ){
-            response.setHeader('Content-disposition','attachment; filename=data.csv')
-            render ( contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data) )
-        }else if(params.callback){
+        widgetObject = widgetObject.createWidget(data, grailsApplication, webService, utilsService, applicationContext, dr);
+
+        data = widgetObject.process(data, null);
+        data.statisticSummary = utilsService.statisticSummary(data.data, true)
+        log.debug(data)
+        if (download) {
+            response.setHeader('Content-disposition', 'attachment; filename=data.csv')
+            render(contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data?.data))
+        } else if (params.callback) {
             render(contentType: 'text/javascript', text: "${params.callback}(${data as JSON})")
-        }else {
+        } else {
             render(contentType: 'application/json', text: data as JSON)
         }
     }
@@ -355,5 +324,17 @@ class PhyloController {
      */
     def startPage(){
         render(view: '/index',model:[ demoId: phyloService.getDemoId() ]);
+    }
+
+    def downloadMapData() {
+        if (!params.qid) {
+            response.status = SC_BAD_REQUEST
+            response.sendError(SC_BAD_REQUEST, "qid is a required parameter")
+        } else {
+            def data = webService.get("${grailsApplication.config.biocache.occurrence.download.url}?q=qid:${params.qid}")
+
+            response.setHeader('Content-disposition', 'attachment; filename=data.csv')
+            render(contentType: 'text/plain', text: data)
+        }
     }
 }

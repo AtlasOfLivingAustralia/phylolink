@@ -9,7 +9,7 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records"/>
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific"/>
     <r:require modules="bugherd"/>
 </head>
 
@@ -41,13 +41,15 @@
                 <li id="charLi" role="presentation" class=""><a id="characterTab" href="#character" aria-controls="home"
                                                                 role="tab"
                                                                 data-toggle="tab">Character</a></li>
-                <li role="presentation"><a href="#map" aria-controls="profile" role="tab" data-toggle="tab"
+                <li role="presentation"><a href="#mapTabContent" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="mapTab">Map</a></li>
                 <li role="presentation"><a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="habitatTab">Analysis</a></li>
                 <li role="presentation" class="active"><a href="#records" aria-controls="profile" role="tab"
                                                           data-toggle="tab"
                                                           id="recordsTab">Occurrences</a></li>
+                <li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"
+                                       id="metadataTab">Metadata</a></li>
                 <li role="presentation"><a href="#help" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="helpTab">Help</a></li>
             </ul>
@@ -56,12 +58,26 @@
             <div class="tab-content" style="position: relative">
                 <div role="tabpanel" class="tab-pane" id="character"></div>
 
-                <div role="tabpanel" class="tab-pane" id="map"></div>
+                <div role="tabpanel" class="tab-pane" id="mapTabContent">
+                    <div id="map"></div>
+                    <div id="mapControls">
+                        <div class="text-right">
+                            <a id="downloadMapDataLink" class="btn btn-link" data-toggle="modal" href="#mapOccurrenceDownloadModal"><i class="fa fa-download"></i>&nbsp;Download occurrence data</a>
+                        </div>
+                        <g:render template="occurrenceDownloadPopup" model="[dialogId: 'mapOccurrenceDownloadModal', clickAction: '$root.downloadMapData', viewModel: '$root.downloadViewModel']"></g:render>
+                    </div>
+                </div>
 
-                <div role="tabpanel" class="tab-pane" id="habitat"></div>
+                <div role="tabpanel" class="tab-pane" id="habitat">
+                    <g:render template="plots"></g:render>
+                </div>
 
                 <div role="tabpanel" class="tab-pane active" id="records">
                     <div id="recordsForm"></div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="metadata">
+                    <g:render template="metadata"></g:render>
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="help">
@@ -97,6 +113,8 @@
         biocacheLayer: 'http://biocache.ala.org.au/ws/ogc/wms/reflect',
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'http://biocache.ala.org.au/occurrence/legend',
+        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
+        downloadReasonsUrl: 'http://logger.ala.org.au/service/logger/reasons',
         legendUrl: function(){
             switch (config.type){
                 case 'sandbox': return config.sandboxLegend;
@@ -112,8 +130,7 @@
         },
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
-        initCharacters: <g:message
-        message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
+        initCharacters: '<g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>',
         filterParams: {
             q: '',
             fq:{
@@ -265,8 +282,7 @@
         listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: <g:message
-            message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
+        initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
         graph: {
             url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
             type: 'GET',
@@ -279,7 +295,9 @@
             url: '${createLink(controller: 'ala', action: 'saveQuery')}',
             type: 'POST',
             dataType: 'JSONP'
-        }
+        },
+        downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
+        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download'
     });
 
     var records = new Records({

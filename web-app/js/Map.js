@@ -587,4 +587,38 @@ function Map(options) {
         that.endSpinner();
     })
 
+    /**
+     * View model for controls that are outside the map itself, such as the download option
+     */
+    this.MapViewModel = function (downloadViewModel) {
+        var self = this;
+
+        self.downloadViewModel = downloadViewModel;
+
+        /**
+         * Downloads the occurrence data for the current map
+         */
+        self.downloadMapData = function () {
+            var qid = pj.getQid(true);
+            var url = records.getDataresource().instanceUrl + "/ws/occurrences/index/download";
+            var email = self.downloadViewModel.email();
+            if (email === undefined) {
+                email = '';
+            }
+
+            url = url + "?q=qid:" + qid + "&reasonTypeId=" + self.downloadViewModel.reason().id() + "&email=" + email;
+
+            $("<a style='display: none' href='" + url + "' download='data.zip'>download data</a>").appendTo('body')[0].click();
+            $(".closeDownloadModal").filter(":visible").click();
+        };
+    };
+
+    this.downloadViewModel = new utils.OccurrenceDownloadViewModel();
+    this.mapViewModel = new this.MapViewModel(this.downloadViewModel);
+
+    this.initialiseBindings = function () {
+        ko.applyBindings(this.mapViewModel, document.getElementById("mapControls"));
+    };
+
+    this.initialiseBindings();
 }
