@@ -279,20 +279,6 @@ class PhyloController {
     }
 
     /**
-     * gets habitats json string
-     * @param phyloInstance
-     * @return
-     */
-    def getHabitatInit(Phylo phyloInstance){
-        String meta = JSON.parse( phyloInstance.getHabitat() );
-        if(params.callback){
-            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
-        } else {
-            render(contentType: 'application/json', text: meta as JSON);
-        }
-    }
-
-    /**
      * save the habitats json string into database
      * @param phyloInstance
      * @return
@@ -303,20 +289,6 @@ class PhyloController {
         phyloInstance.setCharacters(JSON.parse(charInit).toString());
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
-    }
-
-    /**
-     * gets habitats json string
-     * @param phyloInstance
-     * @return
-     */
-    def getCharacters(Phylo phyloInstance){
-        String meta = JSON.parse( phyloInstance.getCharacters() );
-        if(params.callback){
-            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
-        } else {
-            render(contentType: 'application/json', text: meta as JSON);
-        }
     }
 
     /**
