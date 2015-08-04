@@ -17,22 +17,14 @@ hibernate {
 // environment specific settings
 environments {
     development {
-        dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            url = "jdbc:postgresql://localhost:5432/phylolink"
-//            url = "jdbc:h2:file:/data/cache/testDb;MVCC=TRUE"
-        }
     }
     test {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/phylolink"
+       dataSource {
+            dialect = "org.hibernate.dialect.H2Dialect"
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE;"
         }
     }
     production {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:postgresql://localhost:5432/phylolink"
-        }
     }
 }
