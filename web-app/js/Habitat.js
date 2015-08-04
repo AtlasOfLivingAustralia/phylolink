@@ -1,3 +1,10 @@
+/**
+ *
+ * This code is used by the Analysis tab in the UI. The HTML is in the _plots.gsp template.
+ *
+ */
+
+
 var Habitat = function (c) {
     var $ = jQuery;
     new Emitter(this);
@@ -29,7 +36,7 @@ var Habitat = function (c) {
         dataType: 'JSONP',
         googleChartsLoaded: false,
         delayedChartCall: [],
-        chartWidth: 400,
+        chartWidth: '100%',
         chartHeight: 200,
         chartAreaHeight: 100,
         headerHeight:60,
@@ -74,74 +81,10 @@ var Habitat = function (c) {
                 html: 'true',
                 content : 'Select an environmental layer like precipitation to graph the profile of a species'
             }
-        }],
-        template: '<style>' +
-            '.ui-autocomplete {\
-            max-height: 200px;\
-            overflow-y: auto;   /* prevent horizontal scrollbar */\
-            overflow-x: hidden; /* add padding to account for vertical scrollbar */\
-            z-index:1000 !important;\
-            }\
-            .ellipselabel {\
-              white-space: nowrap;\
-              max-width: 220px;\
-              overflow: hidden;              /* "overflow" value must be different from "visible" */\
-              text-overflow: ellipsis;\
-            }' +
-            '</style>' +
-            '<div id="habitatMain">' +
-            '<div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i> Plot profile</div>' +
-            '<div data-bind="sortable:{data:habitats, afterMove: $root.onMove}">' +
-            '<div class="item top-buffer">' +
-            '<div class="label label-default" data-bind="visible: !$root.isHabitatSelected($data)">\
-                <i class="icon-white icon-resize-vertical" aria-hidden="true" style="cursor: move"></i>\
-                <div class="ellipselabel" style="color: #ffffff;display:inline-block;cursor: pointer\
-                " href="#" data-bind="text: displayName, click: $root.selectedHabitat"></div>\
-                <i class="icon-white icon-remove" data-bind="click: $root.removeHabitat" \
-                       style="cursor: pointer"></i>\
-            </div>' +
-            '<div data-bind="select: $root.isHabitatSelected($data)">' +
-            '<input data-bind="value: displayName, event:{blur: $root.clearHabitat}"/>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div data-bind="sortable: {data:habitats, afterMove: $root.onMove}">\
-                <div class="top-buffer panel panel-default" style="position: relative">\
-                    <div class="panel-heading">\
-                        <div data-bind="text: displayName" class="pull-left"></div>\
-                        <div class="pull-right">\
-                            <div data-bind="text: name" style="display:none"></div>\
-                            <i class="icon-info-sign" title="Show more information" onclick="showInfo(this)" data-bind="attr: { id: id_metadata }"></i>\
-                        </div><div>&nbsp;</div>\
-                    </div>\
-                    <div style="display:none"  data-bind="attr: { name: id_metadata }">\
-                        <table class="table table-bordered" ><tbody><tr><th colspan="2">Layer metadata</th></tr>\
-                        <tr><td>Name:</td><td><div data-bind="text: displayName" ></div></td></tr>\
-                        <tr ><td>Description:</td><td><div data-bind="text: mdDescription" ></div></td></tr>\
-                        <tr data-bind="visible: mdNotes().length > 0"><td>Notes:</td><td><div data-bind="text: mdNotes" ></div></td></tr>\
-                        <tr data-bind="visible: mdMin().length > 0"><td>Min:</td><td><div data-bind="text: mdMin" ></div></td></tr>\
-                        <tr data-bind="visible: mdMax().length > 0" ><td>Max:</td><td><div data-bind="text: mdMax" ></div></td></tr>\
-                        <tr data-bind="visible: mdUnits().length > 0"><td>Units:</td><td><div data-bind="text: mdUnits" ></div></td></tr>\
-                        <tr><td>More info:</td><td><a target="_blank" data-bind="attr: { href: mdUrl, title: mdUrl }">more information</a></td></tr>\
-                        </tbody></table>\
-                    </div>\
-                    <div class="panel-body" >\
-                        <div data-bind="attr:{id: id}, addHabitatChart: !$root.isHabitatSelected($data)" style="width: 100%; height: 200px;"></div>\
-                    </div>\
-                </div>\
-            </div>' +
-            '</div>'+
-            '<div class="alert top-buffer">\
-                <button type="button" class="close" data-dismiss="alert">&times;</button>\
-                <h4>Note</h4><p>You can click on <i>Plot profile</i> button to find out the environmental \
-                characteristics like precipitation, temperature etc. of a clade. You can pick the environmental parameter \
-                from the drop down list, or filter the list by typing into the input box.</p>\
-            </div>'+
-            '<script> function showInfo(i){ var t = $("div[name=\'" + i.id + "\'")[0]; ' +
-                'if (t.style.display === "none") t.style.display = "block"; else t.style.display = "none"; } </script>'
+        }]
     }, c);
     var pj = config.pj, hab = this, id = config.id;
-    $('#' + config.id).html(config.template);
+
     /**
      * stores query id for a node.
      */
@@ -177,6 +120,19 @@ var Habitat = function (c) {
         this.mdUrl = ko.observable(c.url);
         this.xAxis = ko.observable(c.xAxis);
         this.yAxis = ko.observable(c.yAxis);
+        this.sampleSize = ko.observable();
+        this.leastFrequent = ko.observable();
+        this.leastFrequentCount = ko.observable();
+        this.mostFrequent = ko.observable();
+        this.mostFrequentCount = ko.observable();
+        this.min = ko.observable();
+        this.max = ko.observable();
+        this.mean = ko.observable();
+        this.median = ko.observable();
+        this.standardDeviation = ko.observable();
+        this.numeric = ko.observable();
+        this.loading = ko.observable(false);
+
         var frequency;
         var spinner = new Spinner({
             top: '50%',
@@ -188,7 +144,7 @@ var Habitat = function (c) {
         };
         this.getFrequency = function () {
             return frequency;
-        }
+        };
         this.startLoading = function () {
             if (!spinner || !spinner.el) {
                 spinner = new Spinner({
@@ -197,13 +153,16 @@ var Habitat = function (c) {
                     className: 'loader'
                 });
             }
+            this.loading(true);
             spinner.spin();
             $('#' + this.id()).parent().append(spinner.el);
         };
         this.stopLoading = function () {
             spinner.stop();
+            this.loading(false);
         };
-    }
+    };
+
     var HabitatViewModel = function () {
         new Emitter(this);
         var self = this;
@@ -223,10 +182,12 @@ var Habitat = function (c) {
          *  initialization flag - boolean
          */
             'changed'
-        ]
+        ];
         self.habitats = ko.observableArray();
         self.selectedHabitat = ko.observable();
         self.count = ko.observable(1);
+
+        self.downloadViewModel = new utils.OccurrenceDownloadViewModel();
 
         /**
          *
@@ -265,7 +226,6 @@ var Habitat = function (c) {
                 id_metadata: 'habitat-metadata-' + self.count(), description: '', url: '',
                 environmentalvaluemin: '', environmentalvaluemax: '', environmentalvalueunits: '', notes: ''});
             self.count(self.count() + 1);
-            console.log("count:" + self.count());
             self.selectedHabitat(habitat);
             self.habitats.push(habitat);
         };
@@ -326,27 +286,22 @@ var Habitat = function (c) {
             self.selectedHabitat().mdUnits(data.environmentalvalueunits);
             self.selectedHabitat().mdUrl(data.url);
             self.emit('changed', self.selectedHabitat());
-        }
+        };
 
-        /**
-         *
-         */
         self.updateChart = function(habitat, list){
             var data = {
                 speciesList: JSON.stringify(list),
-                config: habitat.name(),
-                biocacheServiceUrl: pj.records.getDataresource().biocacheServiceUrl
+                config: habitat.name()
             };
             if(config.doSaveQuery){
                 self.saveQuery(data).then(function(qid){
-                    var data = {q:"qid:"+qid, biocacheServiceUrl:records.getDataresource().biocacheServiceUrl}
+                    var data = {q:"qid:"+qid};
                     self.updateChartDirect(habitat, data);
                 });
             } else {
                 self.updateChartDirect(habitat, data);
             }
-            updateCladeInfo(list)
-        }
+        };
 
         self.saveQuery = function(params){
             return $.ajax({
@@ -360,9 +315,6 @@ var Habitat = function (c) {
             })
         };
 
-        /**
-         *
-         */
         self.updateChartDirect = function (habitat, params) {
             var id = habitat.id();
             habitat.startLoading();
@@ -375,6 +327,30 @@ var Habitat = function (c) {
                 success: function (temp) {
                     habitat.stopLoading();
                     var data = temp.data;
+
+                    var len = Math.min(5, temp.statisticSummary.leastFrequent.items.length) + 1;
+                    var leastFrequent = temp.statisticSummary.leastFrequent.items.slice(0, len - 1).join(", ");
+                    if (temp.statisticSummary.leastFrequent.items.length > 5) {
+                        leastFrequent += ", ..."
+                    }
+                    len = Math.min(5, temp.statisticSummary.mostFrequent.items.length) + 1;
+                    var mostFrequent = temp.statisticSummary.mostFrequent.items.slice(0, len - 1).join(", ");
+                    if (temp.statisticSummary.mostFrequent.items.length > 5) {
+                        mostFrequent += ", ..."
+                    }
+
+                    habitat.sampleSize(temp.statisticSummary.sampleSize);
+                    habitat.leastFrequent(leastFrequent);
+                    habitat.leastFrequentCount(temp.statisticSummary.leastFrequent.count);
+                    habitat.mostFrequent(mostFrequent);
+                    habitat.mostFrequentCount(temp.statisticSummary.mostFrequent.count);
+                    habitat.numeric(temp.statisticSummary.numeric);
+                    habitat.min(temp.statisticSummary.min);
+                    habitat.max(temp.statisticSummary.max);
+                    habitat.mean(temp.statisticSummary.mean);
+                    habitat.median(temp.statisticSummary.median);
+                    habitat.standardDeviation(temp.statisticSummary.standardDeviation);
+
                     habitat.setFrequency(data);
                     if (data == undefined || data.length == 0) {
                         hab.columnchart(id, [
@@ -390,11 +366,7 @@ var Habitat = function (c) {
                     habitat.stopLoading();
                 }
             });
-
-            /**
-             *
-             */
-        }
+        };
 
         /**
          * google chart options. sets x & y axis title.
@@ -420,7 +392,7 @@ var Habitat = function (c) {
                 c.chartArea.height = config.chartHeight - 40
             }
             return c;
-        }
+        };
 
         /**
          *
@@ -432,9 +404,8 @@ var Habitat = function (c) {
             if( qid ){
                 data = {
                     q : qid,
-                    config: habitat.name(),
-                    biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
-                }
+                    config: habitat.name()
+                };
                 self.updateChartDirect(habitat, data);
             } else {
                 list = pj.getChildrenName(pj.getSelection());
@@ -444,8 +415,7 @@ var Habitat = function (c) {
                 };
                 self.updateChartDirect(habitat, data);
             }
-            updateCladeInfo(list)
-        }
+        };
 
         /**
          * handler when list is reordered.
@@ -453,7 +423,70 @@ var Habitat = function (c) {
         self.onMove = function () {
             self.emit('moved');
         };
-    }
+
+        /**
+         * Downloads the faceted source data for the selected plot in CSV format
+         * @param habitat The model of the selected plot
+         */
+        self.downloadSummaryCsv = function (habitat) {
+            var qid = pj.getQid(true);
+
+            $.ajax({
+                url: config.downloadSummaryUrl,
+                type: 'GET',
+                data: {
+                    q: qid,
+                    config: habitat.name()
+                },
+                success: function (csv) {
+                    var uri = 'data:application/csv;charset=UTF-8,' + encodeURIComponent(csv);
+                    $("<a style='display: none' href='" + uri + "' download='data.csv'>download data</a>").appendTo('body')[0].click()
+                }
+            });
+        };
+
+        /**
+         * Downloads the source occurrence records for all plots
+         */
+        self.downloadOccurrenceData = function () {
+            var qid = pj.getQid(true);
+
+            var fields = [];
+            for (var i = 0; i < view.habitats().length; i++) {
+                fields.push(view.habitats()[i].name());
+            }
+
+            var email = self.downloadViewModel.email();
+            if (email === undefined) {
+                email = '';
+            }
+
+            var url = config.biocacheOccurrenceDownload
+                + "?q=qid:" + qid
+                + "&reasonTypeId=" + self.downloadViewModel.reason().id()
+                + "&email=" + email
+                + "&extra=" + fields.join(",");
+
+            $("<a style='display: none' href='" + url + "' download='data.zip'>download data</a>").appendTo('body')[0].click();
+            $(".closeDownloadModal").filter(":visible").click();
+        };
+
+        self.togglePanel = function(data, event, panelId, toggleId) {
+            $('#' + panelId).toggleClass('show hide');
+            $('#' + toggleId).toggleClass('fa-angle-double-down fa-angle-double-up');
+        }
+
+        /**
+         * code added by adam to toggle layer information
+         * @param i
+         */
+        self.showInfo = function (koObj, e) {
+            var i = e.target;
+            var t = $("div[name=\'" + i.id + "\'")[0];
+            if (t.style.display === "none") t.style.display = "block"; else t.style.display = "none";
+        }
+    };
+
     ko.bindingHandlers.select = {
         init: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('init visible and select handler');
@@ -526,25 +559,13 @@ var Habitat = function (c) {
         view.refreshHabitat(habitat);
     });
 
-    updateCladeInfo = function(list) {
-        if (list.length == 0) {
-            pj.selectedClade('All taxa selected')
-            pj.selectedCladeNumber(-1)
-        } else {
-            pj.selectedClade('' + list.length + ' taxa selected')
-            pj.selectedCladeNumber(list.length)
-        }
-    }
-
     this.refresh = function (node, list, saveQuery) {
         var habitats = view.habitats();
         var i, data;
 
         if(saveQuery){
             saveQuery.then(function(qid){
-                var data = {q:pj.getQid(true),
-                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl}
-                console.log(data)
+                var data = {q:pj.getQid(true)}
                 for (i = 0; i < habitats.length; i++) {
                     data.config = habitats[i].name();
                     view.updateChartDirect(habitats[i], data);
@@ -557,14 +578,13 @@ var Habitat = function (c) {
             for (i = 0; i < habitats.length; i++) {
                 data = {
                     speciesList: JSON.stringify(list),
-                    config: habitats[i].name(),
-                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl
+                    config: habitats[i].name()
                 };
 
                 view.updateChartDirect(habitats[i], data);
             }
         }
-        updateCladeInfo(list)
+
     };
 
     this.save = function () {
@@ -573,7 +593,6 @@ var Habitat = function (c) {
         }
 
         var data = ko.toJSON(view);
-        console.log(data);
         console.log(view.count());
         var sync = $.extend({}, config.syncData);
         sync.json = data;

@@ -58,6 +58,7 @@ L.Control.Legend = L.Control.extend({
             return 'background-color:rgb('+this.red()+','+this.green()+','+this.blue()+');';
         },this)
         this.name = ko.observable(data.name||'unknown');
+        this.count = ko.observable(data.count || 0)
     },
     viewmodel: function(){
       this.legends = ko.observableArray([]);
@@ -69,9 +70,9 @@ L.Control.Legend = L.Control.extend({
                    <div class="legend-full leaflet-control-layers-overlays" style="margin:5px;">\
                         <div class="pull-right close" style="padding-left:10px; border: 0;">&times;</div>\
                         <label><strong>Legend</strong></label>\
-                        <div style="overflow:auto; max-height:400px; width: 120px;">\
+                        <div style="overflow:auto; max-height:400px; width: 170px;">\
                             <table class="legendTable"><tbody  data-bind="foreach: legends">\
-                                <tr><td><i class="legendColour" data-bind="attr:{style:style}"></i><span class="legendItemName" data-bind="text: name"></span></td></tr>\
+                                <tr><td><i class="legendColour" data-bind="attr:{style:style}"></i><span class="legendItemName" data-bind="text: name"></span>&nbsp;(<span data-bind="text: count"></span>)</td></tr>\
                                 </tbody>\
                             </table>\
                         </div>\

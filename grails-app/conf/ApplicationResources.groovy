@@ -26,28 +26,28 @@ modules = {
     }
 
     knockout {
-        resource url: 'js/knockout-2.3.0.js',disposition: 'head'
+        resource url: 'thirdparty/knockout-2.3.0.js',disposition: 'head'
     }
 
     knockout3 {
-        resource url: 'js/knockout-3.0.0.js'
-        resource url: 'js/knockout-custom-bindings.js'
+        resource url: 'thirdparty/knockout-3.0.0.js'
+        resource url: 'thirdparty/knockout-custom-bindings.js'
     }
 
     create{
-        resource url: [dir:'js', file: 'jquery.validate.min.js']
-        resource url: [dir:'js', file: 'additional-methods.min.js']
+        resource url: [dir:'thirdparty', file: 'jquery.validate.min.js']
+        resource url: [dir:'thirdparty', file: 'additional-methods.min.js']
     }
 
     application {
         resource url: [dir: 'css', file: "maingsp.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
-        resource url: [dir: "js", file: "jquery-ui.min.js"]
-        resource url: [dir:'js', file: 'jquery.cookie.js']
+        resource url: [dir: "thirdparty", file: "jquery-ui.min.js"]
+        resource url: [dir:'thirdparty', file: 'jquery.cookie.js']
     }
 
     bugherd {
-        resource url:[dir: 'js', file: 'bugherd.js']
+        resource url:[dir: 'thirdparty', file: 'bugherd.js']
     }
 
     appSpecific {
@@ -56,7 +56,7 @@ modules = {
     }
 
     form {
-        resource url: [dir: "js", file: 'knockout-2.3.0.js'],disposition: 'head'
+        resource url: [dir: "thirdparty", file: 'knockout-2.3.0.js'],disposition: 'head'
     }
 
 //    chart{
@@ -64,7 +64,7 @@ modules = {
 //    }
 
     emitter{
-        resource url: 'js/emitter.js'
+        resource url: 'thirdparty/emitter.js'
     }
 
     jqxCore {
@@ -110,23 +110,23 @@ modules = {
         resource url: 'css/leaflet.fullscreen.v0.0.2.css'
         resource url: 'css/Control.Legend.css'
         resource url: 'css/Control.Loading.css'
-        resource url: 'js/spin.min.v2.0.1.js'
-        resource url: 'js/leaflet.v0.7.3.js', disposition: 'head'
-        resource url: 'js/Leaflet.fullscreen.v0.0.2.min.js', disposition: 'head'
+        resource url: 'thirdparty/spin.min.v2.0.1.js'
+        resource url: 'thirdparty/leaflet.v0.7.3.js', disposition: 'head'
+        resource url: 'thirdparty/Leaflet.fullscreen.v0.0.2.min.js', disposition: 'head'
         resource url: 'js/Control.Checkbox.js'
         resource url: 'js/Control.Legend.js'
         resource url: 'js/Control.Loading.js'
         resource url: 'js/Control.Select.js'
         resource url: 'js/Control.Slider.js'
-        resource url: 'js/bootstrap-slider.js'
+        resource url: 'thirdparty/bootstrap-slider.js'
     }
 
     phylojive {
         dependsOn('bootstrap','emitter','knockout3')
-        resource url: 'js/spin.min.v2.0.1.js'
+        resource url: 'thirdparty/spin.min.v2.0.1.js'
         resource url: 'css/PhyloJive.css', disposition: 'head'
-        resource url: 'js/jsphylosvg-min.js', disposition: 'head'
-        resource url: 'js/jit.js', disposition: 'head'
+        resource url: 'thirdparty/jsphylosvg-min.js', disposition: 'head'
+        resource url: 'thirdparty/jit.js', disposition: 'head'
         resource url: 'js/PJ.js'
         resource url: 'js/Filter.js'
         resource url: 'js/Habitat.js'
@@ -134,7 +134,7 @@ modules = {
 
     character {
         dependsOn('knockout3','emitter')
-        resource url: 'js/knockout-sortable.min.js'
+        resource url: 'thirdparty/knockout-sortable.min.js'
         resource url: 'js/Character.js'
         resource url: 'css/PhyloJive.css'
     }
@@ -152,8 +152,8 @@ modules = {
     nano{
         dependsOn('jquery')
         resource url: 'css/nanoscroller.css'
-        resource url:'js/overthrow.min.js'
-        resource url: 'js/jquery.nanoscroller.min.js'
+        resource url:'thirdparty/overthrow.min.js'
+        resource url: 'thirdparty/jquery.nanoscroller.min.js'
     }
 
     bs3theme{
@@ -161,7 +161,7 @@ modules = {
     }
 
     contextmenu{
-        resource url: 'js/jquery.contextMenu.js'
+        resource url: 'thirdparty/jquery.contextMenu.js'
         resource url: 'css/jquery.contextMenu.css'
     }
 }
