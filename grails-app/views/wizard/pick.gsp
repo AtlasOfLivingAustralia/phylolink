@@ -32,11 +32,6 @@
         <g:form controller="wizard" action="pickMethod" method="POST">
             <div class="control-group">
                 <div class="controls">
-                    %{--<g:radioGroup name="options" values="['addTree', 'searchTB','expertTrees','myTrees']"--}%
-                                  %{--labels="['Add a tree', 'Import from TreeBase','Expert suggested tree','My trees']" required="">--}%
-                        %{--<label class="radio">${it.radio} ${it.label}</label>--}%
-                    %{--</g:radioGroup>--}%
-                    %{--<g:radioGroup name="options" required="">--}%
                         <div class="row-fluid">
                             <div class="span3 verticalLine">
                                 <label class="radio"><input type="radio" name="options" value="expertTrees" required=""> Expert suggested tree</label>
@@ -46,9 +41,11 @@
                             <div class="span5">
                                 <label class="radio"><input type="radio" name="options" value="myViz" required=""> My visualisations</label>
                                 <label class="radio"><input type="radio" name="options" value="demo" required=""> Example demonstrations</label>
+                                <g:if test="${params.isAdmin}">
+                                    <label class="radio"><input type="radio" name="options" value="treeAdmin" required=""> Tree administration</label>
+                                </g:if>
                             </div>
                         </div>
-                    %{--</g:radioGroup>--}%
                 </div>
             </div>
             <div class="control-group">

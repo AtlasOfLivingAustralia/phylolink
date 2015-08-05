@@ -259,7 +259,7 @@ var PJ = function (params) {
         setNodeToUrlFlag: false,
         linkouts: {
             ALA: {
-                displayName: 'Atlas of Living Australia',
+                displayName: 'View species details',
                 url: 'http://bie.ala.org.au/species/${name}'
             }
         },
@@ -1568,10 +1568,13 @@ var PJ = function (params) {
             }, link;
             for (var i in config.linkouts) {
                 link = config.linkouts[i];
-                items[i] = {
-                    name: link.displayName,
-                    callback: pj.linkout,
-                    disabled: pj.linkoutDisabled
+                var node = $trigger.data('node');
+                if (node.data.leaf) {
+                    items[i] = {
+                        name: link.displayName,
+                        callback: pj.linkout,
+                        disabled: pj.linkoutDisabled
+                    }
                 }
             }
             return {

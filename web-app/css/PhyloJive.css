@@ -446,3 +446,7 @@ bootstrap callout
 .hide {
     display: none;
 }
+
+.ui-autocomplete, .ui-autocomplete li, .ui-menu, .ui-menu-item {
+    z-index: 9999 !important;
+}
