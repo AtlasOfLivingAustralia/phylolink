@@ -953,9 +953,16 @@ var PJ = function (params) {
                 }
                 callback.apply(that, [options])
             },
-            error: function () {
+            error: function (jqXHR, error) {
                 spinner.stop();
-                alert('Could not load tree. Tree URL seems to be incorrect.');
+                debugger;
+                // a hack for auth issue that recurse when remember me button is not clicked.
+                // this code tries to convert html code from auth page into JSON thus causing an
+                // exception.
+                if(jqXHR.status == 200 && error == 'parsererror'){
+                    location.reload()
+                }
+                //alert('Could not load tree. Tree URL seems to be incorrect.');
             }
         })
     }
