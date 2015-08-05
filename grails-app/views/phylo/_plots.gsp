@@ -15,12 +15,15 @@
 </style>
 
 <div id="habitatMain">
-    <div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i> Plot profile
-    </div>
-    <div id="downloadPlotDataLink" class="btn btn-default" data-toggle="modal" href="#plotOccurrenceDownloadModal"
-       data-bind="visible: habitats().length > 0"><i class="fa fa-download"></i>&nbsp;Download raw data</div>
+    <div class="form-horizontal">
+        <p>Display histograms of information like precipitation, temperature, State etc. of occurrences in the selected clade.</p>
 
-    <div data-bind="sortable:{data:habitats, afterMove: $root.onMove}">
+        <div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i>Add histogram</div>
+        <div id="downloadPlotDataLink" class="btn btn-default" data-toggle="modal" href="#plotOccurrenceDownloadModal"
+             data-bind="visible: habitats().length > 0"><i class="fa fa-download"></i>&nbsp;Download raw data</div>
+    </div>
+
+    <div data-bind="sortable:{data:habitats, afterMove: $root.onMove, options: { cancel: '.no-sort'}}">
         <div class="item top-buffer">
             <div class="label label-default" data-bind="visible: !$root.isHabitatSelected($data)">
                 <i class="icon-white icon-resize-vertical" aria-hidden="true" style="cursor: move"></i>
@@ -31,8 +34,11 @@
                    style="cursor: pointer"></i>
             </div>
 
-            <div data-bind="select: $root.isHabitatSelected($data)">
-                <input data-bind="value: displayName, event:{blur: $root.clearHabitat}"/>
+            <div class="no-sort panel panel-default" data-bind="select: $root.isHabitatSelected($data), visible: $root.isHabitatSelected($data)">
+                <button type="button" class="close" data-bind="click: $root.clearHabitat">&times;</button>
+                <div><input class='pull-left' data-bind="value: displayName" id="layerCombobox"/><div>&nbsp;Search for a layer by name or browse the tree.</div></div>
+                <div>&nbsp;</div>
+                <div id='jqxTree'></div>
             </div>
         </div>
     </div>
@@ -78,15 +84,6 @@
             <g:render template="plotDataSummary"></g:render>
         </div>
     </div>
-</div>
-
-<div class="alert top-buffer">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <h4>Note</h4>
-
-    <p>You can click on <i>Plot profile</i> button to find out the environmental
-    characteristics like precipitation, temperature etc. of a clade. You can pick the environmental parameter
-    from the drop down list, or filter the list by typing into the input box.</p>
 </div>
 
 <g:render template="occurrenceDownloadPopup"

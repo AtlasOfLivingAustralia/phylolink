@@ -374,7 +374,7 @@ log4j = {
         additivity = true
     }
 
-    error   'au.org.ala.cas.client',
+    debug   'au.org.ala.cas.client',
             "au.org.ala",
             'grails.spring.BeanBuilder',
             'grails.plugin.webxml',
@@ -384,5 +384,7 @@ log4j = {
             'grails.app.resourceMappers.org.grails.plugin.resource'
 
     debug   "grails.app",
-            "au.org.ala"
+            "au.org.ala", "org.grails.plugin.resource"
 }
+
+grails.resources.debug = true

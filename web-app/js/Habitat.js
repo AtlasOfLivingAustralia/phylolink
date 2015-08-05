@@ -279,12 +279,12 @@ var Habitat = function (c) {
             self.selectedHabitat().name(data.value);
             self.selectedHabitat().xAxis(xaxis);
             self.selectedHabitat().yAxis(config.graph.yAxis);
-            self.selectedHabitat().mdDescription(data.description);
-            self.selectedHabitat().mdNotes(data.notes);
-            self.selectedHabitat().mdMin(data.environmentalvaluemin);
-            self.selectedHabitat().mdMax(data.environmentalvaluemax);
-            self.selectedHabitat().mdUnits(data.environmentalvalueunits);
-            self.selectedHabitat().mdUrl(data.url);
+            self.selectedHabitat().mdDescription(data.description === undefined ? '' : data.description);
+            self.selectedHabitat().mdNotes(data.notes === undefined ? '' : data.notes );
+            self.selectedHabitat().mdMin(data.environmentalvaluemin === undefined ? '' : data.environmentalvaluemin);
+            self.selectedHabitat().mdMax(data.environmentalvaluemax === undefined ? '' : data.environmentalvaluemax );
+            self.selectedHabitat().mdUnits(data.environmentalvalueunits === undefined ? '' : data.environmentalvalueunits);
+            self.selectedHabitat().mdUrl(data.url === undefined ? '' : data.url);
             self.emit('changed', self.selectedHabitat());
         };
 
@@ -417,8 +417,8 @@ var Habitat = function (c) {
                     config: habitat.name()
                 };
                 self.updateChartDirect(habitat, data);
+                updateCladeInfo(list)
             }
-            updateCladeInfo(list)
         };
 
         /**
@@ -495,16 +495,16 @@ var Habitat = function (c) {
         init: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('init visible and select handler');
             var input = $(element).find("input");
+            var tree = $(element).parent().find('div[id="jqxTree"]');
             input.autocomplete({
                 source: config.list,
-                minLength: 0,
-                minChars: 0,
+                minLength: 1,
                 select: function (event, ui) {
                     event.preventDefault();
                     $(this).val(ui.item.label);
                     var self = koObj.$root;
                     self.changeHabitat(ui.item, data)
-                    input.blur();
+                    self.selectedHabitat(null);
                 },
                 _renderItem: function (ul, item) {
                     return $("<li>")
@@ -512,11 +512,6 @@ var Habitat = function (c) {
                         .append(item.label)
                         .appendTo(ul);
                 }
-            }).on('focus', function (event, ui) {
-                var self = this;
-                ui && $(self).val(ui.item.label);
-                $(self).autocomplete("search", "");
-                koObj.$root.newChar = true;
             });
             input.focus();
             $("#"+config.id).scroll(function(e){
@@ -530,15 +525,89 @@ var Habitat = function (c) {
                     });
                 }
             });
+
+
+            input.treeSelect = function (item) {
+                $(this).val(item.label);
+                var self = koObj.$root;
+                self.changeHabitat(item, data)
+                self.selectedHabitat(null);
+            }
+
+            var source = []
+            var i
+            for (i = 0; i < config.list.length; i++) {
+                var class1 = config.list[i].classification1
+                var class2 = config.list[i].classification2
+                var label = config.list[i].displayname
+                config.list[i].label = label
+
+                if (class1 === undefined || class1 === '') class1 = 'Other'
+                if (class2 === undefined || class2 === '') class2 = 'Other'
+
+                var sclass1 = undefined
+                var sclass2 = undefined
+                var j
+                for (j = 0; j < source.length; j++) {
+
+                    if (source[j].label === class1) {
+                        sclass1 = source[j]
+
+                        var k
+                        for (k = 0; k < source[j].items.length; k++) {
+                            if (source[j].items[k].label === class2) {
+                                sclass2 = source[j].items[k]
+                            }
+                        }
+                    }
+                }
+                var item = {label: label, value: config.list[i]}
+                if (sclass1 === undefined) {
+                    source.push({label: class1, items: [{label: class2, items: [item]}]})
+                } else if (sclass2 === undefined) {
+                    sclass1.items.push({label: class2, items: [item]})
+                } else {
+                    sclass2.items.push(item)
+                }
+            }
+
+            source = source.sort(function (a, b) {
+                return a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+            })
+            for (i = 0; i < source.length; i++) {
+                source[i].items = source[i].items.sort(function (a, b) {
+                    return a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+                })
+                var j
+                for (j = 0; j < source[i].items.length; j++) {
+                    source[i].items[j].items = source[i].items[j].items.sort(function (a, b) {
+                        return a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+                    })
+                }
+            }
+            tree.jqxTree({
+                source: [{label: 'Layers', items: source, expanded: true}],
+                height: '300px',
+                allowDrag: false
+            });
+            tree.on('select', function (event) {
+                var args = event.args;
+                if (args.element !== undefined) {
+                    var item = tree.jqxTree('getItem', args.element);
+                    if (item.value !== undefined && item.value.label !== undefined) {
+                        input.treeSelect(item.value)
+                    }
+                }
+            });
         },
         update: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('update function');
             ko.bindingHandlers.visible.update(element, valueAccessor);
             if (valueAccessor()) {
                 // focus on input tag once clicked to edit
-                $(element).find("input").focus().select();
-            } else {
-                $(element).find("input").blur();
+                $(element).find("input[id='layerCombobox']").focus().select();
+                $(element).find("input[id='layerCombobox']").autocomplete("search", "")
+                
             }
         }
     };
