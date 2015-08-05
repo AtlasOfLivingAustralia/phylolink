@@ -107,8 +107,8 @@ alaDataresourceInfo = [
         'id':-1,
         'drid':null,
         'scientificName':'taxon_name',
-        'biocacheServiceUrl':'${biocacheServiceUrl}',
-        'biocacheHubUrl':'${biocacheHubUrl}',
+        'biocacheServiceUrl':biocacheServiceUrl,
+        'biocacheHubUrl':biocacheHubUrl,
         'title':'Atlas of Living Australia (All data)',
         'layerUrl': 'http://biocache.ala.org.au/ws/webportal/wms/reflect',
         'type':'ala'
