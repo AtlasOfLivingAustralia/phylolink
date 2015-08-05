@@ -46,24 +46,29 @@
         <g:else>
             <g:formRemote name="bla" url="[action: 'toggleExpertTree']" controller="tree" action="toggleExpertTree"
                           method="POST" update="row${tree.id}"
-                          onComplete="jQuery('#promoteExpertTreeModal${tree.id}').modal('hide')">
-                <p>Promote this tree as an 'expert recommended tree'.</p>
+                          onComplete="jQuery('#promoteExpertTreeModal${tree.id}').modal('hide')"
+                          class="form-horizontal">
+                <h4>Promote this tree as an 'expert recommended tree'.</h4>
 
-                    <div class="control-group">
-                        <label for="taxa${tree.id}" class="control-label">Select the higher taxa covered by this tree</label>
+                <div class="control-group">
+                    <label for="taxa${tree.id}"
+                           class="control-label">Select the higher taxa covered by this tree</label>
 
-                        <div class="controls">
-                            <g:hiddenField id="lsid${tree.id}" name="expertTreeLSID"/>
-                            <g:textField id="taxa${tree.id}" type="text" name="expertTreeTaxonomy"
-                                         class="form-control input-xlarge" required="true" placeholder="e.g. 'Aves' for a tree of bird species"
-                                         autocomplete="off" value="${expertTreeLSID}"/>
-                        </div>
+                    <div class="controls">
+                        <g:hiddenField id="lsid${tree.id}" name="expertTreeLSID"/>
+                        <g:textField id="taxa${tree.id}" type="text" name="expertTreeTaxonomy"
+                                     class="form-control input-xlarge" required="true"
+                                     placeholder="e.g. 'Aves' for a tree of bird species"
+                                     autocomplete="off" value="${expertTreeLSID}"/>
                     </div>
+                </div>
 
-                <g:hiddenField name="treeId" value="${tree.id}"/>
-                <g:submitButton name="toggleExpertTree" params="[treeId: tree.id]"
-                                class="btn btn-primary btn-small fa fa-mortar-board"
-                                value="Change to Expert Tree"/>
+                <div class="controls">
+                    <g:hiddenField name="treeId" value="${tree.id}"/>
+                    <g:submitButton name="toggleExpertTree" params="[treeId: tree.id]"
+                                    class="btn btn-primary btn-small    "
+                                    value="Change to Expert Tree"/>
+                </div>
             </g:formRemote>
         </g:else>
     </td>
