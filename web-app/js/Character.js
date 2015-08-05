@@ -968,7 +968,6 @@ var Character = function (options) {
     // load characters list
     if( options.edit && options.charactersList.url ){
         var flag = false
-        console.log("1111111111    " + options.treeId)
         $.ajax({
             url: options.charactersList.url,
             dataType:'JSON',
