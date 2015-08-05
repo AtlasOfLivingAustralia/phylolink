@@ -9,30 +9,148 @@ var st;
  * @return {*}
  */
 function colourNameToHex(colour) {
-    var colours = {"aliceblue": "#f0f8ff", "antiquewhite": "#faebd7", "aqua": "#00ffff", "aquamarine": "#7fffd4", "azure": "#f0ffff",
-        "beige": "#f5f5dc", "bisque": "#ffe4c4", "black": "#000000", "blanchedalmond": "#ffebcd", "blue": "#0000ff", "blueviolet": "#8a2be2", "brown": "#a52a2a", "burlywood": "#deb887",
-        "cadetblue": "#5f9ea0", "chartreuse": "#7fff00", "chocolate": "#d2691e", "coral": "#ff7f50", "cornflowerblue": "#6495ed", "cornsilk": "#fff8dc", "crimson": "#dc143c", "cyan": "#00ffff",
-        "darkblue": "#00008b", "darkcyan": "#008b8b", "darkgoldenrod": "#b8860b", "darkgray": "#a9a9a9", "darkgreen": "#006400", "darkkhaki": "#bdb76b", "darkmagenta": "#8b008b", "darkolivegreen": "#556b2f",
-        "darkorange": "#ff8c00", "darkorchid": "#9932cc", "darkred": "#8b0000", "darksalmon": "#e9967a", "darkseagreen": "#8fbc8f", "darkslateblue": "#483d8b", "darkslategray": "#2f4f4f", "darkturquoise": "#00ced1",
-        "darkviolet": "#9400d3", "deeppink": "#ff1493", "deepskyblue": "#00bfff", "dimgray": "#696969", "dodgerblue": "#1e90ff",
-        "firebrick": "#b22222", "floralwhite": "#fffaf0", "forestgreen": "#228b22", "fuchsia": "#ff00ff",
-        "gainsboro": "#dcdcdc", "ghostwhite": "#f8f8ff", "gold": "#ffd700", "goldenrod": "#daa520", "gray": "#808080", "green": "#008000", "greenyellow": "#adff2f",
-        "honeydew": "#f0fff0", "hotpink": "#ff69b4",
-        "indianred ": "#cd5c5c", "indigo ": "#4b0082", "ivory": "#fffff0", "khaki": "#f0e68c",
-        "lavender": "#e6e6fa", "lavenderblush": "#fff0f5", "lawngreen": "#7cfc00", "lemonchiffon": "#fffacd", "lightblue": "#add8e6", "lightcoral": "#f08080", "lightcyan": "#e0ffff", "lightgoldenrodyellow": "#fafad2",
-        "lightgrey": "#d3d3d3", "lightgreen": "#90ee90", "lightpink": "#ffb6c1", "lightsalmon": "#ffa07a", "lightseagreen": "#20b2aa", "lightskyblue": "#87cefa", "lightslategray": "#778899", "lightsteelblue": "#b0c4de",
-        "lightyellow": "#ffffe0", "lime": "#00ff00", "limegreen": "#32cd32", "linen": "#faf0e6",
-        "magenta": "#ff00ff", "maroon": "#800000", "mediumaquamarine": "#66cdaa", "mediumblue": "#0000cd", "mediumorchid": "#ba55d3", "mediumpurple": "#9370d8", "mediumseagreen": "#3cb371", "mediumslateblue": "#7b68ee",
-        "mediumspringgreen": "#00fa9a", "mediumturquoise": "#48d1cc", "mediumvioletred": "#c71585", "midnightblue": "#191970", "mintcream": "#f5fffa", "mistyrose": "#ffe4e1", "moccasin": "#ffe4b5",
-        "navajowhite": "#ffdead", "navy": "#000080",
-        "oldlace": "#fdf5e6", "olive": "#808000", "olivedrab": "#6b8e23", "orange": "#ffa500", "orangered": "#ff4500", "orchid": "#da70d6",
-        "palegoldenrod": "#eee8aa", "palegreen": "#98fb98", "paleturquoise": "#afeeee", "palevioletred": "#d87093", "papayawhip": "#ffefd5", "peachpuff": "#ffdab9", "peru": "#cd853f", "pink": "#ffc0cb", "plum": "#dda0dd", "powderblue": "#b0e0e6", "purple": "#800080",
-        "red": "#ff0000", "rosybrown": "#bc8f8f", "royalblue": "#4169e1",
-        "saddlebrown": "#8b4513", "salmon": "#fa8072", "sandybrown": "#f4a460", "seagreen": "#2e8b57", "seashell": "#fff5ee", "sienna": "#a0522d", "silver": "#c0c0c0", "skyblue": "#87ceeb", "slateblue": "#6a5acd", "slategray": "#708090", "snow": "#fffafa", "springgreen": "#00ff7f", "steelblue": "#4682b4",
-        "tan": "#d2b48c", "teal": "#008080", "thistle": "#d8bfd8", "tomato": "#ff6347", "turquoise": "#40e0d0",
+    var colours = {
+        "aliceblue": "#f0f8ff",
+        "antiquewhite": "#faebd7",
+        "aqua": "#00ffff",
+        "aquamarine": "#7fffd4",
+        "azure": "#f0ffff",
+        "beige": "#f5f5dc",
+        "bisque": "#ffe4c4",
+        "black": "#000000",
+        "blanchedalmond": "#ffebcd",
+        "blue": "#0000ff",
+        "blueviolet": "#8a2be2",
+        "brown": "#a52a2a",
+        "burlywood": "#deb887",
+        "cadetblue": "#5f9ea0",
+        "chartreuse": "#7fff00",
+        "chocolate": "#d2691e",
+        "coral": "#ff7f50",
+        "cornflowerblue": "#6495ed",
+        "cornsilk": "#fff8dc",
+        "crimson": "#dc143c",
+        "cyan": "#00ffff",
+        "darkblue": "#00008b",
+        "darkcyan": "#008b8b",
+        "darkgoldenrod": "#b8860b",
+        "darkgray": "#a9a9a9",
+        "darkgreen": "#006400",
+        "darkkhaki": "#bdb76b",
+        "darkmagenta": "#8b008b",
+        "darkolivegreen": "#556b2f",
+        "darkorange": "#ff8c00",
+        "darkorchid": "#9932cc",
+        "darkred": "#8b0000",
+        "darksalmon": "#e9967a",
+        "darkseagreen": "#8fbc8f",
+        "darkslateblue": "#483d8b",
+        "darkslategray": "#2f4f4f",
+        "darkturquoise": "#00ced1",
+        "darkviolet": "#9400d3",
+        "deeppink": "#ff1493",
+        "deepskyblue": "#00bfff",
+        "dimgray": "#696969",
+        "dodgerblue": "#1e90ff",
+        "firebrick": "#b22222",
+        "floralwhite": "#fffaf0",
+        "forestgreen": "#228b22",
+        "fuchsia": "#ff00ff",
+        "gainsboro": "#dcdcdc",
+        "ghostwhite": "#f8f8ff",
+        "gold": "#ffd700",
+        "goldenrod": "#daa520",
+        "gray": "#808080",
+        "green": "#008000",
+        "greenyellow": "#adff2f",
+        "honeydew": "#f0fff0",
+        "hotpink": "#ff69b4",
+        "indianred ": "#cd5c5c",
+        "indigo ": "#4b0082",
+        "ivory": "#fffff0",
+        "khaki": "#f0e68c",
+        "lavender": "#e6e6fa",
+        "lavenderblush": "#fff0f5",
+        "lawngreen": "#7cfc00",
+        "lemonchiffon": "#fffacd",
+        "lightblue": "#add8e6",
+        "lightcoral": "#f08080",
+        "lightcyan": "#e0ffff",
+        "lightgoldenrodyellow": "#fafad2",
+        "lightgrey": "#d3d3d3",
+        "lightgreen": "#90ee90",
+        "lightpink": "#ffb6c1",
+        "lightsalmon": "#ffa07a",
+        "lightseagreen": "#20b2aa",
+        "lightskyblue": "#87cefa",
+        "lightslategray": "#778899",
+        "lightsteelblue": "#b0c4de",
+        "lightyellow": "#ffffe0",
+        "lime": "#00ff00",
+        "limegreen": "#32cd32",
+        "linen": "#faf0e6",
+        "magenta": "#ff00ff",
+        "maroon": "#800000",
+        "mediumaquamarine": "#66cdaa",
+        "mediumblue": "#0000cd",
+        "mediumorchid": "#ba55d3",
+        "mediumpurple": "#9370d8",
+        "mediumseagreen": "#3cb371",
+        "mediumslateblue": "#7b68ee",
+        "mediumspringgreen": "#00fa9a",
+        "mediumturquoise": "#48d1cc",
+        "mediumvioletred": "#c71585",
+        "midnightblue": "#191970",
+        "mintcream": "#f5fffa",
+        "mistyrose": "#ffe4e1",
+        "moccasin": "#ffe4b5",
+        "navajowhite": "#ffdead",
+        "navy": "#000080",
+        "oldlace": "#fdf5e6",
+        "olive": "#808000",
+        "olivedrab": "#6b8e23",
+        "orange": "#ffa500",
+        "orangered": "#ff4500",
+        "orchid": "#da70d6",
+        "palegoldenrod": "#eee8aa",
+        "palegreen": "#98fb98",
+        "paleturquoise": "#afeeee",
+        "palevioletred": "#d87093",
+        "papayawhip": "#ffefd5",
+        "peachpuff": "#ffdab9",
+        "peru": "#cd853f",
+        "pink": "#ffc0cb",
+        "plum": "#dda0dd",
+        "powderblue": "#b0e0e6",
+        "purple": "#800080",
+        "red": "#ff0000",
+        "rosybrown": "#bc8f8f",
+        "royalblue": "#4169e1",
+        "saddlebrown": "#8b4513",
+        "salmon": "#fa8072",
+        "sandybrown": "#f4a460",
+        "seagreen": "#2e8b57",
+        "seashell": "#fff5ee",
+        "sienna": "#a0522d",
+        "silver": "#c0c0c0",
+        "skyblue": "#87ceeb",
+        "slateblue": "#6a5acd",
+        "slategray": "#708090",
+        "snow": "#fffafa",
+        "springgreen": "#00ff7f",
+        "steelblue": "#4682b4",
+        "tan": "#d2b48c",
+        "teal": "#008080",
+        "thistle": "#d8bfd8",
+        "tomato": "#ff6347",
+        "turquoise": "#40e0d0",
         "violet": "#ee82ee",
-        "wheat": "#f5deb3", "white": "#ffffff", "whitesmoke": "#f5f5f5",
-        "yellow": "#ffff00", "yellowgreen": "#9acd32"};
+        "wheat": "#f5deb3",
+        "white": "#ffffff",
+        "whitesmoke": "#f5f5f5",
+        "yellow": "#ffff00",
+        "yellowgreen": "#9acd32"
+    };
 
     if (typeof colours[colour.toLowerCase()] != 'undefined')
         return colours[colour.toLowerCase()];
@@ -88,7 +206,7 @@ var PJ = function (params) {
      * when query is saved
      *
      */
-       'savequerybegin',
+        'savequerybegin',
     /**
      * when save query ends
      */
@@ -130,7 +248,7 @@ var PJ = function (params) {
          */
         doSaveQuery: true,
         runSaveQuery: false, // boolean
-        saveQuery:{
+        saveQuery: {
             url: 'http://dev.ala.org.au:8080/phylolink/ala/saveQuery',
             type: 'POST',
             dataType: 'JSON'
@@ -139,56 +257,57 @@ var PJ = function (params) {
          * flag to see if hash is changing due to click by user or going back on browser history
          */
         setNodeToUrlFlag: false,
-        linkouts:{
+        linkouts: {
             ALA: {
-            displayName: 'Atlas of Living Australia',
-            url: 'http://bie.ala.org.au/species/${name}'
-        }},
+                displayName: 'View species details',
+                url: 'http://bie.ala.org.au/species/${name}'
+            }
+        },
         /**
          * popover when user first interacts
          */
         popOver: [{
-            id: '#'+ params.id,
-            options:{
+            id: '#' + params.id,
+            options: {
                 placement: 'top',
                 trigger: 'manual',
                 html: 'true',
-                content : '<button id="pjPopOverClose" class="btn btn-primary">Okay, got it!</button> '
+                content: '<button id="pjPopOverClose" class="btn btn-primary">Okay, got it!</button> '
             }
-        },{
-            id:'#zoomworld',
-            options:{
+        }, {
+            id: '#zoomworld',
+            options: {
                 placement: 'left',
                 trigger: 'manual',
                 html: 'true',
-                content : 'Action buttons'
+                content: 'Action buttons'
             }
-        },{
-            id:function(){
+        }, {
+            id: function () {
                 var nodes = $('.node:visible'), result = [], i, top;
-                for(i =0;i<nodes.length;i++){
-                    top = parseInt($(nodes[i]).css('top').replace('px',''))
-                    if((top < ( params.height/2 +100)) && ( top > ( params.height/2 - 100) )){
+                for (i = 0; i < nodes.length; i++) {
+                    top = parseInt($(nodes[i]).css('top').replace('px', ''))
+                    if ((top < ( params.height / 2 + 100)) && ( top > ( params.height / 2 - 100) )) {
                         result.push(nodes[i].id)
                     }
                 }
-                return '#'+ result[Math.max(result.length/2)];
+                return '#' + result[Math.max(result.length / 2)];
             },
-            options:{
+            options: {
                 placement: 'right',
                 trigger: 'manual',
                 html: 'true',
-                title : 'Tree Leaf',
+                title: 'Tree Leaf',
                 content: 'You can left and right click on this name. Left click interacts with tabs on right.' +
-                    'Right click provides you with a list of options to choose from.'
+                'Right click provides you with a list of options to choose from.'
             }
-        },{
+        }, {
             id: 'canvas',
-            options:{
+            options: {
                 placement: 'bottom',
                 trigger: 'manual',
                 html: 'true',
-                content : '<div id="pjPopOverClose" class="btn btn-primary">Okay, got it!</div> '
+                content: '<div id="pjPopOverClose" class="btn btn-primary">Okay, got it!</div> '
             }
         }],
         //enable panning
@@ -234,26 +353,26 @@ var PJ = function (params) {
             },
 
             onRightClick: function (node, eventInfo, e) {
-                var canvas = jQuery("#"+config.injectInto + " canvas");
-                if(node){
+                var canvas = jQuery("#" + config.injectInto + " canvas");
+                if (node) {
                     if (st.tips.config.enable) st.tips.hide(false);
                     canvas.data("nodeId", node.id);
                     canvas.data("node", node);
                     canvas.data("info", "");
                     canvas.contextMenu({x: e.pageX, y: e.pageY});
-                } else if(e.target){
+                } else if (e.target) {
                     node = $(e.target)
-                    if(!node.hasClass('.node')){
+                    if (!node.hasClass('.node')) {
                         parent = node.parent('.node');
                         child = node.children('.node');
-                        if(parent.length){
+                        if (parent.length) {
                             node = parent.attr('id')
-                        } else if(child.length){
+                        } else if (child.length) {
                             node = child.attr('id')
                         }
                     }
                     node = st.graph.getNode(node);
-                    if(node){
+                    if (node) {
                         canvas.data("node", node);
                         canvas.data("nodeId", node.id);
                         canvas.contextMenu({x: e.pageX, y: e.pageY});
@@ -262,14 +381,14 @@ var PJ = function (params) {
             },
 
             onClick: function (node, eventInfo, e) {
-                var leafs,names,queryObj, canvas;
+                var leafs, names, queryObj, canvas;
                 e = e || {};
                 eventInfo = eventInfo || {};
 
                 if (node) {
                     // Trigger the contextMenu to popup
                     if (st.tips.config.enable) st.tips.hide(false); // hide the tip so it doesn't cover the context menu
-                    if(e.which == 3){
+                    if (e.which == 3) {
                         //right click
                         canvas = jQuery("#infovis-canvas").find('canvas');
                         canvas.data("nodeId", node.id);
@@ -283,7 +402,7 @@ var PJ = function (params) {
                         console.log(node);
                         pj.setNodeToUrl(node.id);
                         names = pj.getChildrenName(node);
-                        if(config.runSaveQuery){
+                        if (config.runSaveQuery) {
                             queryObj = pj.saveQuery(node, names);
                         }
 
@@ -299,7 +418,7 @@ var PJ = function (params) {
                 node, html, split;
             for (var i = 0; ((i < clade.length) & (i < 30)); i++) {
                 node = {}
-                node.name = clade [ i ].name;
+                node.name = clade [i].name;
                 nodeList.push(node);
             }
             if (tmpl) {
@@ -321,7 +440,7 @@ var PJ = function (params) {
         Tips: {
             enable: true,
             onShow: function (div, node) {
-                var url = '', key, i , char,
+                var url = '', key, i, char,
                     html = '', name = '', maptitle = '', index;
                 if (!!node.name) {
                     name = "<i>" + node.name + "</i>";
@@ -329,9 +448,7 @@ var PJ = function (params) {
                 else {
                     name = " unnamed";
                 }
-                //name = name + "<strong> click</strong> for ";
                 if (node.data.leaf) { // end taxon
-                    //    name = name + "for linked data";
                 } else { //clade
                     if (name) {
                         name = "Inner Node:" + name;
@@ -343,8 +460,8 @@ var PJ = function (params) {
                 // display all characters
                 var result = [];
                 for (index in st.config.selectedCharacters) {
-                    key = st.config.selectedCharacters [ index ];
-                    char = node.data.character [ key ];
+                    key = st.config.selectedCharacters [index];
+                    char = node.data.character [key];
                     html = '<strong>' + key + '</strong>: ';
                     if (typeof char === 'undefined' || char.length === 0 || typeof char[0] === 'undefined') {
                         html += '&mdash;';
@@ -398,7 +515,6 @@ var PJ = function (params) {
             style.display = 'inline';
 
             style.color = node.data.$color;
-            //         if (node.data.color)
             var boxes = '';
             var first = st.config.firstCharacter;
             var shapes = ['box', 'star', 'triangle'],
@@ -407,7 +523,6 @@ var PJ = function (params) {
             boxes = '';
 
             for (i = 0; i < list.length; i += 1) {
-                //           for ( char in node.data.character )
                 char = list[i];
                 values = node.data.character[char];
                 if (values && values.length > 0 && typeof values[0] !== 'undefined') {
@@ -469,7 +584,6 @@ var PJ = function (params) {
         onBeforePlotNode: function (node) {
             //add some color to the nodes in the path between the
             //root node and the selected node.
-            //       if (!node.data.leaf) {
             var result = true,
                 char;
             if (!node.data.leaf) {
@@ -539,9 +653,8 @@ var PJ = function (params) {
             //             remove labels of non-leaf nodes
             if (!node.data.leaf) {
                 dom.style.display = 'none';
-                //         dom.innerHTML = node.data.leaves + ' Taxa';
             }
-            //    // show label for the last visible node in the clade
+            // show label for the last visible node in the clade
             dom.style.display = node.data.display || 'block';
             if (alignName) {
                 jQuery('#' + dom.id + ' .quant').addClass('quantAlign');
@@ -550,7 +663,7 @@ var PJ = function (params) {
             }
         },
 
-        getSelectedNode:function(){
+        getSelectedNode: function () {
             return st.clickedNode;
         }
     }, params);
@@ -631,13 +744,12 @@ var PJ = function (params) {
         }
 
         opt.codeBase = opt.codeBase || '';
-//        var popupHTML = '<div id="popup-close" style="position:relative; width:100%; background-color:lightblue"><a href="#" onclick="this.parentNode.parentNode.style.display=\'none\';" onmouseover="this.style.cursor=\'pointer\';" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a></div><div id="popup-text"></div>';
         var navHTML2 = '<div style="position:relative">' +
-            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">'+
-            '<div class="input-append">'+
-            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree">'+
-            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>'+
-            '</div></div>'+
+            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">' +
+            '<div class="input-append">' +
+            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree">' +
+            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>' +
+            '</div></div>' +
             '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="north"><i class="icon-arrow-up"' +
             ' aria-hidden="true"></i></div></div><div id="panleft" style="position: absolute; left: 4px; top: 56px;' +
@@ -656,7 +768,7 @@ var PJ = function (params) {
             '<div id="zoomIN"><i class="icon-zoom-in"></i></div></div>' +
             '</div>';
 
-        var navHTML3 =  '<div style="position:relative"><div id="panup" style="position: absolute; left: 13px; top: 4px;' +
+        var navHTML3 = '<div style="position:relative"><div id="panup" style="position: absolute; left: 13px; top: 4px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="north"><span class="glyphicon glyphicon-arrow-up"' +
             ' aria-hidden="true"></span></div></div><div id="panleft" style="position: absolute; left: 4px; top: 22px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="west"><span class="glyphicon glyphicon-arrow-left"' +
@@ -674,23 +786,17 @@ var PJ = function (params) {
             '<div id="zoomIN"><span class="glyphicon glyphicon-zoom-in"></span></div></div>' +
             '</div>';
 
-        var navHTML = config.bootstrap == 2? navHTML2: navHTML3;
+        var navHTML = config.bootstrap == 2 ? navHTML2 : navHTML3;
         var jitcontainer, rightJitContainer, centerJitContainer,
             id = typeof (opt.injectInto) == 'string' ? opt.injectInto : opt.injectInto.id,
             infovis, parent, popup, navigation, menu, border;
 
-        //  this function is losing its meaning by adding this. just for now.
-        //     var popupContainer = document.getElementById('center-jitcontainer');
-        //     var popup = $jit.id('popup');
-        //     popup.style.display = 'none';
         border = opt.width * 100 / 90;
         jitcontainer = $E('div', {
             'id': 'jitcontainer',
             'className': 'clearfix',
             'style': {
                 'position': 'relative'
-//                'width': border + 'px',
-//                'height': ((opt.height + 55 + border / 20)) + 'px'
             }
         });
 
@@ -720,8 +826,6 @@ var PJ = function (params) {
                 'position': 'absolute',
                 'left': '50px',
                 'top': '90px',
-                //'width': '250px',
-                //'height': '170px',
                 'overflow': 'auto',
                 'text-align': 'left'
             }
@@ -811,12 +915,12 @@ var PJ = function (params) {
         };
 
         var searchBox = $("#searchBtn");
-        searchBox.click(function(){
+        searchBox.click(function () {
             var str = $('#searchText').val();
             pj.search(str, 1);
         })
-        var searchText = $('#searchText').keypress( function(e){
-            if(e.which == 13) {
+        var searchText = $('#searchText').keypress(function (e) {
+            if (e.which == 13) {
                 searchBox.trigger('click');
             }
         });
@@ -834,7 +938,7 @@ var PJ = function (params) {
         console.log(options)
 
         spinner.spin();
-        $('#'+config.injectInto).append(spinner.el);
+        $('#' + config.injectInto).append(spinner.el);
 
         $.ajax({
             url: url,
@@ -849,7 +953,7 @@ var PJ = function (params) {
                 }
                 callback.apply(that, [options])
             },
-            error: function(){
+            error: function () {
                 spinner.stop();
                 alert('Could not load tree. Tree URL seems to be incorrect.');
             }
@@ -897,15 +1001,12 @@ var PJ = function (params) {
             st.loadJSON(json)
             st.compute();
             id = pj.getNodeFromUrl();
-            st.onClick(st.root,true);
+            st.onClick(st.root, true);
 
             // if zoomIndex is not set, the rendering will go crazy. make sure zoomIndex is set when a node is clicked
             st.zoomIndex = st.graph.depth.length;
             st.plot();
-//            if(id!== undefined){
-//                pj.clickNode(id);
-//            }
-            pj.on('treeloaded', function(){
+            pj.on('treeloaded', function () {
                 id && pj.clickNode(id);
             })
             config.treeloaded = true;
@@ -921,81 +1022,53 @@ var PJ = function (params) {
         if (st.character) {
             st.colorCharacter() || '';
         }
-////            jQuery('#legendBody').html(html);
-//            legendElem.style.display = 'inline';
-//        } else {
-//            legendElem.style.display = 'none';
-//        }
-var start, stop
+        var start, stop
         start = new Date();
         for (i in st.graph.nodes) {
             if (st.graph.nodes.hasOwnProperty(i)) {
                 node = st.graph.nodes[i];
-                //         if( node.data.leaf ) {
                 label = jQuery('#' + node.id)[0];
                 label && st.config.onCreateLabel(label, node);
-                //         }
             }
         }
         stop = new Date();
         console.log('elapsed time')
-        console.log( stop - start );
-        //optional: make a translation of the tree
-        //emulate a click on the root node.
-//        var currentZoom = st.zoomIndex;
-//        st.onClick(st.root);
-//        alert("pre-fitScreen, zoom = " + st.zoomIndex);
-//        console.log("st", st);
-//        st.fitScreen();
-//        st.zoomIndex = currentZoom;
-//        if (currentZoom) st.zoom(currentZoom);
-//        alert("post-fitScreen, zoom = " + st.zoomIndex);
+        console.log(stop - start);
     }
 
-    var setTitle = function( config){
-        var HeadingModel = function(d){
-            this.title = ko.observable(d.title||'unnamed');
+    var setTitle = function (config) {
+        var HeadingModel = function (d) {
+            this.title = ko.observable(d.title || 'unnamed');
             this.id = d.id;
-            this.selected = ko.observable(d.selected||false)
+            this.selected = ko.observable(d.selected || false)
             this.edit = d.edit || false
 
-            this.clicked = function(){
+            this.clicked = function () {
                 return this.selected();
             }
-            this.clearClick = function(){
+            this.clearClick = function () {
                 this.selected(false)
             }
-            this.select= function(){
-                if(this.edit){
+            this.select = function () {
+                if (this.edit) {
                     this.selected(true)
-                    $('#'+ config.heading).find('input').focus()
+                    $('#' + config.heading).find('input').focus()
                 }
             }
-            this.sync= function(){
+            this.sync = function () {
                 pj.syncTitle(JSON.parse(ko.toJSON(this)));
             }
         }
 
         var data = config.hData;
         var template = "<div data-bind=' click: $root.select' style='cursor:pointer;'><h1 style='color:#C44D34;display: inline-block' title='Click title to edit it' " +
-            "data-bind='text: title'></h1>&nbsp;<i data-bind='visible: edit' title='Click title to edit it' class='icon icon-pencil'></i></div>"+
-            "<div data-bind='visible: $root.clicked()' style='padding-bottom: 10px'>"+
+            "data-bind='text: title'></h1>&nbsp;<i data-bind='visible: edit' title='Click title to edit it' class='icon icon-pencil'></i></div>" +
+            "<div data-bind='visible: $root.clicked()' style='padding-bottom: 10px'>" +
             "New title for this visualisation: <input data-bind='value: title, event:{blur:$root.clearClick, change:$root.sync}'></div>"
-        var titleDom = $('#'+config.heading).html(template);
+        var titleDom = $('#' + config.heading).html(template);
         var model = new HeadingModel(data);
         ko.applyBindings(model, titleDom[0]);
     }
-
-    // add this class to make the labels disappear outside the bounds of canvas
-    $('#' + config.injectInto).addClass('infovis');
-
-    console.log('before jit initialized')
-    console.log(config)
-    st = new $jit.Phylo(config);
-    navigation(config)
-    setTree(config)
-    setTitle(config);
-    console.log('after jit initialized')
 
     this.st = st;
 
@@ -1089,15 +1162,13 @@ var start, stop
 
             var element = st.labels.getLabel(result[pos].id);
             element.style.backgroundColor = 'yellow';
-            yTranslate = $(element).css('top').replace('px','');
-            yTranslate = yTranslate?parseInt(yTranslate):0;
+            yTranslate = $(element).css('top').replace('px', '');
+            yTranslate = yTranslate ? parseInt(yTranslate) : 0;
             st.canvas.translate(0, -yTranslate);
-//            jQuery(element).click();
         }
     };
 
     this.colorTreeWithCharacter = function (charJson, selected) {
-//        this.clearCharacters()
         st.character = charJson;
         st.config.initCharacter = false;
         st.config.firstCharacter = st.firstCharacter = selected[0];
@@ -1105,24 +1176,24 @@ var start, stop
         var start = new Date(), stop
         st.colorCharacter();
         stop = new Date();
-        console.log( 'elapsed time color tree');
-        console.log((stop- start)/1000)
-        start  = new Date()
+        console.log('elapsed time color tree');
+        console.log((stop - start) / 1000)
+        start = new Date()
         redraw();
         stop = new Date();
-        console.log( 'elapsed time redraw');
-        console.log((stop- start)/1000)
-        start  = new Date()
+        console.log('elapsed time redraw');
+        console.log((stop - start) / 1000)
+        start = new Date()
         st.plot();
         stop = new Date();
-        console.log( 'elapsed time plot');
-        console.log((stop- start)/1000)
+        console.log('elapsed time plot');
+        console.log((stop - start) / 1000)
     };
 
     /**
      * this function does not draw characters on tree. It will display tree as if no character was ever selected
      */
-    this.drawTreeWithoutCharacters = function(){
+    this.drawTreeWithoutCharacters = function () {
         st.character = {};
         st.config.initCharacter = false;
         st.config.firstCharacter = st.firstCharacter = undefined;
@@ -1133,22 +1204,18 @@ var start, stop
         st.plot();
     }
 
-    this.clearCharacters = function(){
+    this.clearCharacters = function () {
         var root = this.getRoot(),
             node = this.getNodeById(root);
-        node.eachSubgraph(function(n){
-//            console.log(n)
-//            n.data.character = {};
-//            n.data.colorCharacter = [];
-//            n.data.color={};
-            n.eachAdjacency(function(adj){
-                adj.setData('color','#000');
+        node.eachSubgraph(function (n) {
+            n.eachAdjacency(function (adj) {
+                adj.setData('color', '#000');
             })
         })
 
     }
 
-    this.getChildrenName = function(node){
+    this.getChildrenName = function (node) {
         var result = []
         node && node.eachSubgraph(function (n) {
             if (n.data.leaf) {
@@ -1158,15 +1225,15 @@ var start, stop
         return result;
     }
 
-    this.getSelection = function(){
+    this.getSelection = function () {
         return st.clickedNode;
     }
 
-    this.getRoot = function(){
+    this.getRoot = function () {
         return st.root;
     }
 
-    this.getNodeById = function(id){
+    this.getNodeById = function (id) {
         return st.graph.getNode(id);
     }
 
@@ -1174,7 +1241,7 @@ var start, stop
      * check if tree is loaded
      * @returns {boolean}
      */
-    this.isTreeLoaded = function(){
+    this.isTreeLoaded = function () {
         return config.treeloaded;
     }
 
@@ -1183,13 +1250,13 @@ var start, stop
      * @param format (Boolean) format query id in ala format
      * @returns (string) eg: 'qid:1234887' or '1234887'
      */
-    this.getQid=function(format){
-        if(qid === undefined){
+    this.getQid = function (format) {
+        if (qid === undefined) {
             return;
         }
 
-        if(format){
-            return 'qid:'+qid;
+        if (format) {
+            return 'qid:' + qid;
         } else {
             return qid;
         }
@@ -1198,17 +1265,17 @@ var start, stop
     /**
      * clear qid.
      */
-    this.clearQid = function(){
+    this.clearQid = function () {
         qid = undefined;
     }
 
     /**
      * gets node id from url hash
      */
-    this.getNodeFromUrl = function(){
+    this.getNodeFromUrl = function () {
         var hash = window.location.hash;
         var nodeId = hash.split("#node/");
-        if(nodeId.length > 1){
+        if (nodeId.length > 1) {
             return parseInt(nodeId[1]);
         }
     }
@@ -1217,8 +1284,8 @@ var start, stop
      * set a node id to url
      * @param id - node id
      */
-    this.setNodeToUrl = function(id){
-        if(id == undefined){
+    this.setNodeToUrl = function (id) {
+        if (id == undefined) {
             return;
         }
         config.setNodeToUrlFlag = true;
@@ -1230,7 +1297,7 @@ var start, stop
      * simulate a click on a node
      * @param node
      */
-    this.clickNode = function(id){
+    this.clickNode = function (id) {
         var node = st.graph.getNode(id);
         st.clickedNode = node
         st.plot()
@@ -1240,37 +1307,37 @@ var start, stop
     /**
      * sync title with server
      */
-    this.syncTitle = function(data){
+    this.syncTitle = function (data) {
         $.ajax({
             url: config.titleUrl,
             data: data,
-            success:function(){
+            success: function () {
                 console.log('title saved!');
             }
         })
     }
 
-    this.saveQuery = function(node, names, dontSave){
+    this.saveQuery = function (node, names, dontSave) {
         var params = config.saveQuery.data;
-        if(config.doSaveQuery){
-            if(!dontSave){
+        if (config.doSaveQuery) {
+            if (!dontSave) {
                 qid = undefined;
             }
             this.emit('savequerybegin')
-            params.speciesList= JSON.stringify(names);
+            params.speciesList = JSON.stringify(names);
             var obj = $.ajax({
                 url: config.saveQuery.url,
                 type: config.saveQuery.type,
                 dataType: config.saveQuery.dataType,
-                data:params,
-                success: function(q){
-                    if(!dontSave){
+                data: params,
+                success: function (q) {
+                    if (!dontSave) {
                         qid = q.qid;
                     }
                     pj.emit('savequeryend')
                     console.log(qid);
                 },
-                error: function(){
+                error: function () {
                     console.log('failed!')
                     pj.emit('savequeryend')
                 }
@@ -1285,8 +1352,8 @@ var start, stop
      * @param instance
      * @param drid
      */
-    this.setSaveQueryParams = function(type, instance, drid){
-        config.saveQuery.data.speciesList= undefined;
+    this.setSaveQueryParams = function (type, instance, drid) {
+        config.saveQuery.data.speciesList = undefined;
         config.saveQuery.data.dataLocationType = type || 'ala';
         config.saveQuery.data.instanceUrl = instance;
         config.saveQuery.data.drid = drid;
@@ -1296,12 +1363,12 @@ var start, stop
      * change runSaveQuery flag
      * @param flag
      */
-    this.setSaveQueryFlag = function(flag){
+    this.setSaveQueryFlag = function (flag) {
         config.runSaveQuery = flag;
     }
 
-    this.getSaveQueryFlag = function(){
-        return config.runSaveQuery ;
+    this.getSaveQueryFlag = function () {
+        return config.runSaveQuery;
     }
 
     /**
@@ -1309,7 +1376,7 @@ var start, stop
      * @param char
      * @returns {*}
      */
-    this.getLegendForCharacter = function(char){
+    this.getLegendForCharacter = function (char) {
         var lg = this.getPJLegendData(char)
         return this.formatPJLegendData(lg);
     }
@@ -1323,8 +1390,8 @@ var start, stop
         return rgb;
     }
 
-    this.formatPJLegendData = function(data){
-        if(!data){
+    this.formatPJLegendData = function (data) {
+        if (!data) {
             return;
         }
 
@@ -1334,12 +1401,12 @@ var start, stop
             hex,
             rgb;
 
-        for( var name in data){
+        for (var name in data) {
             color = data[name].color;
-            if(color.match('#')){
+            if (color.match('#')) {
                 rgb = this.hexToRgb(color);
             } else {
-                rgb = this.hexToRgb( colourNameToHex(color) );
+                rgb = this.hexToRgb(colourNameToHex(color));
             }
 
             result.push({
@@ -1358,33 +1425,34 @@ var start, stop
      * @param char
      * @returns {*}
      */
-    this.getPJLegendData = function(char){
-        if(!char){
+    this.getPJLegendData = function (char) {
+        if (!char) {
             return;
-        };
+        }
+        ;
 
         var state = st.colorCoding[char];
-        if(!state){
+        if (!state) {
             state = st.colorCodingQuali[char];
         }
 
         return state;
     }
 
-    this.getQuantCharacterState = function(val, char){
+    this.getQuantCharacterState = function (val, char) {
         var quant = this.getLegendForCharacter(char),
             name,
             range;
 
-        for(var i =0; i< quant.length; i++){
+        for (var i = 0; i < quant.length; i++) {
             name = quant[i].name;
             range = name && name.match(/\d+\.*\d*/g);
-            if(range.length){
+            if (range.length) {
                 range[0] = Number.parseFloat(range[0]);
                 range[1] = Number.parseFloat(range[1]);
             }
 
-            if(val >=range[0] && val < range[1]){
+            if (val >= range[0] && val < range[1]) {
                 return name;
             }
         }
@@ -1396,26 +1464,26 @@ var start, stop
      * group species by color of character. this function returns an object with hex color as key and
      * array of species list as value.
      */
-    this.groupByCharacter = function(char, addEmpty, addNone){
+    this.groupByCharacter = function (char, addEmpty, addNone) {
         var node = this.getSelection();
         var result = {},
             legend,
             state,
             i,
             name;
-        node && node.eachSubgraph(function(n){
-            if(n.data.leaf){
+        node && node.eachSubgraph(function (n) {
+            if (n.data.leaf) {
                 state = n.data.character[char]
-                for(i = 0; i < state.length; i++){
+                for (i = 0; i < state.length; i++) {
                     name = state[i];
-                    switch (typeof name){
+                    switch (typeof name) {
                         case 'number':
-                            name = pj.getQuantCharacterState(name,char);
+                            name = pj.getQuantCharacterState(name, char);
                             break;
                     }
-                    if(!result[name]){
+                    if (!result[name]) {
                         result[name] = {
-                            list : []
+                            list: []
                         }
                     }
 
@@ -1425,9 +1493,9 @@ var start, stop
         });
 
         legend = this.getLegendForCharacter(char);
-        for(var i = 0; i<legend.length; i++){
+        for (var i = 0; i < legend.length; i++) {
             state = legend[i]
-            if(result[state.name]){
+            if (result[state.name]) {
                 result[this.toHex(state.red, state.green, state.blue)] = result[state.name];
                 delete result[state.name];
             }
@@ -1439,7 +1507,7 @@ var start, stop
     /**
      * click on selected node again
      */
-    this.clickSelectedNode = function(){
+    this.clickSelectedNode = function () {
         var nodeId = this.getSelection();
         this.clickNode(nodeId.id);
     }
@@ -1449,26 +1517,27 @@ var start, stop
      * returns string
      * #aabbcc
      */
-    this.toHex = function(r,g,b){
+    this.toHex = function (r, g, b) {
         function componentToHex(c) {
-            if(typeof c != 'number'){
+            if (typeof c != 'number') {
                 c = parseInt(c);
             }
             var hex = c.toString(16);
             return hex.length == 1 ? "0" + hex : hex;
         }
-        return '#' + componentToHex(r)+componentToHex(g)+componentToHex(b);
+
+        return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
     }
 
-    this.linkout = function(name, obj){
+    this.linkout = function (name, obj) {
         var url = config.linkouts[name].url;
         var node = obj.$trigger.data("node");
-        url = url.replace("${name}",node.name.replace(' ','+'));
-        window.open(url,'_newtab');
+        url = url.replace("${name}", node.name.replace(' ', '+'));
+        window.open(url, '_newtab');
     }
-    this.linkoutDisabled = function(name, obj){
+    this.linkoutDisabled = function (name, obj) {
         var node = obj.$trigger.data('node');
-        if(node.data.leaf){
+        if (node.data.leaf) {
             return false;
         } else {
             return true;
@@ -1476,14 +1545,13 @@ var start, stop
     }
     jQuery.contextMenu({
         selector: '#' + config.injectInto + " canvas",
-//        selector:"#main",
         trigger: 'none',
         autoHide: false,
         build: function ($trigger, e) {
             var items = {
                 "info": {
                     name: "Expand/Collapse",
-                    callback: function(key, options) {
+                    callback: function (key, options) {
                         var node = $trigger.data("node");
                         st.setCollapsed(node);
                         var level = st.nodesExpCol(node);
@@ -1493,17 +1561,20 @@ var start, stop
                         st.computePositions(st.graph.getNode(st.root), '');
                         st.plot();
                     },
-                    disabled: function(key, options) {
+                    disabled: function (key, options) {
                         return false;
                     }
                 }
             }, link;
-            for ( var i in config.linkouts){
+            for (var i in config.linkouts) {
                 link = config.linkouts[i];
-                items[i] = {
-                    name: link.displayName,
-                    callback: pj.linkout,
-                    disabled: pj.linkoutDisabled
+                var node = $trigger.data('node');
+                if (node.data.leaf) {
+                    items[i] = {
+                        name: link.displayName,
+                        callback: pj.linkout,
+                        disabled: pj.linkoutDisabled
+                    }
                 }
             }
             return {
@@ -1516,47 +1587,59 @@ var start, stop
         }
     });
 
-    function initPopover(){
-        var pops = config.popOver, i,id;
-        if($.cookie('_pji') == "ok")    {
+    function initPopover() {
+        var pops = config.popOver, i, id;
+        if ($.cookie('_pji') == "ok") {
             return
         }
-        for(i=0;i<pops.length;i++){
+        for (i = 0; i < pops.length; i++) {
             id = pops[i].id
-            if(typeof id == "function"){
+            if (typeof id == "function") {
                 pops[i].id = id = id();
             }
             $(id).popover(pops[i].options);
             $(id).popover('show');
         }
-        $('body').on('click','.popover #pjPopOverClose', function(){
+        $('body').on('click', '.popover #pjPopOverClose', function () {
             console.log('clicked button')
             pj.popOver(false);
-            $.cookie('_pji',"ok")
+            $.cookie('_pji', "ok")
         })
     }
 
-    this.popOver = function(toggle){
-        var pops = config.popOver, i,id;
-        for(i=0;i<pops.length;i++){
+    this.popOver = function (toggle) {
+        var pops = config.popOver, i, id;
+        for (i = 0; i < pops.length; i++) {
             id = pops[i].id
-            if(typeof id == "function"){
+            if (typeof id == "function") {
                 id = id();
             }
-            if(toggle){
+            if (toggle) {
                 $(pops[i].id).popover('show');
             } else {
                 $(pops[i].id).popover('hide');
             }
         }
     }
-    this.on('treeloaded',initPopover);
+    this.on('treeloaded', initPopover);
 
 
-    $(window).on('hashchange',function(){
-        if(!config.setNodeToUrlFlag){
+    $(window).on('hashchange', function () {
+        if (!config.setNodeToUrlFlag) {
             pj.clickNode(pj.getNodeFromUrl())
         }
         config.setNodeToUrlFlag = false;
     })
+
+
+    // add this class to make the labels disappear outside the bounds of canvas
+    $('#' + config.injectInto).addClass('infovis');
+
+    console.log('before jit initialized')
+    console.log(config)
+    st = new $jit.Phylo(config);
+    navigation(config)
+    setTree(config)
+    setTitle(config);
+    console.log('after jit initialized')
 };

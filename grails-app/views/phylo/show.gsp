@@ -56,7 +56,9 @@
 
             <!-- Tab panes -->
             <div class="tab-content" style="position: relative">
-                <div role="tabpanel" class="tab-pane" id="character"></div>
+                <div role="tabpanel" class="tab-pane" id="character">
+                    <g:render template="character"></g:render>
+                </div>
 
                 <div role="tabpanel" class="tab-pane" id="mapTabContent">
                     <div id="map"></div>
@@ -268,7 +270,8 @@
             url: config.colorByUrl,
             drid: config.drid,
             defaultValue: 'taxon_name'
-        }
+        },
+        downloadReasonsUrl: config.downloadReasonsUrl
     });
 
     var habitat = new Habitat({
@@ -282,7 +285,7 @@
         listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
+        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
         graph: {
             url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
             type: 'GET',
@@ -297,7 +300,8 @@
             dataType: 'JSONP'
         },
         downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
-        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download'
+        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
+        downloadReasonsUrl: config.downloadReasonsUrl
     });
 
     var records = new Records({

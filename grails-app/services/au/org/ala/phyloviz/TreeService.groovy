@@ -171,7 +171,7 @@ class TreeService {
      *
      */
     def guessFormat(String tree) {
-        def formats = grailsApplication.config['treeFormats']
+        def formats = [ 'nexml', 'nexus', 'newick' ]
         def result;
         log.debug( formats )
         for (def i = 0; i < formats.size(); i++) {

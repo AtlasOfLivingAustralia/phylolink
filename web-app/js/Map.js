@@ -613,7 +613,7 @@ function Map(options) {
         };
     };
 
-    this.downloadViewModel = new utils.OccurrenceDownloadViewModel();
+    this.downloadViewModel = new utils.OccurrenceDownloadViewModel(options.downloadReasonsUrl);
     this.mapViewModel = new this.MapViewModel(this.downloadViewModel);
 
     this.initialiseBindings = function () {
