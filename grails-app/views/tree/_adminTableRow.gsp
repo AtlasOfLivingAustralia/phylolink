@@ -49,27 +49,16 @@
                           onComplete="jQuery('#promoteExpertTreeModal${tree.id}').modal('hide')">
                 <p>Promote this tree as an 'expert recommended tree'.</p>
 
-                <div class="form-horizontal">
                     <div class="control-group">
-                        <label for="expertTreeTaxonomy" class="control-label">Species covered</label>
-
-                        <div class="controls">
-                            <g:textField name="expertTreeTaxonomy" id="expertTreeTaxonomy" required="true"
-                                         value="${expertTreeTaxonomy}"/>
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label for="taxa${tree.id}" class="control-label">Select the taxa covered by this tree</label>
+                        <label for="taxa${tree.id}" class="control-label">Select the higher taxa covered by this tree</label>
 
                         <div class="controls">
                             <g:hiddenField id="lsid${tree.id}" name="expertTreeLSID"/>
-                            <g:textField id="taxa${tree.id}" type="text" name="expertTreeLSID12"
-                                         class="form-control" required="true"
+                            <g:textField id="taxa${tree.id}" type="text" name="expertTreeTaxonomy"
+                                         class="form-control input-xlarge" required="true" placeholder="e.g. 'Aves' for a tree of bird species"
                                          autocomplete="off" value="${expertTreeLSID}"/>
                         </div>
                     </div>
-                </div>
 
                 <g:hiddenField name="treeId" value="${tree.id}"/>
                 <g:submitButton name="toggleExpertTree" params="[treeId: tree.id]"
