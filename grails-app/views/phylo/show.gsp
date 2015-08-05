@@ -56,7 +56,9 @@
 
             <!-- Tab panes -->
             <div class="tab-content" style="position: relative">
-                <div role="tabpanel" class="tab-pane" id="character"></div>
+                <div role="tabpanel" class="tab-pane" id="character">
+                    <g:render template="characters"></g:render>
+                </div>
 
                 <div role="tabpanel" class="tab-pane" id="mapTabContent">
                     <div id="map"></div>
@@ -219,7 +221,8 @@
         charOnRequest: config.charOnRequest,
         charOnRequestBaseUrl: config.charOnRequestBaseUrl,
         charOnRequestParams: config.charOnRequestParams,
-        charOnRequestListKeys: config.charOnRequestListKeys
+        charOnRequestListKeys: config.charOnRequestListKeys,
+        treeId: "${phyloInstance.studyid}"
 
     });
     var map = new Map({

@@ -1,7 +1,9 @@
 package au.org.ala.phyloviz
 
+import grails.converters.JSON
 import grails.converters.XML
 import groovy.json.JsonSlurper
+import jade.tree.JadeTree
 import jade.tree.TreeReader
 import org.apache.commons.io.IOUtils
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
@@ -604,5 +606,32 @@ class TreeService {
             result.push(cv.convert(tree));
         }
         return result;
+    }
+
+    List getSpeciesNamesFromTree(Integer treeId) {
+        JadeTree tree = metricsService.getJadeTree(metricsService.treeProcessing(Tree.findById(treeId).tree))
+
+        metricsService.getLeafNames(tree)
+    }
+
+    /**
+     * Removes all character lists that do no contain any of the species in the specified tree
+     *
+     * @param treeId The ID of the tree to use for filtering
+     * @param characterLists Collection of character lists to be filtered
+     * @return Subset of the characterLists where at least 1 species in the tree is in each list
+     */
+    List filterCharacterListsByTree(Integer treeId, Collection characterLists) {
+        List speciesNames = getSpeciesNamesFromTree(treeId)
+
+        Map request = [scientificNames: speciesNames, drIds: characterLists.collect { it.dataResourceId }]
+
+        String url = "${grailsApplication.config.listToolBaseURL}/ws/speciesList/filter"
+
+        def filteredDrIds = webService.doJsonPost(url, (request as JSON).toString())?.data
+
+        characterLists.removeAll { !filteredDrIds.contains(it.dataResourceId) }
+
+        characterLists
     }
 }

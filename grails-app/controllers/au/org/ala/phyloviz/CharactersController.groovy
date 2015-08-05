@@ -4,6 +4,7 @@ import grails.converters.JSON
 
 class CharactersController {
 
+    TreeService treeService
     def charactersService
     def alaService
     def authService
@@ -12,17 +13,12 @@ class CharactersController {
      *
      * @return
      */
-    def list(){
-        def id = authService.getUserId()
-        log.debug(id)
-        def owner = Owner.findByUserId(id)
-        def lists = Characters.findAllByOwner(owner);
-        def slist = Characters.findAllByOwner(Owner.findByUserId(1));
-        lists.addAll(slist);
-        log.debug(lists)
-        def result = charactersService.getCharUrl(lists);
+    def list() {
+        List characterLists = charactersService.getCharacterListsByOwner()
 
-        if(params.callback){
+        List result = treeService.filterCharacterListsByTree(params.treeId, characterLists)
+
+        if (params.callback) {
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
             render(contentType: 'application/json', text: result as JSON)

@@ -92,44 +92,13 @@ class WebService implements InitializingBean {
         }
     }
 
-    def doJsonPost(String url, String path, String port, String postBody, String cookie) {
-        log.debug "postBody = " + postBody
-        def http = new HTTPBuilder(url)
-        http.request(groovyx.net.http.Method.POST, groovyx.net.http.ContentType.JSON) {
-            uri.path = path
-            if (port) {
-                uri.port = port as int
-            }
-
-            if(cookie){
-                headers['Cookie'] = cookie;
-            }
-
-            body = postBody
-            requestContentType = ContentType.JSON
-            response.success = { resp, json ->
-                log.debug "bulk lookup = " + json
-                return json
-            }
-
-            response.failure = { resp ->
-                def error = [error: "Unexpected error: ${resp.statusLine.statusCode} : ${resp.statusLine.reasonPhrase}"]
-                log.error "Oops: " + error.error
-                return error
-            }
-        }
-    }
-
-    /**
-     * do json post with cookie data provided
-     * @param url
-     * @param path
-     * @param port
-     * @param postBody
-     * @return
-     */
-    def doJsonPost(String url, String path, String port, String postBody) {
-        doJsonPost(url, path, port, postBody, null);
+    def doJsonPost(String url, body, Map query = null, Map headers = null, ContentType requestContentType = ContentType.JSON, ContentType responseContentType = ContentType.JSON) {
+        RESTClient client = new RESTClient(url)
+        client.post(headers: headers,
+                query: query,
+                requestContentType: requestContentType,
+                contentType: responseContentType,
+                body: body)
     }
 
     def doPost(String url, String path, String port, String postBody) {
