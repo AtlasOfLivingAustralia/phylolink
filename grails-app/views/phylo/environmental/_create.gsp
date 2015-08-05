@@ -8,6 +8,7 @@
         <input type="text" id="widgets[ID].displayname" name="widgets[ID].displayname" readonly="true" value=""/>
 </div>
 <div class="span4">
-        <input id="widgetautocompleteID" type="text" placeholder="Choose a layer here"/></div>
+        <input id="widgetautocompleteID" type="text" placeholder="Choose a layer here"
+               onfocus="clearPlaceholder(this)"/></div>
 </div>
 </script>

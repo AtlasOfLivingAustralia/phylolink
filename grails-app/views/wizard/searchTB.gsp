@@ -19,7 +19,8 @@
         <form class="form-search form-inline">
             %{--<label class="control-label" style="font-size: 16px">Search DB</label>--}%
             <div class="input-append">
-                <input id="searchTB" type="text" class="span2 search-query" placeholder="Search TreeBASE">
+                <input id="searchTB" type="text" class="span2 search-query" placeholder="Search TreeBASE"
+                       onfocus="clearPlaceholder(this)">
                 <button type="submit" class="btn" onclick="search(); return false;"><i class="icon-search"></i></button>
             </div>
         </form>

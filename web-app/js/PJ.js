@@ -188,6 +188,11 @@ var PJ = function (params) {
     var self = new Emitter(this);
     var pj = this;
     var qid, prevSearch;
+    
+    this.selectedDr = ko.observable('')
+    this.selectedClade = ko.observable('')
+    this.selectedCladeNumber = ko.observable(-1)
+    
     //adding support functions for event handling
     this.events = [
     /**
@@ -745,11 +750,11 @@ var PJ = function (params) {
 
         opt.codeBase = opt.codeBase || '';
         var navHTML2 = '<div style="position:relative">' +
-            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">' +
-            '<div class="input-append">' +
-            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree">' +
-            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>' +
-            '</div></div>' +
+            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">'+
+            '<div class="input-append">'+
+            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="clearPlaceholder(this)">'+
+            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>'+
+            '</div></div>'+
             '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="north"><i class="icon-arrow-up"' +
             ' aria-hidden="true"></i></div></div><div id="panleft" style="position: absolute; left: 4px; top: 56px;' +
@@ -1352,10 +1357,11 @@ var PJ = function (params) {
      * @param instance
      * @param drid
      */
-    this.setSaveQueryParams = function (type, instance, drid) {
+
+    this.setSaveQueryParams = function(type, biocacheServiceUrl, drid){
         config.saveQuery.data.speciesList = undefined;
         config.saveQuery.data.dataLocationType = type || 'ala';
-        config.saveQuery.data.instanceUrl = instance;
+        config.saveQuery.data.biocacheServiceUrl = biocacheServiceUrl;
         config.saveQuery.data.drid = drid;
     }
 

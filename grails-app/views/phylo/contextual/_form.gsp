@@ -32,7 +32,8 @@
                                             type="text"
                                             data-bind="attr:{id: displayNameId, name: displayNameId, value:displayname}"
                                             readonly="true"
-                                            value="" placeholder="Choose a layer using the button below"/>
+                                            value="" placeholder="Choose a layer using the button below"
+                                            onfocus="clearPlaceholder(this)"/>
 
                                     </div>
 

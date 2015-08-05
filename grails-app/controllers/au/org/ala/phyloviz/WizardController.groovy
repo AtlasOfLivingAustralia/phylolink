@@ -48,12 +48,22 @@ class WizardController {
     }
 
     def start() {
-        render(view: '/wizard/pick', contentType: 'text/html')
+        def userId = authService.getUserId()
+        
+        //number of trees for this user
+        def numberOfTrees = userId != null ? myTrees().trees.size() : 0
+        
+        //number of visualisations for this user
+        def numberOfVisualisations = userId != null ? myViz().viz.size() : 0
+        
+        render(view: '/wizard/pick', contentType: 'text/html', 
+                model: [numberOfTrees: numberOfTrees, numberOfVisualisations: numberOfVisualisations, loggedIn: userId != null])
     }
 
     def create() {
         userService.registerCurrentUser()
-        def user = Owner.findByUserId(authService.getUserId() ?: -1)
+        def userId = authService.getUserId()
+        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         log.debug('creating form for user: ' + authService.getUserId())
         if (user) {
             def tree = new Tree(params);
@@ -176,7 +186,7 @@ class WizardController {
         if (myViz.size() == 0) {
             flash.message = 'You have not created any visualisations.'
         }
-        [viz: myViz, name: name]
+        [viz: myViz, name: name, isDemonstration: false]
     }
 
 
@@ -213,6 +223,6 @@ class WizardController {
         if (myViz.size() == 0) {
             flash.message = 'You do not have any trees uploaded.'
         }
-        render(view:'myViz', model: [viz: myViz, name: 'Demonstration'])
+        render(view:'myViz', model: [viz: myViz, name: 'Demonstration', isDemonstration: true])
     }
 }

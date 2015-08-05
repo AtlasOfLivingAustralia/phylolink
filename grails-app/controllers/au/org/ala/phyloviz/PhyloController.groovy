@@ -33,13 +33,13 @@ class PhyloController extends BaseController {
 
         Boolean edit = false
         log.debug("user id : ${userId instanceof String}")
-        log.debug("owner id: ${phyloInstance.getOwner().userId}");
-        if( phyloInstance.getOwner().userId == userId ){
+        log.debug("owner id: ${phyloInstance.getOwner()?.userId}");
+        if( phyloInstance.getOwner()?.userId == userId && userId != null){
             edit = true
             log.debug('editable');
         }
 
-        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit]
+        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid()]
     }
 
     def create() {
@@ -302,7 +302,7 @@ class PhyloController extends BaseController {
         if (!params.qid) {
             badRequest "qid is a required parameter"
         } else {
-            def data = webService.get("${grailsApplication.config.biocache.occurrence.download.url}?q=qid:${params.qid}")
+            def data = webService.get("${params.biocacheServiceUrl}?q=qid:${params.qid}")
 
             response.setHeader('Content-disposition', 'attachment; filename=data.csv')
             render(contentType: 'text/plain', text: data)

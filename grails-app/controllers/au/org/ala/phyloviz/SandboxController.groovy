@@ -30,8 +30,10 @@ class SandboxController {
     def dataresourceInfo(){
         def owner = authService.getUserId();
         def druid = params.druid;
-        def source = grailsApplication.config.sandboxUrl;
-        def result = sandboxService.getDataresourceInfo(druid, owner, source);
+        def phyloId = params.phyloId;
+        def biocacheServiceUrl = grailsApplication.config.sandboxBiocacheServiceUrl;
+        def biocacheHubUrl = grailsApplication.config.sandboxHubUrl;
+        def result = sandboxService.getDataresourceInfo(druid, owner, biocacheServiceUrl, biocacheHubUrl, phyloId);
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
@@ -45,6 +47,9 @@ class SandboxController {
     def allDataresourceInfo(){
         def userId = authService.getUserId();
         def result = sandboxService.getAllDataresourceInfo(userId);
+        if (userId == null) {
+            result.addAll(sandboxService.getAllDataresourceInfoByPhyloId(params?.phyloId))
+        }
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {

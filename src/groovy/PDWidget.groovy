@@ -22,6 +22,7 @@ class PDWidget implements WidgetInterface{
     def alaController
     def phyloController
     def dr
+    def biocacheServiceUrl
 
     PDWidget(config , grailsApplication, webService, utilsService, applicationContext){
         this.webService = webService;
@@ -34,6 +35,7 @@ class PDWidget implements WidgetInterface{
         this.regions = JSON.parse( config.data )
         this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
         this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
+        this.biocacheServiceUrl = config.biocacheServiceUrl?:this.grailsApplication.config.biocacheServiceUrl
     }
 
     PDWidget(config , grailsApplication, webService, utilsService, applicationContext, dr){
@@ -48,6 +50,7 @@ class PDWidget implements WidgetInterface{
         this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
         this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
         this.dr = dr
+        this.biocacheServiceUrl = config.biocacheServiceUrl?:this.grailsApplication.config.biocacheServiceUrl
     }
 
     def getViewFile(){
@@ -69,7 +72,7 @@ class PDWidget implements WidgetInterface{
             def th
             th = Thread.start {
                 def speciesList,pd ;
-                speciesList = this.getSpeciesList( r.code );
+                speciesList = this.getSpeciesList( r.code, biocacheServiceUrl );
                 log.debug( r.code )
                 log.debug( 'convert to array ' + r.code)
                 log.debug( speciesList )
@@ -96,9 +99,9 @@ class PDWidget implements WidgetInterface{
 
     }
 
-    def getSpeciesList( region ){
+    def getSpeciesList( region, biocacheServiceUrl ){
         def startTime, deltaTime;
-        def url = grailsApplication.config.speciesListUrl;
+        def url = grailsApplication.config.speciesListUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl);
 
         if( dr ){
             url = grailsApplication.config.drUrl

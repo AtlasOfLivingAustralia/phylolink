@@ -5,7 +5,8 @@
 
     <div class="controls ${hasErrors(bean: tree, field: 'tree', 'error')}">
         <g:textArea name="tree" class="field span8" rows="8" value="${tree?.tree}"
-                    placeholder="(Acacia_semicircinalis:0.03434179368091353,(Acacia_adinophylla:0.01786382226553121,Acacia_aphanoclada:0.027802263108902575));"/>
+                    placeholder="(Acacia_semicircinalis:0.03434179368091353,(Acacia_adinophylla:0.01786382226553121,Acacia_aphanoclada:0.027802263108902575));"
+                    onfocus="clearPlaceholder(this)" />
                     <div class="row-fluid">Or, upload a file: <input type="file" name="file" value="Upload"/></div>
 
                 </div>
@@ -27,7 +28,8 @@
 
     <div class="controls ${hasErrors(bean: tree, field: 'reference', 'error')}">
         <g:textArea name="reference" class="span8" value="${tree?.reference}"
-        placeholder="Miller, J. T., Murphy, D. J., Brown, G. K., Richardson, D. M. and González-Orozco,C. E. (2011), The evolution and phylogenetic placement of invasive Australian Acacia species. Diversity and Distributions, 17: 848–860. doi: 10.1111/j.1472-4642.2011.00780.x"/>
+        placeholder="Miller, J. T., Murphy, D. J., Brown, G. K., Richardson, D. M. and González-Orozco,C. E. (2011), The evolution and phylogenetic placement of invasive Australian Acacia species. Diversity and Distributions, 17: 848–860. doi: 10.1111/j.1472-4642.2011.00780.x"
+        onfocus="clearPlaceholder(this)"/>
     </div>
 </div>
 
@@ -35,7 +37,8 @@
     <label class="control-label" for="title">Publication title</label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'title', 'error')}">
-        <g:textField name="title" class="span8" value="${tree?.title}" required="" placeholder="The evolution and phylogenetic placement of invasive Australian Acacia species."/>
+        <g:textField name="title" class="span8" value="${tree?.title}" required="" placeholder="The evolution and phylogenetic placement of invasive Australian Acacia species."
+        onfocus="clearPlaceholder(this)"/>
     </div>
 </div>
 
@@ -43,7 +46,8 @@
     <label class="control-label" for="year">Publication year</label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'year', 'error')}">
-        <g:textField name="year" class="span2" value="${tree?.year?:''}" placeholder="2011"/>
+        <g:textField name="year" class="span2" value="${tree?.year?:''}" placeholder="2011"
+         onfocus="clearPlaceholder(this)"/>
     </div>
 </div>
 
@@ -51,7 +55,8 @@
     <label class="control-label" for="doi">Publication DOI</label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'doi', 'error')}">
-        <g:textField name="doi" class="span8" value="${tree?.doi}" placeholder="10.1111/j.1472-4642.2011.00780.x"/>
+        <g:textField name="doi" class="span8" value="${tree?.doi}" placeholder="10.1111/j.1472-4642.2011.00780.x"
+         onfocus="clearPlaceholder(this)"/>
     </div>
 
     %{--<div id="doiField" class="span4">--}%

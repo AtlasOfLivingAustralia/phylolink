@@ -13,6 +13,7 @@
         border-right: thin solid;
     }
     </style>
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'PhyloJive.css')}" type="text/css" media="screen"/>
 </head>
 <body>
 <div class="container"  style="min-height: 700px">
@@ -34,12 +35,17 @@
                 <div class="controls">
                         <div class="row-fluid">
                             <div class="span3 verticalLine">
-                                <label class="radio"><input type="radio" name="options" value="expertTrees" required=""> Expert suggested tree</label>
-                                <label class="radio"><input type="radio" name="options" value="myTrees" required=""> My trees</label>
-                                <label class="radio"><input type="radio" name="options" value="addTree" required=""> Add a tree</label>
+                                
+                                <label class="radio"><input type="radio" name="options" value="expertTrees" required=""> Expert suggested tree</input></label>
+                                <label class="radio" <g:if test="${!loggedIn}">disabled</g:if>><input <g:if test="${!loggedIn}">disabled</g:if>
+                                                            type="radio" name="options" value="addTree" required=""> Add a tree
+                                    <g:if test="${!loggedIn}"> (login required)</g:if></input></label>
+                                <label class="radio" <g:if test="${numberOfTrees <= 0}">disabled</g:if>><input <g:if test="${numberOfTrees <= 0}">disabled</g:if>
+                                                            type="radio" name="options" value="myTrees" required=""> My trees</input></label>
                             </div>
                             <div class="span5">
-                                <label class="radio"><input type="radio" name="options" value="myViz" required=""> My visualisations</label>
+                                <label class="radio" <g:if test="${numberOfVisualisations <= 0}">disabled</g:if>><input <g:if test="${numberOfVisualisations <= 0}">disabled</g:if>
+                                                            type="radio" name="options" value="myViz" required=""> My visualisations</label>
                                 <label class="radio"><input type="radio" name="options" value="demo" required=""> Example demonstrations</label>
                                 <g:if test="${params.isAdmin}">
                                     <label class="radio"><input type="radio" name="options" value="treeAdmin" required=""> Tree administration</label>

@@ -41,7 +41,8 @@ var Records = function (c) {
         this.title = ko.observable(opt.title||'');
         this.scName = ko.observable(opt.scName||'');
         this.drid = ko.observable(opt.drid||undefined);
-        this.instanceUrl = ko.observable(opt.instanceUrl||'');
+        this.biocacheServiceUrl = ko.observable(opt.biocacheServiceUrl||'');
+        this.biocacheHubUrl = ko.observable(opt.biocacheHubUrl||'');
         this.layerUrl = ko.observable(opt.layerUrl||'');
         this.type = ko.observable(opt.type||'');
     };
@@ -367,9 +368,9 @@ var Records = function (c) {
     this.updateMap = function(){
         var sel = dataresourceViewModel.selectedValue();
         var layer = sel.layerUrl(),
-            instanceUrl = sel.instanceUrl();
+            biocacheServiceUrl = sel.biocacheServiceUrl();
         pj.clearQid();
-        pj.setSaveQueryParams(sel.type(), instanceUrl, sel.drid());
+        pj.setSaveQueryParams(sel.type(), biocacheServiceUrl, sel.drid());
         map.setDataSource(sel.type());
         // saving query to server is only done when this flag is set. otherwise, query parameters are sent on
         // all get request.
@@ -378,6 +379,11 @@ var Records = function (c) {
         }
         map.setLayerUrl(layer);
         pj.clickSelectedNode();
+        if (sel.title().endsWith('(All data)')) {
+            pj.selectedDr(sel.title())
+        } else {
+            pj.selectedDr(sel.title() + ' (uploaded occurrences)')
+        }
     }
 
     /**

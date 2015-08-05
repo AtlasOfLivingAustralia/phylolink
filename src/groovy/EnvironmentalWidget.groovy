@@ -14,6 +14,7 @@ class EnvironmentalWidget implements  WidgetInterface{
     def layer
     def region
     def alaController
+    def biocacheServiceUrl
 
     EnvironmentalWidget(config , grailsApplication, webService, utilsService, applicationContext){
         this.webService = webService;
@@ -24,6 +25,7 @@ class EnvironmentalWidget implements  WidgetInterface{
         this.layer = config.config?:''
         this.region = config.region?:''
         this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
+        this.biocacheServiceUrl = config.biocacheServiceUrl?:this.grailsApplication.config.biocacheServiceUrl
     }
 
     def getViewFile(){
@@ -37,10 +39,10 @@ class EnvironmentalWidget implements  WidgetInterface{
     def process( data , phylo){
         def summary;
         if(data.q){
-            summary = alaController.getQidIntersections( data.q, this.layer, this.region );
+            summary = alaController.getQidIntersections( data.q, this.layer, this.region, this.biocacheServiceUrl );
         } else if(data.speciesList){
             data.speciesList = JSON.parse( data.speciesList?:'[]' );
-            summary = alaController.getIntersections( data.speciesList, this.layer, this.region );
+            summary = alaController.getIntersections( data.speciesList, this.layer, this.region, this.biocacheServiceUrl );
         }
 
         def output = [:]

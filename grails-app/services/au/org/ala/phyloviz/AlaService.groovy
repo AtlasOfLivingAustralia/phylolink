@@ -93,6 +93,16 @@ class AlaService {
         }
         return result;
     }
+    
+    def i18nProperties
+    def i18n() {
+        if (i18nProperties == null || i18nProperties.size() == 0) {
+            def p = new Properties()
+            p.load(new StringReader(webService.get(grailsApplication.config.biocacheServiceUrl + '/facets/i18n')))
+            i18nProperties = p
+        }
+        i18nProperties
+    }
 
     def getFacetElements(keyValues) {
         def results = [], temp;
@@ -108,9 +118,26 @@ class AlaService {
         }
         return results;
     }
+    
+    def getFacets(baseUrl) {
+        def results = []
+        
+        def url = "${baseUrl}/search/grouped/facets";
+        def facets = webService.get(url);
+        facets = JSON.parse(facets);
+        
+        //merge with group names
+        facets.each { g ->
+            g.facets.each { f ->
+                results.add([group: g.title, name: f.field, displayName: i18n().getAt('facet.' + f.field) ?: f.field])
+            }
+        }
+        
+        results
+    }
 
     def getDynamicFacets(baseUrl, drid) {
-        def url = "${baseUrl}/ws/upload/dynamicFacets?q=${drid}";
+        def url = "${baseUrl}/upload/dynamicFacets?q=${drid}";
         def facets = webService.get(url);
         facets = JSON.parse(facets);
         def result = [];
@@ -124,7 +151,7 @@ class AlaService {
     }
 
     def getFields() {
-        def url = "http://biocache.ala.org.au/ws/index/fields"
+        def url = grailsApplication.config.biocacheServiceUrl + "/index/fields"
         def fields = JSON.parse(webService.get(url));
         fields.eachWithIndex { def field, int i ->
             field['displayName'] = field['description'];
@@ -161,7 +188,7 @@ class AlaService {
     }
 
     def getSandboxPoints(baseUrl, q, fq) {
-        def url = "${baseUrl}/ws/occurrences/search";
+        def url = "${baseUrl}/occurrences/search";
         def p = [];
         if (!q?.endsWith('q=')) {
             p.push(q)
@@ -182,41 +209,9 @@ class AlaService {
     }
 
     def getSandboxFacets(baseUrl, q, fq) {
-        def result = getSandboxPoints(baseUrl, q, fq)
-        result = getFacetElements(result);
+        def result = getFacets(baseUrl);
         def dFacets = getDynamicFacets(baseUrl, q);
         return result.plus(dFacets);
-    }
-
-    def getAlaPoints(q, fq) {
-        def url = grailsApplication.config['occurrencesSearch'];
-        def p = [];
-        if(!( q == 'q=' || q == '')){
-
-            if (q?.startsWith('q=')) {
-                p.push(q)
-            } else if (!q?.startsWith('q=')) {
-                p.push('q=' + q)
-            }
-
-            if (fq?.startsWith('fq=')) {
-                p.push(fq);
-            } else if (!fq?.startsWith('fq=')) {
-                p.push('fq=' + fq)
-            }
-        } else {
-            p.push('q='+fq?.replaceFirst('fq=',''));
-        }
-
-        url = "${url}?${p.join('&')}".replace(' ', '+');
-        def result = webService.get(url);
-        result = JSON.parse(result);
-        return result;
-    }
-
-    def getAlaFacets(q, fq) {
-        def result = getAlaPoints(q, fq);
-        return getFacetElements(result);
     }
 
     /**
@@ -253,20 +248,14 @@ class AlaService {
     /**
      *
      */
-    def saveQuery(JSONArray clade, String dataLocationType, String serverInstance, String drid, String matchingCol) {
-        def data, url = grailsApplication.config.qidUrl,
+    def saveQuery(JSONArray clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol) {
+        def data, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
             fq;
         matchingCol = matchingCol ?: 'taxon_name';
         data = filterQuery(clade, null, matchingCol);
         if (drid != null && !drid.isEmpty()) {
             fq = data;
             data = "data_resource_uid:${drid}"
-        }
-
-        switch (dataLocationType) {
-            case 'sandbox':
-                url = sandboxService.getQidUrl(serverInstance);
-                break;
         }
 
         return getQid(data, url, fq);
@@ -279,6 +268,15 @@ class AlaService {
      */
     def getQid(String q, String url, String fq) {
         NameValuePair[] nameValuePairs = new NameValuePair[2];
+        
+        //truncate q OR terms to avoid SOLR error
+        //TODO: rewrite all biocache/ws usage to collate multiple qid queries to avoid loss of OR terms
+        def qsplit = q.split(' OR ')
+        if (qsplit.length >= grailsApplication.config.biocache.maxBooleanClauses) {
+            qsplit = (qsplit as List).subList(0, grailsApplication.config.biocache.maxBooleanClauses)
+            q = (qsplit as List).join(' OR ')
+            if (q.startsWith('(')) q += ')'
+        }
         nameValuePairs[0] = new NameValuePair("q", q);
         nameValuePairs[1] = new NameValuePair("fq", fq);
         return webService.postNameValue(url, nameValuePairs);
@@ -386,7 +384,7 @@ class AlaService {
     /**
      * function that calls respective function to upload data
      */
-    def uploadData(String type, String title, String scName, File file, String cookie) {
+    def uploadData(String type, String title, String scName, File file, String cookie, String phyloId) {
         def result;
 
         switch (type) {
@@ -406,7 +404,7 @@ class AlaService {
                     return ['error': 'No species name or otu number provided', 'message': 'Please select from the list provided.']
                 }
 
-                result = sandboxService.upload(file, title, scName);
+                result = sandboxService.upload(file, title, scName, phyloId);
                 break;
         }
 
@@ -418,9 +416,14 @@ class AlaService {
      * @param userId
      * @return
      */
-    def getRecordsList(userId){
+    def getRecordsList(userId, phyloId){
         def result = [grailsApplication.config.alaDataresourceInfo];
-        result.addAll( sandboxService.getAllDataresourceInfo(userId) );
+        if (userId != null) {
+            result.addAll(sandboxService.getAllDataresourceInfo(userId));
+        } else {
+            //add phyloId instance uploads when no user is logged in
+            result.addAll(sandboxService.getAllDataresourceInfoByPhyloId(phyloId))
+        }
         result
     }
 
@@ -433,21 +436,12 @@ class AlaService {
      * @param cm
      * @return
      */
-    List getLegends(String source, String q, String fq, String type, String cm, String instanceUrl){
+    List getLegends(String source, String q, String fq, String type, String cm, String biocacheHubUrl){
         List result = [];
         String url;
         List params = [];
         type = type?:'application/json';
-        switch (source){
-            case 'sandbox':
-                String legendSandbox = grailsApplication.config.legendSandbox;
-                legendSandbox = legendSandbox.replace('INSTANCEURL', instanceUrl);
-                url = legendSandbox;
-                break;
-            case 'ala':
-                url = grailsApplication.config.legendAla;
-                break;
-        }
+        url = grailsApplication.config.legendAla.replace('BIOCACHE_HUB', biocacheHubUrl);
 
         params.push("cm=${cm}");
         params.push("type=${type}");

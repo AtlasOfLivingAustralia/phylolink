@@ -20,10 +20,14 @@ class AlaController {
 
     }
 
-    def getOccurrenceRecords(speciesName, layer, region){
+    def getOccurrenceRecords(speciesName, layer, region, biocacheServiceUrl){
         layer = layer ?: ''
         region = region ?: ''
-        def occurrenceUrl = this.grailsApplication.config.occurrences.replace('SEARCH', speciesName.encodeAsURL()).replace('LAYER',layer.encodeAsURL()).replace('REGION',region.encodeAsURL())
+        def occurrenceUrl = this.grailsApplication.config.occurrences.
+                replace("BIOCACHE_SERVICE", biocacheServiceUrl).
+                replace('SEARCH', speciesName.encodeAsURL()).
+                replace('LAYER',layer.encodeAsURL()).
+                replace('REGION',region.encodeAsURL())
         def occurrencesResult = JSON.parse( webService.get( occurrenceUrl ) );
         return occurrencesResult;
     }
@@ -46,11 +50,11 @@ class AlaController {
         return summary
     }
 
-    def getIntersections( species, layer, region ){
+    def getIntersections( species, layer, region, biocacheServiceUrl ){
         def summary = []
         def occurrencesResult
         for( speciesName in species ){
-            occurrencesResult = this.getOccurrenceRecords( speciesName, layer, region)
+            occurrencesResult = this.getOccurrenceRecords( speciesName, layer, region, biocacheServiceUrl)
             summary.addAll( this.extractFacets( occurrencesResult, speciesName ))
         }
         return  summary;
@@ -63,10 +67,10 @@ class AlaController {
      * @param region
      * @return
      */
-    def getQidIntersections( qid, layer, region ){
+    def getQidIntersections( qid, layer, region, biocacheServiceUrl ){
         def summary = []
         def occurrencesResult
-        occurrencesResult = this.getOccurrenceRecords( qid, layer, region)
+        occurrencesResult = this.getOccurrenceRecords( qid, layer, region, biocacheServiceUrl)
         summary.addAll( this.extractFacets( occurrencesResult, qid ))
         return  summary;
     }
@@ -76,8 +80,9 @@ class AlaController {
         def download = params.download?:"false"
         def layer = params.layer
         def region = params.region
+        def biocacheServiceUrl = params.biocacheServiceUrl
         download = download.toBoolean();
-        def data = this.getIntersections( species, layer, region )
+        def data = this.getIntersections( species, layer, region, biocacheServiceUrl )
 
         if( download ){
             response.setHeader('Content-disposition','attachment; filename=data.csv')
@@ -244,16 +249,10 @@ class AlaController {
     def facets(){
         def drid = params.drid
         def source = params.source;
-        def baseUrl = params.serverInstance;
+        def baseUrl = params.biocacheServiceUrl;
         def result ;
-        switch (source){
-            case 'sandbox':
-                result = alaService.getSandboxFacets(baseUrl, params.q, params.fq);
-                break;
-            case 'ala':
-                result = alaService.getAlaFacets(params.q, params.fq);
-                break;
-        }
+        result = alaService.getSandboxFacets(baseUrl, params.q, params.fq);
+        
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
@@ -267,14 +266,14 @@ class AlaController {
     def saveQuery(){
         String list = params.speciesList?:'[]';
         String dataLocationType = params.dataLocationType?:'ala';
-        String serverInstance = params.instanceUrl;
+        String biocacheServiceUrl = params.biocacheServiceUrl;
         String matchingCol = params.matchingCol;
         String drid = params.drid;
         log.debug(list);
         def json = JSON.parse(list);
         def result;
         if(json){
-            result = alaService.saveQuery(json, dataLocationType, serverInstance, drid, matchingCol);
+            result = alaService.saveQuery(json, dataLocationType, biocacheServiceUrl, drid, matchingCol);
             result = [qid: result];
             if(params.callback){
                 render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
@@ -323,7 +322,7 @@ class AlaController {
         colIndex = formParams['column']['id']
         colName  = formParams['column']['displayname']
         reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
-        result = alaService.createList(reader, title, colIndex, cookie);
+        result = alaService.createList(reader, title, colIndex, cookie, phyloId);
         if(result?.druid){
             def url = getUrl(result.druid);
             id = result.id
@@ -378,10 +377,11 @@ class AlaController {
         String title = params.title;
         String scientificName = params.scientificName;
         String cookie = request.getHeader('Cookie')
+        String phyloId = params?.phyloId
 
         CommonsMultipartFile file = request.getFile('file');
         File tempFile = utilsService.getFileFromCommonsMultipartFile(file);
-        result = alaService.uploadData(type, title, scientificName, tempFile, cookie);
+        result = alaService.uploadData(type, title, scientificName, tempFile, cookie, phyloId);
         if( result.error ){
             render(status: 405, contentType: 'application/json', text: result as JSON);
         } else{
@@ -395,7 +395,7 @@ class AlaController {
      */
     def getRecordsList(){
         def userId = authService.getUserId();
-        def result = alaService.getRecordsList(userId);
+        def result = alaService.getRecordsList(userId, params.phyloId);
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
@@ -413,8 +413,8 @@ class AlaController {
         String type = params.type;
         String q = params.q;
         String fq = params.fq;
-        String instanceUrl = params.instanceUrl;
-        def result = alaService.getLegends(source, q, fq, type, cm, instanceUrl);
+        String biocacheHubUrl = params.biocacheHubUrl;
+        def result = alaService.getLegends(source, q, fq, type, cm, biocacheHubUrl);
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {

@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import net.sf.json.JSONObject
+import org.apache.commons.io.FileUtils
 import org.apache.commons.logging.LogFactory
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
@@ -300,9 +301,11 @@ class UtilsService {
      */
     def getFileFromCommonsMultipartFile(file) {
         def is = file.getInputStream(), path = null;
-        if (is instanceof FileInputStream) {
-            path = is.path;
-        } else if (is instanceof ByteArrayInputStream) {
+        if( is instanceof FileInputStream){
+            def tmp = File.createTempFile('upload','tmp')
+            FileUtils.copyInputStreamToFile(is, tmp)
+            path = tmp.path;
+        } else if( is instanceof ByteArrayInputStream){
             path = file.getFileItem()?.tempFile?.path;
         }
 

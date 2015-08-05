@@ -10,7 +10,9 @@ class ConvertSandbox extends ConvertDomainObject {
                 'drid'          : 'drid',
                 'scientificName': 'scientificName',
                 'serverInstance': 'instanceUrl',
-                'title'         : 'title'
+                'title'         : 'title',
+                'biocacheServiceUrl': 'biocacheServiceUrl',
+                'biocacheHubUrl': 'biocacheHubUrl'
         ]
     }
 
@@ -20,7 +22,7 @@ class ConvertSandbox extends ConvertDomainObject {
     }
 
     def addProperties(obj){
-        obj['layerUrl'] = obj['instanceUrl'] + "/ws/webportal/wms/reflect";
+        obj['layerUrl'] = obj['biocacheServiceUrl'] + "/webportal/wms/reflect";
         obj['type'] = 'sandbox';
         return obj;
     }

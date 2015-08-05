@@ -249,7 +249,8 @@ class TreeService {
         log.debug('in create tree instance function:' + authService.getUserId())
         treep.created = new Date()
 //        userService.registerCurrentUser()
-        def user = Owner.findByUserId( authService.getUserId()?:-1 )
+        def userId = authService.getUserId()
+        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
 
         log.debug( user.toString() )
         if( treep.tree && treep.treeFormat && user ){
@@ -583,7 +584,7 @@ class TreeService {
         Owner user;
 
         if( userId ){
-            user = Owner.findByUserId(userId)
+            user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         } else {
             return [ 'message' : 'Cannot find your user details on system. Contact adminstrator.' ];
         }
@@ -612,7 +613,7 @@ class TreeService {
      */
     def getCurrentOwner(){
         def id = authService.getUserId()
-        Owner.findByUserId(id)
+        id != null ? Owner.findByUserId(id) : Owner.findByDisplayName('Guest')
     }
 
     def search(String q){
