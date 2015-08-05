@@ -7,7 +7,9 @@ function Map(options) {
     new Emitter(this);
     var that = map = this;
     var i,
-        records;
+        records,
+        xhrColorBy,
+        xhrLegend;
     var $ = jQuery;
     options = $.extend({
         type: 'GET',
@@ -320,7 +322,7 @@ function Map(options) {
 
         }
 
-        $.ajax({
+        xhrColorBy = $.ajax({
             url: url,
             data: data,
             method: 'POST',
@@ -376,7 +378,7 @@ function Map(options) {
 
         // if cm is not defined, this url will produce an error.
         if (data.cm) {
-            $.ajax({
+            xhrLegend  = $.ajax({
                 url: url,
                 data: data,
                 success: function (data) {
@@ -570,6 +572,13 @@ function Map(options) {
            'name': character.name,
            'type': 'character'
        }
+    }
+
+    this.abortRequests = function(){
+        xhrColorBy && xhrColorBy.abort();
+        xhrColorBy = null;
+        xhrLegend && xhrLegend.abort();
+        xhrLegend = null;
     }
 
     options.character && options.character.on('treecolored', function () {
