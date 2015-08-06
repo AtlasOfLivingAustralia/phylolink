@@ -42,20 +42,20 @@
                         View an example demonstration <a href="${createLink(controller: 'phylo',action: 'show')}/${demoId}"> here</a>. Or, view screencast on how to view phylolink <a href="#myModal" role="button"  data-toggle="modal">here</a>.
                     </p>
                     <br/>
-                    <div class="button-toolbar row-fluid">
-                        <button type="button" style="height: 40px" class="btn btn-primary btn-lg btn-block"
+                    <div class="text-center padding-top-1">
+                        <button type="button" style="height: 40px; width: 80%" class="btn btn-primary btn-lg"
                                 onclick="window.location = '${createLink(controller: 'wizard', action: 'start')}'">Start Phylolink</button>
                     </div>
                     <br/>
-                    <div class="button-toolbar row-fluid">
-                        <button type="button" style="height: 40px" class="btn btn-primary btn-lg btn-block" onclick="window.location ='http://www.ala.org.au/explore-phylogenetic-diversity/'">Explore Phylogenetic Diversity</button>
+                    <div class="text-center">
+                        <button type="button" style="height: 40px; width: 80%" class="btn btn-primary btn-lg" onclick="window.location ='http://www.ala.org.au/explore-phylogenetic-diversity/'">Explore Phylogenetic Diversity</button>
                     </div>
                     <br/>
 
-                    <div class="well">
-                        <h4 class="heading-xsmall">Collaborators and acknowledgement:</h4>
+                    <div class="well margin-top-3">
+                        <h5>Collaborators and acknowledgement:</h5>
 
-                        <p class="font-xsmall">These tools are the result of a collaboration between scientists, the creators of PhyloJIVE and the Atlas of Living Australia. The tools have been developed by Temi Varghese, Rebecca Pirzl, Adam Collins, Nick dos Remedios and Dave Martin, with advice from Joe Miller, Craig Moritz, Dan Rosauer and Garry Jolley-Rogers.</p>
+                        <p class="small">These tools are the result of a collaboration between scientists, the creators of PhyloJIVE and the Atlas of Living Australia. The tools have been developed by Temi Varghese, Rebecca Pirzl, Adam Collins, Nick dos Remedios and Dave Martin, with advice from Joe Miller, Craig Moritz, Dan Rosauer and Garry Jolley-Rogers.</p>
                     </div>
                 </div>
             </div>
@@ -68,8 +68,6 @@
     </div>
 </div>
 
-</div>
-</div>
 <div id="myModal" class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

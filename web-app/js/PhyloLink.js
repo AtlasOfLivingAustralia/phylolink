@@ -1190,7 +1190,6 @@ function phylogenyExplorer_init(initial) {
                     }
                     result.push(html);
                 }
-                result.push('[click for actions &amp; more info]');
                 div.innerHTML = name + result.join('<br/>') + maptitle + url;
             }
         },
