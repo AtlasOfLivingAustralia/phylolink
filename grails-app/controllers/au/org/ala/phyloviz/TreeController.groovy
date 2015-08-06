@@ -1,11 +1,17 @@
 package au.org.ala.phyloviz
+
+import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.apache.http.client.HttpResponseException
+
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST
+
 /**
  * Created by Temi Varghese
  */
 
-class TreeController {
+class TreeController extends BaseController {
     def utilsService
     def opentreeService
     def treeService
@@ -249,7 +255,7 @@ class TreeController {
      * get tree
      */
     def getTreeNexml(Tree tree){
-        render(text: tree.getTree(), contentType: 'text/plain')
+        render(text: tree?.getTree(), contentType: 'text/plain')
     }
 
     /**
@@ -290,6 +296,24 @@ class TreeController {
             render( contentType: 'text/plain', text:tree.getTree());
         } else {
             render(contentType: 'text/plain', fileName:'tree.txt', text: 'An error occurred or you are not authorized to access this tree.');
+        }
+    }
+
+    @AlaSecured(value = ["ROLE_ADMIN", "ROLE_PHYLOLINK_ADMIN"], redirectUri = "/403", anyRole = true)
+    def treeAdmin() {
+        List publicTrees = treeService.getPublicTrees()
+
+        render view: "admin", model: [trees: publicTrees]
+    }
+
+    @AlaSecured(value = ["ROLE_ADMIN", "ROLE_PHYLOLINK_ADMIN"], redirectUri = "/403", anyRole = true)
+    def toggleExpertTree() {
+        if (!params.treeId) {
+            badRequest "treeId is a required parameter"
+        } else {
+            Tree tree = treeService.toggleExpertTree(params.treeId, params.expertTreeTaxonomy, params.expertTreeLSID, params.expertTreeId)
+
+            render template: "adminTableRow", model: [tree: tree]
         }
     }
 }

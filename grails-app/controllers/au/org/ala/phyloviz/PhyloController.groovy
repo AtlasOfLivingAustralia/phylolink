@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.*
 /**
  * Created by Temi Varghese on 19/06/2014.
  */
-class PhyloController {
+class PhyloController extends BaseController {
     def webService;
     def utilsService
     def userService
@@ -279,20 +279,6 @@ class PhyloController {
     }
 
     /**
-     * gets habitats json string
-     * @param phyloInstance
-     * @return
-     */
-    def getHabitatInit(Phylo phyloInstance){
-        String meta = JSON.parse( phyloInstance.getHabitat() );
-        if(params.callback){
-            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
-        } else {
-            render(contentType: 'application/json', text: meta as JSON);
-        }
-    }
-
-    /**
      * save the habitats json string into database
      * @param phyloInstance
      * @return
@@ -306,20 +292,6 @@ class PhyloController {
     }
 
     /**
-     * gets habitats json string
-     * @param phyloInstance
-     * @return
-     */
-    def getCharacters(Phylo phyloInstance){
-        String meta = JSON.parse( phyloInstance.getCharacters() );
-        if(params.callback){
-            render(contentType: 'text/javascript', text: "${params.callback}(${meta as JSON})");
-        } else {
-            render(contentType: 'application/json', text: meta as JSON);
-        }
-    }
-
-    /**
      * start page for phylolink
      */
     def startPage(){
@@ -328,8 +300,7 @@ class PhyloController {
 
     def downloadMapData() {
         if (!params.qid) {
-            response.status = SC_BAD_REQUEST
-            response.sendError(SC_BAD_REQUEST, "qid is a required parameter")
+            badRequest "qid is a required parameter"
         } else {
             def data = webService.get("${grailsApplication.config.biocache.occurrence.download.url}?q=qid:${params.qid}")
 

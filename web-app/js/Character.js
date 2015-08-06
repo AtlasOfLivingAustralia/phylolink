@@ -104,6 +104,8 @@ var Character = function (options) {
         minUploadId = 'minimizeUpload';
     var pj = options.pj;
     var characterListLoaded = false;
+    var input = $('#' + inputId);
+    var characterList = [], charJson;
 
     //check bootstrap version
     switch (options.bootstrap){
@@ -115,9 +117,6 @@ var Character = function (options) {
             //  use default value
             break;
     }
-
-    var input = $('#' + inputId);
-    var characterList = [], charJson;
 
     // knockout code
     var Character = function (opt) {
@@ -155,7 +154,7 @@ var Character = function (options) {
         self.count = ko.observable(1);
         self.selectedCharacter = ko.observable();
         self.lists = ko.observableArray([]);
-        self.list = ko.observable();
+        self.list = ko.observable({});
         self.edit = ko.observable(options.edit);
         self.listLoading = ko.observable(false);
 

@@ -187,7 +187,9 @@ var PJ = function (params) {
     console.log('in pj');
     var self = new Emitter(this);
     var pj = this;
-    var qid, prevSearch;
+    var qid,
+        prevSearch,
+        queryObj;
     //adding support functions for event handling
     this.events = [
     /**
@@ -259,7 +261,7 @@ var PJ = function (params) {
         setNodeToUrlFlag: false,
         linkouts: {
             ALA: {
-                displayName: 'Atlas of Living Australia',
+                displayName: 'View species details',
                 url: 'http://bie.ala.org.au/species/${name}'
             }
         },
@@ -381,10 +383,9 @@ var PJ = function (params) {
             },
 
             onClick: function (node, eventInfo, e) {
-                var leafs, names, queryObj, canvas;
+                var leafs, names, canvas;
                 e = e || {};
                 eventInfo = eventInfo || {};
-
                 if (node) {
                     // Trigger the contextMenu to popup
                     if (st.tips.config.enable) st.tips.hide(false); // hide the tip so it doesn't cover the context menu
@@ -397,6 +398,10 @@ var PJ = function (params) {
                         canvas.contextMenu({x: e.pageX, y: e.pageY});
                     } else {
                         //left click
+
+                        // abort previous save query calls since this is a new query
+                        queryObj && !queryObj.statusText && queryObj.abort();
+                        queryObj = null;
                         st.clickedNode = node;
                         st.plot()
                         console.log(node);
@@ -472,7 +477,6 @@ var PJ = function (params) {
                     }
                     result.push(html);
                 }
-                result.push('[click for actions &amp; more info]');
                 div.innerHTML = name + result.join('<br/>') + maptitle + url;
             }
         },
@@ -953,7 +957,11 @@ var PJ = function (params) {
                 }
                 callback.apply(that, [options])
             },
-            error: function () {
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("jqXHR = " + JSON.stringify(jqXHR));
+                console.log("textStatus = " + textStatus);
+                console.log("errorThrown = " + errorThrown);
+
                 spinner.stop();
                 alert('Could not load tree. Tree URL seems to be incorrect.');
             }
@@ -1568,10 +1576,13 @@ var PJ = function (params) {
             }, link;
             for (var i in config.linkouts) {
                 link = config.linkouts[i];
-                items[i] = {
-                    name: link.displayName,
-                    callback: pj.linkout,
-                    disabled: pj.linkoutDisabled
+                var node = $trigger.data('node');
+                if (node.data.leaf) {
+                    items[i] = {
+                        name: link.displayName,
+                        callback: pj.linkout,
+                        disabled: pj.linkoutDisabled
+                    }
                 }
             }
             return {

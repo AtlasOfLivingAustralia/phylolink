@@ -41,11 +41,11 @@
                 <li id="charLi" role="presentation" class=""><a id="characterTab" href="#character" aria-controls="home"
                                                                 role="tab"
                                                                 data-toggle="tab">Character</a></li>
-                <li role="presentation"><a href="#mapTabContent" aria-controls="profile" role="tab" data-toggle="tab"
+                <li role="presentation" class="active"><a href="#mapTabContent" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="mapTab">Map</a></li>
                 <li role="presentation"><a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="habitatTab">Analysis</a></li>
-                <li role="presentation" class="active"><a href="#records" aria-controls="profile" role="tab"
+                <li role="presentation" ><a href="#records" aria-controls="profile" role="tab"
                                                           data-toggle="tab"
                                                           id="recordsTab">Occurrences</a></li>
                 <li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"
@@ -57,10 +57,10 @@
             <!-- Tab panes -->
             <div class="tab-content" style="position: relative">
                 <div role="tabpanel" class="tab-pane" id="character">
-                    <g:render template="characters"></g:render>
+                    <g:render template="character"></g:render>
                 </div>
 
-                <div role="tabpanel" class="tab-pane" id="mapTabContent">
+                <div role="tabpanel" class="tab-pane active" id="mapTabContent">
                     <div id="map"></div>
                     <div id="mapControls">
                         <div class="text-right">
@@ -74,7 +74,7 @@
                     <g:render template="plots"></g:render>
                 </div>
 
-                <div role="tabpanel" class="tab-pane active" id="records">
+                <div role="tabpanel" class="tab-pane" id="records">
                     <div id="recordsForm"></div>
                 </div>
 
@@ -132,7 +132,7 @@
         },
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
-        initCharacters: '<g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>',
+        initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
         filterParams: {
             q: '',
             fq:{
@@ -286,7 +286,7 @@
         listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
+        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
         graph: {
             url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
             type: 'GET',
