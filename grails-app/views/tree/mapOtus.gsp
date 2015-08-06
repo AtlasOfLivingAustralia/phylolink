@@ -15,6 +15,16 @@
 <body>
 <div style="min-height: 700px">
 <div class="container">
+    <div class="row-fluid">
+        <div class="span12">
+            <ul class="breadcrumb">
+                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
+                <li><a href="${createLink(controller: 'wizard', action: 'myTrees')}">My Trees</a></li>
+            </ul>
+        </div>
+    </div>
+
     <legend>Reconcile names with ALA taxonomy</legend>
     <p style="font-size:14px; max-width: 60em;">Reconcile node names with ALA taxonomy.
     The system tries to auto match and the result of this operation are on <span class="label">Matched name</span>

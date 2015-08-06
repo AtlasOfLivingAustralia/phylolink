@@ -628,4 +628,8 @@ class TreeService {
         }
         return result;
     }
+
+    def deleteTree(Integer treeId) {
+        Tree.findById(treeId)?.delete()
+    }
 }

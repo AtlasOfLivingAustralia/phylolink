@@ -380,6 +380,7 @@ function Map(options) {
                 url: url,
                 data: data,
                 success: function (data) {
+                    console.log(JSON.stringify(data))
                     legendCtrl.legend(data);
                 }
             });
@@ -392,6 +393,7 @@ function Map(options) {
     this.showLegendsWithCharacter = function(){
         var sel = colorBy.getSelection()
             char = sel.name();
+        console.log("++++++++"+JSON.stringify(pj.getLegendForCharacter(char)))
         legendCtrl.legend(pj.getLegendForCharacter(char));
     }
 

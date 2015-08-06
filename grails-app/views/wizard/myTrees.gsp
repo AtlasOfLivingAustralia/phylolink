@@ -8,6 +8,7 @@
     <meta name="layout" content="main"/>
     <title>${name} trees</title>
     <r:require modules="bugherd"/>
+    <r:require modules="css"/>
 </head>
 
 <body>
@@ -39,7 +40,7 @@
             <tbody>
             <g:each in="${trees}" var="tree" status="i">
                 <tr>
-                    <td class="span6">
+                    <td width="45%">
                         <div>
                             <div class="btn btn-link" onclick="showInfo(${i})">
                                 ${tree.getTitle()}
@@ -47,17 +48,34 @@
                             </div>
                         </div>
                     </td>
-                    <td><a
+                    <td width="30%"><a
                             href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
                             target="_blank">${tree.getExpertTreeTaxonomy()}</a>
                     </td>
-                    <td style="justify: center">
+                    <td width="35%">
                         <div class="btn btn-small btn-primary" onclick="window.location =
                                 '${createLink( action: 'visualize')}?id=${tree.getId()}'">
                             <i class="icon-ok"></i> Open</div>
                         <a
                                 href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
                                 class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
+                        <a id="deleteTreeLink${tree.getId()}" class="btn btn-default btn-small" data-toggle="modal" href="#${tree.getId()}ConfirmationModal"><i class="fa fa-trash"></i>&nbsp;Delete tree</a>
+
+                        <div id="${tree.getId()}ConfirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Confirmation" aria-hidden="true">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h3 id="myModalLabel">Confirmation</h3>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you wish to delete this tree?</p><p>This operation cannot be undone.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <g:form method="DELETE" controller="Tree" action="deleteTree" params="[id: tree.getId()]" class="inline-block">
+                                    <g:actionSubmit value="Delete tree" controller="Tree" action="deleteTree" params="[id: tree.getId()]" class="btn btn-warning" />
+                                </g:form>
+                                <button id="closeDownloadModal" class="btn closeDownloadModal" data-dismiss="modal" aria-hidden="true">Close</button>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -95,5 +113,6 @@
         }
     </script>
 </div>
+
 </body>
 </html>

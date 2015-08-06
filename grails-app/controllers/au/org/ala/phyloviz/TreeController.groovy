@@ -272,6 +272,18 @@ class TreeController extends BaseController {
         }
     }
 
+    def deleteTree() {
+        if (!params.id) {
+            badRequest "id is a required parameter"
+        } else if (!Tree.findById(params.id)) {
+            notFound "No tree found for id ${params.id}"
+        } else {
+            treeService.deleteTree(params.id as int)
+
+            redirect controller: "wizard", action: "myTrees"
+        }
+    }
+
     /**
      *
      * @return
