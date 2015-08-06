@@ -955,6 +955,7 @@ var PJ = function (params) {
             },
             error: function (jqXHR, error) {
                 spinner.stop();
+                conosle.log(arguments);
                 debugger;
                 // a hack for auth issue that recurse when remember me button is not clicked.
                 // this code tries to convert html code from auth page into JSON thus causing an
