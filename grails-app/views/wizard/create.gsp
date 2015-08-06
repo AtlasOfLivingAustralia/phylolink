@@ -24,17 +24,11 @@
     <g:if test="${flash.message}">
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>
-    %{--<g:hasErrors bean="${tree}">--}%
-        %{--<ul class="errors alert-error unstyled" role="alert">--}%
-            %{--<g:eachError bean="${tree}" var="error">--}%
-                %{--<li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message--}%
-                        %{--error="${error}"/></li>--}%
-            %{--</g:eachError>--}%
-        %{--</ul>--}%
-    %{--</g:hasErrors>--}%
+
     <g:form action="save" class="form-horizontal" method="POST" enctype="multipart/form-data">
         <legend>Upload a tree</legend>
-        <p style="font-size:14px">Enter your tree here by filling the form below. Pressing <span class="label label-info">next</span> button will save the tree. Use <span class="label">back</span> button to go to previous page</p>
+        <p style="font-size:14px">Enter your tree here by completing the form below. Tree data can be provided by uploading a file or by pasting the data into the box below. Supported formats are NEXML and NEWICK.<p/>
+
         <fieldset class="form">
             <div class="row-fluid">
                 <g:render template="/tree/form" model="['tree':tree]"/>
