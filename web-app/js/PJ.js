@@ -187,7 +187,9 @@ var PJ = function (params) {
     console.log('in pj');
     var self = new Emitter(this);
     var pj = this;
-    var qid, prevSearch;
+    var qid,
+        prevSearch,
+        queryObj;
     //adding support functions for event handling
     this.events = [
     /**
@@ -381,10 +383,9 @@ var PJ = function (params) {
             },
 
             onClick: function (node, eventInfo, e) {
-                var leafs, names, queryObj, canvas;
+                var leafs, names, canvas;
                 e = e || {};
                 eventInfo = eventInfo || {};
-
                 if (node) {
                     // Trigger the contextMenu to popup
                     if (st.tips.config.enable) st.tips.hide(false); // hide the tip so it doesn't cover the context menu
@@ -397,6 +398,10 @@ var PJ = function (params) {
                         canvas.contextMenu({x: e.pageX, y: e.pageY});
                     } else {
                         //left click
+
+                        // abort previous save query calls since this is a new query
+                        queryObj && !queryObj.statusText && queryObj.abort();
+                        queryObj = null;
                         st.clickedNode = node;
                         st.plot()
                         console.log(node);
