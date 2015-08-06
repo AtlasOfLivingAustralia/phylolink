@@ -450,3 +450,15 @@ bootstrap callout
 .ui-autocomplete, .ui-autocomplete li, .ui-menu, .ui-menu-item {
     z-index: 9999 !important;
 }
+
+/**
+ * settings button style. this button is for phylolink.
+ */
+#settingsBtn {
+    position: absolute;
+    left: 13px;
+    top: 147px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
