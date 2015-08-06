@@ -47,11 +47,11 @@ class PhyloController extends BaseController {
             badRequest "id is a required parameter"
         } else if (!Phylo.findById(params.id)) {
             notFound "No visualisation was found for id ${params.id}"
+        } else {
+            phyloService.deleteVisualisation(params.id as int)
+
+            redirect controller: "wizard", action: "myViz"
         }
-
-        phyloService.deleteVisualisation(params.id as int)
-
-        redirect controller: "wizard", action: "myViz"
     }
 
     def create() {
