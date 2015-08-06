@@ -472,7 +472,6 @@ var PJ = function (params) {
                     }
                     result.push(html);
                 }
-                result.push('[click for actions &amp; more info]');
                 div.innerHTML = name + result.join('<br/>') + maptitle + url;
             }
         },
@@ -953,7 +952,11 @@ var PJ = function (params) {
                 }
                 callback.apply(that, [options])
             },
-            error: function () {
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("jqXHR = " + JSON.stringify(jqXHR));
+                console.log("textStatus = " + textStatus);
+                console.log("errorThrown = " + errorThrown);
+
                 spinner.stop();
                 alert('Could not load tree. Tree URL seems to be incorrect.');
             }
