@@ -1,6 +1,7 @@
 /**
- * author: temi varghese
+ * The _characters.gsp file contains the view associated with this script
  */
+
 var Character = function (options) {
     // emitter mixin. adding functions that support events.
     new Emitter(this);
@@ -105,6 +106,17 @@ var Character = function (options) {
     var characterListLoaded = false;
     var input = $('#' + inputId);
     var characterList = [], charJson;
+
+    //check bootstrap version
+    switch (options.bootstrap){
+        case 2:
+            options.primaryClass = 'label label-info';
+            options.defaultClass = 'label';
+            break;
+        case 3:
+            //  use default value
+            break;
+    }
 
     // knockout code
     var Character = function (opt) {
@@ -958,6 +970,9 @@ var Character = function (options) {
         $.ajax({
             url: options.charactersList.url,
             dataType:'JSON',
+            data: {
+                treeId: options.treeId
+            },
             success: function(data){
                 var i, slistId;
                 slistId = options.initCharacters.list && options.initCharacters.list.id;

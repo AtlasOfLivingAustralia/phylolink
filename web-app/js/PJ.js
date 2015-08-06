@@ -187,7 +187,9 @@ var PJ = function (params) {
     console.log('in pj');
     var self = new Emitter(this);
     var pj = this;
-    var qid, prevSearch;
+    var qid,
+        prevSearch,
+        queryObj;
     //adding support functions for event handling
     this.events = [
     /**
@@ -381,10 +383,9 @@ var PJ = function (params) {
             },
 
             onClick: function (node, eventInfo, e) {
-                var leafs, names, queryObj, canvas;
+                var leafs, names, canvas;
                 e = e || {};
                 eventInfo = eventInfo || {};
-
                 if (node) {
                     // Trigger the contextMenu to popup
                     if (st.tips.config.enable) st.tips.hide(false); // hide the tip so it doesn't cover the context menu
@@ -397,6 +398,10 @@ var PJ = function (params) {
                         canvas.contextMenu({x: e.pageX, y: e.pageY});
                     } else {
                         //left click
+
+                        // abort previous save query calls since this is a new query
+                        queryObj && !queryObj.statusText && queryObj.abort();
+                        queryObj = null;
                         st.clickedNode = node;
                         st.plot()
                         console.log(node);
@@ -472,7 +477,6 @@ var PJ = function (params) {
                     }
                     result.push(html);
                 }
-                result.push('[click for actions &amp; more info]');
                 div.innerHTML = name + result.join('<br/>') + maptitle + url;
             }
         },
@@ -953,10 +957,13 @@ var PJ = function (params) {
                 }
                 callback.apply(that, [options])
             },
-            error: function (jqXHR, error) {
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("jqXHR = " + JSON.stringify(jqXHR));
+                console.log("textStatus = " + textStatus);
+                console.log("errorThrown = " + errorThrown);
+                console.log(arguments);
+
                 spinner.stop();
-                conosle.log(arguments);
-                debugger;
                 // a hack for auth issue that recurse when remember me button is not clicked.
                 // this code tries to convert html code from auth page into JSON thus causing an
                 // exception.

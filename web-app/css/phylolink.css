@@ -1,31 +1,34 @@
-#phylolink-content{
-    margin-top:10px;
+#phylolink-content {
+    margin-top: 10px;
     position: relative;
     overflow: hidden;
 }
+
 #phylolink-visualization {
     float: left;
     overflow-x: auto;
 }
-#widgets-overlay{
+
+#widgets-overlay {
     /*background-color: rgb(255, 254, 247);*/
-    background-color: rgb(0,0,0);
+    background-color: rgb(0, 0, 0);
     border-style: hidden;
     border-right: 2px;
     border-left: 2px;
     border-bottom-width: 0px;
     border-top-width: 0px;
     opacity: 0.7;
-    filter:alpha( opacity=70 );
-    position : absolute;
+    filter: alpha(opacity=70);
+    position: absolute;
     border-radius: 20px;
 }
-#phylolink-widgetpanel{
+
+#phylolink-widgetpanel {
     overflow-y: hidden;
     position: absolute;
 }
 
-#phylolink-widgets{
+#phylolink-widgets {
     float: left;
     border-left: 1px;
     border-left-color: #808080;
@@ -34,27 +37,126 @@
     left: 0px;
     top: 0px;
 }
-#phylolink-content .phylolink-widget{
+
+#phylolink-content .phylolink-widget {
     color: #808080;
     background-color: #ffffff;
-    border:1px;
+    border: 1px;
     border-radius: 5px;
     border-style: solid;
     border-color: #808080;
-    margin-top:20px;
+    margin-top: 20px;
     margin-left: 40px;
     float: left;
 }
-#phylolink-content .phylolink-env{
-    width:300px;
+
+#phylolink-content .phylolink-env {
+    width: 300px;
     height: 300px;
 }
-#phylolink-content .phylolink-widget h6{
+
+#phylolink-content .phylolink-widget h6 {
     text-align: center;
 }
-#phyolink-widgetsblock{
+
+#phyolink-widgetsblock {
     position: relative;
 }
-#phylolink-widgetsscrollable{
+
+#phylolink-widgetsscrollable {
     /*overflow-y: auto;*/
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: bold;
+}
+
+.heading-underlined {
+    text-decoration: underline;
+}
+
+.padding-left-1 {
+    padding-left: 10px;
+}
+
+.padding-left-2 {
+    padding-left: 20px;
+}
+
+.padding-left-3 {
+    padding-left: 40px;
+}
+
+.padding-right-1 {
+    padding-right: 10px;
+}
+
+.padding-right-2 {
+    padding-right: 20px;
+}
+
+.padding-right-3 {
+    padding-right: 40px;
+}
+
+.padding-top-1 {
+    padding-top: 10px;
+}
+
+.padding-top-2 {
+    padding-top: 20px;
+}
+
+.margin-left-1 {
+    margin-left: 10px;
+}
+
+.margin-left-2 {
+    margin-left: 20px;
+}
+
+.margin-left-3 {
+    margin-left: 40px;
+}
+
+.margin-right-1 {
+    margin-right: 10px;
+}
+
+.margin-right-2 {
+    margin-right: 20px;
+}
+
+.margin-right-3 {
+    margin-right: 40px;
+}
+
+.margin-top-1 {
+    margin-top: 10px;
+}
+
+.margin-top-2 {
+    margin-top: 20px;
+}
+
+.margin-top-3 {
+    margin-top: 40px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #f2684c;
+    margin-bottom: 20px;
+}
+
+.border-bottom h1 {
+    margin-top: 30px;
+    margin-bottom: 0;
+}
+
+.small {
+    font-size: 12px;
 }
