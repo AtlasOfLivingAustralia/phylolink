@@ -16,7 +16,7 @@ class CharactersController {
     def list() {
         List characterLists = charactersService.getCharacterListsByOwner()
 
-        List result = treeService.filterCharacterListsByTree(params.treeId, characterLists)
+        List result = treeService.filterCharacterListsByTree(Integer.parseInt(params.treeId), characterLists)
 
         if (params.callback) {
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
