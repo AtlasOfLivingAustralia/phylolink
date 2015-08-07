@@ -1229,8 +1229,6 @@ var Character = function (options) {
         // do not save when initializing the charts. changed event is fired there too.
         !init && that.emit('sync');
     });
-    console.log('options')
-    console.log(options)
     if(options.edit){
         $("#csvFile").on('change', function(event){
             var file = event.target.files[0];
