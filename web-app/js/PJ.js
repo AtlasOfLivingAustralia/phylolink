@@ -937,7 +937,7 @@ var PJ = function (params) {
      * @param options
      */
     var getTree = function (url, callback, options) {
-        var that = this
+        var that = pj
         var method = options.method || 'GET'
         console.log(options)
 
@@ -990,8 +990,6 @@ var PJ = function (params) {
                 if (obj.tree) {
                     obj.tree = obj.tree.replace(/ /g, '_').replace(/'/g, "").replace(/\[pre-ingroup-marker\]/g, '')
                     dataObject = new Smits.PhyloCanvas.NewickParse(obj.tree);
-                } else if (obj.url) {
-                    getTree(obj.url, setTree, obj)
                 }
                 break;
             case 'nexml':
@@ -999,15 +997,8 @@ var PJ = function (params) {
                     d = XMLObjectifier.textToXML(obj.tree);
                     d = XMLObjectifier.xmlToJSON(d);
                     dataObject = new Smits.PhyloCanvas.NexmlParse(d, {nexml: obj.nexml});
-                } else if (obj.url) {
-                    getTree(obj.url, setTree, obj)
                 }
                 break;
-            default :
-                // if no format is given, then get it from url. remember the url should provide tree and format.
-                if (obj.url) {
-                    getTree(obj.url, setTree, obj)
-                }
         }
 
         if (dataObject) {
@@ -1028,6 +1019,9 @@ var PJ = function (params) {
             // fire event after tree is loaded
             pj.emit('treeloaded');
             console.log('successfully completed')
+        } else if (obj.url) {
+            // if no format is given, then get it from url. remember the url should provide tree and format.
+            getTree(obj.url, setTree, obj)
         }
     }
 
