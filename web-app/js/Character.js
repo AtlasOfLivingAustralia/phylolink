@@ -253,10 +253,6 @@ var Character = function (options) {
             charJson = that.charJsonSubset(list);
             temp = that.getCharArray(name,charJson);
             if(temp == undefined || temp.length == 0){
-//                for(i in charJson){
-//                    temp.push([undefined,undefined])
-//                }
-//                data = that.chartDataTransform([0,0]);
                 that.columnchart(id,[['',''],[0,0]]);
                 return;
             }

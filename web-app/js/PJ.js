@@ -937,7 +937,8 @@ var PJ = function (params) {
      * @param options
      */
     var getTree = function (url, callback, options) {
-        var that = pj
+        var that = pj,
+            initialArguments = arguments;
         var method = options.method || 'GET'
         console.log(options)
 
@@ -958,19 +959,20 @@ var PJ = function (params) {
                 callback.apply(that, [options])
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log("jqXHR = " + JSON.stringify(jqXHR));
-                console.log("textStatus = " + textStatus);
-                console.log("errorThrown = " + errorThrown);
-                console.log(arguments);
-
                 spinner.stop();
-                // a hack for auth issue that recurse when remember me button is not clicked.
-                // this code tries to convert html code from auth page into JSON thus causing an
-                // exception.
-                if(jqXHR.status == 200 && error == 'parsererror'){
-                    location.reload()
-                }
-                //alert('Could not load tree. Tree URL seems to be incorrect.');
+                // CAS sometimes redirects to auth.ala.org.au. Since that page returns html code and jquery ajax tries
+                // to convert it to JSON, an error is throw. The below code attempts to catch such error and regenerate
+                // the ajax request. If it was a CAS problem, the second request must work.
+                if(jqXHR.status == 200 && textStatus == 'parsererror'){
+                    getTree.apply(that, initialArguments);
+                } else {
+                    console.log("jqXHR = " + JSON.stringify(jqXHR));
+                    console.log("textStatus = " + textStatus);
+                    console.log("errorThrown = " + errorThrown);
+                    console.log(arguments);
+                    alert('Could not load tree. Tree URL seems to be incorrect.');
+                };
+
             }
         })
     }
