@@ -58,3 +58,7 @@
 #phylolink-widgetsscrollable{
     /*overflow-y: auto;*/
 }
+
+input[type="radio"][disabled], label[class="radio"][disabled]  {
+    color: #d3d3d3;
+}
