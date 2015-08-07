@@ -270,12 +270,12 @@ class AlaController {
         String serverInstance = params.instanceUrl;
         String matchingCol = params.matchingCol;
         String drid = params.drid;
+        boolean characterQuery = params.characterQuery?.toBoolean()
         log.debug(list);
         def json = JSON.parse(list);
         def result;
         if(json){
-            result = alaService.saveQuery(json, dataLocationType, serverInstance, drid, matchingCol);
-            result = [qid: result];
+            result = alaService.saveQuery(json, dataLocationType, serverInstance, drid, matchingCol, characterQuery);
             if(params.callback){
                 render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
             } else {

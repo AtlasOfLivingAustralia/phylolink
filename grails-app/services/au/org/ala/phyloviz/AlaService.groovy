@@ -253,7 +253,7 @@ class AlaService {
     /**
      *
      */
-    def saveQuery(JSONArray clade, String dataLocationType, String serverInstance, String drid, String matchingCol) {
+    def saveQuery(JSONArray clade, String dataLocationType, String serverInstance, String drid, String matchingCol, boolean characterQuery = false) {
         def data, url = grailsApplication.config.qidUrl,
             fq;
         matchingCol = matchingCol ?: 'taxon_name';
@@ -269,7 +269,18 @@ class AlaService {
                 break;
         }
 
-        return getQid(data, url, fq);
+        Map result = [:]
+        result.qid = getQid(data, url, fq);
+
+        if (characterQuery) {
+            result.count = getOccurrenceCount(result.qid)
+        }
+
+        return result
+    }
+
+    int getOccurrenceCount(String qid) {
+        webService.getJson("${grailsApplication.config.occurrencesSearch}?q=qid:${qid}&pageSize=0&facet=off").totalRecords
     }
 
     /**

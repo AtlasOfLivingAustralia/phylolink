@@ -405,7 +405,6 @@ var PJ = function (params) {
                         queryObj = null;
                         st.clickedNode = node;
                         st.plot()
-                        console.log(node);
                         pj.setNodeToUrl(node.id);
                         names = pj.getChildrenName(node);
                         if (config.runSaveQuery) {
@@ -958,7 +957,6 @@ var PJ = function (params) {
     var getTree = function (url, callback, options) {
         var that = this
         var method = options.method || 'GET'
-        console.log(options)
 
         spinner.spin();
         $('#' + config.injectInto).append(spinner.el);
@@ -1344,13 +1342,14 @@ var PJ = function (params) {
         })
     }
 
-    this.saveQuery = function (node, names, dontSave) {
+    this.saveQuery = function (node, names, characterQuery) {
         var params = config.saveQuery.data;
+        params.characterQuery = characterQuery;
         if (config.doSaveQuery) {
-            if (!dontSave) {
+            if (!characterQuery) {
                 qid = undefined;
             }
-            this.emit('savequerybegin')
+            this.emit('savequerybegin');
             params.speciesList = JSON.stringify(names);
             var obj = $.ajax({
                 url: config.saveQuery.url,
@@ -1358,15 +1357,16 @@ var PJ = function (params) {
                 dataType: config.saveQuery.dataType,
                 data: params,
                 success: function (q) {
-                    if (!dontSave) {
+                    console.log(JSON.stringify(q))
+                    if (!characterQuery) {
                         qid = q.qid;
                     }
-                    pj.emit('savequeryend')
+                    pj.emit('savequeryend');
                     console.log(qid);
                 },
                 error: function () {
-                    console.log('failed!')
-                    pj.emit('savequeryend')
+                    console.log('failed!');
+                    pj.emit('savequeryend');
                 }
             });
             return obj;
@@ -1440,7 +1440,8 @@ var PJ = function (params) {
                 name: name,
                 red: rgb[0],
                 green: rgb[1],
-                blue: rgb[2]
+                blue: rgb[2],
+                count: data[name].count || 0
             });
         }
 
@@ -1515,6 +1516,7 @@ var PJ = function (params) {
                     }
 
                     result[name].list.push(n.name);
+                    result[name].name = name;
                 }
             }
         });
