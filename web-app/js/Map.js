@@ -468,12 +468,20 @@ function Map(options) {
             list,
             that = this;
 
+        var legends = pj.getPJLegendData(char);
+        for (var legend in legends) {
+            legends[legend].count = 0;
+        }
+
         for (i in groups) {
             list = groups[i].list;
             if (list.length) {
                 this.emit('updatestart');
                 ajax = pj.saveQuery(undefined, list, true);
                 ajax.color = i;
+                var legends = pj.getPJLegendData(char);
+                console.log(JSON.stringify(legends))
+
                 ajax.then(function (data, status, ajx) {
                     var qid = 'qid:' + data.qid;
                     var url = query + '?q=' + qid;
@@ -483,8 +491,6 @@ function Map(options) {
                         attribution: "PhyloLink",
                         bgcolor: "0x000000"
                     });
-
-                    var legends = pj.getPJLegendData(char)//pj.getLegendForCharacter(char);
 
                     legends[groups[ajx.color].name].count = data.count;
 
@@ -502,9 +508,7 @@ function Map(options) {
                 });
             }
         }
-
-
-    }
+    };
 
     this.removeLayers = function () {
         var i;
