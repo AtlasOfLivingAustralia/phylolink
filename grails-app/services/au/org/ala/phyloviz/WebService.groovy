@@ -153,8 +153,8 @@ class WebService implements InitializingBean {
             requestContentType = enc;
             body = data;
             log.debug(head['cookie'])
-            response.'500' = { r ->
-                log.debug(r);
+            response.'500' = { HttpResponseDecorator r ->
+                log.error("POST to ${url} with data ${data} failed with HTTP 500.");
                 return [error:'Internal server problem'];
             }
         }

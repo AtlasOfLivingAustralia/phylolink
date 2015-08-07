@@ -416,7 +416,7 @@ function Map(options) {
     this.showLegendsWithCharacter = function(){
         var sel = colorBy.getSelection()
             char = sel.name();
-        legendCtrl.legend(pj.getLegendForCharacter(char));
+            legendCtrl.legend(pj.getLegendForCharacter(char));
     }
 
     this.showLegendDefault = function(){
@@ -467,21 +467,26 @@ function Map(options) {
         var groups = pj.groupByCharacter(char, true, true),
             list,
             that = this;
+
         for (i in groups) {
             list = groups[i].list;
             if (list.length) {
                 this.emit('updatestart');
                 ajax = pj.saveQuery(undefined, list, true);
                 ajax.color = i;
-                ajax.then(function (q, status, ajx) {
-                    var qid = 'qid:' + q.qid;
-                    var q = query + '?q=' + qid;
-                    var layer = L.tileLayer.wms(q, {
+                ajax.then(function (data, status, ajx) {
+                    var qid = 'qid:' + data.qid;
+                    var url = query + '?q=' + qid;
+                    var layer = L.tileLayer.wms(url, {
                         format: 'image/png',
                         transparent: true,
                         attribution: "PhyloLink",
                         bgcolor: "0x000000"
                     });
+
+                    var legends = pj.getPJLegendData(char)//pj.getLegendForCharacter(char);
+
+                    legends[groups[ajx.color].name].count = data.count;
 
                     layers.push(layer);
                     options.env.colormode = undefined;
@@ -490,11 +495,15 @@ function Map(options) {
                     that.updateEnv(layer);
                     lmap.addLayer(layer);
                     that.emit('updateend');
+
+                    that.updateLegend();
                 }, function(){
                     that.emit('updateend');
                 });
             }
         }
+
+
     }
 
     this.removeLayers = function () {
