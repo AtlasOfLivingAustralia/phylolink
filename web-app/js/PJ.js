@@ -189,7 +189,8 @@ var PJ = function (params) {
     var pj = this;
     var qid,
         prevSearch,
-        queryObj;
+        queryObj,
+        settings;
     //adding support functions for event handling
     this.events = [
     /**
@@ -650,7 +651,7 @@ var PJ = function (params) {
         },
 
         onPlaceLabel: function (dom, node) {
-            var alignName = config.alignName || false
+            var alignName = settings.alignName() || false
             if (node.selected) {
                 dom.style.display = 'none';
             }
@@ -674,6 +675,21 @@ var PJ = function (params) {
     config.injectInto = config.id;
     delete config.id;
     //end config
+
+    // settings model and functionality
+    function SettingsModel(opt) {
+        this.alignName = ko.observable(opt.alignName || false);
+        this.alignPJ = function (obj , e) {
+            pj.alignNames(this.alignName());
+            return true;
+        }
+    }
+
+    settings = new SettingsModel({
+        alignName: config.alignName
+    });
+    ko.applyBindings(settings, document.getElementById(config.settingsId));
+    // end settings functionality
 
     var nextStep = function (pos, step, length) {
         // logic so that search starts from the first instance
@@ -770,6 +786,9 @@ var PJ = function (params) {
             '<div id="zoomin" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
             'pointer;">' +
             '<div id="zoomIN"><i class="icon-zoom-in"></i></div></div>' +
+            '<div id="settingsBtn"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
+            '   <i class="icon icon-cog"></i>' +
+            '</a></div>' +
             '</div>';
 
         var navHTML3 = '<div style="position:relative"><div id="panup" style="position: absolute; left: 13px; top: 4px;' +
@@ -1632,6 +1651,21 @@ var PJ = function (params) {
             }
         }
     }
+
+    /**
+     * align leaf names
+     * alignName - Boolean
+     */
+    this.alignNames = function (alignName) {
+        st.config.alignName = alignName;
+        if (alignName) {
+            jQuery('.quant').addClass('quantAlign');
+        } else {
+            jQuery('.quant').removeClass('quantAlign');
+        }
+        st.plot();
+    };
+
     this.on('treeloaded', initPopover);
 
 

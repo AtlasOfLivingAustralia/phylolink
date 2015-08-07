@@ -32,6 +32,7 @@
     <div class="row-fluid">
         <div class="span6">
             <div id="info"></div>
+            <g:render template="settings"></g:render>
         </div>
 
         <div role="tabpanel" id="tabs" class="span6">
@@ -166,6 +167,7 @@
         id: config.pjId ,
         format: config.format,
         heading:'vizTitle',
+        settingsId:'pjSettings',
         hData:{
             id:config.id,
             title: config.title,
