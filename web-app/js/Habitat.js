@@ -635,11 +635,11 @@ var Habitat = function (c) {
 
     updateCladeInfo = function(list) {
         if (list.length == 0) {
-            pj.selectedClade('All taxa selected')
-            pj.selectedCladeNumber(-1)
+            pj.hData.selectedClade('All taxa selected')
+            pj.hData.selectedCladeNumber(-1)
         } else {
-            pj.selectedClade('' + list.length + ' taxa selected')
-            pj.selectedCladeNumber(list.length)
+            pj.hData.selectedClade('' + list.length + ' taxa selected')
+            pj.hData.selectedCladeNumber(list.length)
         }
     }
 

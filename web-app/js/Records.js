@@ -380,9 +380,9 @@ var Records = function (c) {
         map.setLayerUrl(layer);
         pj.clickSelectedNode();
         if (sel.title().endsWith('(All data)')) {
-            pj.selectedDr(sel.title())
+            pj.hData.selectedDr(sel.title())
         } else {
-            pj.selectedDr(sel.title() + ' (uploaded occurrences)')
+            pj.hData.selectedDr(sel.title() + ' (uploaded occurrences)')
         }
     }
 

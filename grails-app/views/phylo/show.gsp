@@ -28,17 +28,7 @@
     </div>
 
     <div class="row-fluid">
-        <div id="vizTitle" class="pull-left"></div>
-
-        <div class="pull-right alert selection-info text-right" role="alert" id="selectionInfo">
-            <table>
-                <tr><td data-bind="text: pj.selectedDr"></td></tr>
-                <tr><td data-bind="text: pj.selectedClade"></td></tr>
-                <tr><td data-bind="visible: pj.selectedCladeNumber() >= ${grailsApplication.config.biocache.maxBooleanClauses}"
-                        class="alert-error">
-                    limited to the first ${grailsApplication.config.biocache.maxBooleanClauses} taxa</td></tr>
-            </table>
-        </div>
+        <div id="vizTitle"><g:render template="title"></g:render></div>
     </div>
 
     <div class="row-fluid">
@@ -180,7 +170,10 @@
         hData:{
             id:config.id,
             title: config.title,
-            edit: config.edit
+            edit: config.edit,
+            selectedDr: ko.observable(''),
+            selectedClade: ko.observable(''),
+            selectedCladeNumber: ko.observable(-1)
         },
         titleUrl: config.titleUrl,
         edit: config.edit,
@@ -195,9 +188,12 @@
                 biocacheServiceUrl: undefined, // 'http://sandbox.ala.org.au',
                 drid: undefined // drt121
             }
+        },
+        spUrl: {
+            baseUrl: '${grailsApplication.config.spatialPortalRoot}',
+            url: ko.observable('${grailsApplication.config.spatialPortalRoot}')
         }
     });
-    ko.applyBindings(pj, document.getElementById('selectionInfo'));
 
     var filter = new Filter($.extend(config.filterParams, {
         pj: pj,
@@ -236,11 +232,6 @@
         charOnRequestListKeys: config.charOnRequestListKeys
 
     });
-
-    var spUrl = {
-        baseUrl: '${grailsApplication.config.spatialPortalRoot}',
-        url: ko.observable('${grailsApplication.config.spatialPortalRoot}')
-    }
 
     var map = new Map({
         id: 'map',
@@ -287,8 +278,7 @@
             url: config.colorByUrl,
             drid: config.drid,
             defaultValue: 'taxon_name'
-        },
-        spUrl: spUrl
+        }
     });
 
     var habitat = new Habitat({
