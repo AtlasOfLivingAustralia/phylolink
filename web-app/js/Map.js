@@ -28,10 +28,6 @@ function Map(options) {
             'opacity': 0.8,
             'color': 'df4a21'
         },
-        spUrl: {
-            url: undefined,
-            baseUrl: undefined
-        },
 
         showCharacterOnMap: true,
         /**
@@ -137,7 +133,7 @@ function Map(options) {
         var ws = '&ws=' + records.getDataresource().biocacheHubUrl
         var bs = '&bs=' + records.getDataresource().biocacheServiceUrl
         
-        pj.spUrl.url(pj.spUrl.baseUrl + '?' + q + ws + bs)
+        config.spUrl.url(config.spUrl.baseUrl + '?' + q + ws + bs)
     }
 
     this.updateEnv = function (l) {
@@ -634,7 +630,7 @@ function Map(options) {
 
     this.downloadViewModel = new utils.OccurrenceDownloadViewModel();
     this.mapViewModel = new this.MapViewModel(this.downloadViewModel);
-    this.mapViewModel.spUrl = pj.spUrl
+    this.mapViewModel.spUrl = config.spUrl
 
     this.initialiseBindings = function () {
         ko.applyBindings(this.mapViewModel, document.getElementById("mapControls"));

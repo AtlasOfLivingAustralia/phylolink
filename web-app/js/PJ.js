@@ -71,7 +71,6 @@ var PJ = function (params) {
     var pj = this;
     var qid, prevSearch;
     this.hData = params.hData
-    this.spUrl = params.spUrl
 
     //adding support functions for event handling
     this.events = [

@@ -302,7 +302,7 @@ var Habitat = function (c) {
             } else {
                 self.updateChartDirect(habitat, data);
             }
-            updateCladeInfo(list)
+            utils.updateCladeInfo(list)
         };
 
         self.saveQuery = function(params){
@@ -417,7 +417,7 @@ var Habitat = function (c) {
                     config: habitat.name()
                 };
                 self.updateChartDirect(habitat, data);
-                updateCladeInfo(list)
+                utils.updateCladeInfo(list)
             }
         };
 
@@ -633,16 +633,6 @@ var Habitat = function (c) {
         view.refreshHabitat(habitat);
     });
 
-    updateCladeInfo = function(list) {
-        if (list.length == 0) {
-            pj.hData.selectedClade('All taxa selected')
-            pj.hData.selectedCladeNumber(-1)
-        } else {
-            pj.hData.selectedClade('' + list.length + ' taxa selected')
-            pj.hData.selectedCladeNumber(list.length)
-        }
-    }
-
     this.refresh = function (node, list, saveQuery) {
         var habitats = view.habitats();
         var i, data;
@@ -670,7 +660,7 @@ var Habitat = function (c) {
                 view.updateChartDirect(habitats[i], data);
             }
         }
-        updateCladeInfo(list)
+        utils.updateCladeInfo(list)
     };
 
     this.save = function () {
