@@ -9,7 +9,7 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific"/>
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree"/>
     <r:require modules="bugherd"/>
 </head>
 

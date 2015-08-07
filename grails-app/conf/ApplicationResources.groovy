@@ -82,6 +82,15 @@ modules = {
         resource url: [dir: '/jqwidgets', file: 'jqxgrid.edit.js'], disposition: 'head'
     }
 
+    jqxTree {
+        dependsOn('jqxCore')
+        resource url: [dir: '/jqwidgets', file: 'jqxbuttons.js'], disposition: 'head'
+        resource url: [dir: '/jqwidgets', file: 'jqxscrollbar.js'], disposition: 'head'
+        resource url: [dir: '/jqwidgets', file: 'jqxpanel.js'], disposition: 'head'
+        resource url: [dir: '/jqwidgets', file: 'jqxtree.js'], disposition: 'head'
+        resource url: [dir: '/jqwidgets', file: 'jqxexpander.js'], disposition: 'head'
+    }
+
     slickgrid {
         dependsOn( 'jquery', "jquery-ui" )
         resource url: 'slickgrid/jquery.event.drag-2.2.js', disposition: 'head'
