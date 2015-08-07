@@ -15,7 +15,7 @@
 </style>
 
 <div id="habitatMain">
-    <div class="form-horizontal">
+    <div class="bs-callout">
         <p>Display histograms of information like precipitation, temperature, State etc. of occurrences in the selected clade.</p>
 
         <div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i>Add histogram</div>

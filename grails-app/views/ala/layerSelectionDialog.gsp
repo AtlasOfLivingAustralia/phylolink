@@ -18,7 +18,7 @@
                     <input id="modalAutoComplete" class="ui-autocomplete-input" aria-autocomplete="list" aria-haspopup="true" autocomplete="off"
                            type="text"
                            placeholder="Choose a layer here"
-                           onfocus="clearPlaceholder(this)"/>
+                           onfocus="utils.clearPlaceholder(this)"/>
                         <div id="modalSearchWell" class="well" style="max-height: 250px; height: 250px">
 
                         </div>

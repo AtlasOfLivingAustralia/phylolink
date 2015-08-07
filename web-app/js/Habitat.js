@@ -595,7 +595,7 @@ var Habitat = function (c) {
                 var args = event.args;
                 if (args.element !== undefined) {
                     var item = tree.jqxTree('getItem', args.element);
-                    if (item.value !== undefined && item.value.label !== undefined) {
+                    if (item.value !== undefined && item.value != null && item.value.label !== undefined) {
                         input.treeSelect(item.value)
                     }
                 }

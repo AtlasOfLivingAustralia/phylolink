@@ -18,7 +18,7 @@
                     <label class="control-label">Title*:</label>
                     <div class="controls">
                         <input name="title" type="text" id="titleRecords" data-bind="value: title, attr:{disabled: formDisabled}" placeholder="My occurrence records" required
-                               onfocus="clearPlaceholder(this)">
+                               onfocus="utils.clearPlaceholder(this)">
                     </div>
                 </div>
                 <div class="control-group">
