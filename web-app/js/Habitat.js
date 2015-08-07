@@ -588,7 +588,8 @@ var Habitat = function (c) {
             tree.jqxTree({
                 source: [{label: 'Layers', items: source, expanded: true}],
                 height: '300px',
-                allowDrag: false
+                allowDrag: false,
+                toggleMode: "click"
             });
             tree.on('select', function (event) {
                 var args = event.args;
