@@ -285,7 +285,7 @@
             defaultValue: 'taxon_name'
         },
         downloadReasonsUrl: config.downloadReasonsUrl,
-        spUrl: spUrl
+        spUrl: config.spUrl
     });
 
     var habitat = new Habitat({

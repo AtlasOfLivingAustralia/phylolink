@@ -144,8 +144,8 @@ function Map(options) {
     this.setSpUrl = function (q) {
         var ws = '&ws=' + records.getDataresource().biocacheHubUrl
         var bs = '&bs=' + records.getDataresource().biocacheServiceUrl
-        
-        config.spUrl.url(config.spUrl.baseUrl + '?' + q + ws + bs)
+
+        options.spUrl.url(options.spUrl.baseUrl + '?' + q + ws + bs)
     }
 
     this.updateEnv = function (l) {
@@ -667,7 +667,7 @@ function Map(options) {
 
     this.downloadViewModel = new utils.OccurrenceDownloadViewModel(options.downloadReasonsUrl);
     this.mapViewModel = new this.MapViewModel(this.downloadViewModel);
-    this.mapViewModel.spUrl = config.spUrl
+    this.mapViewModel.spUrl = options.spUrl
 
     this.initialiseBindings = function () {
         ko.applyBindings(this.mapViewModel, document.getElementById("mapControls"));
