@@ -107,6 +107,17 @@ var Character = function (options) {
     var input = $('#' + inputId);
     var characterList = [], charJson;
 
+    //check bootstrap version
+    switch (options.bootstrap){
+        case 2:
+            options.primaryClass = 'label label-info';
+            options.defaultClass = 'label';
+            break;
+        case 3:
+            //  use default value
+            break;
+    }
+
     // knockout code
     var Character = function (opt) {
         this.name = ko.observable(opt.name);
@@ -1103,8 +1114,6 @@ var Character = function (options) {
         // do not save when initializing the charts. changed event is fired there too.
         !init && that.emit('sync');
     });
-    console.log('options')
-    console.log(options)
     if(options.edit){
         $("#csvFile").on('change', function(event){
             var file = event.target.files[0];

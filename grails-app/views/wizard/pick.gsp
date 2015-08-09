@@ -13,7 +13,7 @@
         border-right: thin solid;
     }
     </style>
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'PhyloJive.css')}" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'phylolink.css')}" type="text/css" media="screen"/>
 </head>
 <body>
 <div class="container"  style="min-height: 700px">

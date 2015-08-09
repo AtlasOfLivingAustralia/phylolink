@@ -392,3 +392,4 @@ log4j = {
     debug   "grails.app",
             "au.org.ala"
 }
+grails.resources.debug = true

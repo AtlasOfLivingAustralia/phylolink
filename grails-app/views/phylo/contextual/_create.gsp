@@ -9,6 +9,6 @@
 </div>
 <div class="span4">
         <input id="widgetautocompleteID" type="text" placeholder="Choose a layer here"
-               onfocus="clearPlaceholder(this)"/></div>
+               onfocus="utils.clearPlaceholder(this)"/></div>
 </div>
 </script>

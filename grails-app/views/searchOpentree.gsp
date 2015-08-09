@@ -41,7 +41,7 @@
                         <input type="text" id="study-list-filter" class="search-query" style="width: 290px;"
                                placeholder="Filter by reference text, DOI, tag, curator&hellip;"
                                data-bind="value: viewModel.listFilters.STUDIES.match, valueUpdate: ['afterkeydown', 'input']"
-                               onfocus="clearPlaceholder(this)">
+                               onfocus="utils.clearPlaceholder(this)">
                     </form>
                     <ul class="nav" style="padding-left: 1em;">
                         <li class="dropdown">

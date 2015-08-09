@@ -9,10 +9,6 @@ modules = {
         resource url:alaBaseUrl + '/commonui-bs2/css/ala-styles.css', attrs:[media:'all']
         resource url:alaBaseUrl + '/commonui-bs2/js/bootstrap.js'
     }
-    
-    util {
-        resource url: [dir: 'js', file: 'form.js']
-    }
 
     core {
         dependsOn 'jquery'

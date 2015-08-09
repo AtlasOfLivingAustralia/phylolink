@@ -28,17 +28,7 @@
     </div>
 
     <div class="row-fluid">
-        <div id="vizTitle" class="pull-left"></div>
-
-        <div class="pull-right alert selection-info text-right" role="alert" id="selectionInfo">
-            <table>
-                <tr><td data-bind="text: pj.selectedDr"></td></tr>
-                <tr><td data-bind="text: pj.selectedClade"></td></tr>
-                <tr><td data-bind="visible: pj.selectedCladeNumber() >= ${grailsApplication.config.biocache.maxBooleanClauses}"
-                        class="alert-error">
-                    limited to the first ${grailsApplication.config.biocache.maxBooleanClauses} taxa</td></tr>
-            </table>
-        </div>
+        <div id="vizTitle"><g:render template="title"></g:render></div>
     </div>
 
     <div class="row-fluid">
@@ -76,7 +66,7 @@
                     <div id="map"></div>
                     <div id="mapControls">
                         <div class="text-right">
-                            <a id="spLink" class="btn btn-link" data-bind="attr:{href:spUrl.url}" target="_blank" ><i class="fa fa-external-link"></i>&nbsp;Open in Spatial Portal</a>
+                            <a id="spLink" class="btn btn-link" data-bind="attr:{href:config.spUrl.url}" target="_blank" ><i class="fa fa-external-link"></i>&nbsp;Open in Spatial Portal</a>
                             <a id="downloadMapDataLink" class="btn btn-link" data-toggle="modal" href="#mapOccurrenceDownloadModal"><i class="fa fa-download"></i>&nbsp;Download occurrence data</a>
                         </div>
 
@@ -164,6 +154,10 @@
         charOnRequestParams:{
             drid:undefined,
             keys:undefined
+        },
+        spUrl: {
+            baseUrl: '${grailsApplication.config.spatialPortalRoot}',
+            url: ko.observable('${grailsApplication.config.spatialPortalRoot}')
         }
     }
 
@@ -182,7 +176,10 @@
         hData:{
             id:config.id,
             title: config.title,
-            edit: config.edit
+            edit: config.edit,
+            selectedDr: ko.observable(''),
+            selectedClade: ko.observable(''),
+            selectedCladeNumber: ko.observable(-1)
         },
         titleUrl: config.titleUrl,
         edit: config.edit,
@@ -199,7 +196,6 @@
             }
         }
     });
-    ko.applyBindings(pj, document.getElementById('selectionInfo'));
 
     var filter = new Filter($.extend(config.filterParams, {
         pj: pj,
@@ -238,11 +234,6 @@
         charOnRequestListKeys: config.charOnRequestListKeys
 
     });
-
-    var spUrl = {
-        baseUrl: '${grailsApplication.config.spatialPortalRoot}',
-        url: ko.observable('${grailsApplication.config.spatialPortalRoot}')
-    }
 
     var map = new Map({
         id: 'map',

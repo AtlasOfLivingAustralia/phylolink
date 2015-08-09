@@ -302,7 +302,7 @@ var Habitat = function (c) {
             } else {
                 self.updateChartDirect(habitat, data);
             }
-            updateCladeInfo(list)
+            utils.updateCladeInfo(list)
         };
 
         self.saveQuery = function(params){
@@ -417,7 +417,7 @@ var Habitat = function (c) {
                     config: habitat.name()
                 };
                 self.updateChartDirect(habitat, data);
-                updateCladeInfo(list)
+                utils.updateCladeInfo(list)
             }
         };
 
@@ -588,13 +588,14 @@ var Habitat = function (c) {
             tree.jqxTree({
                 source: [{label: 'Layers', items: source, expanded: true}],
                 height: '300px',
-                allowDrag: false
+                allowDrag: false,
+                toggleMode: "click"
             });
             tree.on('select', function (event) {
                 var args = event.args;
                 if (args.element !== undefined) {
                     var item = tree.jqxTree('getItem', args.element);
-                    if (item.value !== undefined && item.value.label !== undefined) {
+                    if (item.value !== undefined && item.value != null && item.value.label !== undefined) {
                         input.treeSelect(item.value)
                     }
                 }
@@ -632,16 +633,6 @@ var Habitat = function (c) {
         view.refreshHabitat(habitat);
     });
 
-    updateCladeInfo = function(list) {
-        if (list.length == 0) {
-            pj.selectedClade('All taxa selected')
-            pj.selectedCladeNumber(-1)
-        } else {
-            pj.selectedClade('' + list.length + ' taxa selected')
-            pj.selectedCladeNumber(list.length)
-        }
-    }
-
     this.refresh = function (node, list, saveQuery) {
         var habitats = view.habitats();
         var i, data;
@@ -669,7 +660,7 @@ var Habitat = function (c) {
                 view.updateChartDirect(habitats[i], data);
             }
         }
-        updateCladeInfo(list)
+        utils.updateCladeInfo(list)
     };
 
     this.save = function () {

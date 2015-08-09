@@ -1,12 +1,7 @@
 package au.org.ala.phyloviz
-
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.apache.http.client.HttpResponseException
-
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST
-
 /**
  * Created by Temi Varghese
  */

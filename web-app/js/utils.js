@@ -79,5 +79,19 @@ var utils={
     SelectItem: function(id, name) {
         this.id = ko.observable(id);
         this.displayName = ko.observable(name);
+    },
+    
+    clearPlaceholder: function(it) {
+        $(it).attr('placeholder','')
+    },
+
+    updateCladeInfo: function(list) {
+        if (list.length == 0) {
+            pj.hData.selectedClade('All taxa selected')
+            pj.hData.selectedCladeNumber(-1)
+        } else {
+            pj.hData.selectedClade('' + list.length + ' taxa selected')
+            pj.hData.selectedCladeNumber(list.length)
+        }
     }
 };

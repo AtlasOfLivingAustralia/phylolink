@@ -188,11 +188,8 @@ var PJ = function (params) {
     var self = new Emitter(this);
     var pj = this;
     var qid, prevSearch;
-    
-    this.selectedDr = ko.observable('')
-    this.selectedClade = ko.observable('')
-    this.selectedCladeNumber = ko.observable(-1)
-    
+    this.hData = params.hData
+
     //adding support functions for event handling
     this.events = [
     /**
@@ -752,7 +749,7 @@ var PJ = function (params) {
         var navHTML2 = '<div style="position:relative">' +
             '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">'+
             '<div class="input-append">'+
-            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="clearPlaceholder(this)">'+
+            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="utils.clearPlaceholder(this)">'+
             '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>'+
             '</div></div>'+
             '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +
@@ -1047,6 +1044,9 @@ var PJ = function (params) {
             this.id = d.id;
             this.selected = ko.observable(d.selected || false)
             this.edit = d.edit || false
+            this.selectedDr = d.selectedDr
+            this.selectedClade = d.selectedClade
+            this.selectedCladeNumber = d.selectedCladeNumber
 
             this.clicked = function () {
                 return this.selected();
@@ -1066,11 +1066,7 @@ var PJ = function (params) {
         }
 
         var data = config.hData;
-        var template = "<div data-bind=' click: $root.select' style='cursor:pointer;'><h1 style='color:#C44D34;display: inline-block' title='Click title to edit it' " +
-            "data-bind='text: title'></h1>&nbsp;<i data-bind='visible: edit' title='Click title to edit it' class='icon icon-pencil'></i></div>" +
-            "<div data-bind='visible: $root.clicked()' style='padding-bottom: 10px'>" +
-            "New title for this visualisation: <input data-bind='value: title, event:{blur:$root.clearClick, change:$root.sync}'></div>"
-        var titleDom = $('#' + config.heading).html(template);
+        var titleDom = $('#'+config.heading);
         var model = new HeadingModel(data);
         ko.applyBindings(model, titleDom[0]);
     }

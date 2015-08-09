@@ -21,7 +21,7 @@
                             data-bind="attr:{id: autocompleteId}"
                             type="text"
                             placeholder="Choose a layer here"
-                            onfocus="clearPlaceholder(this)"/>
+                            onfocus="utils.clearPlaceholder(this)"/>
                     <div class="span6">
                         <div class="well">
 
