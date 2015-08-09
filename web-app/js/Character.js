@@ -1,6 +1,7 @@
 /**
- * author: temi varghese
+ * The _characters.gsp file contains the view associated with this script
  */
+
 var Character = function (options) {
     // emitter mixin. adding functions that support events.
     new Emitter(this);
@@ -253,10 +254,6 @@ var Character = function (options) {
             charJson = that.charJsonSubset(list);
             temp = that.getCharArray(name,charJson);
             if(temp == undefined || temp.length == 0){
-//                for(i in charJson){
-//                    temp.push([undefined,undefined])
-//                }
-//                data = that.chartDataTransform([0,0]);
                 that.columnchart(id,[['',''],[0,0]]);
                 return;
             }
@@ -970,6 +967,9 @@ var Character = function (options) {
         $.ajax({
             url: options.charactersList.url,
             dataType:'JSON',
+            data: {
+                treeId: options.treeId
+            },
             success: function(data){
                 var i, slistId;
                 slistId = options.initCharacters.list && options.initCharacters.list.id;

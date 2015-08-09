@@ -87,6 +87,9 @@ listCsvForKeys = 'http://lists.ala.org.au/ws/speciesListItems/byKeys?druid=DRID&
 listKeys = 'http://lists.ala.org.au/ws/speciesListItems/keys?druid=DRID'
 listsPermUrl = 'http://lists.ala.org.au/speciesListItem/list/DRID'
 legendAla = 'BIOCACHE_HUB/occurrence/legend'
+legendSandbox = "INSTANCEURL/ala-hub/occurrence/legend"
+listToolBaseURL = "http://lists.ala.org.au"
+
 
 //opentree configs
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"

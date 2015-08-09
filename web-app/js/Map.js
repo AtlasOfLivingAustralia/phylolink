@@ -5,9 +5,21 @@
 function Map(options) {
     // mixin for event handling functions
     new Emitter(this);
+    var events = [
+    /**
+     * when an ajax function is fired
+     */
+        'updatestart',
+    /**
+     * when an ajax function finishes, either on success or failure.
+     */
+        'updateend'
+    ]
     var that = map = this;
     var i,
-        records;
+        records,
+        xhrColorBy,
+        xhrLegend;
     var $ = jQuery;
     options = $.extend({
         type: 'GET',
@@ -190,7 +202,7 @@ function Map(options) {
         id: 'examples.map-i875mjb7'
     }).addTo(lmap);
 
-    var layer, layers = [], spinner = [];
+    var layer, layers = [], spinner = null;
 
     // spinner
     var loadingControl = L.Control.loading({
@@ -264,7 +276,9 @@ function Map(options) {
     pj.on('click', function (node, list, ajax) {
 
         if (ajax) {
-            ajax.then(that.update, function () {
+            ajax.then(function(){
+                that.update();
+            }, function () {
                 console.log('failed to save query')
             })
         } else {
@@ -273,15 +287,17 @@ function Map(options) {
     });
 
     this.update = function () {
+        this.abortRequests();
+
         // color mode reset
         colorBy.updateData([]);
-        that.updateColorBy();
+        this.updateColorBy();
 
         // reload legend
-        that.updateLegend();
+        this.updateLegend();
 
         // update map
-        that.updateMap();
+        this.updateMap();
     }
 
     this.updateColorBy = function (f) {
@@ -327,16 +343,19 @@ function Map(options) {
 
         }
 
-        $.ajax({
+        this.emit('updatestart');
+        xhrColorBy = $.ajax({
             url: url,
             data: data,
             method: 'POST',
             success: function (data) {
                 data = data || [];
                 that.loadColorByData(data)
+                that.emit('updateend');
             },
             error: function () {
                 console.log('error communicating with colorby service.');
+                that.emit('updateend');
             }
         });
     };
@@ -383,11 +402,16 @@ function Map(options) {
 
         // if cm is not defined, this url will produce an error.
         if (data.cm) {
-            $.ajax({
+            this.emit('updatestart');
+            xhrLegend  = $.ajax({
                 url: url,
                 data: data,
                 success: function (data) {
                     legendCtrl.legend(data);
+                    that.emit('updateend');
+                },
+                error: function(){
+                    that.emit('updateend');
                 }
             });
         }
@@ -456,6 +480,7 @@ function Map(options) {
         for (i in groups) {
             list = groups[i].list;
             if (list.length) {
+                this.emit('updatestart');
                 ajax = pj.saveQuery(undefined, list, true);
                 ajax.color = i;
                 ajax.then(function (q, status, ajx) {
@@ -476,6 +501,9 @@ function Map(options) {
                     lmap.addLayer(layer)
                     spUrl += '&ly.' + c + '=' + list[0] + '&ly.' + c + '.s=' + parseInt('0x' + layer.color) + '&ly.' + c + '.q=' + qid
                     c = c + 1
+                    that.emit('updateend');
+                }, function(){
+                    that.emit('updateend');
                 });
             }
         }
@@ -525,13 +553,11 @@ function Map(options) {
         spin = new Spinner(options.spinner)
         spin.spin();
         $('#' + options.id).append(spin.el)
-        spinner.push(spin)
+        spinner && spinner.stop();
+        spinner = spin;
     }
     this.endSpinner = function () {
-        var spin
-        while (spin = spinner.pop()) {
-            spin.stop();
-        }
+        spinner && spinner.stop();
     }
 
     this.setLayerUrl = function (url) {
@@ -585,6 +611,17 @@ function Map(options) {
        }
     }
 
+    this.abortRequests = function(){
+        // cancel all ajax requests.
+        xhrColorBy && xhrColorBy.abort();
+        xhrColorBy = null;
+        xhrLegend && xhrLegend.abort();
+        xhrLegend = null;
+        this.removeLayers();
+        // destroy spinner
+        this.endSpinner();
+    }
+
     options.character && options.character.on('treecolored', function () {
         // color mode reset
         colorBy.updateData([]);
@@ -593,10 +630,10 @@ function Map(options) {
         that.updateColorBy();
         that.updateMap();
     })
-    pj.on('savequerybegin', function () {
+    this.on('updatestart', function () {
         that.beginSpinner();
     })
-    pj.on('savequeryend', function () {
+    this.on('updateend', function () {
         that.endSpinner();
     })
 

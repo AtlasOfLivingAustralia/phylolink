@@ -1,5 +1,6 @@
 package au.org.ala.phyloviz
 
+import au.org.ala.web.AuthService
 import grails.converters.JSON
 import grails.transaction.Transactional
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -12,11 +13,25 @@ class CharactersService {
     def g
     def webService
     def grailsApplication
+    AuthService authService
+
+    def getCharacterListsByOwner() {
+        def id = authService.getUserId()
+        log.debug(id)
+        def owner = Owner.findByUserId(id)
+        def lists = Characters.findAllByOwner(owner);
+        def slist = Characters.findAllByOwner(Owner.findByUserId(1));
+        lists.addAll(slist);
+        log.debug(lists)
+
+        getCharUrl(lists);
+    }
 
     def getCharUrl( ArrayList<Characters> lists ) {
         def result=[]
         lists.each{ list->
             result.push([
+                'dataResourceId': list.drid,
                 'url': getUrl(list.drid),
                 'title':list.title,
                 'id': list.id,
@@ -25,6 +40,7 @@ class CharactersService {
         }
         return result
     }
+
     /**
      *
      * @param druid

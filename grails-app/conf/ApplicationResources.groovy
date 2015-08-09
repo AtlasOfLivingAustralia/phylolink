@@ -2,6 +2,10 @@ def alaBaseUrl = "https://www.ala.org.au"
 
 modules = {
 
+    css {
+        resource url: "css/phylolink.css"
+    }
+
     bootstrapApp {
         dependsOn 'core', 'font-awesome'
         resource url:alaBaseUrl + '/commonui-bs2/css/bootstrap.min.css', attrs:[media:'all']

@@ -187,8 +187,11 @@ var PJ = function (params) {
     console.log('in pj');
     var self = new Emitter(this);
     var pj = this;
-    var qid, prevSearch;
     this.hData = params.hData
+    var qid,
+        prevSearch,
+        queryObj,
+        settings;
 
     //adding support functions for event handling
     this.events = [
@@ -383,10 +386,9 @@ var PJ = function (params) {
             },
 
             onClick: function (node, eventInfo, e) {
-                var leafs, names, queryObj, canvas;
+                var leafs, names, canvas;
                 e = e || {};
                 eventInfo = eventInfo || {};
-
                 if (node) {
                     // Trigger the contextMenu to popup
                     if (st.tips.config.enable) st.tips.hide(false); // hide the tip so it doesn't cover the context menu
@@ -399,6 +401,10 @@ var PJ = function (params) {
                         canvas.contextMenu({x: e.pageX, y: e.pageY});
                     } else {
                         //left click
+
+                        // abort previous save query calls since this is a new query
+                        queryObj && !queryObj.statusText && queryObj.abort();
+                        queryObj = null;
                         st.clickedNode = node;
                         st.plot()
                         console.log(node);
@@ -474,7 +480,6 @@ var PJ = function (params) {
                     }
                     result.push(html);
                 }
-                result.push('[click for actions &amp; more info]');
                 div.innerHTML = name + result.join('<br/>') + maptitle + url;
             }
         },
@@ -648,7 +653,7 @@ var PJ = function (params) {
         },
 
         onPlaceLabel: function (dom, node) {
-            var alignName = config.alignName || false
+            var alignName = settings.alignName() || false
             if (node.selected) {
                 dom.style.display = 'none';
             }
@@ -672,6 +677,21 @@ var PJ = function (params) {
     config.injectInto = config.id;
     delete config.id;
     //end config
+
+    // settings model and functionality
+    function SettingsModel(opt) {
+        this.alignName = ko.observable(opt.alignName || false);
+        this.alignPJ = function (obj , e) {
+            pj.alignNames(this.alignName());
+            return true;
+        }
+    }
+
+    settings = new SettingsModel({
+        alignName: config.alignName
+    });
+    ko.applyBindings(settings, document.getElementById(config.settingsId));
+    // end settings functionality
 
     var nextStep = function (pos, step, length) {
         // logic so that search starts from the first instance
@@ -768,6 +788,9 @@ var PJ = function (params) {
             '<div id="zoomin" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
             'pointer;">' +
             '<div id="zoomIN"><i class="icon-zoom-in"></i></div></div>' +
+            '<div id="settingsBtn"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
+            '   <i class="icon icon-cog"></i>' +
+            '</a></div>' +
             '</div>';
 
         var navHTML3 = '<div style="position:relative"><div id="panup" style="position: absolute; left: 13px; top: 4px;' +
@@ -935,7 +958,8 @@ var PJ = function (params) {
      * @param options
      */
     var getTree = function (url, callback, options) {
-        var that = this
+        var that = pj,
+            initialArguments = arguments;
         var method = options.method || 'GET'
         console.log(options)
 
@@ -955,9 +979,21 @@ var PJ = function (params) {
                 }
                 callback.apply(that, [options])
             },
-            error: function () {
+            error: function (jqXHR, textStatus, errorThrown) {
                 spinner.stop();
-                alert('Could not load tree. Tree URL seems to be incorrect.');
+                // CAS sometimes redirects to auth.ala.org.au. Since that page returns html code and jquery ajax tries
+                // to convert it to JSON, an error is throw. The below code attempts to catch such error and regenerate
+                // the ajax request. If it was a CAS problem, the second request must work.
+                if(jqXHR.status == 200 && textStatus == 'parsererror'){
+                    getTree.apply(that, initialArguments);
+                } else {
+                    console.log("jqXHR = " + JSON.stringify(jqXHR));
+                    console.log("textStatus = " + textStatus);
+                    console.log("errorThrown = " + errorThrown);
+                    console.log(arguments);
+                    alert('Could not load tree. Tree URL seems to be incorrect.');
+                };
+
             }
         })
     }
@@ -977,8 +1013,6 @@ var PJ = function (params) {
                 if (obj.tree) {
                     obj.tree = obj.tree.replace(/ /g, '_').replace(/'/g, "").replace(/\[pre-ingroup-marker\]/g, '')
                     dataObject = new Smits.PhyloCanvas.NewickParse(obj.tree);
-                } else if (obj.url) {
-                    getTree(obj.url, setTree, obj)
                 }
                 break;
             case 'nexml':
@@ -986,15 +1020,8 @@ var PJ = function (params) {
                     d = XMLObjectifier.textToXML(obj.tree);
                     d = XMLObjectifier.xmlToJSON(d);
                     dataObject = new Smits.PhyloCanvas.NexmlParse(d, {nexml: obj.nexml});
-                } else if (obj.url) {
-                    getTree(obj.url, setTree, obj)
                 }
                 break;
-            default :
-                // if no format is given, then get it from url. remember the url should provide tree and format.
-                if (obj.url) {
-                    getTree(obj.url, setTree, obj)
-                }
         }
 
         if (dataObject) {
@@ -1015,6 +1042,9 @@ var PJ = function (params) {
             // fire event after tree is loaded
             pj.emit('treeloaded');
             console.log('successfully completed')
+        } else if (obj.url) {
+            // if no format is given, then get it from url. remember the url should provide tree and format.
+            getTree(obj.url, setTree, obj)
         }
     }
 
@@ -1623,6 +1653,21 @@ var PJ = function (params) {
             }
         }
     }
+
+    /**
+     * align leaf names
+     * alignName - Boolean
+     */
+    this.alignNames = function (alignName) {
+        st.config.alignName = alignName;
+        if (alignName) {
+            jQuery('.quant').addClass('quantAlign');
+        } else {
+            jQuery('.quant').removeClass('quantAlign');
+        }
+        st.plot();
+    };
+
     this.on('treeloaded', initPopover);
 
 
