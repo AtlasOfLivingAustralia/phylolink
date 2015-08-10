@@ -13,14 +13,14 @@ class BootStrap {
     def grailsApplication
 
     def init = { servletContext ->
-        if(skip){
+        if (skip) {
             return;
         }
 
         // since bootstrap loads expert trees and expert tree requires curator app on web2py, we cannot
         // proceed further as it will break the test on travis.
-        if(Environment.current == Environment.TEST) {
-            return ;
+        if (Environment.current == Environment.TEST) {
+            return;
         }
 
         log.debug('checking for system user name')
@@ -31,40 +31,39 @@ class BootStrap {
                     displayName: "System",
                     email: "phylojive@ala.org.au",
                     created: new Date(),
-                    role:"admin"
+                    role: "admin"
             ).save(flush: true, failOnError: true)
         }
         log.debug('after getting system username')
-        log.debug( 'in bootstrap init func')
-        def trees = [ this.acaciaTree(), this.amphibianTree(), this.mammalsTree()]
-        trees.each{
+        log.debug('in bootstrap init func')
+        def trees = [this.acaciaTree(), this.amphibianTree(), this.mammalsTree()]
+        trees.each {
             def tree = it
             tree.owner = systemUser;
             def pt = Tree.findByReference(tree.reference)
             if (!pt) {
-                log.debug( 'adding tree' +  tree['title'] )
+                log.debug('adding tree' + tree['title'])
                 pt = new Tree(tree).save(flush: true, failOnError: true);
-            } else if(overwrite) {
-                it.each{key,value->
-                    pt[key]=value;
+            } else if (overwrite) {
+                it.each { key, value ->
+                    pt[key] = value;
                 }
                 pt.save(flush: true);
-            }else
-             {
-                log.debug( 'tree already in database' )
+            } else {
+                log.debug('tree already in database')
             }
         }
 
         def chars = listCharacters()
-        chars.each{
+        chars.each {
             def c = it
             c.owner = systemUser;
             def pt = Characters.findByDrid(c.drid)
-            if (!pt ) {
-                log.debug( 'adding character' +  c['title'] )
+            if (!pt) {
+                log.debug('adding character' + c['title'])
                 pt = new Characters(c).save(flush: true, failOnError: true);
             } else {
-                log.debug( 'Character already in database' );
+                log.debug('Character already in database');
             }
         }
 
@@ -79,7 +78,7 @@ class BootStrap {
     def acaciaTree() {
         log.debug('loading acacia tree')
         def result = [:], filename = 'acacia.newick'
-        def file =  grailsApplication.mainContext.getResource('artifacts/' + filename).file;
+        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
         result['nexson'] = result['nexson'].toString();
@@ -92,16 +91,16 @@ class BootStrap {
         result['title'] = 'Acacia – Miller et al 2012'
         result['expertTree'] = true
         result['expertTreeTaxonomy'] = 'Acacia'
-        result['expertTreeLSID']= 'urn:lsid:biodiversity.org.au:apni.taxon:295861'
+        result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:apni.taxon:295861'
         result['treeFormat'] = 'newick'
         result['created'] = new Date()
         return result
     }
 
-    def mammalsTree(){
+    def mammalsTree() {
         log.debug('adding mammals tree to map object')
         def result = [:], filename = 'mammals.newick'
-        def file =grailsApplication.mainContext.getResource('artifacts/' + filename).file;
+        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
         log.debug('mammals tree' + result['tree'])
         result['treeFormat'] = 'newick'
@@ -122,7 +121,7 @@ class BootStrap {
         return result
     }
 
-    def amphibianTree(){
+    def amphibianTree() {
         log.debug('loading amphibians tree')
         def result = [:], filename = 'amp.newick'
         def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
@@ -147,7 +146,7 @@ class BootStrap {
 
     def loadNexmlFile2() {
         def result = [:], filename = 'ot_13.nexml.txt'
-        def file =  grailsApplication.mainContext.getResource('artifacts/' + filename).file
+        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file
         result['tree'] = file.text
         result['nexson'] = new File('/artifacts/ot_13.json.1.2.1.json').text
         result['year'] = '2014'
@@ -162,11 +161,11 @@ class BootStrap {
         return result
     }
 
-    def loadNexmlFile3(){
+    def loadNexmlFile3() {
         def result = [:], filename = 'ot_14.nexml.json'
-        def file = new File( '/artifacts/' + filename )
+        def file = new File('/artifacts/' + filename)
         result['tree'] = file.text
-        result['nexson'] = new File( '/artifacts/ot_14.json.1.2.1.json' ).text
+        result['nexson'] = new File('/artifacts/ot_14.json.1.2.1.json').text
         result['year'] = '2014'
         result['hide'] = false
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
@@ -179,33 +178,33 @@ class BootStrap {
         return result
     }
 
-    def listCharacters(){
+    def listCharacters() {
         return [[
-                drid:'dr2116',
-                title:'Acacia Characters'
-        ],[
-                drid:'dr2324',
-                title:'Mammal traits'
-        ]]
+                        drid : 'dr2116',
+                        title: 'Acacia Characters'
+                ], [
+                        drid : 'dr2324',
+                        title: 'Mammal traits'
+                ]]
     }
 
-    def createDemo(){
+    def createDemo() {
         def guest = Owner.findByDisplayName("Guest");
         def tree = Tree.findByTitle('Acacia – Miller et al 2012');
-        if( !tree || !guest){
-            return ;
+        if (!tree || !guest) {
+            return;
         }
 
         def demo = Phylo.findByTitle('Phylolink Demo');
-        if(!demo){
-            demo = new Phylo( [
-                    title: 'Phylolink Demo',
+        if (!demo) {
+            demo = new Phylo([
+                    title     : 'Phylolink Demo',
                     characters: '{"listLoading":false,"selectedCharacter":null,"count":3,"events":["statechange","moved","edited","newchar","removed"],"edit":true,"newChar":true,"list":{"id":5,"title":"Acacia Characters","listurl":"http://lists.ala.org.au/speciesListItem/list/dr2116","url":"/ala/getCharJson?drid=dr2116"},"_callbacks":{"statechange":[null,null],"newchar":[null]},"lists":[{"id":5,"title":"Acacia Characters","listurl":"http://lists.ala.org.au/speciesListItem/list/dr2116","url":"/ala/getCharJson?drid=dr2116"}],"characters":[{"id":"charChart-2","name":"Inflorescence_arrangement"},{"id":"charChart-1","name":"annual_mean_rad"}]}',
-                    habitat: '{"habitats":[{"id":"habitat-1","yAxis":"Occurrence count","name":"el790","xAxis":"%","displayName":"WorldClim: Temperature - isothermality"},{"id":"habitat-2","yAxis":"Occurrence count","name":"el1010","xAxis":"degrees C","displayName":"2030A1BMk35M: Temperature - coldest month min"}],"count":3,"newChar":true,"selectedHabitat":{"id":"habitat-2","yAxis":"Occurrence count","name":"el1010","xAxis":"degrees C","displayName":"2030A1BMk35M: Temperature - coldest month min"},"_callbacks":{"moved":[null],"removed":[null],"changed":[null,null]}}',
-                    owner : guest   ,
-                    studyid: tree.getId().toString(),
-                    treeid: '1',
-                    viz: ['viz':'PhyloJive']
+                    habitat   : '{"habitats":[{"id":"habitat-1","yAxis":"Occurrence count","name":"el790","xAxis":"%","displayName":"WorldClim: Temperature - isothermality"},{"id":"habitat-2","yAxis":"Occurrence count","name":"el1010","xAxis":"degrees C","displayName":"2030A1BMk35M: Temperature - coldest month min"}],"count":3,"newChar":true,"selectedHabitat":{"id":"habitat-2","yAxis":"Occurrence count","name":"el1010","xAxis":"degrees C","displayName":"2030A1BMk35M: Temperature - coldest month min"},"_callbacks":{"moved":[null],"removed":[null],"changed":[null,null]}}',
+                    owner     : guest,
+                    studyid   : tree.getId().toString(),
+                    treeid    : '1',
+                    viz       : ['viz': 'PhyloJive']
             ]).save(flush: true, failOnError: true);
         }
         return demo
