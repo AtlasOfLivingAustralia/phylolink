@@ -274,7 +274,7 @@ class TreeService {
 //                    elasticService.indexDoc(elasticService.getNEXSON_INDEX(), tree.getId(), tree.getNexson());
                 }
             } catch (Exception e) {
-                log.debug( 'exception while converting tree to nexson' + e.getMessage() )
+                log.debug('exception while converting tree to nexson' + e.getMessage(), e)
                 return
             }
 
