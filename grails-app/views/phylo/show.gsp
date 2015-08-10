@@ -204,6 +204,19 @@
         fqVariable:'species'
     }));
 
+    var records = new Records({
+        id: 'recordsForm',
+        template: $('#templateOccurrence').html(),
+        uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}?phyloId=${phyloInstance.id}',
+        indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
+        sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
+        dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}?phyloId=${phyloInstance.id}",
+        dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
+        pj: pj,
+        selectResourceOnInit: true,
+        initResourceId: -1
+    });
+
     var character = new Character({
         id: "character",
         tabId: 'characterTab',
@@ -285,7 +298,8 @@
             defaultValue: 'taxon_name'
         },
         downloadReasonsUrl: config.downloadReasonsUrl,
-        spUrl: config.spUrl
+        spUrl: config.spUrl,
+        records: records
     });
 
     var habitat = new Habitat({
@@ -318,24 +332,15 @@
         downloadReasonsUrl: config.downloadReasonsUrl
     });
 
-    var records = new Records({
-        id: 'recordsForm',
-        template: $('#templateOccurrence').html(),
-        uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}?phyloId=${phyloInstance.id}',
-        indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
-        sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
-        dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}?phyloId=${phyloInstance.id}",
-        dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
-        map : map,
-        pj: pj,
-        selectResourceOnInit: true,
-        initResourceId: -1
-    });
 
     $( "#tabs" ).tab('show');
     // a fix to display map tiles properly. Without it map is grey colored for majority of area.
     $("body").on("shown.bs.tab", "#mapTab", function() {
         map.invalidateSize();
+    });
+    $("body").on("shown.bs.tab", "#habitatTab", function() {
+        // abort previous save query calls since this is a new query
+        habitat.redraw()
     });
 
     google.setOnLoadCallback(character.googleChartsLoaded);

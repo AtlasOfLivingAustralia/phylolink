@@ -2,11 +2,8 @@ import org.apache.log4j.Level
 
 /******* Change this stuff for your project *******/
 def appName = 'phylolink'
-//serverName='http://localhost:8080'
-//contextPath='/phylolink'
 def ENV_NAME = "${appName.toUpperCase()}_CONFIG"
 default_config = "/data/${appName}/config/${appName}-config.properties"
-//runWithNoExternalConfig = true
 
 if(!grails.config.locations || !(grails.config.locations instanceof List)) {
     grails.config.locations = []
@@ -37,13 +34,24 @@ reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
 /*** Phylo Link config *******/
 
 // TODO: move this config to file in data directory.
-sandboxUrl = "http://sandbox1.ala.org.au"
-sandboxCollectoryUrl = "http://collectory-dev.ala.org.au/ws/tempDataResource?alaId=ALAID"
-sandboxBiocacheServiceUrl = "http://sandbox1.ala.org.au/ws"
-sandboxHubUrl = "http://sandbox1.ala.org.au/ala-hub"
-biocacheServiceUrl = "http://biocache.ala.org.au/ws"
-biocacheHubUrl = "http://biocache.ala.org.au/"
+
+sandboxRoot="http://sandbox1.ala.org.au"
+sandboxCollectoryRoot="http://collectory-dev.ala.org.au"
+
+spatialPortalRoot="http://spatial.ala.org.au"
+regionsRoot="http://regions.ala.org.au"
+bieRoot="http://bie.ala.org.au"
+listToolBaseURL="http://lists.ala.org.au"
+biocacheRoot="http://biocache.ala.org.au"
+
 // end of config to move
+
+sandboxUrl = "${sandboxRoot}/datacheck"
+sandboxCollectoryUrl = "${sandboxCollectoryRoot}/ws/tempDataResource?alaId=ALAID"
+sandboxBiocacheServiceUrl = "${sandboxRoot}/ws"
+sandboxHubUrl = "${sandboxRoot}/ala-hub"
+biocacheServiceUrl = "${biocacheRoot}/ws"
+biocacheHubUrl = "${biocacheRoot}/"
 
 biocache.maxBooleanClauses=1024
 
@@ -64,32 +72,27 @@ citationParser = "http://freecite.library.brown.edu/citations/create"
 
 //ala webservices
 occurrences = "BIOCACHE_SERVICE/occurrences/search?q=SEARCH&facets=LAYER&fq=REGION&flimit=1000000"
-layers = "http://spatial.ala.org.au/ws/layers"
-fields = "http://spatial.ala.org.au/ws/fields"
-layerMetadata = "http://spatial.ala.org.au/layers-service/layers/view/more/"
-spatialPortalRoot="http://spatial.ala.org.au"
+layers = "${spatialPortalRoot}/ws/layers"
+fields = "${spatialPortalRoot}/ws/fields"
+layerMetadata = "${spatialPortalRoot}/layers-service/layers/view/more/"
+
 regionsUrl = [
-        "state": "http://regions.ala.org.au/regions/regionList?type=states",
-        "ibra": "http://regions.ala.org.au/regions/regionList?type=ibras"
+        "state": "${regionsRoot}/regions/regionList?type=states",
+        "ibra": "${regionsRoot}/regions/regionList?type=ibras"
 ];
 speciesListUrl = "BIOCACHE_SERVICE/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
-drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
+drUrl = "BIOCACHE_SERVICE/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
 occurrencesSearch = "BIOCACHE_SERVICE/occurrences/search"
-autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON"
-bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
+autocompleteUrl = "${bieRoot}/ws/search.json?q=QUERY&fq=idxtype:TAXON"
+bieInfo = "${bieRoot}/ws/species/info/QUERY.json"
 qidUrl = 'BIOCACHE_SERVICE/webportal/params'
-//listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
-listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
-//listPost = 'http://lists.ala.org.au/ws/speciesList'
-listPost = 'http://lists.ala.org.au/ws/speciesList'
-listCSV = 'http://lists.ala.org.au/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test'
-listCsvForKeys = 'http://lists.ala.org.au/ws/speciesListItems/byKeys?druid=DRID&keys=KEYS&format=csv'
-listKeys = 'http://lists.ala.org.au/ws/speciesListItems/keys?druid=DRID'
-listsPermUrl = 'http://lists.ala.org.au/speciesListItem/list/DRID'
+listUrl = "${listToolBaseURL}/ws/speciesListItems/DRID?includeKVP=true"
+listPost = "${listToolBaseURL}/ws/speciesList"
+listCSV = "${listToolBaseURL}/speciesListItem/downloadList/DRID?id=DRID&action=list&controller=speciesListItem&max=10&sort=itemOrder&fetch=%7BkvpValues%3Dselect%7D&file=test"
+listCsvForKeys = "${listToolBaseURL}/ws/speciesListItems/byKeys?druid=DRID&keys=KEYS&format=csv"
+listKeys = "${listToolBaseURL}/ws/speciesListItems/keys?druid=DRID"
+listsPermUrl = "${listToolBaseURL}/speciesListItem/list/DRID"
 legendAla = 'BIOCACHE_HUB/occurrence/legend'
-legendSandbox = "INSTANCEURL/ala-hub/occurrence/legend"
-listToolBaseURL = "http://lists.ala.org.au"
-
 
 //opentree configs
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"
@@ -113,7 +116,7 @@ alaDataresourceInfo = [
         'biocacheServiceUrl':biocacheServiceUrl,
         'biocacheHubUrl':biocacheHubUrl,
         'title':'Atlas of Living Australia (All data)',
-        'layerUrl': 'http://biocache.ala.org.au/ws/webportal/wms/reflect',
+        'layerUrl': "${biocacheServiceUrl}/webportal/wms/reflect",
         'type':'ala'
 ]
 
@@ -251,24 +254,6 @@ facets ='''
 
 grails.project.groupId = au.org.ala // change this to alter the default package name and Maven publishing destination
 
-//localAuthService properties
-auth.userDetailsUrl='http://auth.ala.org.au/userdetails/userDetails/'
-auth.userNamesForIdPath='getUserList'
-auth.userNamesForNumericIdPath='getUserListWithIds'
-
-// locations to search for config files that get merged into the main config;
-// config files can be ConfigSlurper scripts, Java properties files, or classes
-// in the classpath in ConfigSlurper format
-
-// grails.config.locations = [ "classpath:${appName}-config.properties",
-//                             "classpath:${appName}-config.groovy",
-//                             "file:${userHome}/.grails/${appName}-config.properties",
-//                             "file:${userHome}/.grails/${appName}-config.groovy"]
-
-// if (System.properties["${appName}.config.location"]) {
-//    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
-// }
-
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
 grails.mime.types = [ // the first one is the default format
@@ -286,9 +271,6 @@ grails.mime.types = [ // the first one is the default format
     hal:           ['application/hal+json','application/hal+xml'],
     xml:           ['text/xml', 'application/xml']
 ]
-
-// URL Mapping Cache Max Size, defaults to 5000
-//grails.urlmapping.cache.maxsize = 1000
 
 // What URL patterns should be processed by the resources plugin
 grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
@@ -345,20 +327,7 @@ grails.hibernate.pass.readonly = false
 // configure passing read-only to OSIV session by default, requires "singleSession = false" OSIV mode
 grails.hibernate.osiv.readonly = false
 
-environments {
-    development {
-    }
-    test {
-        dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
-            username = "sa"
-            password = ""
-        }
-    }
-    production {
-    }
-}
+def loggingDir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
 
 log4j = {
     appenders {
@@ -395,4 +364,6 @@ log4j = {
     debug   "grails.app",
             "au.org.ala"
 }
+
+//to fix the loading of some images use: grails.resources.debug = true
 grails.resources.debug = true

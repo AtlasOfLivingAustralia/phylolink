@@ -104,7 +104,7 @@ class PDWidget implements WidgetInterface{
         def url = grailsApplication.config.speciesListUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl);
 
         if( dr ){
-            url = grailsApplication.config.drUrl
+            url = grailsApplication.config.drUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl)
         }
         url = url.replaceAll( 'REGION', region.encodeAsURL() )
         log.debug( url )

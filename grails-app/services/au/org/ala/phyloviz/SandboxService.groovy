@@ -39,7 +39,7 @@ class SandboxService {
 
 
         FileBody fbody = new FileBody(file);
-        String uUrl = "${serverInstance}/datacheck/upload/uploadFile";
+        String uUrl = "${serverInstance}/upload/uploadFile";
         result = webService.postMultipart(uUrl, ['myFile': fbody], null);
         preview = getFileId(result.location);
         if (preview.fileId == null) {
@@ -106,7 +106,7 @@ class SandboxService {
      */
     def csvFileUrl(String fileId) {
         def biocache = grailsApplication.config.sandboxUrl;
-        return "${biocache}/datacheck/upload/serveFile?fileId=${fileId}";
+        return "${biocache}/upload/serveFile?fileId=${fileId}";
     }
 
     /**
