@@ -45,12 +45,17 @@ class PhyloController extends BaseController {
     def deleteViz() {
         if (!params.id) {
             badRequest "id is a required parameter"
-        } else if (!Phylo.findById(params.id)) {
-            notFound "No visualisation was found for id ${params.id}"
         } else {
-            phyloService.deleteVisualisation(params.id as int)
+            Phylo phylo = Phylo.findById(params.id)
+            if (!phylo) {
+                notFound "No visualisation was found for id ${params.id}"
+            } else if (!params.isAdmin && phylo.owner != treeService.getCurrentOwner()) {
+                notAuthorised "Only the visualisation owner or an administrator can delete this profile"
+            } else {
+                phyloService.deleteVisualisation(params.id as int)
 
-            redirect controller: "wizard", action: "myViz"
+                redirect controller: "wizard", action: "myViz"
+            }
         }
     }
 
