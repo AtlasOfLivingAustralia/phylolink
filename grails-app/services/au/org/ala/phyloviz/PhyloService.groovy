@@ -5,6 +5,10 @@ import grails.transaction.Transactional
 @Transactional
 class PhyloService {
 
+    void deleteVisualisation(Integer id) {
+        Phylo.findById(id)?.delete()
+    }
+
     def createVisualization( studyId, treeId, owner ) {
         def viz = new Phylo( [
                 studyid: studyId,

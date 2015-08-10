@@ -42,6 +42,23 @@ class PhyloController extends BaseController {
         respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid()]
     }
 
+    def deleteViz() {
+        if (!params.id) {
+            badRequest "id is a required parameter"
+        } else {
+            Phylo phylo = Phylo.findById(params.id)
+            if (!phylo) {
+                notFound "No visualisation was found for id ${params.id}"
+            } else if (!params.isAdmin && phylo.owner != treeService.getCurrentOwner()) {
+                notAuthorised "Only the visualisation owner or an administrator can delete this profile"
+            } else {
+                phyloService.deleteVisualisation(params.id as int)
+
+                redirect controller: "wizard", action: "myViz"
+            }
+        }
+    }
+
     def create() {
         respond new Phylo(params)
     }
@@ -112,16 +129,6 @@ class PhyloController extends BaseController {
                 redirect action: "index", method: "GET"
             }
             '*' { render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'phyloInstance.label', default: 'Phylo'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NOT_FOUND }
         }
     }
 

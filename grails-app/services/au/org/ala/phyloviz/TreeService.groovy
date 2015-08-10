@@ -658,4 +658,8 @@ class TreeService {
 
         characterLists
     }
+
+    def deleteTree(Integer treeId) {
+        Tree.findById(treeId)?.delete()
+    }
 }
