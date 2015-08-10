@@ -36,16 +36,19 @@ class BootStrap {
         }
         log.debug('after getting system username')
         log.debug('in bootstrap init func')
-        def trees = [this.acaciaTree(), this.amphibianTree(), this.mammalsTree()]
+        def trees = [this.acaciaTree(), this.amphibianTree(), this.mammalsTree(),
+                     this.marsupialsTree(), this.maluridaeTree()]
         trees.each {
             def tree = it
             tree.owner = systemUser;
             def pt = Tree.findByReference(tree.reference)
             if (!pt) {
                 log.debug('adding tree' + tree['title'])
+                tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
                 pt = new Tree(tree).save(flush: true, failOnError: true);
             } else if (overwrite) {
-                it.each { key, value ->
+                tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
+                tree.each { key, value ->
                     pt[key] = value;
                 }
                 pt.save(flush: true);
@@ -80,8 +83,6 @@ class BootStrap {
         def result = [:], filename = 'acacia.newick'
         def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
         result['tree'] = file.text
-        result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
-        result['nexson'] = result['nexson'].toString();
         result['year'] = 2011
         result['hide'] = false
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
@@ -104,8 +105,6 @@ class BootStrap {
         result['tree'] = file.text
         log.debug('mammals tree' + result['tree'])
         result['treeFormat'] = 'newick'
-        result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
-        result['nexson'] = result['nexson'].toString();
         log.debug(result['nexson'])
         result['year'] = 2009
         result['hide'] = false
@@ -128,8 +127,6 @@ class BootStrap {
         result['tree'] = file.text
         log.debug('amphibians tree' + result['tree'])
         result['treeFormat'] = 'newick'
-        result['nexson'] = opentreeService.convertNewickToNexson(result.tree)
-        result['nexson'] = result['nexson'].toString();
         result['year'] = 2011
         result['hide'] = false
         result['doi'] = ''
@@ -144,37 +141,64 @@ class BootStrap {
         return result
     }
 
-    def loadNexmlFile2() {
-        def result = [:], filename = 'ot_13.nexml.txt'
-        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file
+    def marsupialsTree() {
+        log.debug('creating marsupials tree metadata')
+        def result = [:]
+        def file = grailsApplication.mainContext.getResource('artifacts/marsupials.newick').file;
         result['tree'] = file.text
-        result['nexson'] = new File('/artifacts/ot_13.json.1.2.1.json').text
-        result['year'] = '2014'
+        result['treeFormat'] = 'newick'
+        log.debug(result['nexson'])
+        result['year'] = 2004
         result['hide'] = false
-        result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
-        result['reference'] = 'Riginos C. 2014. Dispersal capacity predicts both population genetic structure' +
-                ' and species richness in reef fishes. The American Naturalist, 184.'
-        result['title'] = 'Dispersal capacity predicts both population genetic structure and species richness in reef fishes'
-        result['expertTree'] = false
-        result['treeFormat'] = 'nexml'
+        result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1017/S0952836904005539/full'
+        result['title'] = 'Marsupials – Cardillo et al 2004'
+        result['reference'] = 'Cardillo, M., Bininda-Emonds, R. P., Boakes, E., & Purvis, A. (2004).  ' +
+                'A species-level phylogenetic supertree of marsupials.  Journal of Zoology, 264(1), 11–31.'
         result['created'] = new Date()
+        result['expertTree'] = true
+        result['expertTreeTaxonomy'] = 'Marsupials'
+        result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:afd.taxon:602afec4-950f-4961-9ad0-74793be8efbf'
+        result['notes'] = 'Source data from treebase/phylows/study/TB2:S1128'
         return result
     }
 
-    def loadNexmlFile3() {
-        def result = [:], filename = 'ot_14.nexml.json'
-        def file = new File('/artifacts/' + filename)
+    def hornwortsTree() {
+        log.debug('creating Australian Hornworts tree metadata')
+        def result = [:]
+        def file = grailsApplication.mainContext.getResource('artifacts/hornworts.newick').file;
         result['tree'] = file.text
-        result['nexson'] = new File('/artifacts/ot_14.json.1.2.1.json').text
-        result['year'] = '2014'
+        result['treeFormat'] = 'newick'
+        log.debug(result['nexson'])
+        result['year'] = null;
         result['hide'] = false
-        result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1111/j.1472-4642.2011.00780.x/full'
-        result['reference'] = 'Riginos C. 2014. Dispersal capacity predicts both population genetic structure' +
-                ' and species richness in reef fishes. The American Naturalist, 184.'
-        result['title'] = 'Dispersal capacity predicts both population genetic structure and species richness in reef fishes'
-        result['treeFormat'] = 'nexml'
-        result['expertTree'] = false
+        result['doi'] = null;
+        result['title'] = 'Australian Hornworts'
+        result['reference'] = null;
         result['created'] = new Date()
+        result['expertTree'] = true
+        result['expertTreeTaxonomy'] = 'Hornworts'
+        result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:apni.taxon:303372'
+        result['notes'] = ''
+        return result
+    }
+
+    def maluridaeTree() {
+        log.debug('creating Maluridae tree metadata')
+        def result = [:]
+        def file = grailsApplication.mainContext.getResource('artifacts/maluridae.newick').file;
+        result['tree'] = file.text
+        result['treeFormat'] = 'newick'
+        result['year'] = 2012
+        result['hide'] = false
+        result['doi'] = 'http://doi.org/10.1093/sysbio/syr101'
+        result['title'] = 'Maluridae - Lee et al 2012'
+        result['reference'] = 'Lee JY, Joseph L, Edwards S. 2012. A species tree for the Australo-Papuan' +
+                ' fairy-wrens an allies (Aves: Maluridae). Syst. Biol. 61(2): 253-271.'
+        result['created'] = new Date()
+        result['expertTree'] = true
+        result['expertTreeTaxonomy'] = 'Maluridae'
+        result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:afd.taxon:e0c1a995-d168-468f-8270-8299043212c5'
+        result['notes'] = 'Tree provided by Scott Edwards sedwards@fas.harvard.edu'
         return result
     }
 
