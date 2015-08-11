@@ -7,13 +7,10 @@ import grails.util.Environment
 class BootStrap {
     def opentreeService
     def utilsService
-    def skip = false
-    def overwrite = false
-//    def elasticService
     def grailsApplication
 
     def init = { servletContext ->
-        if (skip) {
+        if (Boolean.parseBoolean(grailsApplication.config.bootstrap.skip) ) {
             return;
         }
 
@@ -46,7 +43,7 @@ class BootStrap {
                 log.debug('adding tree' + tree['title'])
                 tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
                 pt = new Tree(tree).save(flush: true, failOnError: true);
-            } else if (overwrite) {
+            } else if (Boolean.parseBoolean(grailsApplication.config.bootstrap.overwrite)) {
                 tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
                 tree.each { key, value ->
                     pt[key] = value;
