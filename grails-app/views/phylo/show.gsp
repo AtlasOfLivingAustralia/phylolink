@@ -214,7 +214,8 @@
         dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
         pj: pj,
         selectResourceOnInit: true,
-        initResourceId: -1
+        initResourceId: -1,
+        edit: ${edit}
     });
 
     var character = new Character({

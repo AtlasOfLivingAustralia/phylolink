@@ -20,7 +20,8 @@ var Records = function (c) {
             pj: undefined,
             map: undefined,
             selectResourceOnInit: true,
-            initResourceId: -1
+            initResourceId: -1,
+            edit: true
         }, c),
         records = new Emitter(this),
         pj = config.pj,
@@ -409,5 +410,11 @@ var Records = function (c) {
     this.setMap = function(map) {
         this.map = map
         this.updateMap()
+    }
+
+    if(config.edit){
+        $("#csvFormRecordsUnavailable").hide();
+    } else {
+        $("#csvFormRecords").hide();
     }
 }
