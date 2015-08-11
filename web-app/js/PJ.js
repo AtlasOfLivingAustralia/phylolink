@@ -191,7 +191,8 @@ var PJ = function (params) {
     var qid,
         prevSearch,
         queryObj,
-        settings;
+        settings,
+        trimming;
 
     //adding support functions for event handling
     this.events = [
@@ -692,6 +693,28 @@ var PJ = function (params) {
     ko.applyBindings(settings, document.getElementById(config.settingsId));
     // end settings functionality
 
+
+    // tree trimming model and functionality
+    function TrimmingModel() {
+        this.trimOption = ko.observable({displayName: "All species", value: "NONE"});
+        this.trimOptions = ko.observableArray([
+            {displayName: "All species", value: "NONE"},
+            {displayName: "Australian species", value: "AUSTRALIAN_ONLY"},
+            {displayName: "Species in the ALA", value: "ALA_ONLY"}]);
+
+        this.applyTrimOptions = function() {
+            pj.clearNodeToUrl();
+
+            getTree(config.url, setTree, {});
+            $("#" + config.trimmingId).modal('hide');
+        }
+    }
+
+
+    trimming = new TrimmingModel();
+    ko.applyBindings(trimming, document.getElementById(config.trimmingId));
+
+
     var nextStep = function (pos, step, length) {
         // logic so that search starts from the first instance
         if (typeof pos === 'undefined') {
@@ -772,23 +795,27 @@ var PJ = function (params) {
             '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>'+
             '</div></div>'+
             '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +
-            ' width: 18px; height: 18px; cursor: pointer;"><div id="north"><i class="icon-arrow-up"' +
-            ' aria-hidden="true"></i></div></div><div id="panleft" style="position: absolute; left: 4px; top: 56px;' +
+            ' width: 18px; height: 18px; cursor: pointer;"><div id="north" title="Pan up"><i class="icon-arrow-up"' +
+            ' aria-hidden="true"></i></div></div><div id="panleft" title="Pan left" style="position: absolute; left: 4px; top: 56px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="west"><i class="icon-arrow-left"' +
-            ' aria-hidden="true"></i></div></div><div id="panright" style="position: absolute; left: 22px; ' +
+            ' aria-hidden="true"></i></div></div><div id="panright" title="Pan right" style="position: absolute; left: 22px; ' +
             'top: 56px; width: 18px; height: 18px; cursor: pointer;"><div id="east"><i class=" ' +
-            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" style="position: ' +
+            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
+            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
             'absolute; left: 13px; top: 70px; width: 18px; height: 18px; cursor: pointer;"><div id="south"><i ' +
             'class="icon-arrow-down" aria-hidden="true"></i></div></div>' +
-            '<div id="zoomout" style="position: absolute; left: 13px; top: 129px; width: 18px; height: 18px; ' +
+            '<div id="zoomout" title="Zoom out" style="position: absolute; left: 13px; top: 129px; width: 18px; height: 18px; ' +
             'cursor: pointer;"><div id="zoomOUT"><i class="icon-zoom-out"></i></div></div>' +
             '<div id="zoomworld" style="position: absolute; left: 13px; top: 93px; width: 18px; height: 18px; cursor: pointer;"><div id="world" style="position: relative; width: 18px; height: ' +
             '18px;" ><i class="icon-resize-small"></i></div></div>' +
-            '<div id="zoomin" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
+            '<div id="zoomin" title="Zoom in" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
             'pointer;">' +
             '<div id="zoomIN"><i class="icon-zoom-in"></i></div></div>' +
-            '<div id="settingsBtn"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
+            '<div id="settingsBtn" title="Tree display options"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
             '   <i class="icon icon-cog"></i>' +
+            '</a></div>' +
+            '<div id="trimmingBtn" title="Tree trimming options"> <a href="#' + config.trimmingId + '" role="button" data-toggle="modal">' +
+            '   <i class="icon icon-leaf icon-green"></i>' +
             '</a></div>' +
             '</div>';
 
@@ -967,6 +994,9 @@ var PJ = function (params) {
         $.ajax({
             url: url,
             dataType: options.dataType,
+            data: {
+                trimOption: (trimming.trimOption() ? trimming.trimOption().value : "NONE")
+            },
             success: function (data) {
                 spinner.stop();
                 if (typeof data == 'object') {
@@ -1033,9 +1063,16 @@ var PJ = function (params) {
             // if zoomIndex is not set, the rendering will go crazy. make sure zoomIndex is set when a node is clicked
             st.zoomIndex = st.graph.depth.length;
             st.plot();
+            if(!config.clickNodeHandlerRegistered){
             pj.on('treeloaded', function () {
-                id && pj.clickNode(id);
-            })
+                if (id) {
+                    pj.clickNode(id);
+                } else {
+                    pj.clickNode(st.root);
+                }
+            });
+            }
+            config.clickNodeHandlerRegistered = true;
             config.treeloaded = true;
             // fire event after tree is loaded
             pj.emit('treeloaded');
@@ -1320,7 +1357,11 @@ var PJ = function (params) {
         config.setNodeToUrlFlag = true;
         var hash = '#node/' + id
         window.location.hash = hash;
-    }
+    };
+
+    this.clearNodeToUrl = function() {
+        window.location.hash = "";
+    };
 
     /**
      * simulate a click on a node

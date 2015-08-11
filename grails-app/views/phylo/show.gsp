@@ -35,6 +35,7 @@
         <div class="span6">
             <div id="info"></div>
             <g:render template="settings"></g:render>
+            <g:render template="trimming"></g:render>
         </div>
 
         <div role="tabpanel" id="tabs" class="span6">
@@ -136,7 +137,7 @@
         },
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
-        initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
+        initCharacters: '<g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>',
         filterParams: {
             q: '',
             fq:{
@@ -175,6 +176,7 @@
         format: config.format,
         heading:'vizTitle',
         settingsId:'pjSettings',
+        trimmingId:'pjTrimming',
         hData:{
             id:config.id,
             title: config.title,
@@ -299,7 +301,7 @@
     listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
+        initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
         graph: {
             url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
             type: 'GET',

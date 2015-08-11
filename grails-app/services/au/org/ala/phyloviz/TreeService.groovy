@@ -1,5 +1,6 @@
 package au.org.ala.phyloviz
 
+import au.org.ala.phylolink.TrimOption
 import grails.converters.JSON
 import grails.converters.XML
 import groovy.json.JsonSlurper
@@ -633,9 +634,13 @@ class TreeService {
     }
 
     List getSpeciesNamesFromTree(Integer treeId) {
-        JadeTree tree = metricsService.getJadeTree(metricsService.treeProcessing(Tree.findById(treeId).tree))
+        JadeTree tree = toJadeTree(treeId)
 
         metricsService.getLeafNames(tree)
+    }
+
+    JadeTree toJadeTree(Integer treeId) {
+        metricsService.getJadeTree(metricsService.treeProcessing(Tree.findById(treeId).tree))
     }
 
     /**
@@ -669,5 +674,66 @@ class TreeService {
         visualisations*.delete()
 
         Tree.findById(treeId)?.delete()
+    }
+
+    Tree trimTree(Integer treeId, TrimOption option) {
+        log.debug("Before : ${getSpeciesNamesFromTree(treeId).size()}")
+
+        Tree tree = Tree.findById(treeId)
+
+        Tree trimmedTree
+
+        switch (option) {
+            case TrimOption.AUSTRALIAN_ONLY:
+                Set australianSpecies = getAustralianSpecies(treeId)
+                trimmedTree = trim(treeId, australianSpecies)
+                break
+            case TrimOption.ALA_ONLY:
+                Set alaRecognisedSpecies = getAlaRecognisedSpecies(treeId)
+                trimmedTree = trim(treeId, alaRecognisedSpecies)
+                break
+            case TrimOption.NONE:
+            default:
+                trimmedTree = tree
+                break
+        }
+
+        trimmedTree
+    }
+
+    private Set getAustralianSpecies(Integer treeId) {
+        getBieSpecies(treeId).findResults { it?.isAustralian == "recorded" ? it.name : null } as HashSet
+    }
+
+    private Set getAlaRecognisedSpecies(Integer treeId) {
+        getBieSpecies(treeId).findResults { it?.name } as HashSet
+    }
+
+    private getBieSpecies(Integer treeId) {
+        List speciesNames = getSpeciesNamesFromTree(treeId)
+
+        webService.doJsonPost("${grailsApplication.config.bieBaseUrl}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"]}").data
+    }
+
+    private Tree trim(Integer treeId, Set species) {
+        JadeTree tree = toJadeTree(treeId)
+
+        List leavesToTrim = tree.iterateExternalNodes().findAll { !species.contains(it.getName()) }
+        log.debug("Before : ${tree.externalNodeCount}")
+
+        leavesToTrim.each {
+            tree.pruneExternalNode(it)
+        }
+        log.debug("After : ${tree.externalNodeCount}")
+
+        Tree trimmedTree = new Tree(Tree.findById(treeId).properties)
+        trimmedTree.id = null
+        trimmedTree.created = null
+        trimmedTree.version = null
+        trimmedTree.treeFormat = "newick"
+        trimmedTree.title = "${trimmedTree.title} (Trimmed}"
+        trimmedTree.tree = "${tree.root.getNewick(true)};"
+
+        trimmedTree
     }
 }

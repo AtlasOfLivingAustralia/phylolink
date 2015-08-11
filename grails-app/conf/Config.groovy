@@ -58,6 +58,8 @@ alaWebServiceMeta = [
         "speciesfacet":'taxon_name'
 ]
 
+bieBaseUrl = "http://bie.ala.org.au"
+
 //external webservice
 doiSearchUrl = "http://search.crossref.org/dois?q=SEARCH&header=true"
 citationParser = "http://freecite.library.brown.edu/citations/create"
@@ -75,8 +77,8 @@ regionsUrl = [
 speciesListUrl = "BIOCACHE_SERVICE/occurrences/facets/download?facets=${alaWebServiceMeta['speciesfacet']}&flimit=1000000&fq=REGION&fq=rank:species"
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
 occurrencesSearch = "BIOCACHE_SERVICE/occurrences/search"
-autocompleteUrl = "http://bie.ala.org.au/ws/search.json?q=QUERY&fq=idxtype:TAXON"
-bieInfo = 'http://bie.ala.org.au/ws/species/info/QUERY.json'
+autocompleteUrl = "${bieBaseUrl}/ws/search.json?q=QUERY&fq=idxtype:TAXON"
+bieInfo = '${bieBaseUrl}/ws/species/info/QUERY.json'
 qidUrl = 'BIOCACHE_SERVICE/webportal/params'
 //listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"

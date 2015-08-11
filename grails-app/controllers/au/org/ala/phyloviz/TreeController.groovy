@@ -1,4 +1,6 @@
 package au.org.ala.phyloviz
+
+import au.org.ala.phylolink.TrimOption
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.apache.http.client.HttpResponseException
@@ -259,12 +261,36 @@ class TreeController extends BaseController {
      */
     def getTree(Tree tree){
         def result = [:]
+
+        if (params.trimOption && TrimOption.valueOf(params.trimOption) != TrimOption.NONE) {
+            tree = treeService.trimTree(tree.id, TrimOption.valueOf(params.trimOption))
+        }
+
         result['tree']=tree.getTree();
         result['format']=tree.getTreeFormat();
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
             render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    def trimTree() {
+        if (!params.treeId || !params.trimOption || !TrimOption.valueOf(params.trimOption)) {
+            badRequest "treeId and trimOption are required parameters. trimOption must be one of ${TrimOption.values()}"
+        } else if (!Tree.findById(params.treeId)) {
+            notFound "No matching tree was found for id ${params.treeId}"
+        } else {
+            Tree tree = treeService.trimTree(params.treeId, TrimOption.valueOf(params.trimOption))
+
+            def result = [:]
+            result['tree']=tree.getTree();
+            result['format']=tree.getTreeFormat();
+            if(params.callback){
+                render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
+            } else {
+                render(contentType: 'application/json', text: result as JSON)
+            }
         }
     }
 
