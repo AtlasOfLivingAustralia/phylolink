@@ -659,7 +659,15 @@ class TreeService {
         characterLists
     }
 
-    def deleteTree(Integer treeId) {
+    /**
+     * Deletes the specified tree and any visualisations that were created from it
+     *
+     * @param treeId ID of the tree to delete
+     */
+    void deleteTree(Integer treeId) {
+        List<Phylo> visualisations = Phylo.findAllByStudyid(treeId)
+        visualisations*.delete()
+
         Tree.findById(treeId)?.delete()
     }
 }
