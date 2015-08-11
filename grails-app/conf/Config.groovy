@@ -37,7 +37,6 @@ reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
 
 sandboxRoot="http://sandbox1.ala.org.au"
 sandboxCollectoryRoot="http://collectory-dev.ala.org.au"
-
 spatialPortalRoot="http://spatial.ala.org.au"
 regionsRoot="http://regions.ala.org.au"
 bieRoot="http://bie.ala.org.au"
@@ -116,7 +115,7 @@ alaDataresourceInfo = [
         'biocacheServiceUrl':biocacheServiceUrl,
         'biocacheHubUrl':biocacheHubUrl,
         'title':'Atlas of Living Australia (All data)',
-        'layerUrl': "${biocacheServiceUrl}/webportal/wms/reflect",
+        'layerUrl': "/webportal/wms/reflect",
         'type':'ala'
 ]
 
@@ -327,7 +326,7 @@ grails.hibernate.pass.readonly = false
 // configure passing read-only to OSIV session by default, requires "singleSession = false" OSIV mode
 grails.hibernate.osiv.readonly = false
 
-def loggingDir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
+loggingDir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
 
 log4j = {
     appenders {
