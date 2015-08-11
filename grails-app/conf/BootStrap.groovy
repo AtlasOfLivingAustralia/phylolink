@@ -37,7 +37,7 @@ class BootStrap {
         log.debug('after getting system username')
         log.debug('in bootstrap init func')
         def trees = [this.acaciaTree(), this.amphibianTree(), this.mammalsTree(),
-                     this.marsupialsTree(), this.maluridaeTree()]
+                     this.marsupialsTree(), this.maluridaeTree(), hornwortsTree()]
         trees.each {
             def tree = it
             tree.owner = systemUser;
@@ -169,11 +169,11 @@ class BootStrap {
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
         log.debug(result['nexson'])
-        result['year'] = null;
+        result['year'] = 2013;
         result['hide'] = false
-        result['doi'] = null;
+        result['doi'] = 'http://dx.doi.org/10.1071/SB13030';
         result['title'] = 'Australian Hornworts'
-        result['reference'] = null;
+        result['reference'] = 'Cargill D. Christine, Vella Nicole G. F., Sharma Ish, Miller Joseph T. (2013) Cryptic speciation and species diversity among Australian and New Zealand hornwort taxa of Megaceros (Dendrocerotaceae). Australian Systematic Botany 26, 356–377.';
         result['created'] = new Date()
         result['expertTree'] = true
         result['expertTreeTaxonomy'] = 'Hornworts'
