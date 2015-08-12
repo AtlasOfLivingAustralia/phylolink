@@ -10,13 +10,13 @@ class BootStrap {
     def grailsApplication
 
     def init = { servletContext ->
-        if (Boolean.parseBoolean(grailsApplication.config.bootstrap.skip) ) {
-            return;
-        }
-
         // since bootstrap loads expert trees and expert tree requires curator app on web2py, we cannot
         // proceed further as it will break the test on travis.
         if (Environment.current == Environment.TEST) {
+            return;
+        }
+
+        if (Boolean.parseBoolean(grailsApplication.config.bootstrap.skip) ) {
             return;
         }
 
