@@ -159,7 +159,8 @@
         spUrl: {
             baseUrl: '${grailsApplication.config.spatialPortalRoot}',
             url: ko.observable('${grailsApplication.config.spatialPortalRoot}')
-        }
+        },
+        chartWidth: $('#tabs').width() - 30
     }
 
     google.load("visualization", "1", {packages: ["corechart"]});
@@ -234,7 +235,9 @@
         charOnRequestBaseUrl: config.charOnRequestBaseUrl,
         charOnRequestParams: config.charOnRequestParams,
         charOnRequestListKeys: config.charOnRequestListKeys,
-        treeId: "${phyloInstance.studyid}"
+        treeId: "${phyloInstance.studyid}",
+        // dynamic chart size. the default chart width is too small.
+        chartWidth: config.chartWidth
 
     });
 
@@ -315,7 +318,9 @@
         },
         downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
         biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
-        downloadReasonsUrl: config.downloadReasonsUrl
+        downloadReasonsUrl: config.downloadReasonsUrl,
+        // dynamic chart size. the default chart width is too small.
+        chartWidth: config.chartWidth
     });
 
     var records = new Records({

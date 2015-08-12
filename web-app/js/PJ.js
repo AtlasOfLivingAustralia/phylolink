@@ -1472,6 +1472,15 @@ var PJ = function (params) {
         return state;
     }
 
+    this.getRange = function(name) {
+        var range = name && name.match(/\d+\.*\d*/g);
+        if (range.length) {
+            range[0] = Number.parseFloat(range[0]);
+            range[1] = Number.parseFloat(range[1]);
+        }
+        return range;
+    }
+
     this.getQuantCharacterState = function (val, char) {
         var quant = this.getLegendForCharacter(char),
             name,
@@ -1479,13 +1488,8 @@ var PJ = function (params) {
 
         for (var i = 0; i < quant.length; i++) {
             name = quant[i].name;
-            range = name && name.match(/\d+\.*\d*/g);
-            if (range.length) {
-                range[0] = Number.parseFloat(range[0]);
-                range[1] = Number.parseFloat(range[1]);
-            }
-
-            if (val >= range[0] && val < range[1]) {
+            range = pj.getRange(name);
+            if (val >= range[0] && val <= range[1]) {
                 return name;
             }
         }
