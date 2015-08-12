@@ -9,14 +9,54 @@ class MetricsService {
     def grailsApplication
     def webService
 
-    def getJadeTree( String treeText ){
+    def getJadeTreeFromNewick(String newick) {
         def tReader = new TreeReader();
-        def tree = tReader.readTree(treeText);
+        def tree = tReader.readTree(newick);
         return tree;
     }
 
+    def getJadeTreeFromNeXML(String nexml) {
+        JadeTree tree = new JadeTree()
+
+        def xml = new XmlSlurper().parseText(nexml)
+
+        Map tips = [:]
+        xml.otus.otu.each {
+            tips << [(it.@id.toString()): it.@label.toString()]
+        }
+
+        Map<String, List> edges = [:].withDefault { [] }
+        xml.trees.tree[0].edge.each {
+            edges[it.@source.toString()] << [child: it.@target.toString(), length: it.@length.toString()]
+        }
+
+        Map nodes = [:]
+        xml.trees.tree[0].node.each {
+            nodes << [(it.@id.toString()): it.@otu?.toString() ?: null]
+        }
+
+        def root = xml.trees.tree[0].node.find { it.@root?.toBoolean() }
+
+        JadeNode node = new JadeNode(0, tips[root.@otu.toString()]?.label, null)
+        tree.setRoot(node)
+        tree.addInternalNode(node)
+        addChildren(tree, edges, tips, nodes, root.@id.toString(), node)
+
+        tree
+    }
+
+    private addChildren(JadeTree tree, Map edges, Map tips, Map nodes, String nodeId, JadeNode node) {
+        edges[nodeId].each {
+            String label = (tips[nodes[it.child]] ?: "").replaceAll("_", " ").replaceAll("'", "")
+            JadeNode child = new JadeNode(it.length as double, label, node)
+            node.addChild(child)
+            label ? tree.addExternalNode(child) : tree.addInternalNode(child)
+            addChildren(tree, edges, tips, nodes, it.child, child)
+        }
+    }
+
     def pd( String treeText, speciesList ) {
-        def tree = this.getJadeTree( treeText );
+        def tree = this.getJadeTreeFromNewick( treeText );
         return this.pd(tree, speciesList)
     }
 
@@ -93,7 +133,7 @@ class MetricsService {
     }
 
     def maxPd( String tree ){
-        def treeObj = this.getJadeTree( tree )
+        def treeObj = this.getJadeTreeFromNewick( tree )
         def leaves = this.getLeafNames( treeObj );
         def maxPd = [:]
         maxPd = this.pd( tree, leaves)

@@ -35,7 +35,7 @@ class TreeService {
         }
 
         def lsid = alaService.getLsid(names)
-        if( lsid?.error ){
+        if (lsid?.error) {
             result = lsid
         } else {
             lsid = lsid.resp;
@@ -174,9 +174,9 @@ class TreeService {
      *
      */
     def guessFormat(String tree) {
-        def formats = [ 'nexml', 'nexus', 'newick' ]
+        def formats = ['nexml', 'nexus', 'newick']
         def result;
-        log.debug( formats )
+        log.debug(formats)
         for (def i = 0; i < formats.size(); i++) {
             switch (formats[i]) {
                 case 'nexml':
@@ -192,13 +192,13 @@ class TreeService {
                     result = isNexus(tree) ? 'nexus' : null;
                     break;
             }
-            if( result != null ){
+            if (result != null) {
                 return result
             }
         }
     }
 
-    def isNexml( String tree) {
+    def isNexml(String tree) {
         try {
             XML.parse(tree)
             return true
@@ -208,35 +208,35 @@ class TreeService {
         }
     }
 
-    def isNewick( String tree) {
+    def isNewick(String tree) {
         def newick, reader
 
         reader = new TreeReader()
-        try{
+        try {
             newick = reader.readTree(tree);
-        }catch ( Exception e){
-            log.debug( 'Exception:' + e.getMessage() )
+        } catch (Exception e) {
+            log.debug('Exception:' + e.getMessage())
             return false
         }
         return true
     }
 
-    def isNexus( String tree ){
+    def isNexus(String tree) {
         return tree ==~ /(?s)^\#NEXUS.*/
     }
 
     /**
      * get meta data from a given tree
      */
-    def getTreeMeta( String tree ){
+    def getTreeMeta(String tree) {
         def meta = [:], nex
-        meta['format'] = this.guessFormat( tree )
-        log.debug( meta['format'] )
-        switch ( meta['format'] ){
+        meta['format'] = this.guessFormat(tree)
+        log.debug(meta['format'])
+        switch (meta['format']) {
             case 'nexml':
-                nex = opentreeService.convertNexmlToNexson( tree )
-                nex = new Nexson( nex )
-                nex.getMeta( meta )
+                nex = opentreeService.convertNexmlToNexson(tree)
+                nex = new Nexson(nex)
+                nex.getMeta(meta)
                 break;
         }
         return meta;
@@ -244,10 +244,10 @@ class TreeService {
 
     /**
      * create Tree instance
-     * @param 
+     * @param
      * treep - tree parameters
      */
-    def createTreeInstance( treep ){
+    def createTreeInstance(treep) {
         def tree;
         log.debug('in create tree instance function:' + authService.getUserId())
         treep.created = new Date()
@@ -255,13 +255,13 @@ class TreeService {
         def userId = authService.getUserId()
         def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
 
-        log.debug( user.toString() )
-        if( treep.tree && treep.treeFormat && user ){
+        log.debug(user.toString())
+        if (treep.tree && treep.treeFormat && user) {
             try {
                 log.debug('before convert nexson')
                 treep.nexson = opentreeService.convertToNexson(treep.tree, treep.treeFormat);
 //                return
-                if(treep.nexson == null){
+                if (treep.nexson == null) {
                     return;
                 }
 
@@ -269,8 +269,8 @@ class TreeService {
                 treep.nexson = treep.nexson.toString()
                 treep.owner = user
                 log.debug('before tree instance creation')
-                tree = new Tree( treep )
-                if( tree.save( flush: true ) ){
+                tree = new Tree(treep)
+                if (tree.save(flush: true)) {
                     log.debug('tree saved to database.' + tree.getId())
 //                    elasticService.indexDoc(elasticService.getNEXSON_INDEX(), tree.getId(), tree.getNexson());
                 }
@@ -280,7 +280,7 @@ class TreeService {
             }
 
         }
-        return  tree;
+        return tree;
     }
 
     /**
@@ -289,43 +289,43 @@ class TreeService {
      * @param study
      * @return
      */
-    def saveOtus( otus, study ){
-        def nexson = new Nexson( study.getNexson() )
+    def saveOtus(otus, study) {
+        def nexson = new Nexson(study.getNexson())
 
-        nexsonService.updateOtus( otus , nexson )
-        study.setNexson( nexson.getTree() )
-        if( study.save( flush: true ) ){
+        nexsonService.updateOtus(otus, nexson)
+        study.setNexson(nexson.getTree())
+        if (study.save(flush: true)) {
 //            elasticService.indexDoc(elasticService.getNEXSON_INDEX(), study.getId(), study.getNexson());
         }
     }
 
-    def searchTreebase( query ){
-        query = query.replace(' ','%20');
+    def searchTreebase(query) {
+        query = query.replace(' ', '%20');
         def json = [], id
         def urlStr = "http://treebase.org/treebase-web/phylows/study/find?format=rss1&recordSchema=study&query=dcterms.title==\"${query}\"";
         URL url = new URL(urlStr);
         URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
         urlStr = uri.toURL().toString();
-        log.debug( urlStr )
-        def rss = webService.get( urlStr );
-        log.debug( rss );
-        if( rss ){
+        log.debug(urlStr)
+        def rss = webService.get(urlStr);
+        log.debug(rss);
+        if (rss) {
             def df = DocumentBuilderFactory.newInstance();
-            def builder =  df.newDocumentBuilder()
-            try{
-                def rsser = builder.parse( IOUtils.toInputStream( rss,'UTF-8' ) )
+            def builder = df.newDocumentBuilder()
+            try {
+                def rsser = builder.parse(IOUtils.toInputStream(rss, 'UTF-8'))
                 def nodelist = rsser.getElementsByTagName('item');
                 log.debug("getting a lot of names")
                 Iterator iter = nodelist.iterator();
                 def cIter;
-                while(iter.hasNext()){
+                while (iter.hasNext()) {
                     def link = [:];
                     Object item = iter.next();
                     def children = item.childNodes;
                     cIter = children.iterator();
-                    while( cIter.hasNext() ){
+                    while (cIter.hasNext()) {
                         def child = cIter.next();
-                        switch ( child.getNodeName() ){
+                        switch (child.getNodeName()) {
                             case 'description':
                                 id = child.getTextContent()
                                 link.description = id
@@ -343,19 +343,19 @@ class TreeService {
                                 link.publication = child.getTextContent();
                                 break;
                             case 'link':
-                                link.url = child.getTextContent()+'?format=nexml';
+                                link.url = child.getTextContent() + '?format=nexml';
                                 break;
                             case 'prism:doi':
-                                link.doi = child.getTextContent()?:null;
-                                if( link.doi ){
+                                link.doi = child.getTextContent() ?: null;
+                                if (link.doi) {
                                     link.doiUrl = this.doiResolution(link.doi)
                                 }
                                 break;
                         }
                     }
-                    json.push( link );
+                    json.push(link);
                 }
-            } catch (Exception e ){
+            } catch (Exception e) {
                 return "NEXML is not well formed"
             }
         }
@@ -367,18 +367,16 @@ class TreeService {
      * @param doi
      * @return
      */
-    def doiResolution( doi){
+    def doiResolution(doi) {
         return grailsApplication.config['doiAddress'] + doi
     }
-
 
     /**
      * get nexml from TreeBASE
      */
-    def importTB( url ){
-        return webService.getXml( url )
+    def importTB(url) {
+        return webService.getXml(url)
     }
-
 
     /**
      *
@@ -386,23 +384,23 @@ class TreeService {
      * metadata variable to which the result of this function gets added to
      * @return
      */
-     def getExpertTreeMeta( meta ) {
-        meta = meta?:[:]
-        Tree.findAllWhere(['expertTree':true]);
-        def trees = grailsApplication.config.expert_trees, i, studyId , treeId, input = [], studyMeta, temp
-        for( i = 0;i < trees.size(); i++ ){
-            if( trees[i][grailsApplication.config.treeMeta.treeText] == null ){
+    def getExpertTreeMeta(meta) {
+        meta = meta ?: [:]
+        Tree.findAllWhere(['expertTree': true]);
+        def trees = grailsApplication.config.expert_trees, i, studyId, treeId, input = [], studyMeta, temp
+        for (i = 0; i < trees.size(); i++) {
+            if (trees[i][grailsApplication.config.treeMeta.treeText] == null) {
                 studyId = trees[i].studyId?.toString()
                 treeId = trees[i].treeId?.toString()
-                studyMeta = getTreeMeta( treeId, studyId, trees[i] )
-                input.push( studyMeta.clone() )
+                studyMeta = getTreeMeta(treeId, studyId, trees[i])
+                input.push(studyMeta.clone())
             } else {
-                input.push( trees[i].clone() )
+                input.push(trees[i].clone())
             }
         }
 
-        meta[ grailsApplication.config.expertTreesMeta.et ] = input
-        return  meta
+        meta[grailsApplication.config.expertTreesMeta.et] = input
+        return meta
     }
 
     /**
@@ -412,21 +410,21 @@ class TreeService {
      * @param meta
      * @return
      */
-     def getTreeMeta(String treeId, String studyId){
-         Integer id = Integer.parseInt(studyId)
-         Tree [] trees = Tree.findById(id)
-         List result = [];
-         Integer i
-         Object temp
-         ConvertTreeToObject to = new ConvertTreeToObject();
-         for( i = 0;i < trees.size(); i++ ){
-             temp = to.convert(trees[i]);
-             temp = opentreeService.addTreeMeta(metricsService.getJadeTree(
-                     trees[i][grailsApplication.config.treeMeta.treeText] ), temp);
-             getViewerUrl(null,trees[i].getId(), temp);
-             result.push( temp )
-         }
-         return  result
+    def getTreeMeta(String treeId, String studyId) {
+        Integer id = Integer.parseInt(studyId)
+        Tree[] trees = Tree.findById(id)
+        List result = [];
+        Integer i
+        Object temp
+        ConvertTreeToObject to = new ConvertTreeToObject();
+        for (i = 0; i < trees.size(); i++) {
+            temp = to.convert(trees[i]);
+            temp = opentreeService.addTreeMeta(metricsService.getJadeTreeFromNewick(
+                    trees[i][grailsApplication.config.treeMeta.treeText]), temp);
+            getViewerUrl(null, trees[i].getId(), temp);
+            result.push(temp)
+        }
+        return result
     }
 
     /**
@@ -434,7 +432,7 @@ class TreeService {
      * @param id
      * @return
      */
-    def getTree( Integer id){
+    def getTree(Integer id) {
         Tree tree = Tree.findById(id);
         ConvertTreeToObject to = new ConvertTreeToObject();
         tree = to.convert(tree);
@@ -448,8 +446,8 @@ class TreeService {
      * @param meta
      * @return
      */
-    def getTreeText(String treeId, String studyId, meta){
-        meta = meta?:[:]
+    def getTreeText(String treeId, String studyId, meta) {
+        meta = meta ?: [:]
         log.debug(studyId);
         studyId = Integer.parseInt(studyId);
         String tree = Tree.findById(studyId).tree;
@@ -464,15 +462,15 @@ class TreeService {
         return meta
     }
 
-    def removeProp( Collection meta, String prop){
-        for ( def i = 0 ; i < meta.size(); i++){
-            meta[i]?.remove( prop )
+    def removeProp(Collection meta, String prop) {
+        for (def i = 0; i < meta.size(); i++) {
+            meta[i]?.remove(prop)
         }
         return meta;
     }
 
-    def removeProp( HashMap meta , String prop ){
-        meta?.remove( prop )
+    def removeProp(HashMap meta, String prop) {
+        meta?.remove(prop)
         return meta;
     }
 
@@ -480,7 +478,7 @@ class TreeService {
      * get expert trees from database
      * return: an array of expert trees
      */
-    public def getExpertTrees(noTreeText){
+    public def getExpertTrees(noTreeText) {
         convertTreesToObjects(Tree.findAllByExpertTree(true), !noTreeText)
     }
 
@@ -506,7 +504,7 @@ class TreeService {
 
         List treeObjects = trees.collect {
             Map treeObject = cv.convert(it)
-            treeObject = opentreeService.addTreeMeta(metricsService.getJadeTree(it[grailsApplication.config.treeMeta.treeText]), treeObject);
+            treeObject = opentreeService.addTreeMeta(metricsService.getJadeTreeFromNewick(it[grailsApplication.config.treeMeta.treeText]), treeObject);
 
             getViewerUrl(null, it.getId(), treeObject);
 
@@ -528,49 +526,49 @@ class TreeService {
      * @param speciesList
      * @return
      */
-    def getPDCalc( String treeId, String studyId, String tree, String speciesList){
+    def getPDCalc(String treeId, String studyId, String tree, String speciesList) {
         def startTime, deltaTime
-        def treeUrl, type, i,pd, sList;
-        def studyMeta = [:], result =[], trees = [], input =[]
-        type = tree?"tree":studyId?"gettree":"besttrees"
-        switch (type){
+        def treeUrl, type, i, pd, sList;
+        def studyMeta = [:], result = [], trees = [], input = []
+        type = tree ? "tree" : studyId ? "gettree" : "besttrees"
+        switch (type) {
             case 'tree':
-                studyMeta [grailsApplication.config.treeMeta.treeText]=tree
-                studyMeta [ grailsApplication.config.studyMetaMap.name ]= message(code: 'phylo.userTreeName', default: 'User tree' )
-                studyMeta = opentreeService.addTreeMeta(metricsService.getJadeTree( tree ), studyMeta )
-                input.push( studyMeta )
+                studyMeta[grailsApplication.config.treeMeta.treeText] = tree
+                studyMeta[grailsApplication.config.studyMetaMap.name] = message(code: 'phylo.userTreeName', default: 'User tree')
+                studyMeta = opentreeService.addTreeMeta(metricsService.getJadeTreeFromNewick(tree), studyMeta)
+                input.push(studyMeta)
                 break;
             case 'gettree':
-                studyMeta = this.getTreeMeta(treeId, studyId )
-                input= studyMeta;
+                studyMeta = this.getTreeMeta(treeId, studyId)
+                input = studyMeta;
                 break;
             case 'besttrees':
                 startTime = System.currentTimeMillis()
                 input = this.getExpertTrees(false);
                 deltaTime = System.currentTimeMillis() - startTime
-                log.debug( "time elapse: ${deltaTime}")
+                log.debug("time elapse: ${deltaTime}")
                 break;
         }
 
-        sList = new JsonSlurper().parseText( speciesList )
-        for( i = 0; i < input.size(); i++){
+        sList = new JsonSlurper().parseText(speciesList)
+        for (i = 0; i < input.size(); i++) {
             studyMeta = [:]
-            log.debug( input[i] );
-            input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing( input[i][grailsApplication.config.treeMeta.treeText] )
+            log.debug(input[i]);
+            input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing(input[i][grailsApplication.config.treeMeta.treeText])
 
             // calculate pd
-            pd = metricsService.pd( input[i][grailsApplication.config.treeMeta.treeText], sList )
-            input[i]['maxPd'] = metricsService.maxPd( input[i].tree )
+            pd = metricsService.pd(input[i][grailsApplication.config.treeMeta.treeText], sList)
+            input[i]['maxPd'] = metricsService.maxPd(input[i].tree)
 
             // merge the variables
-            pd.each {k,v->
-                input[i][k]=v
+            pd.each { k, v ->
+                input[i][k] = v
             }
 
-            result.push( input[i] )
+            result.push(input[i])
         }
 
-        return  result;
+        return result;
     }
 
     /**
@@ -578,24 +576,24 @@ class TreeService {
      * @param id
      * @return
      */
-    def canAccess(id){
+    def canAccess(id) {
         return true;
     }
 
-    def saveTitle(Phylo phyloInstance, title){
+    def saveTitle(Phylo phyloInstance, title) {
         String userId = authService.getUserId();
         Owner user;
 
-        if( userId ){
+        if (userId) {
             user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         } else {
-            return [ 'message' : 'Cannot find your user details on system. Contact adminstrator.' ];
+            return ['message': 'Cannot find your user details on system. Contact adminstrator.'];
         }
 
         def result = [:]
         log.debug(user)
         log.debug(phyloInstance.getOwner()?.userId)
-        if(phyloInstance.getOwner()?.userId == user.userId){
+        if (phyloInstance.getOwner()?.userId == user.userId) {
             phyloInstance.setTitle(title);
             phyloInstance.save(
                     flush: true
@@ -614,20 +612,20 @@ class TreeService {
     /**
      * get current owner
      */
-    def getCurrentOwner(){
+    def getCurrentOwner() {
         def id = authService.getUserId()
         id != null ? Owner.findByUserId(id) : Owner.findByDisplayName('Guest')
     }
 
-    def search(String q){
+    def search(String q) {
         def owner = getCurrentOwner();
         def result = []
         def cv = new ConvertTreeToObject();
         def trees = Tree.withCriteria {
-            ilike('tree',"%${q}%") && ( eq('expertTree', true) || eq('owner', owner));
+            ilike('tree', "%${q}%") && (eq('expertTree', true) || eq('owner', owner));
         }
 
-        trees.each{tree->
+        trees.each { tree ->
             result.push(cv.convert(tree));
         }
         return result;
@@ -640,7 +638,12 @@ class TreeService {
     }
 
     JadeTree toJadeTree(Integer treeId) {
-        metricsService.getJadeTree(metricsService.treeProcessing(Tree.findById(treeId).tree))
+        Tree tree = Tree.findById(treeId)
+        if (tree.treeFormat == "newick") {
+            metricsService.getJadeTreeFromNewick(metricsService.treeProcessing(tree.tree))
+        } else if (tree.treeFormat == "nexml") {
+            metricsService.getJadeTreeFromNeXML(tree.tree)
+        }
     }
 
     /**
@@ -719,12 +722,24 @@ class TreeService {
         JadeTree tree = toJadeTree(treeId)
 
         List leavesToTrim = tree.iterateExternalNodes().findAll { !species.contains(it.getName()) }
+
         log.debug("Before : ${tree.externalNodeCount}")
 
-        leavesToTrim.each {
-            tree.pruneExternalNode(it)
+        String newTreeText = ""
+        if (leavesToTrim.size() != tree.externalNodeCount) {
+            leavesToTrim.each {
+                if (it.getParent() == null) {
+                    println it.getName()
+                }
+                tree.pruneExternalNode(it)
+            }
+
+            newTreeText = "${tree.root.getNewick(true)};"
+
+            log.debug("After : ${tree.externalNodeCount}")
+        } else {
+            log.warn("Trimmed tree has 0 nodes")
         }
-        log.debug("After : ${tree.externalNodeCount}")
 
         Tree trimmedTree = new Tree(Tree.findById(treeId).properties)
         trimmedTree.id = null
@@ -732,7 +747,7 @@ class TreeService {
         trimmedTree.version = null
         trimmedTree.treeFormat = "newick"
         trimmedTree.title = "${trimmedTree.title} (Trimmed}"
-        trimmedTree.tree = "${tree.root.getNewick(true)};"
+        trimmedTree.tree = newTreeText
 
         trimmedTree
     }
