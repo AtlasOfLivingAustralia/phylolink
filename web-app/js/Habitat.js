@@ -81,7 +81,8 @@ var Habitat = function (c) {
                 html: 'true',
                 content : 'Select an environmental layer like precipitation to graph the profile of a species'
             }
-        }]
+        }],
+        records: undefined
     }, c);
     var pj = config.pj, hab = this, id = config.id;
 
@@ -289,18 +290,18 @@ var Habitat = function (c) {
         };
 
         self.updateChart = function(habitat, list){
-            if (records.getDataresource() !== undefined) {
+            if (config.records.getDataresource() !== undefined) {
                 var data = {
                     speciesList: JSON.stringify(list),
                     config: habitat.name(),
-                    biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
+                    biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
                 };
                 if (config.doSaveQuery) {
 
                     self.saveQuery(data).then(function (qid) {
                         var data = {
                             q: "qid:" + qid,
-                            biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
+                            biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
                         };
                         self.updateChartDirect(habitat, data);
                     });
@@ -408,14 +409,14 @@ var Habitat = function (c) {
          * @param habitat
          */
         self.refreshHabitat = function (habitat) {
-            if (records.getDataresource() !== undefined) {
+            if (config.records.getDataresource() !== undefined) {
                 var data, list;
                 var qid = pj.getQid(true);
                 if (qid) {
                     data = {
                         q: qid,
                         config: habitat.name(),
-                        biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
+                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
                     };
                     self.updateChartDirect(habitat, data);
                 } else {
@@ -474,7 +475,7 @@ var Habitat = function (c) {
                 email = '';
             }
 
-            var url = records.getDataresource().biocacheServiceUrl + '/occurrences/index/download'
+            var url = config.records.getDataresource().biocacheServiceUrl + '/occurrences/index/download'
                 + "?q=" + qid
                 + "&reasonTypeId=" + self.downloadViewModel.reason().id()
                 + "&email=" + email
@@ -653,7 +654,7 @@ var Habitat = function (c) {
     }
 
     this.refresh = function (node, list, saveQuery) {
-        if (records.getDataresource() !== undefined) {
+        if (config.records.getDataresource() !== undefined) {
             var habitats = view.habitats();
             var i, data;
 
@@ -661,7 +662,7 @@ var Habitat = function (c) {
                 saveQuery.then(function (qid) {
                     var data = {
                         q: pj.getQid(true),
-                        biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
+                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
                     }
                     for (i = 0; i < habitats.length; i++) {
                         data.config = habitats[i].name();
@@ -676,7 +677,7 @@ var Habitat = function (c) {
                     data = {
                         speciesList: JSON.stringify(list),
                         config: habitats[i].name(),
-                        biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
+                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
                     };
 
                     view.updateChartDirect(habitats[i], data);

@@ -89,6 +89,19 @@ phylolink.pj = null;
         fqVariable: 'species'
     });
 
+    phylolink.records = new Records({
+        id: "recordsForm",
+        template: $('#templateOccurrence').html(),
+        uploadUrl: null,
+        indexingStatusUrl: null,
+        sampleFile: null,
+        dataresrouceInfoUrl: null,
+        dataresourceListUrl: null,
+        pj: phylolink.pj,
+        selectResourceOnInit: true,
+        initResourceId: -1
+    });
+
     phylolink.map = new Map({
         id: "map",
         tabId: "mapTab",
@@ -140,7 +153,8 @@ phylolink.pj = null;
         spUrl: {
             baseUrl: undefined,
             url: ko.observable(undefined)
-        }
+        },
+        records: phylolink.records
     });
 
     phylolink.habitat = new Habitat({
@@ -170,21 +184,8 @@ phylolink.pj = null;
         },
         downloadSummaryUrl: undefined,
         biocacheOccurrenceDownload: undefined,
-        downloadReasonsUrl: undefined
-    });
-
-    phylolink.records = new Records({
-        id: "recordsForm",
-        template: $('#templateOccurrence').html(),
-        uploadUrl: null,
-        indexingStatusUrl: null,
-        sampleFile: null,
-        dataresrouceInfoUrl: null,
-        dataresourceListUrl: null,
-        map: phylolink.map,
-        pj: phylolink.pj,
-        selectResourceOnInit: true,
-        initResourceId: -1
+        downloadReasonsUrl: undefined,
+        records: phylolink.records
     });
 })();
 

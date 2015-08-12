@@ -17,16 +17,16 @@ class BootStrap {
             return;
         }
         
-        //update alaDataresourceInfo with biocache urls
-        grailsApplication.config.alaDataresourceInfo.biocacheServiceUrl = grailsApplication.config.biocacheServiceUrl
-        grailsApplication.config.alaDataresourceInfo.biocacheHubUrl = grailsApplication.config.biocacheHubUrl
-        grailsApplication.config.alaDataresourceInfo.layerUrl = grailsApplication.config.biocacheServiceUrl + grailsApplication.config.alaDataresourceInfo.layerUrl
-
         // since bootstrap loads expert trees and expert tree requires curator app on web2py, we cannot
         // proceed further as it will break the test on travis.
         if(Environment.current == Environment.TEST) {
             return ;
         }
+
+        //update alaDataresourceInfo with biocache urls
+        grailsApplication.config.alaDataresourceInfo.biocacheServiceUrl = grailsApplication.config.biocacheServiceUrl
+        grailsApplication.config.alaDataresourceInfo.biocacheHubUrl = grailsApplication.config.biocacheHubUrl
+        grailsApplication.config.alaDataresourceInfo.layerUrl = grailsApplication.config.biocacheServiceUrl + grailsApplication.config.alaDataresourceInfo.layerUrl
 
         log.debug('checking for system user name')
         def systemUser = Owner.findByDisplayName("System")
