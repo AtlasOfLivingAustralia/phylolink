@@ -1547,7 +1547,7 @@ var PJ = function (params) {
      */
     this.clickSelectedNode = function () {
         var nodeId = this.getSelection();
-        this.clickNode(nodeId.id);
+        nodeId && this.clickNode(nodeId.id);
     }
 
     /**

@@ -542,6 +542,7 @@ var Character = function (options) {
     this.getCharListFromUrl = function(url, params){
         this.setCharacterListLoaded(false);
         var that = this
+        this.setCharJson(null);
         $.ajax({
             url: url,
             data: params,
