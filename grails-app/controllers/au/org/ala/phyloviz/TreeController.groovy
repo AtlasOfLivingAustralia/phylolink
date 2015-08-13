@@ -263,7 +263,7 @@ class TreeController extends BaseController {
         def result = [:]
 
         if (params.trimOption && TrimOption.valueOf(params.trimOption) != TrimOption.NONE) {
-            tree = treeService.trimTree(tree.id, TrimOption.valueOf(params.trimOption))
+            tree = treeService.trimTree(tree.id, TrimOption.valueOf(params.trimOption), params.trimData)
         }
 
         result['tree']=tree.getTree();
@@ -276,8 +276,12 @@ class TreeController extends BaseController {
     }
 
     def trimTree() {
-        if (!params.treeId || !params.trimOption || !TrimOption.valueOf(params.trimOption)) {
+        TrimOption trimOption = TrimOption.valueOf(params.trimOption)
+
+        if (!params.treeId || !trimOption) {
             badRequest "treeId and trimOption are required parameters. trimOption must be one of ${TrimOption.values()}"
+        } else if (trimOption == TrimOption.SPECIES_LIST && !params.trimData) {
+            badRequest "trimData is a required parameter when trimOption = SPECIES_LIST"
         } else if (!Tree.findById(params.treeId)) {
             notFound "No matching tree was found for id ${params.treeId}"
         } else {

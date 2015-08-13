@@ -298,7 +298,7 @@ class AlaService {
     /**
      * create a filter query
      */
-    def filterQuery(JSONArray list, op, field) {
+    def filterQuery(list, op, field) {
         if (!list) {
             return '';
         }

@@ -183,3 +183,12 @@ h1, h2, h3, h4, h5 {
 .inline-block {
     display: inline-block;
 }
+
+.modal-wide {
+    width: 700px;
+}
+
+
+.modal-wide .input-xlarge {
+    width: 480px;
+}

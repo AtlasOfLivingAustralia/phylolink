@@ -4,6 +4,7 @@ import au.org.ala.phylolink.TrimOption
 import grails.converters.JSON
 import grails.converters.XML
 import groovy.json.JsonSlurper
+import groovyx.net.http.ContentType
 import jade.tree.JadeTree
 import jade.tree.TreeReader
 import org.apache.commons.io.IOUtils
@@ -679,7 +680,15 @@ class TreeService {
         Tree.findById(treeId)?.delete()
     }
 
-    Tree trimTree(Integer treeId, TrimOption option) {
+    /**
+     * Trim the specified tree using the provided option.
+     *
+     * @param treeId Id of the tree to trim. The tree can be either newick or nexml
+     * @param option The {@link TrimOption} to use
+     * @param data Additional data required by the trim option (e.g. species list DataResourceId if TrimOption#SPECIES_LIST is selected)
+     * @return The trimmed tree in newick format.
+     */
+    Tree trimTree(Integer treeId, TrimOption option, data = null) {
         log.debug("Before : ${getSpeciesNamesFromTree(treeId).size()}")
 
         Tree tree = Tree.findById(treeId)
@@ -695,6 +704,10 @@ class TreeService {
                 Set alaRecognisedSpecies = getAlaRecognisedSpecies(treeId)
                 trimmedTree = trim(treeId, alaRecognisedSpecies)
                 break
+            case TrimOption.SPECIES_LIST:
+                Set species = getSpeciesFromList(data as String)
+                trimmedTree = trim(treeId, species)
+                break
             case TrimOption.NONE:
             default:
                 trimmedTree = tree
@@ -705,17 +718,37 @@ class TreeService {
     }
 
     private Set getAustralianSpecies(Integer treeId) {
-        getBieSpecies(treeId).findResults { it?.isAustralian == "recorded" ? it.name : null } as HashSet
+        getBieSpecies(treeId).findResults { it?.name } as HashSet
     }
 
     private Set getAlaRecognisedSpecies(Integer treeId) {
-        getBieSpecies(treeId).findResults { it?.name } as HashSet
+        getBiocacheSpecies(treeId).findResults { it?.count > 0 ? it?.name : null } as HashSet
+    }
+
+    private Set getSpeciesFromList(String listDataResourceId) {
+        if (!listDataResourceId) {
+            throw new IllegalArgumentException("List Data Resource Id is required")
+        }
+        def data = webService.getJson("${grailsApplication.config.listToolBaseURL}/ws/speciesListItems/${listDataResourceId}")
+
+        data.findResults { it?.name } as HashSet
     }
 
     private getBieSpecies(Integer treeId) {
         List speciesNames = getSpeciesNamesFromTree(treeId)
 
-        webService.doJsonPost("${grailsApplication.config.bieBaseUrl}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"]}").data
+        webService.doJsonPost("${grailsApplication.config.bieBaseUrl}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"],\"vernacular\":true}").data
+    }
+
+    private getBiocacheSpecies(Integer treeId) {
+        List speciesNames = getSpeciesNamesFromTree(treeId).collect { it }
+
+        String query = alaService.filterQuery(speciesNames, null, "taxon_name")
+
+        String url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", grailsApplication.config.biocacheServiceUrl)
+        String qid = alaService.getQid(query, url, null)
+
+        webService.getJson("${grailsApplication.config.biocacheServiceUrl}/mapping/legend?q=qid:${qid}&cm=taxon_name&type=application/json")
     }
 
     private Tree trim(Integer treeId, Set species) {
@@ -723,9 +756,11 @@ class TreeService {
 
         List leavesToTrim = tree.iterateExternalNodes().findAll { !species.contains(it.getName()) }
 
+        log.debug("Dropping ${leavesToTrim.collect { it.getName() }}")
+
         log.debug("Before : ${tree.externalNodeCount}")
 
-        String newTreeText = ""
+        String newTreeText
         if (leavesToTrim.size() != tree.externalNodeCount) {
             leavesToTrim.each {
                 if (it.getParent() == null) {
@@ -739,6 +774,7 @@ class TreeService {
             log.debug("After : ${tree.externalNodeCount}")
         } else {
             log.warn("Trimmed tree has 0 nodes")
+            newTreeText = "();"
         }
 
         Tree trimmedTree = new Tree(Tree.findById(treeId).properties)

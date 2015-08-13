@@ -696,10 +696,16 @@ var PJ = function (params) {
 
     // tree trimming model and functionality
     function TrimmingModel() {
-        this.trimOption = ko.observable({displayName: "All species", value: "NONE"});
+        this.TRIM_NONE = {displayName: "All species", value: "NONE"};
+        this.TRIM_LIST = {displayName: "Species from a list", value: "SPECIES_LIST"};
+
+        this.trimOption = ko.observable(this.TRIM_NONE);
+        this.trimData = ko.observable();
+
         this.trimOptions = ko.observableArray([
-            {displayName: "All species", value: "NONE"},
+            this.TRIM_NONE,
             {displayName: "Australian species", value: "AUSTRALIAN_ONLY"},
+            this.TRIM_LIST,
             {displayName: "Species in the ALA", value: "ALA_ONLY"}]);
 
         this.applyTrimOptions = function() {
@@ -707,11 +713,32 @@ var PJ = function (params) {
 
             getTree(config.url, setTree, {});
             $("#" + config.trimmingId).modal('hide');
-        }
+        };
+        var url = "http://lists.ala.org.au/ws/speciesList?max=1000"
+
+        this.init = function() {
+            $.ajax({
+                url: url,
+                dataType: "jsonp",
+                success: function (data) {
+                    var lists = [];
+                    data.lists.forEach(function (list) {
+                        lists.push({id: list.dataResourceUid, text: list.listName})
+                    });
+
+                    $("#trimByList").select2({
+                        data: lists
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Failed to retrieve species lists from url " + url)
+                }
+            });
+        };
     }
 
-
     trimming = new TrimmingModel();
+    trimming.init();
     ko.applyBindings(trimming, document.getElementById(config.trimmingId));
 
 
@@ -995,7 +1022,8 @@ var PJ = function (params) {
             url: url,
             dataType: options.dataType,
             data: {
-                trimOption: (trimming.trimOption() ? trimming.trimOption().value : "NONE")
+                trimOption: (trimming.trimOption() ? trimming.trimOption().value : "NONE"),
+                trimData: (trimming.trimData() ? trimming.trimData() : null)
             },
             success: function (data) {
                 spinner.stop();
@@ -1005,6 +1033,11 @@ var PJ = function (params) {
                 } else {
                     options.tree = data;
                 }
+
+                if (!options.tree || options.tree.length == 0 || options.tree === "();") {
+                    alert("The resulting tree has no nodes");
+                }
+
                 callback.apply(that, [options])
             },
             error: function (jqXHR, textStatus, errorThrown) {

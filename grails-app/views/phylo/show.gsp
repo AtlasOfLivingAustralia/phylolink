@@ -9,7 +9,7 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree"/>
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree,select2,css"/>
     <r:require modules="bugherd"/>
 </head>
 
@@ -122,6 +122,7 @@
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'http://biocache.ala.org.au/occurrence/legend',
         downloadReasonsUrl: 'http://logger.ala.org.au/service/logger/reasons',
+        listToolBaseUrl: "${grailsApplication.config.listToolBaseUrl}",
         legendUrl: function(){
             switch (config.type){
                 case 'sandbox': return config.sandboxLegend;
