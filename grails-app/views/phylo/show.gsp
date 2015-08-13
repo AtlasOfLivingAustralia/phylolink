@@ -303,7 +303,11 @@
         },
         downloadReasonsUrl: config.downloadReasonsUrl,
         spUrl: config.spUrl,
-        records: records
+        records: records,
+        mapbox: {
+            id: "${grailsApplication.config.map.mapbox.id}",
+            token: "${grailsApplication.config.map.mapbox.token}"
+        }
     });
 
     var habitat = new Habitat({

@@ -187,7 +187,7 @@ class BootStrap {
     def maluridaeTree() {
         log.debug('creating Maluridae tree metadata')
         def result = [:]
-        def file = grailsApplication.mainContext.getResource('artifacts/maluridae.newick').file;
+        def file = grailsApplication.mainContext.getResource('artifacts/Maluridae.newick').file;
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
         result['year'] = 2012
