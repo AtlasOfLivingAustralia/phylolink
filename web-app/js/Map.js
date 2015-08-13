@@ -422,7 +422,7 @@ function Map(options) {
     this.showLegendsWithCharacter = function(){
         var sel = colorBy.getSelection()
             char = sel.name();
-        legendCtrl.legend(pj.getLegendForCharacter(char));
+            legendCtrl.legend(pj.getLegendForCharacter(char));
     }
 
     this.showLegendDefault = function(){
@@ -476,21 +476,32 @@ function Map(options) {
             that = this;
         var spUrl = ''
         var c = 1
+
+        var legends = pj.getPJLegendData(char);
+        for (var legend in legends) {
+            legends[legend].count = 0;
+        }
+
         for (i in groups) {
             list = groups[i].list;
             if (list.length) {
                 this.emit('updatestart');
                 ajax = pj.saveQuery(undefined, list, true);
                 ajax.color = i;
-                ajax.then(function (q, status, ajx) {
-                    var qid = 'qid:' + q.qid;
-                    var q = query + '?q=' + qid;
-                    var layer = L.tileLayer.wms(q, {
+                var legends = pj.getPJLegendData(char);
+                console.log(JSON.stringify(legends))
+
+                ajax.then(function (data, status, ajx) {
+                    var qid = 'qid:' + data.qid.qid;
+                    var url = query + '?q=' + qid;
+                    var layer = L.tileLayer.wms(url, {
                         format: 'image/png',
                         transparent: true,
                         attribution: "PhyloLink",
                         bgcolor: "0x000000"
                     });
+
+                    legends[groups[ajx.color].name].count = data.count;
 
                     layers.push(layer);
                     options.env.colormode = undefined;
@@ -501,6 +512,8 @@ function Map(options) {
                     spUrl += '&ly.' + c + '=' + list[0] + '&ly.' + c + '.s=' + parseInt('0x' + layer.color) + '&ly.' + c + '.q=' + qid
                     c = c + 1
                     that.emit('updateend');
+
+                    that.updateLegend();
                 }, function(){
                     that.emit('updateend');
                 });

@@ -274,7 +274,7 @@ class TreeService {
 //                    elasticService.indexDoc(elasticService.getNEXSON_INDEX(), tree.getId(), tree.getNexson());
                 }
             } catch (Exception e) {
-                log.debug( 'exception while converting tree to nexson' + e.getMessage() )
+                log.debug('exception while converting tree to nexson' + e.getMessage(), e)
                 return
             }
 
@@ -657,5 +657,17 @@ class TreeService {
         characterLists.removeAll { !filteredDrIds.contains(it.dataResourceId) }
 
         characterLists
+    }
+
+    /**
+     * Deletes the specified tree and any visualisations that were created from it
+     *
+     * @param treeId ID of the tree to delete
+     */
+    void deleteTree(Integer treeId) {
+        List<Phylo> visualisations = Phylo.findAllByStudyid(treeId)
+        visualisations*.delete()
+
+        Tree.findById(treeId)?.delete()
     }
 }

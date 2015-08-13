@@ -248,7 +248,7 @@ class AlaService {
     /**
      *
      */
-    def saveQuery(JSONArray clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol) {
+    def saveQuery(JSONArray clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol, boolean characterQuery = false) {
         def data, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
             fq;
         matchingCol = matchingCol ?: 'taxon_name';
@@ -258,7 +258,20 @@ class AlaService {
             data = "data_resource_uid:${drid}"
         }
 
-        return getQid(data, url, fq);
+        Map result = [:]
+        result.qid = getQid(data, url, fq);
+
+        if (characterQuery) {
+            result.count = getOccurrenceCount(result.qid, biocacheServiceUrl)
+        }
+
+        return result
+    }
+
+    int getOccurrenceCount(String qid, String biocacheServiceUrl) {
+        String url = grailsApplication.config.occurrencesSearch.replace("BIOCACHE_SERVICE", biocacheServiceUrl)
+
+        webService.getJson("${url}?q=qid:${qid}&pageSize=0&facet=off").totalRecords
     }
 
     /**
