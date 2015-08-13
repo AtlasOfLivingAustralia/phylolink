@@ -167,6 +167,6 @@ modules = {
 
     select2 {
         resource url: 'thirdparty/select2/select2-3.5.8.css'
-        resource url: 'thirdparty/select2/select2.js'
+        resource url: 'thirdparty/select2/select2-3.5.8.min.js'
     }
 }
