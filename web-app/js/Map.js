@@ -91,7 +91,12 @@ function Map(options) {
                     content: '<div id="pjPopOverClose" class="btn btn-primary">Okay, got it!</div> '
                 }
             }
-        ]
+        ],
+        mapbox:{
+            id:null,
+            version:null,
+            token: null
+        }
     }, options);
 
     var env = options.env;
