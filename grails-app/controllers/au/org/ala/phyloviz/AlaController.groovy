@@ -414,7 +414,17 @@ class AlaController {
         String q = params.q;
         String fq = params.fq;
         String biocacheHubUrl = params.biocacheHubUrl;
+
+        switch (source){
+            case 'ala':
+                // quick fix since biocache url has changed but sandbox remains the same
+                biocacheHubUrl += 'ws/mapping'
+                break;
+            case 'sandbox':
+                biocacheHubUrl += '/occurrence'
+        }
         def result = alaService.getLegends(source, q, fq, type, cm, biocacheHubUrl);
+
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
