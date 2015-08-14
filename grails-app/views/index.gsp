@@ -93,10 +93,6 @@
 
 
 <r:script disposition="defer">
-    close = function() {
-        $('#collaborationTip').popover('hide');
-    };
-
     $('#collaborationTip').popover({
         html: true,
         content: '<ul>' +
