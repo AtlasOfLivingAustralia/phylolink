@@ -695,7 +695,7 @@ var PJ = function (params) {
 
 
     // tree trimming model and functionality
-    function TrimmingModel() {
+    function TrimmingModel(config) {
         this.TRIM_LIST = {displayName: "A species list", value: "SPECIES_LIST"};
 
         this.trimOption = ko.observable();
@@ -725,7 +725,7 @@ var PJ = function (params) {
             $("#" + config.trimmingId).modal('hide');
         };
 
-        var url = "http://lists.ala.org.au/ws/speciesList?max=1000";
+        var url = config.listToolBaseURL + "/ws/speciesList?max=1000";
 
         this.init = function() {
             $.ajax({
@@ -748,7 +748,7 @@ var PJ = function (params) {
         };
     }
 
-    trimming = new TrimmingModel();
+    trimming = new TrimmingModel(config);
     trimming.init();
     ko.applyBindings(trimming, document.getElementById(config.trimmingId));
 

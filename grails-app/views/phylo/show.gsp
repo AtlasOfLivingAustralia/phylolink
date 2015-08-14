@@ -122,7 +122,6 @@
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'http://biocache.ala.org.au/occurrence/legend',
         downloadReasonsUrl: 'http://logger.ala.org.au/service/logger/reasons',
-        listToolBaseUrl: "${grailsApplication.config.listToolBaseUrl}",
         legendUrl: function(){
             switch (config.type){
                 case 'sandbox': return config.sandboxLegend;
@@ -199,7 +198,8 @@
                 biocacheServiceUrl: undefined, // 'http://sandbox.ala.org.au',
                 drid: undefined // drt121
             }
-        }
+        },
+        listToolBaseURL: "${grailsApplication.config.listToolBaseURL}"
     });
 
     var filter = new Filter($.extend(config.filterParams, {
