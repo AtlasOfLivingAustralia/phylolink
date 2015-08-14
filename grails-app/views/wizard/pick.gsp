@@ -8,11 +8,6 @@
     <title>Add Phylogenetic Tree</title>
     <r:require modules="bootstrap"/>
     <r:require modules="bugherd"/>
-    <style>
-    .verticalLine {
-        border-right: thin solid;
-    }
-    </style>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'phylolink.css')}" type="text/css" media="screen"/>
 </head>
 <body>
@@ -24,33 +19,38 @@
             </ul>
         </div>
     </div>
-    <legend>Pick a tree or view a visualisation</legend>
-    <p style="font-size:14px; max-width: 60em">On this page, you can pick a tree for visualisation, view your previous visualisations, or
-    upload your own tree for visualisation. You can pick a tree from expert recommended list or from your previous
-    uploads. Click <span class="label label-info">next</span> button to proceed or to go to previous page click <span class="label">back</span> button.</p>
+    <legend>Load a tree or select a visualisation</legend>
+    <p style="font-size:14px; max-width: 60em">On this page, you can load a tree for visualisation, view your previous visualisations, or
+    upload your own tree for visualisation. You can select a tree from an expert recommended list or from your previous uploads.
 
     <div class="row-fluid">
         <g:form controller="wizard" action="pickMethod" method="POST">
             <div class="control-group">
                 <div class="controls">
                         <div class="row-fluid">
-                            <div class="span3 verticalLine">
-                                
-                                <label class="radio"><input type="radio" name="options" value="expertTrees" required=""> Expert suggested tree</input></label>
-                                <label class="radio" <g:if test="${!loggedIn}">disabled</g:if>><input <g:if test="${!loggedIn}">disabled</g:if>
-                                                            type="radio" name="options" value="addTree" required=""> Add a tree
-                                    <g:if test="${!loggedIn}"> (login required)</g:if></input></label>
+                            <div class="span3 verticalLine wizard-option-group">
+                                <h5>Load a tree</h5>
+                                <label class="radio"><input type="radio" name="options" value="expertTrees" required=""> Select an expert recommended tree</input></label>
                                 <label class="radio" <g:if test="${numberOfTrees <= 0}">disabled</g:if>><input <g:if test="${numberOfTrees <= 0}">disabled</g:if>
-                                                            type="radio" name="options" value="myTrees" required=""> My trees</input></label>
+                                                                       type="radio" name="options" value="myTrees" required=""> Select from my trees</input></label>
+                                <label class="radio" <g:if test="${!loggedIn}">disabled</g:if>><input <g:if test="${!loggedIn}">disabled</g:if>
+                                                            type="radio" name="options" value="addTree" required=""> Add a new tree
+                                    <g:if test="${!loggedIn}"> (login required)</g:if></input></label>
+
                             </div>
-                            <div class="span5">
+                            <div class="span3 wizard-option-group">
+                                <h5>Select a visualisation</h5>
                                 <label class="radio" <g:if test="${numberOfVisualisations <= 0}">disabled</g:if>><input <g:if test="${numberOfVisualisations <= 0}">disabled</g:if>
-                                                            type="radio" name="options" value="myViz" required=""> My visualisations</label>
-                                <label class="radio"><input type="radio" name="options" value="demo" required=""> Example demonstrations</label>
-                                <g:if test="${params.isAdmin}">
-                                    <label class="radio"><input type="radio" name="options" value="treeAdmin" required=""> Tree administration</label>
-                                </g:if>
+                                                            type="radio" name="options" value="myViz" required=""> Select from my previous visualisations</label>
+                                <label class="radio"><input type="radio" name="options" value="demo" required=""> View a demonstration visualisation</label>
+
                             </div>
+                            <g:if test="${params.isAdmin}">
+                                <div class="span3 verticalLineLeft wizard-option-group">
+                                    <h5>Administration</h5>
+                                    <label class="radio"><input type="radio" name="options" value="treeAdmin" required=""> Tree administration</label>
+                                </div>
+                            </g:if>
                         </div>
                 </div>
             </div>

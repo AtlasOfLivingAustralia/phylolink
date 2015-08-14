@@ -20,7 +20,8 @@ var Records = function (c) {
             pj: undefined,
             map: undefined,
             selectResourceOnInit: true,
-            initResourceId: -1
+            initResourceId: -1,
+            edit: true
         }, c),
         records = new Emitter(this),
         pj = config.pj,
@@ -32,9 +33,6 @@ var Records = function (c) {
      */
         'resourcelistloaded'
     ]
-
-    // map instance uses this for colorby and other operations. passing this instance as soon as possible.
-    map.setRecords(this);
 
     var DataresourceModel = function (opt) {
         this.id = ko.observable(opt.id || null);
@@ -366,18 +364,27 @@ var Records = function (c) {
      * called when a new data resource is selected
      */
     this.updateMap = function(){
+        if (dataresourceViewModel.selectedValue() === undefined) {
+            return
+        }
+        
         var sel = dataresourceViewModel.selectedValue();
         var layer = sel.layerUrl(),
             biocacheServiceUrl = sel.biocacheServiceUrl();
         pj.clearQid();
         pj.setSaveQueryParams(sel.type(), biocacheServiceUrl, sel.drid());
-        map.setDataSource(sel.type());
+        
         // saving query to server is only done when this flag is set. otherwise, query parameters are sent on
         // all get request.
         if(!pj.getSaveQueryFlag()){
             pj.setSaveQueryFlag(true)
         }
-        map.setLayerUrl(layer);
+
+        if (map !== undefined) {
+            map.setDataSource(sel.type());
+            map.setLayerUrl(layer);
+        }
+        
         pj.clickSelectedNode();
         if (sel.title().endsWith('(All data)')) {
             pj.hData.selectedDr(sel.title())
@@ -399,4 +406,15 @@ var Records = function (c) {
     }
 
     this.showForm();
+    
+    this.setMap = function(map) {
+        this.map = map
+        this.updateMap()
+    }
+
+    if(config.edit){
+        $("#csvFormRecordsUnavailable").hide();
+    } else {
+        $("#csvFormRecords").hide();
+    }
 }

@@ -17,7 +17,6 @@ function Map(options) {
     ]
     var that = map = this;
     var i,
-        records,
         xhrColorBy,
         xhrLegend;
     var $ = jQuery;
@@ -92,7 +91,12 @@ function Map(options) {
                     content: '<div id="pjPopOverClose" class="btn btn-primary">Okay, got it!</div> '
                 }
             }
-        ]
+        ],
+        mapbox:{
+            id:null,
+            version:null,
+            token: null
+        }
     }, options);
 
     var env = options.env;
@@ -142,8 +146,8 @@ function Map(options) {
     };
     
     this.setSpUrl = function (q) {
-        var ws = '&ws=' + records.getDataresource().biocacheHubUrl
-        var bs = '&bs=' + records.getDataresource().biocacheServiceUrl
+        var ws = '&ws=' + options.records.getDataresource().biocacheHubUrl
+        var bs = '&bs=' + options.records.getDataresource().biocacheServiceUrl
 
         options.spUrl.url(options.spUrl.baseUrl + '?' + q + ws + bs)
     }
@@ -194,12 +198,14 @@ function Map(options) {
         }
     }).setView([-27, 133], 3);
 
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tiles.mapbox.com/{version}/{id}/{z}/{x}/{y}.png?access_token={token}', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
             '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        id: 'examples.map-i875mjb7'
+        id: options.mapbox.id,
+        token: options.mapbox.token,
+        version: options.mapbox.version || 'v4'
     }).addTo(lmap);
 
     var layer, layers = [], spinner = null;
@@ -302,7 +308,7 @@ function Map(options) {
 
     this.updateColorBy = function (f) {
         // do not execute if records tab has not loaded data resource.
-        if(!records.isDRLoaded()){
+        if(!options.records.isDRLoaded()){
             return;
         }
 
@@ -310,7 +316,7 @@ function Map(options) {
         var url = options.colorBy.url;
         var that = this;
         var qid = pj.getQid(true),
-            drProp = records && records.getDataresource(),
+            drProp = options.records && options.records.getDataresource(),
             data = {};
 
         if(!drProp){
@@ -362,7 +368,7 @@ function Map(options) {
 
     this.updateLegend = function (f) {
         // do not execute if records tab has not loaded data resource.
-        if(!records.isDRLoaded()){
+        if(!options.records.isDRLoaded()){
             return;
         }
 
@@ -388,7 +394,7 @@ function Map(options) {
     this.showLegendWithFacets = function(){
         var data = $.extend({}, options.legend.urlParams),
             url = options.legend.baseUrl,
-            dr = records.getDataresource() || {},
+            dr = options.records.getDataresource() || {},
             cby = colorBy.getSelection();
         data.cm = cby.name() || '';
         data.q = pj.getQid(true);
@@ -432,7 +438,7 @@ function Map(options) {
 
     this.updateMap = function (f) {
         // do not execute if records tab has not loaded data resource.
-        if(!records.isDRLoaded()){
+        if(!options.records.isDRLoaded()){
             return;
         }
 
@@ -440,7 +446,7 @@ function Map(options) {
             cm = colorBy.getSelectState(),
             url,
             type,
-            dr = records.getDataresource();
+            dr = options.records.getDataresource();
 
         this.removeLayers();
         url = dr.layerUrl;
@@ -582,14 +588,6 @@ function Map(options) {
     }
 
     /**
-     * passing the records instance
-     * @param rec
-     */
-    this.setRecords = function(rec){
-        records = options.records =  rec;
-    }
-
-    /**
      * fill the drop down options of colorby with the data provided. It has a flag to include characters from
      * character tab.
      * @param data - Array - array of color by options.
@@ -663,7 +661,7 @@ function Map(options) {
          */
         self.downloadMapData = function () {
             var qid = pj.getQid(true);
-            var url = records.getDataresource().biocacheServiceUrl + "/occurrences/index/download";
+            var url = options.records.getDataresource().biocacheServiceUrl + "/occurrences/index/download";
             var email = self.downloadViewModel.email();
             if (email === undefined) {
                 email = '';
@@ -681,6 +679,7 @@ function Map(options) {
     this.downloadViewModel = new utils.OccurrenceDownloadViewModel(options.downloadReasonsUrl);
     this.mapViewModel = new this.MapViewModel(this.downloadViewModel);
     this.mapViewModel.spUrl = options.spUrl
+    options.records.setMap(this)
 
     this.initialiseBindings = function () {
         ko.applyBindings(this.mapViewModel, document.getElementById("mapControls"));

@@ -113,12 +113,7 @@ modules = {
         resource url: 'thirdparty/spin.min.v2.0.1.js'
         resource url: 'thirdparty/leaflet.v0.7.3.js', disposition: 'head'
         resource url: 'thirdparty/Leaflet.fullscreen.v0.0.2.min.js', disposition: 'head'
-        resource url: 'js/Control.Checkbox.js'
-        resource url: 'js/Control.Legend.js'
-        resource url: 'js/Control.Loading.js'
-        resource url: 'js/Control.Select.js'
-        resource url: 'js/Control.Slider.js'
-        resource url: 'thirdparty/bootstrap-slider.js'
+        resource url: 'thirdparty/bootstrap-slider.js', disposition: 'head'
     }
 
     phylojive {
@@ -127,26 +122,30 @@ modules = {
         resource url: 'css/PhyloJive.css', disposition: 'head'
         resource url: 'thirdparty/jsphylosvg-min.js', disposition: 'head'
         resource url: 'thirdparty/jit.js', disposition: 'head'
-        resource url: 'js/PJ.js'
-        resource url: 'js/Filter.js'
-        resource url: 'js/Habitat.js'
+        resource url: 'js/PJ.js', disposition: 'head'
+        resource url: 'js/Filter.js', disposition: 'head'
+        resource url: 'js/Habitat.js', disposition: 'head'
     }
 
     character {
-        dependsOn('knockout3','emitter')
+        dependsOn('knockout3','emitter', 'phylojive')
         resource url: 'thirdparty/knockout-sortable.min.js'
-        resource url: 'js/Character.js'
-        resource url: 'css/PhyloJive.css'
+        resource url: 'js/Character.js', disposition: 'head'
     }
 
     records {
-        dependsOn('knockout3','emitter')
-        resource url: 'js/Records.js'
+        dependsOn('knockout3','emitter','phylojive')
+        resource url: 'js/Records.js', disposition: 'head'
     }
 
     map{
-        dependsOn('emitter','leaflet')
-        resource url: 'js/Map.js'
+        dependsOn('emitter','leaflet','phylojive')
+        resource url: 'js/Control.Checkbox.js', disposition: 'head'
+        resource url: 'js/Control.Legend.js', disposition: 'head'
+        resource url: 'js/Control.Loading.js', disposition: 'head'
+        resource url: 'js/Control.Select.js', disposition: 'head'
+        resource url: 'js/Control.Slider.js', disposition: 'head'
+        resource url: 'js/Map.js', disposition: 'head'
     }
 
     nano{
@@ -161,8 +160,8 @@ modules = {
     }
 
     contextmenu{
-        resource url: 'thirdparty/jquery.contextMenu.js'
-        resource url: 'css/jquery.contextMenu.css'
+        resource url: 'thirdparty/jquery.contextMenu.js', disposition: 'head'
+        resource url: 'css/jquery.contextMenu.css', disposition: 'head'
     }
 
     select2 {

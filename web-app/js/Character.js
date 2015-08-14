@@ -1,3 +1,4 @@
+
 /**
  * The _characters.gsp file contains the view associated with this script
  */
@@ -17,6 +18,9 @@ var Character = function (options) {
         chartWidth:400,
         chartHeight:200,
         chartAreaHeight:100,
+        chartDataHeaders:[
+            ['Species Name', 'Value', { role: 'style' }]
+        ],
         // flag to show upload character interface
         edit: true,
         //flag to check if character has been loaded
@@ -248,22 +252,26 @@ var Character = function (options) {
             self.emit('statechange', self.charlist());
         }
 
+        /**
+         * This function is called when a character is newly added. not when it is rearranged.
+         */
         self.updateChart = function(char,list){
             var id = char.id(),
-                name = char.name(),charJson,i;
+                name = char.name(),
+                charJson;
             charJson = that.charJsonSubset(list);
             temp = that.getCharArray(name,charJson);
+
             if(temp == undefined || temp.length == 0){
-                that.columnchart(id,[['',''],[0,0]]);
+                that.columnchart(id,[['',''],[0,0]], name);
                 return;
             }
+
             // check if values are string or numeric
             if (typeof temp[0][1] === 'number') {
-                data = that.chartDataTransform(temp);
-                that.histogram(id,data);
+                character.chartQuantitativeChars(name, temp, id);
             } else {
-                data = that.chartDataTransform(temp);
-                that.columnchart(id, data)
+                character.chartQualitativeChars(name, temp, id);
             }
         }
 
@@ -364,11 +372,9 @@ var Character = function (options) {
                 }
                 // check if values are string or numeric
                 if (typeof temp[0][1] === 'number') {
-                    data = that.chartDataTransform(temp);
-                    that.histogram(id,data);
+                    character.chartQuantitativeChars(charName, temp, id);
                 } else {
-                    data = that.chartDataTransform(temp);
-                    that.columnchart(id, data);
+                    character.chartQualitativeChars(charName, temp, id);
                 }
 //                google.visualization.events.addListener(chart, 'onmouseover', that.chartHover);
             }
@@ -402,10 +408,6 @@ var Character = function (options) {
 
     var upload = new UploadViewModel();
     ko.applyBindings(upload, document.getElementById('uploadCharacters'));
-//    $('#minimizeUpload').hide()
-//    $('#uploadCharactersTitle').click(function(){
-//        $('#minimizeUpload').toggle('hide');
-//    })
     /**
      * transform data to be able to be displayed by chart. i.e. convert qualitative character to term frequency
      * to display as histogram.
@@ -414,25 +416,16 @@ var Character = function (options) {
      */
     this.chartDataTransform = function(temp){
         var data = [
-            ['Species Name', 'Value']
-        ],oneD=[];
-        var type = typeof temp[0][1] === 'number'?'histogram':'columnchart';
-        switch (type){
-            case 'histogram':
-                temp.forEach(function (it) {
-                    data.push(it);
-                });
-                break;
-            case 'columnchart':
-                temp.forEach(function(it){
-                    oneD.push(it[1]);
-                });
-                temp = that.frequencyCount(oneD);
-                temp.forEach(function (it) {
-                    data.push(it);
-                });
-                break;
-        }
+        ],
+            oneD=[];
+        temp.forEach(function(it){
+            oneD.push(it[1]);
+        });
+        temp = that.frequencyCount(oneD);
+        temp.forEach(function (it) {
+            data.push(it);
+        });
+
         return data;
     };
 
@@ -450,12 +443,13 @@ var Character = function (options) {
                 width: width,
                 height: height,
                 legend: { position: 'none' },
-                chartArea: { top: 10 },
+                chartArea: { top: 80 },
                 vAxis: {
                     title: options.graph.yAxis
                 },
                 hAxis: {
-                    title: options.graph.xAxis
+                    title: options.graph.xAxis,
+                    slantedText: true
                 }
             };
             data = google.visualization.arrayToDataTable(data);
@@ -471,7 +465,8 @@ var Character = function (options) {
      * @param id - element id to draw the map
      * @param data - contains data in google chart understandable format
      */
-    this.columnchart = function(id, data){
+    this.columnchart = function(id, data, xAxis){
+        xAxis = xAxis || options.graph.xAxis
         if(options.googleChartsLoaded){
             var chart = new google.visualization.ColumnChart(document.getElementById(id));
             var width = $('#'+options.id+' .panel-body:first').width() || options.chartWidth;
@@ -479,13 +474,14 @@ var Character = function (options) {
             var opt = {
                 width: width,
                 height: height,
-                legend: { position: 'none' },
-                chartArea: { top: 10, chartAreaHeight: options.chartAreaHeight },
+                legend: { position: 'right' },
+                chartArea: { top: 30, chartAreaHeight: options.chartAreaHeight },
                 vAxis: {
                     title: options.graph.yAxis
                 },
                 hAxis: {
-                    title: options.graph.xAxis
+                    title: xAxis
+                    //slantedText: true
                 }
             };
             data = google.visualization.arrayToDataTable(data);
@@ -495,6 +491,23 @@ var Character = function (options) {
             options.delayedChartCall.push([arguments.callee,this,arguments]);
         }
 
+    }
+
+    /**
+     * creates a key value pair of character name and it color value
+     *
+     */
+    this.getColorForCharacter = function(name, state){
+        var legends = pj.getLegendForCharacter(name),
+            result;
+
+        legends && legends.forEach(function(it){
+            if( it['name'] == state){
+               result = it;
+               //continue
+           }
+        });
+        return result;
     }
 
     //get charJson
@@ -529,6 +542,7 @@ var Character = function (options) {
     this.getCharListFromUrl = function(url, params){
         this.setCharacterListLoaded(false);
         var that = this
+        this.setCharJson(null);
         $.ajax({
             url: url,
             data: params,
@@ -678,13 +692,6 @@ var Character = function (options) {
         var cFn = options.cFn || comp,
             result = {};
         chars = chars || charJson;
-//        for(i=0;i<species.length;i++){
-//            for(j in chars){
-//                if(cFn(species[i],j)){
-//                    result[j]=chars[j];
-//                }
-//            }
-//        }
 
         for(i=0;i<species.length;i++){
             if(chars[species[i]]){
@@ -1050,6 +1057,66 @@ var Character = function (options) {
             result.push(ko.toJS(item));
         });
         return result
+    }
+
+    this.chartQualitativeChars = function (name, temp, id) {
+        var startTime = new Date();
+        // clone array
+        var data = options.chartDataHeaders.slice()
+        // google chart representation
+        data = data.concat(that.chartDataTransform(temp));
+        for (i = 1; i < data.length; i++) {
+            charObj = character.getColorForCharacter(name, data[i][0]);
+            if (charObj) {
+                data[i].push(pj.toHex(charObj.red, charObj.green, charObj.blue));
+            }
+        }
+        character.columnchart(id, data, name);
+        console.log('elapsed time for string char:' + (new Date() - startTime) / 1000);
+    };
+
+    this.chartQuantitativeChars = function(name, temp, id) {
+        var startTime,
+            data,
+            i, j,
+            range,
+            charObj,
+            range1,
+            range2;
+
+        startTime = new Date()
+        for (i = 0; i < temp.length; i++) {
+            //get range text '1 - 2' or '2 - 3'
+            range = pj.getQuantCharacterState(temp[i][1], name);
+            temp[i][1] = range;
+        }
+
+        // clone array
+        data = options.chartDataHeaders.slice()
+        // google chart representation
+        data = data.concat(that.chartDataTransform(temp));
+
+        // add color
+        for (i = 1; i < data.length; i++) {
+            charObj = character.getColorForCharacter(name, data[i][0]);
+            if (charObj) {
+                data[i].push(pj.toHex(charObj.red, charObj.green, charObj.blue));
+            }
+        }
+        // bubble sort
+        for (i = 1; i < data.length; i++) {
+            for (j = i + 1; j < data.length; j++) {
+                range1 = pj.getRange(data[i][0]);
+                range2 = pj.getRange(data[j][0]);
+                if (range1[0] > range2[0]) {
+                    temp = data[i];
+                    data[i] = data[j];
+                    data[j] = temp;
+                }
+            }
+        }
+        character.columnchart(id, data, name)
+        console.log('elapsed time for numeric char:' + (new Date() - startTime)/1000);
     }
 
 //    $('#'+options.id).on('show',initPopover);

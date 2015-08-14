@@ -51,7 +51,7 @@
                 <div class="pull-right">
                     <div data-bind="text: name" style="display:none"></div>
                     <i class="icon-download-alt" title="Download plot's raw data" data-bind="click: $root.downloadSummaryCsv, visible: !loading()"></i>
-                    <i class="icon-info-sign" title="Show more information" onclick="showInfo(this)"
+                    <i class="icon-info-sign" title="Show more information"
                        data-bind="attr: { id: id_metadata }, click: $root.showInfo"></i>
                 </div>
 

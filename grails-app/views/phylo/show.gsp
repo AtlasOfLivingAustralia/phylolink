@@ -160,7 +160,8 @@
         spUrl: {
             baseUrl: '${grailsApplication.config.spatialPortalRoot}',
             url: ko.observable('${grailsApplication.config.spatialPortalRoot}')
-        }
+        },
+        chartWidth: $('#tabs').width() - 30
     }
 
     google.load("visualization", "1", {packages: ["corechart"]});
@@ -207,6 +208,20 @@
         fqVariable:'species'
     }));
 
+    var records = new Records({
+        id: 'recordsForm',
+        template: $('#templateOccurrence').html(),
+        uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}?phyloId=${phyloInstance.id}',
+        indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
+        sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
+        dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}?phyloId=${phyloInstance.id}",
+        dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
+        pj: pj,
+        selectResourceOnInit: true,
+        initResourceId: -1,
+        edit: ${edit}
+    });
+
     var character = new Character({
         id: "character",
         tabId: 'characterTab',
@@ -237,7 +252,9 @@
         charOnRequestBaseUrl: config.charOnRequestBaseUrl,
         charOnRequestParams: config.charOnRequestParams,
         charOnRequestListKeys: config.charOnRequestListKeys,
-        treeId: "${phyloInstance.studyid}"
+        treeId: "${phyloInstance.studyid}",
+        // dynamic chart size. the default chart width is too small.
+        chartWidth: config.chartWidth
 
     });
 
@@ -288,7 +305,12 @@
             defaultValue: 'taxon_name'
         },
         downloadReasonsUrl: config.downloadReasonsUrl,
-        spUrl: config.spUrl
+        spUrl: config.spUrl,
+        records: records,
+        mapbox: {
+            id: "${grailsApplication.config.map.mapbox.id}",
+            token: "${grailsApplication.config.map.mapbox.token}"
+        }
     });
 
     var habitat = new Habitat({
@@ -297,9 +319,9 @@
         pj: pj,
         doSync: ${edit},
         syncData: {
-            id: ${phyloInstance.getId()}
-    },
-    listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
+            id: ${phyloInstance.getId()},
+        },
+        listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
         initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
@@ -318,27 +340,21 @@
         },
         downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
         biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
-        downloadReasonsUrl: config.downloadReasonsUrl
+        downloadReasonsUrl: config.downloadReasonsUrl,
+        records: records,
+        // dynamic chart size. the default chart width is too small.
+        chartWidth: config.chartWidth
     });
 
-    var records = new Records({
-        id: 'recordsForm',
-        template: $('#templateOccurrence').html(),
-        uploadUrl: '${createLink(controller: 'ala', action: 'uploadData')}?phyloId=${phyloInstance.id}',
-        indexingStatusUrl: "${createLink(controller: 'sandbox', action: 'checkStatus')}",
-        sampleFile: "${createLink(controller: 'artifacts', action: 'occurrenceRecords.csv')}",
-        dataresrouceInfoUrl: "${createLink(controller: 'sandbox', action: 'dataresourceInfo')}?phyloId=${phyloInstance.id}",
-        dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
-        map : map,
-        pj: pj,
-        selectResourceOnInit: true,
-        initResourceId: -1
-    });
 
     $( "#tabs" ).tab('show');
     // a fix to display map tiles properly. Without it map is grey colored for majority of area.
     $("body").on("shown.bs.tab", "#mapTab", function() {
         map.invalidateSize();
+    });
+    $("body").on("shown.bs.tab", "#habitatTab", function() {
+        // abort previous save query calls since this is a new query
+        habitat.redraw()
     });
 
     google.setOnLoadCallback(character.googleChartsLoaded);

@@ -285,7 +285,7 @@ class AlaService {
         //truncate q OR terms to avoid SOLR error
         //TODO: rewrite all biocache/ws usage to collate multiple qid queries to avoid loss of OR terms
         def qsplit = q.split(' OR ')
-        if (qsplit.length >= grailsApplication.config.biocache.maxBooleanClauses) {
+        if (qsplit.length >= Integer.parseInt(grailsApplication.config.biocache.maxBooleanClauses + '')) {
             qsplit = (qsplit as List).subList(0, grailsApplication.config.biocache.maxBooleanClauses)
             q = (qsplit as List).join(' OR ')
             if (q.startsWith('(')) q += ')'

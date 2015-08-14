@@ -81,7 +81,8 @@ var Habitat = function (c) {
                 html: 'true',
                 content : 'Select an environmental layer like precipitation to graph the profile of a species'
             }
-        }]
+        }],
+        records: undefined
     }, c);
     var pj = config.pj, hab = this, id = config.id;
 
@@ -289,20 +290,27 @@ var Habitat = function (c) {
         };
 
         self.updateChart = function(habitat, list){
-            var data = {
-                speciesList: JSON.stringify(list),
-                config: habitat.name(),
-                biocacheServiceUrl: pj.records.getDataresource().biocacheServiceUrl
-            };
-            if(config.doSaveQuery){
-                self.saveQuery(data).then(function(qid){
-                    var data = {q:"qid:"+qid, biocacheServiceUrl:records.getDataresource().biocacheServiceUrl};
+            if (config.records.getDataresource() !== undefined) {
+                var data = {
+                    speciesList: JSON.stringify(list),
+                    config: habitat.name(),
+                    biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
+                };
+                if (config.doSaveQuery) {
+
+                    self.saveQuery(data).then(function (qid) {
+                        var data = {
+                            q: "qid:" + qid,
+                            biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
+                        };
+                        self.updateChartDirect(habitat, data);
+                    });
+
+                } else {
                     self.updateChartDirect(habitat, data);
-                });
-            } else {
-                self.updateChartDirect(habitat, data);
+                }
+                utils.updateCladeInfo(list)
             }
-            utils.updateCladeInfo(list)
         };
 
         self.saveQuery = function(params){
@@ -358,11 +366,11 @@ var Habitat = function (c) {
                         hab.columnchart(id, [
                             ['', ''],
                             [0, 0]
-                        ]);
+                        ], view.getOptions(habitat));
                         return;
                     }
 
-                    hab.columnchart(id, data, view.getOptions(habitat));
+                    hab.columnchart(id, data, view.getOptions(habitat), habitat);
                 },
                 error: function () {
                     habitat.stopLoading();
@@ -401,23 +409,25 @@ var Habitat = function (c) {
          * @param habitat
          */
         self.refreshHabitat = function (habitat) {
-            var data, list;
-            var qid = pj.getQid(true);
-            if( qid ){
-                data = {
-                    q : qid,
-                    config: habitat.name(),
-                    biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
-                };
-                self.updateChartDirect(habitat, data);
-            } else {
-                list = pj.getChildrenName(pj.getSelection());
-                data = {
-                    speciesList: JSON.stringify(list),
-                    config: habitat.name()
-                };
-                self.updateChartDirect(habitat, data);
-                utils.updateCladeInfo(list)
+            if (config.records.getDataresource() !== undefined) {
+                var data, list;
+                var qid = pj.getQid(true);
+                if (qid) {
+                    data = {
+                        q: qid,
+                        config: habitat.name(),
+                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
+                    };
+                    self.updateChartDirect(habitat, data);
+                } else {
+                    list = pj.getChildrenName(pj.getSelection());
+                    data = {
+                        speciesList: JSON.stringify(list),
+                        config: habitat.name()
+                    };
+                    self.updateChartDirect(habitat, data);
+                    utils.updateCladeInfo(list)
+                }
             }
         };
 
@@ -465,7 +475,7 @@ var Habitat = function (c) {
                 email = '';
             }
 
-            var url = records.getDataresource().biocacheServiceUrl + '/occurrences/index/download'
+            var url = config.records.getDataresource().biocacheServiceUrl + '/occurrences/index/download'
                 + "?q=" + qid
                 + "&reasonTypeId=" + self.downloadViewModel.reason().id()
                 + "&email=" + email
@@ -632,35 +642,49 @@ var Habitat = function (c) {
     view.on('changed', function (habitat) {
         view.refreshHabitat(habitat);
     });
-
-    this.refresh = function (node, list, saveQuery) {
+    
+    this.redraw = function() {
+        var i;
         var habitats = view.habitats();
-        var i, data;
-
-        if(saveQuery){
-            saveQuery.then(function(qid){
-                var data = {q:pj.getQid(true),
-                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl}
-                for (i = 0; i < habitats.length; i++) {
-                    data.config = habitats[i].name();
-                    view.updateChartDirect(habitats[i], data);
-                }
-
-            },function(qid){
-                console.log('failed')
-            });
-        } else {
-            for (i = 0; i < habitats.length; i++) {
-                data = {
-                    speciesList: JSON.stringify(list),
-                    config: habitats[i].name(),
-                    biocacheServiceUrl:records.getDataresource().biocacheServiceUrl
-                };
-
-                view.updateChartDirect(habitats[i], data);
+        for (i = 0; i < habitats.length; i++) {
+            if (habitats[i].chartopt !== undefined) {
+                hab.columnchart(habitats[i].chartid, habitats[i].chartdata, habitats[i].chartopt)
             }
         }
-        utils.updateCladeInfo(list)
+    }
+
+    this.refresh = function (node, list, saveQuery) {
+        if (config.records.getDataresource() !== undefined) {
+            var habitats = view.habitats();
+            var i, data;
+
+            if (saveQuery) {
+                saveQuery.then(function (qid) {
+                    var data = {
+                        q: pj.getQid(true),
+                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
+                    }
+                    for (i = 0; i < habitats.length; i++) {
+                        data.config = habitats[i].name();
+                        view.updateChartDirect(habitats[i], data);
+                    }
+
+                }, function (qid) {
+                    console.log('failed')
+                });
+            } else {
+                for (i = 0; i < habitats.length; i++) {
+                    data = {
+                        speciesList: JSON.stringify(list),
+                        config: habitats[i].name(),
+                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
+                    };
+
+                    view.updateChartDirect(habitats[i], data);
+                }
+            }
+            utils.updateCladeInfo(list)
+        }
     };
 
     this.save = function () {
@@ -712,14 +736,20 @@ var Habitat = function (c) {
 
     /**
      * draws a column chart. this is used when data are qualitative i.e. string. currently using google charts
+     * retain inputs for redrawing
      * @param id - element id to draw the map
      * @param data - contains data in google chart understandable format
      */
-    this.columnchart = function (id, data, opt) {
+    this.columnchart = function (id, data, opt, habitat) {
         if (config.googleChartsLoaded) {
             var chart = new google.visualization.ColumnChart(document.getElementById(id));
-            data = google.visualization.arrayToDataTable(data);
-            chart.draw(data, opt);
+            var tdata = google.visualization.arrayToDataTable(data);
+            chart.draw(tdata, opt)
+            if (habitat !== undefined && habitat != null) {;
+                habitat.chartid = id;
+                habitat.chartdata = data;
+                habitat.chartopt = opt;
+            }
         } else {
             // some times google chart is not ready when this function is called
             config.delayedChartCall.push([arguments.callee, this, arguments]);
