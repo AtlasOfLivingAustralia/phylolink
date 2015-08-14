@@ -598,6 +598,7 @@ var Habitat = function (c) {
             tree.jqxTree({
                 source: [{label: 'Layers', items: source, expanded: true}],
                 height: '300px',
+                width: $('#tab').width - 30,
                 allowDrag: false,
                 toggleMode: "click"
             });
