@@ -26,12 +26,14 @@
     </div>
 
     <legend>Reconcile names with ALA taxonomy</legend>
-    <p style="font-size:14px; max-width: 60em;">Reconcile node names with ALA taxonomy.
-    The system tries to auto match and the result of this operation are on <span class="label">Matched name</span>
-    column. If you think it is wrong, please click on the cell to correct it. You can save your mapping by clicking on
-    <span class="label">Save</span> button. Or, you can proceed to viewing tree by clicking
-    <span class="label label-info">Visualise</span>.</p>
+    <p style="font-size:14px; max-width: 60em;">
+        On this page, you can reconcile the tip names of your tree with ALA taxonomy. The system-matched name is listed
+        in the <span class="label">Matched name</span> column. To edit, click on a cell. To save changes, click <span class="label">Save</span> button.
+    </p>
     <div id="myGrid" style="width: 500px;height: 400px">
+
+
+
 
     </div>
 
