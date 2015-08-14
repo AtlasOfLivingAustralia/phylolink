@@ -10,6 +10,7 @@
     <r:require modules="jquery"/>
     <r:require modules="bugherd"/>
     <r:require modules="css"/>
+    <r:require modules="bootstrapApp"/>
 </head>
 
 <body>
@@ -55,7 +56,18 @@
                     <div class="well margin-top-3">
                         <h5>Collaborators and acknowledgement:</h5>
 
-                        <p class="small">These tools are the result of a collaboration between scientists, the creators of PhyloJIVE and the Atlas of Living Australia. The tools have been developed by Temi Varghese, Rebecca Pirzl, Adam Collins, Nick dos Remedios and Dave Martin, with advice from Joe Miller, Craig Moritz, Dan Rosauer and Garry Jolley-Rogers.</p>
+                        <p class="small">
+                            Phylolink is the result of <a href="#" id="collaborationTip" data-toggle="popover" data-original-title="Phylolink Team">collaboration</a> between the Atlas of Living Australia and scientists at CSIRO, the Australian National University and the National Science Foundation (USA).
+                            Phylolink builds upon <a href="http://trin.github.io/phyloJIVE/" target="_blank">PhyloJIVE</a>, which was developed by <a href="www.csiro.au" target="_blank">CSIRO</a>,
+                            the Taxonomy Research and Information Network (<a href="http://www.taxonomy.org.au/" target="_blank">TRIN</a>), and the Centre for Australian National Biodiversity Research
+                            (<a href="http://www.cpbr.gov.au/cpbr/" target="_blank">CANBR</a>).
+                        </p>
+                        <p class="small"><strong>Publications:</strong></p>
+                            <ul>
+                                <li><a href="http://bioinformatics.oxfordjournals.org/content/early/2014/01/31/bioinformatics.btu024" target="_blank">PhyloJIVE: Integrating biodiversity data with the Tree of Life</a></li>
+                                <li><a href="http://www.researchgate.net/publication/262693905_Correcting_the_disconnect_between_phylogenetics_and_biodiversity_informatics" target="_blank">Correcting the disconnect between phylogenetics and biodiversity informatics</a></li>
+                            </ul>
+
                     </div>
                 </div>
             </div>
@@ -78,5 +90,28 @@
         </iframe>
     </div>
 </div>
+
+
+<r:script disposition="defer">
+    close = function() {
+        $('#collaborationTip').popover('hide');
+    };
+
+    $('#collaborationTip').popover({
+        html: true,
+        content: '<ul>' +
+        '<li>Developers - Temi Varghese, Adam Collins, Mark Chambers, Nick dos Remedios, Dave Martin</li>' +
+        '<li>Advisors - Joe Miller, Craig Moritz, Dan Rosauer, Garry Jolley-Rogers</li>' +
+        '<li>Coordinator - Rebecca Pirzl</li>' +
+        '</ul>'
+    });
+
+    $(document).click(function (e) {
+        if (e.target.id != "collaborationTip") {
+            $('#collaborationTip').popover('hide');
+        }
+    });
+</r:script>
+
 </body>
 </html>
