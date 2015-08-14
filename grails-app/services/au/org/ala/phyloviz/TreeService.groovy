@@ -685,10 +685,11 @@ class TreeService {
      *
      * @param treeId Id of the tree to trim. The tree can be either newick or nexml
      * @param option The {@link TrimOption} to use
+     * @param trimToInclude True to INCLUDE the identified species, false to EXCLUDE the identified species
      * @param data Additional data required by the trim option (e.g. species list DataResourceId if TrimOption#SPECIES_LIST is selected)
      * @return The trimmed tree in newick format.
      */
-    Tree trimTree(Integer treeId, TrimOption option, data = null) {
+    Tree trimTree(Integer treeId, TrimOption option, boolean trimToInclude, data = null) {
         log.debug("Before : ${getSpeciesNamesFromTree(treeId).size()}")
 
         Tree tree = Tree.findById(treeId)
@@ -698,15 +699,15 @@ class TreeService {
         switch (option) {
             case TrimOption.AUSTRALIAN_ONLY:
                 Set australianSpecies = getAustralianSpecies(treeId)
-                trimmedTree = trim(treeId, australianSpecies)
+                trimmedTree = trim(treeId, australianSpecies, trimToInclude)
                 break
             case TrimOption.ALA_ONLY:
                 Set alaRecognisedSpecies = getAlaRecognisedSpecies(treeId)
-                trimmedTree = trim(treeId, alaRecognisedSpecies)
+                trimmedTree = trim(treeId, alaRecognisedSpecies, trimToInclude)
                 break
             case TrimOption.SPECIES_LIST:
                 Set species = getSpeciesFromList(data as String)
-                trimmedTree = trim(treeId, species)
+                trimmedTree = trim(treeId, species, trimToInclude)
                 break
             case TrimOption.NONE:
             default:
@@ -751,10 +752,10 @@ class TreeService {
         webService.getJson("${grailsApplication.config.biocacheServiceUrl}/mapping/legend?q=qid:${qid}&cm=taxon_name&type=application/json")
     }
 
-    private Tree trim(Integer treeId, Set species) {
+    private Tree trim(Integer treeId, Set species, boolean trimToInclude) {
         JadeTree tree = toJadeTree(treeId)
 
-        List leavesToTrim = tree.iterateExternalNodes().findAll { !species.contains(it.getName()) }
+        List leavesToTrim = tree.iterateExternalNodes().findAll { trimToInclude ? !species.contains(it.getName()) : species.contains(it.getName()) }
 
         log.debug("Dropping ${leavesToTrim.collect { it.getName() }}")
 

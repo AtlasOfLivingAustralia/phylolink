@@ -263,7 +263,7 @@ class TreeController extends BaseController {
         def result = [:]
 
         if (params.trimOption && TrimOption.valueOf(params.trimOption) != TrimOption.NONE) {
-            tree = treeService.trimTree(tree.id, TrimOption.valueOf(params.trimOption), params.trimData)
+            tree = treeService.trimTree(tree.id, TrimOption.valueOf(params.trimOption), params.trimToInclude?.toBoolean(), params.trimData)
         }
 
         result['tree']=tree.getTree();
@@ -285,7 +285,7 @@ class TreeController extends BaseController {
         } else if (!Tree.findById(params.treeId)) {
             notFound "No matching tree was found for id ${params.treeId}"
         } else {
-            Tree tree = treeService.trimTree(params.treeId, TrimOption.valueOf(params.trimOption))
+            Tree tree = treeService.trimTree(params.treeId, TrimOption.valueOf(params.trimOption), params.trimToInclude?.toBoolean(), params.trimData)
 
             def result = [:]
             result['tree']=tree.getTree();

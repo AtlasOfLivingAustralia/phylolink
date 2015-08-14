@@ -78,7 +78,7 @@ speciesListUrl = "BIOCACHE_SERVICE/occurrences/facets/download?facets=${alaWebSe
 drUrl = "http://sandbox.ala.org.au/biocache-service/occurrences/search?q=data_resource_uid:DATA_RESOURCE&facets=${alaWebServiceMeta['speciesfacet']}&fq=REGION"
 occurrencesSearch = "BIOCACHE_SERVICE/occurrences/search"
 autocompleteUrl = "${bieBaseUrl}/ws/search.json?q=QUERY&fq=idxtype:TAXON"
-bieInfo = '${bieBaseUrl}/ws/species/info/QUERY.json'
+bieInfo = "${bieBaseUrl}/ws/species/info/QUERY.json"
 qidUrl = 'BIOCACHE_SERVICE/webportal/params'
 //listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"
 listUrl = "http://lists.ala.org.au/ws/speciesListItems/DRID?includeKVP=true"

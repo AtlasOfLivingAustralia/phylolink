@@ -696,17 +696,16 @@ var PJ = function (params) {
 
     // tree trimming model and functionality
     function TrimmingModel() {
-        this.TRIM_NONE = {displayName: "All species", value: "NONE"};
-        this.TRIM_LIST = {displayName: "Species from a list", value: "SPECIES_LIST"};
+        this.TRIM_LIST = {displayName: "A species list", value: "SPECIES_LIST"};
 
-        this.trimOption = ko.observable(this.TRIM_NONE);
+        this.trimOption = ko.observable();
         this.trimData = ko.observable();
+        this.trimToInclude = ko.observable("true");
 
         this.trimOptions = ko.observableArray([
-            this.TRIM_NONE,
-            {displayName: "Australian species", value: "AUSTRALIAN_ONLY"},
+            {displayName: "Australia", value: "AUSTRALIAN_ONLY"},
             this.TRIM_LIST,
-            {displayName: "Species in the ALA", value: "ALA_ONLY"}]);
+            {displayName: "The Atlas of Living Australia", value: "ALA_ONLY"}]);
 
         this.applyTrimOptions = function() {
             pj.clearNodeToUrl();
@@ -714,7 +713,19 @@ var PJ = function (params) {
             getTree(config.url, setTree, {});
             $("#" + config.trimmingId).modal('hide');
         };
-        var url = "http://lists.ala.org.au/ws/speciesList?max=1000"
+
+        this.clearTrimOptions = function() {
+            pj.clearNodeToUrl();
+
+            this.trimOption = ko.observable();
+            this.trimData = ko.observable();
+            this.trimToInclude = ko.observable("true");
+
+            getTree(config.url, setTree, {});
+            $("#" + config.trimmingId).modal('hide');
+        };
+
+        var url = "http://lists.ala.org.au/ws/speciesList?max=1000";
 
         this.init = function() {
             $.ajax({
@@ -1023,7 +1034,8 @@ var PJ = function (params) {
             dataType: options.dataType,
             data: {
                 trimOption: (trimming.trimOption() ? trimming.trimOption().value : "NONE"),
-                trimData: (trimming.trimData() ? trimming.trimData() : null)
+                trimData: (trimming.trimData() ? trimming.trimData() : null),
+                trimToInclude: (trimming.trimToInclude() === undefined ? true : trimming.trimToInclude())
             },
             success: function (data) {
                 spinner.stop();
