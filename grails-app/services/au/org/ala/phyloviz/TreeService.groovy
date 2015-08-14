@@ -692,8 +692,6 @@ class TreeService {
     Tree trimTree(Integer treeId, TrimOption option, boolean trimToInclude, data = null) {
         log.debug("Before : ${getSpeciesNamesFromTree(treeId).size()}")
 
-        Tree tree = Tree.findById(treeId)
-
         Tree trimmedTree
 
         switch (option) {
@@ -711,7 +709,7 @@ class TreeService {
                 break
             case TrimOption.NONE:
             default:
-                trimmedTree = tree
+                trimmedTree = Tree.findById(treeId)
                 break
         }
 
@@ -738,7 +736,7 @@ class TreeService {
     private getBieSpecies(Integer treeId) {
         List speciesNames = getSpeciesNamesFromTree(treeId)
 
-        webService.doJsonPost("${grailsApplication.config.bieBaseUrl}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"],\"vernacular\":true}").data
+        webService.doJsonPost("${grailsApplication.config.bieRoot}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"],\"vernacular\":true}").data
     }
 
     private getBiocacheSpecies(Integer treeId) {
