@@ -25,9 +25,7 @@
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>
     <legend>${name} trees</legend>
-    <p style="font-size:14px; max-width: 60em">List of all trees uploaded by you. You can click
-        <span class="label label-info">open</span> button to view the tree. Or, use
-        <span class="label label-info">back</span> button to go to previous page</p>
+    <p >List of all trees that you have uploaded.</p>
     <g:if test="${trees.size() != 0}">
         <table class="table table-hover table-bordered">
             <thead>
@@ -40,7 +38,7 @@
             <tbody>
             <g:each in="${trees}" var="tree" status="i">
                 <tr>
-                    <td width="45%">
+                    <td width="43%">
                         <div>
                             <div class="btn btn-link" onclick="showInfo(${i})">
                                 ${tree.getTitle()}
@@ -52,7 +50,7 @@
                             href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
                             target="_blank">${tree.getExpertTreeTaxonomy()}</a>
                     </td>
-                    <td width="35%">
+                    <td width="37%">
                         <div class="btn btn-small btn-primary" onclick="window.location =
                                 '${createLink( action: 'visualize')}?id=${tree.getId()}'">
                             <i class="icon-ok"></i> Open</div>
