@@ -480,8 +480,9 @@ var Character = function (options) {
                     title: options.graph.yAxis
                 },
                 hAxis: {
-                    title: xAxis
-                    //slantedText: true
+                    title: xAxis,
+                    slantedText: true,
+                    textPosition: 'in'
                 }
             };
             data = google.visualization.arrayToDataTable(data);

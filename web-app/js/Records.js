@@ -3,6 +3,12 @@
  */
 
 var Records = function (c) {
+    var events = [
+    /**
+     * fired when datasource changed
+     */
+        'sourcechanged'
+    ]
     var config = $.extend({
             templateUrl: undefined,
             template: undefined,
@@ -345,11 +351,15 @@ var Records = function (c) {
             selected = dataresourceViewModel.selectedValue();
         if(!(selected && selected.type())){
             if(flag){
+                // flag to notify selected value changing for the first time
+                config.firstInitialisation = true
                 dr = dataresourceViewModel.findResourceById(id);
                 dataresourceViewModel.selectedValue(dr);
                 records.updateMap();
+                config.firstInitialisation = false
             }
         }
+
     }
 
     /**
@@ -411,6 +421,30 @@ var Records = function (c) {
         this.map = map
         this.updateMap()
     }
+
+    this.save = function () {
+        if (!(config.edit && !config.firstInitialisation) ) {
+            return;
+        }
+
+        var sync = {id: config.phyloId, sourceId: dataresourceViewModel.selectedValue().id};
+        $.ajax({
+            url: config.syncUrl,
+            data: sync,
+            success: function (data) {
+                console.log('saved records in database!');
+            },
+            error: function () {
+                console.log('error saving records!');
+            }
+        });
+    }
+
+    dataresourceViewModel.selectedValue.subscribe(function(){
+        records.emit('sourcechanged')
+    }, this, 'change');
+
+    records.on('sourcechanged', this.save);
 
     if(config.edit){
         $("#csvFormRecordsUnavailable").hide();

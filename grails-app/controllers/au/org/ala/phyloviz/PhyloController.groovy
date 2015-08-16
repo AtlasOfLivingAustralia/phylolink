@@ -2,7 +2,6 @@ package au.org.ala.phyloviz
 import grails.converters.JSON
 import groovy.json.JsonBuilder
 
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST
 import static org.springframework.http.HttpStatus.*
 /**
  * Created by Temi Varghese on 19/06/2014.
@@ -278,6 +277,10 @@ class PhyloController extends BaseController {
      * @return
      */
     def saveHabitat(Phylo phyloInstance){
+        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+            notAuthorised "Only owner can edit this visualisation";
+        }
+
         String habInit = params.json
         log.debug(habInit);
         phyloInstance.setHabitat(JSON.parse(habInit).toString());
@@ -291,9 +294,30 @@ class PhyloController extends BaseController {
      * @return
      */
     def saveCharacters(Phylo phyloInstance){
+        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+            notAuthorised "Only owner can edit this visualisation";
+        }
+
         String charInit = params.json
         log.debug(charInit);
         phyloInstance.setCharacters(JSON.parse(charInit).toString());
+        phyloInstance.save(flush: true);
+        render(contentType: 'application/json',text:"{\"message\":\"success\"}");
+    }
+
+    /**
+     * save the habitats json string into database
+     * @param phyloInstance
+     * @return
+     */
+    def saveSource(Phylo phyloInstance){
+        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+            notAuthorised "Only owner can edit this visualisation";
+        }
+
+        String id = params.sourceId
+        log.debug(id);
+        phyloInstance.setSource(id);
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
     }

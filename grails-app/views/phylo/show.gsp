@@ -137,7 +137,7 @@
         },
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
-        initCharacters: '<g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>',
+        initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
         filterParams: {
             q: '',
             fq:{
@@ -218,8 +218,10 @@
         dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
         pj: pj,
         selectResourceOnInit: true,
-        initResourceId: -1,
-        edit: ${edit}
+        initResourceId: <g:message message="${phyloInstance.getSource()?:-1}"/>,
+        edit: ${edit},
+        syncUrl: "${createLink(controller: 'phylo', action: 'saveSource')}",
+        phyloId: config.id
     });
 
     var character = new Character({
