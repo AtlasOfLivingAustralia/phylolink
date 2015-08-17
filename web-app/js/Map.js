@@ -499,7 +499,7 @@ function Map(options) {
                 console.log(JSON.stringify(legends))
 
                 ajax.then(function (data, status, ajx) {
-                    var qid = 'qid:' + data.qid.qid;
+                    var qid = 'qid:' + data.qid;
                     var url = query + '?q=' + qid;
                     var layer = L.tileLayer.wms(url, {
                         format: 'image/png',
