@@ -595,7 +595,7 @@ var PJ = function (params) {
                 char;
             if (!node.data.leaf) {
                 for (var key in st.config.selectedCharacters) {
-                    if (node.data.characterConsistency.hasOwnProperty(key)) {
+                    if (node.data.characterConsistency && node.data.characterConsistency.hasOwnProperty(key)) {
                         char = st.config.selectedCharacters[key];
                         result = result && node.data.characterConsistency[char];
                     }

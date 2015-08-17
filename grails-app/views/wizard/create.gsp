@@ -25,7 +25,7 @@
         <div class="message alert-info" role="status">${flash.message}</div>
     </g:if>
 
-    <g:form action="save" class="form-horizontal" method="POST" enctype="multipart/form-data">
+    <g:form action="create" class="form-horizontal" method="POST" enctype="multipart/form-data">
         <legend>Upload a tree</legend>
         <p style="font-size:14px">Enter your tree here by completing the form below. Tree data can be provided by uploading a file or by pasting the data into the box below. Supported formats are NEXML and NEWICK.<p/>
 

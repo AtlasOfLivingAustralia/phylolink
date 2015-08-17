@@ -394,7 +394,7 @@ var Habitat = function (c) {
                     title: habitat.yAxis()
                 },
                 hAxis: {
-                    title: habitat.xAxis()
+                    title: habitat.displayName() + '(' + habitat.mdUnits() + ')'
                 }
             };
             if (typeof habitat.getFrequency()[1][0] !== 'number') {

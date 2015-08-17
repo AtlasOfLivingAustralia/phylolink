@@ -60,31 +60,27 @@ class WizardController {
                 model: [numberOfTrees: numberOfTrees, numberOfVisualisations: numberOfVisualisations, loggedIn: userId != null])
     }
 
-    def create() {
-        userService.registerCurrentUser()
-        def userId = authService.getUserId()
-        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
-        log.debug('creating form for user: ' + authService.getUserId())
-        if (user) {
-            def tree = new Tree(params);
-            tree.owner = user;
-            render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
-        } else {
-            def msg = "Failed to detect current user details. Are you logged in?"
-            flash.message = msg
-            redirect(controller: 'wizard', action: 'start');
-        }
-    }
+//    def create() {
+//        userService.registerCurrentUser()
+//        def userId = authService.getUserId()
+//        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
+//        log.debug('creating form for user: ' + authService.getUserId())
+//        if (user) {
+//            def tree = new Tree(params);
+//            tree.owner = user;
+//            render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
+//        } else {
+//            def msg = "Failed to detect current user details. Are you logged in?"
+//            flash.message = msg
+//            redirect(controller: 'wizard', action: 'start');
+//        }
+//    }
 
-    def save() {
+    def create() {
         log.debug('params are ' + params)
 
-        if( params.tree == null || params.tree == '' ){
-            params.tree = request.getFile('file').inputStream.text
-            log.debug( 'tree data: ' + params.tree )
-        }
         def tree
-
+        params.tree = getTreeFromMultipartFile()
         try{
             tree = treeService.createTreeInstance(params);
             if (tree && !tree.hasErrors() && tree.validate()) {
@@ -95,19 +91,19 @@ class WizardController {
             } else {
                 log.debug('error creating tree')
                 flash.message = 'Error saving tree to database.'
-                render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
+                render(view: 'create', model: [back: createLink(action: 'start'), tree: params])
             }
         } catch ( Exception e){
             log.debug('error creating tree')
             flash.message = 'Error creating/storing tree to database. Check if tree format is correct?'
-            render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
+            render(view: 'create', model: [back: createLink(action: 'start'), tree: params])
         }
+    }
 
-//        userService.registerCurrentUser()
-//        def user = Owner.findByUserId(authService.getUserId()?:-1)
-//        params.owner = user
-//        def tree = new Tree( params )
-
+    private String getTreeFromMultipartFile() {
+        if ((params.tree == null || params.tree == '') && request) {
+            return request.getFile('file').inputStream.text
+        }
     }
 
     def visualize() {
