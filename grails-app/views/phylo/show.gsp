@@ -340,7 +340,8 @@
         downloadReasonsUrl: config.downloadReasonsUrl,
         records: records,
         // dynamic chart size. the default chart width is too small.
-        chartWidth: config.chartWidth
+        chartWidth: config.chartWidth,
+        tabId: 'tab'
     });
 
 

@@ -40,6 +40,7 @@ var Habitat = function (c) {
         chartHeight: 200,
         chartAreaHeight: 100,
         headerHeight:60,
+        tabId: 'tab',
         /**
          * sync flag
          *
@@ -598,7 +599,7 @@ var Habitat = function (c) {
             tree.jqxTree({
                 source: [{label: 'Layers', items: source, expanded: true}],
                 height: '300px',
-                width: $('#tab').width - 30,
+                width: $('#' + config.tabId).width - 30,
                 allowDrag: false,
                 toggleMode: "click"
             });
