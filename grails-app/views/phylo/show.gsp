@@ -9,7 +9,7 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree"/>
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree,select2,css"/>
     <r:require modules="bugherd"/>
 </head>
 
@@ -35,6 +35,7 @@
         <div class="span6">
             <div id="info"></div>
             <g:render template="settings"></g:render>
+            <g:render template="trimming"></g:render>
         </div>
 
         <div role="tabpanel" id="tabs" class="span6">
@@ -176,6 +177,7 @@
         format: config.format,
         heading:'vizTitle',
         settingsId:'pjSettings',
+        trimmingId:'pjTrimming',
         hData:{
             id:config.id,
             title: config.title,
@@ -197,7 +199,8 @@
                 biocacheServiceUrl: undefined, // 'http://sandbox.ala.org.au',
                 drid: undefined // drt121
             }
-        }
+        },
+        listToolBaseURL: "${grailsApplication.config.listToolBaseURL}"
     });
 
     var filter = new Filter($.extend(config.filterParams, {
@@ -215,8 +218,10 @@
         dataresourceListUrl: '${createLink(controller: 'ala', action: 'getRecordsList')}?phyloId=${phyloInstance.id}',
         pj: pj,
         selectResourceOnInit: true,
-        initResourceId: -1,
-        edit: ${edit}
+        initResourceId: <g:message message="${phyloInstance.getSource()?:-1}"/>,
+        edit: ${edit},
+        syncUrl: "${createLink(controller: 'phylo', action: 'saveSource')}",
+        phyloId: config.id
     });
 
     var character = new Character({
@@ -321,7 +326,7 @@
         listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
+        initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
         graph: {
             url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
             type: 'GET',

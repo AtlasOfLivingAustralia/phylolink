@@ -174,11 +174,11 @@ class BootStrap {
         result['year'] = 2013;
         result['hide'] = false
         result['doi'] = 'http://dx.doi.org/10.1071/SB13030';
-        result['title'] = 'Australian Hornworts'
+        result['title'] = 'Hornworts - Cargill et al 2013'
         result['reference'] = 'Cargill D. Christine, Vella Nicole G. F., Sharma Ish, Miller Joseph T. (2013) Cryptic speciation and species diversity among Australian and New Zealand hornwort taxa of Megaceros (Dendrocerotaceae). Australian Systematic Botany 26, 356–377.';
         result['created'] = new Date()
         result['expertTree'] = true
-        result['expertTreeTaxonomy'] = 'Hornworts'
+        result['expertTreeTaxonomy'] = 'Australian Hornworts'
         result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:apni.taxon:303372'
         result['notes'] = ''
         return result
@@ -193,12 +193,12 @@ class BootStrap {
         result['year'] = 2012
         result['hide'] = false
         result['doi'] = 'http://doi.org/10.1093/sysbio/syr101'
-        result['title'] = 'Maluridae - Lee et al 2012'
+        result['title'] = 'Wrens (Maluridae) - Lee et al 2012'
         result['reference'] = 'Lee JY, Joseph L, Edwards S. 2012. A species tree for the Australo-Papuan' +
                 ' fairy-wrens an allies (Aves: Maluridae). Syst. Biol. 61(2): 253-271.'
         result['created'] = new Date()
         result['expertTree'] = true
-        result['expertTreeTaxonomy'] = 'Maluridae'
+        result['expertTreeTaxonomy'] = 'Wrens (Maluridae)'
         result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:afd.taxon:e0c1a995-d168-468f-8270-8299043212c5'
         result['notes'] = 'Tree provided by Scott Edwards sedwards@fas.harvard.edu'
         return result

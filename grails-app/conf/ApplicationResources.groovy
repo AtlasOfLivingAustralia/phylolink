@@ -163,4 +163,9 @@ modules = {
         resource url: 'thirdparty/jquery.contextMenu.js', disposition: 'head'
         resource url: 'css/jquery.contextMenu.css', disposition: 'head'
     }
+
+    select2 {
+        resource url: 'thirdparty/select2/select2-3.5.8.css'
+        resource url: 'thirdparty/select2/select2-3.5.8.min.js'
+    }
 }

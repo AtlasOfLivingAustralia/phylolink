@@ -5,6 +5,8 @@ import grails.transaction.Transactional
 @Transactional
 class PhyloService {
 
+    def authService
+
     void deleteVisualisation(Integer id) {
         Phylo.findById(id)?.delete()
     }
@@ -29,5 +31,11 @@ class PhyloService {
         if(demo){
             return demo.getId();
         }
+    }
+
+    def isAuthorised(Owner owner){
+        def userId = authService.getUserId();
+        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest');
+        return user == owner;
     }
 }

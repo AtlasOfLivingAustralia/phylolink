@@ -22,6 +22,7 @@ import groovyx.net.http.RESTClient
 import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.NameValuePair
 import org.apache.commons.httpclient.methods.PostMethod
+import org.apache.commons.io.IOUtils
 import org.apache.http.entity.mime.MultipartEntity
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.json.JSONObject
@@ -94,11 +95,17 @@ class WebService implements InitializingBean {
 
     def doJsonPost(String url, body, Map query = null, Map headers = null, ContentType requestContentType = ContentType.JSON, ContentType responseContentType = ContentType.JSON) {
         RESTClient client = new RESTClient(url)
-        client.post(headers: headers,
+        def response = client.post(headers: headers,
                 query: query,
                 requestContentType: requestContentType,
                 contentType: responseContentType,
                 body: body)
+
+        if (responseContentType == ContentType.TEXT) {
+            IOUtils.toString(response.data)
+        } else {
+            response
+        }
     }
 
     def doPost(String url, String path, String port, String postBody) {

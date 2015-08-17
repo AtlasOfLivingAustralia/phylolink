@@ -191,7 +191,8 @@ var PJ = function (params) {
     var qid,
         prevSearch,
         queryObj,
-        settings;
+        settings,
+        trimming;
 
     //adding support functions for event handling
     this.events = [
@@ -530,7 +531,7 @@ var PJ = function (params) {
 
             for (i = 0; i < list.length; i += 1) {
                 char = list[i];
-                values = node.data.character[char];
+                values = node.data.character && node.data.character[char];
                 if (values && values.length > 0 && typeof values[0] !== 'undefined') {
                     if (charTypeMapping[char] === st.config.typeEnum.quali) {
                         temp = colorCoding[char];
@@ -680,7 +681,7 @@ var PJ = function (params) {
     // settings model and functionality
     function SettingsModel(opt) {
         this.alignName = ko.observable(opt.alignName || false);
-        this.alignPJ = function (obj , e) {
+        this.alignPJ = function (obj, e) {
             pj.alignNames(this.alignName());
             return true;
         }
@@ -691,6 +692,66 @@ var PJ = function (params) {
     });
     ko.applyBindings(settings, document.getElementById(config.settingsId));
     // end settings functionality
+
+
+    // tree trimming model and functionality
+    function TrimmingModel(config) {
+        this.TRIM_LIST = {displayName: "A species list", value: "SPECIES_LIST"};
+
+        this.trimOption = ko.observable();
+        this.trimData = ko.observable();
+        this.trimToInclude = ko.observable("true");
+
+        this.trimOptions = ko.observableArray([
+            {displayName: "Australia", value: "AUSTRALIAN_ONLY"},
+            this.TRIM_LIST,
+            {displayName: "The Atlas of Living Australia", value: "ALA_ONLY"}]);
+
+        this.applyTrimOptions = function () {
+            pj.clearNodeToUrl();
+
+            getTree(config.url, setTree, {});
+            $("#" + config.trimmingId).modal('hide');
+        };
+
+        this.clearTrimOptions = function () {
+            pj.clearNodeToUrl();
+
+            this.trimOption = ko.observable();
+            this.trimData = ko.observable();
+            this.trimToInclude = ko.observable("true");
+
+            getTree(config.url, setTree, {});
+            $("#" + config.trimmingId).modal('hide');
+        };
+
+        var url = config.listToolBaseURL + "/ws/speciesList?max=1000";
+
+        this.init = function () {
+            $.ajax({
+                url: url,
+                dataType: "jsonp",
+                success: function (data) {
+                    var lists = [];
+                    data.lists.forEach(function (list) {
+                        lists.push({id: list.dataResourceUid, text: list.listName})
+                    });
+
+                    $("#trimByList").select2({
+                        data: lists
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Failed to retrieve species lists from url " + url)
+                }
+            });
+        };
+    }
+
+    trimming = new TrimmingModel(config);
+    trimming.init();
+    ko.applyBindings(trimming, document.getElementById(config.trimmingId));
+
 
     var nextStep = function (pos, step, length) {
         // logic so that search starts from the first instance
@@ -766,29 +827,33 @@ var PJ = function (params) {
 
         opt.codeBase = opt.codeBase || '';
         var navHTML2 = '<div style="position:relative">' +
-            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">'+
-            '<div class="input-append">'+
-            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="utils.clearPlaceholder(this)">'+
-            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>'+
-            '</div></div>'+
+            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">' +
+            '<div class="input-append">' +
+            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="utils.clearPlaceholder(this)">' +
+            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>' +
+            '</div></div>' +
             '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +
-            ' width: 18px; height: 18px; cursor: pointer;"><div id="north"><i class="icon-arrow-up"' +
-            ' aria-hidden="true"></i></div></div><div id="panleft" style="position: absolute; left: 4px; top: 56px;' +
+            ' width: 18px; height: 18px; cursor: pointer;"><div id="north" title="Pan up"><i class="icon-arrow-up"' +
+            ' aria-hidden="true"></i></div></div><div id="panleft" title="Pan left" style="position: absolute; left: 4px; top: 56px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="west"><i class="icon-arrow-left"' +
-            ' aria-hidden="true"></i></div></div><div id="panright" style="position: absolute; left: 22px; ' +
+            ' aria-hidden="true"></i></div></div><div id="panright" title="Pan right" style="position: absolute; left: 22px; ' +
             'top: 56px; width: 18px; height: 18px; cursor: pointer;"><div id="east"><i class=" ' +
-            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" style="position: ' +
+            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
+            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
             'absolute; left: 13px; top: 70px; width: 18px; height: 18px; cursor: pointer;"><div id="south"><i ' +
             'class="icon-arrow-down" aria-hidden="true"></i></div></div>' +
-            '<div id="zoomout" style="position: absolute; left: 13px; top: 129px; width: 18px; height: 18px; ' +
+            '<div id="zoomout" title="Zoom out" style="position: absolute; left: 13px; top: 129px; width: 18px; height: 18px; ' +
             'cursor: pointer;"><div id="zoomOUT"><i class="icon-zoom-out"></i></div></div>' +
             '<div id="zoomworld" style="position: absolute; left: 13px; top: 93px; width: 18px; height: 18px; cursor: pointer;"><div id="world" style="position: relative; width: 18px; height: ' +
             '18px;" ><i class="icon-resize-small"></i></div></div>' +
-            '<div id="zoomin" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
+            '<div id="zoomin" title="Zoom in" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
             'pointer;">' +
             '<div id="zoomIN"><i class="icon-zoom-in"></i></div></div>' +
-            '<div id="settingsBtn"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
+            '<div id="settingsBtn" title="Tree display options"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
             '   <i class="icon icon-cog"></i>' +
+            '</a></div>' +
+            '<div id="trimmingBtn" title="Tree trimming options"> <a href="#' + config.trimmingId + '" role="button" data-toggle="modal">' +
+            '   <i class="icon icon-leaf icon-green"></i>' +
             '</a></div>' +
             '</div>';
 
@@ -967,6 +1032,11 @@ var PJ = function (params) {
         $.ajax({
             url: url,
             dataType: options.dataType,
+            data: {
+                trimOption: (trimming.trimOption() ? trimming.trimOption().value : "NONE"),
+                trimData: (trimming.trimData() ? trimming.trimData() : null),
+                trimToInclude: (trimming.trimToInclude() === undefined ? true : trimming.trimToInclude())
+            },
             success: function (data) {
                 spinner.stop();
                 if (typeof data == 'object') {
@@ -975,6 +1045,11 @@ var PJ = function (params) {
                 } else {
                     options.tree = data;
                 }
+
+                if (!options.tree || options.tree.length == 0 || options.tree === "();") {
+                    alert("The resulting tree has no nodes");
+                }
+
                 callback.apply(that, [options])
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -982,7 +1057,7 @@ var PJ = function (params) {
                 // CAS sometimes redirects to auth.ala.org.au. Since that page returns html code and jquery ajax tries
                 // to convert it to JSON, an error is throw. The below code attempts to catch such error and regenerate
                 // the ajax request. If it was a CAS problem, the second request must work.
-                if(jqXHR.status == 200 && textStatus == 'parsererror'){
+                if (jqXHR.status == 200 && textStatus == 'parsererror') {
                     getTree.apply(that, initialArguments);
                 } else {
                     console.log("jqXHR = " + JSON.stringify(jqXHR));
@@ -990,7 +1065,8 @@ var PJ = function (params) {
                     console.log("errorThrown = " + errorThrown);
                     console.log(arguments);
                     alert('Could not load tree. Tree URL seems to be incorrect.');
-                };
+                }
+                ;
 
             }
         })
@@ -1033,9 +1109,16 @@ var PJ = function (params) {
             // if zoomIndex is not set, the rendering will go crazy. make sure zoomIndex is set when a node is clicked
             st.zoomIndex = st.graph.depth.length;
             st.plot();
-            pj.on('treeloaded', function () {
-                id && pj.clickNode(id);
-            })
+            if (!config.clickNodeHandlerRegistered) {
+                pj.on('treeloaded', function () {
+                    if (id) {
+                        pj.clickNode(id);
+                    } else {
+                        pj.clickNode(st.root);
+                    }
+                });
+            }
+            config.clickNodeHandlerRegistered = true;
             config.treeloaded = true;
             // fire event after tree is loaded
             pj.emit('treeloaded');
@@ -1094,7 +1177,7 @@ var PJ = function (params) {
         }
 
         var data = config.hData;
-        var titleDom = $('#'+config.heading);
+        var titleDom = $('#' + config.heading);
         var model = new HeadingModel(data);
         ko.applyBindings(model, titleDom[0]);
     }
@@ -1320,7 +1403,11 @@ var PJ = function (params) {
         config.setNodeToUrlFlag = true;
         var hash = '#node/' + id
         window.location.hash = hash;
-    }
+    };
+
+    this.clearNodeToUrl = function () {
+        window.location.hash = "";
+    };
 
     /**
      * simulate a click on a node
@@ -1384,7 +1471,7 @@ var PJ = function (params) {
      * @param drid
      */
 
-    this.setSaveQueryParams = function(type, biocacheServiceUrl, drid){
+    this.setSaveQueryParams = function (type, biocacheServiceUrl, drid) {
         config.saveQuery.data.speciesList = undefined;
         config.saveQuery.data.dataLocationType = type || 'ala';
         config.saveQuery.data.biocacheServiceUrl = biocacheServiceUrl;
@@ -1472,7 +1559,7 @@ var PJ = function (params) {
         return state;
     }
 
-    this.getRange = function(name) {
+    this.getRange = function (name) {
         var range = name && name.match(/\d+\.*\d*/g);
         if (range.length) {
             range[0] = Number.parseFloat(range[0]);
@@ -1511,21 +1598,23 @@ var PJ = function (params) {
         node && node.eachSubgraph(function (n) {
             if (n.data.leaf) {
                 state = n.data.character[char]
-                for (i = 0; i < state.length; i++) {
-                    name = state[i];
-                    switch (typeof name) {
-                        case 'number':
-                            name = pj.getQuantCharacterState(name, char);
-                            break;
-                    }
-                    if (!result[name]) {
-                        result[name] = {
-                            list: []
+                if (state) {
+                    for (i = 0; i < state.length; i++) {
+                        name = state[i];
+                        switch (typeof name) {
+                            case 'number':
+                                name = pj.getQuantCharacterState(name, char);
+                                break;
                         }
-                    }
+                        if (!result[name]) {
+                            result[name] = {
+                                list: []
+                            }
+                        }
 
-                    result[name].list.push(n.name);
-                    result[name].name = name;
+                        result[name].list.push(n.name);
+                        result[name].name = name;
+                    }
                 }
             }
         });

@@ -443,7 +443,7 @@ var Character = function (options) {
                 width: width,
                 height: height,
                 legend: { position: 'none' },
-                chartArea: { top: 10 },
+                chartArea: { top: 80 },
                 vAxis: {
                     title: options.graph.yAxis
                 },
@@ -474,14 +474,15 @@ var Character = function (options) {
             var opt = {
                 width: width,
                 height: height,
-                legend: { position: 'none' },
-                chartArea: { top: 10, chartAreaHeight: options.chartAreaHeight },
+                legend: { position: 'right' },
+                chartArea: { top: 30, chartAreaHeight: options.chartAreaHeight },
                 vAxis: {
                     title: options.graph.yAxis
                 },
                 hAxis: {
                     title: xAxis,
-                    slantedText: true
+                    slantedText: true,
+                    textPosition: 'in'
                 }
             };
             data = google.visualization.arrayToDataTable(data);

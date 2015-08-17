@@ -184,6 +184,15 @@ h1, h2, h3, h4, h5 {
     display: inline-block;
 }
 
+.modal-wide {
+    width: 700px;
+}
+
+
+.modal-wide .input-xlarge {
+    width: 480px;
+}
+
 .verticalLine {
     border-right: thin solid;
 }
@@ -197,4 +206,9 @@ h1, h2, h3, h4, h5 {
 .wizard-option-group {
     min-height: 125px;
     height: 125px;
+}
+
+.popover {
+    width: 600px;
+    max-width: 600px;
 }

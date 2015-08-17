@@ -18,12 +18,14 @@ class Phylo {
     String dataResource
     String habitat
     String characters
+    String source
     List widgets = new ArrayList()
     static hasMany = [ widgets: Widget ]
     static mapping = {
         widgets cascade:"all-delete-orphan"
         habitat type:'text'
         characters type:'text'
+        source type: 'text'
         title defaultValue:"'Unnamed'"
     }
     static constraints = {
@@ -39,6 +41,7 @@ class Phylo {
         owner( nullable: true)
         habitat(nullable: true, blank: true)
         characters(nullable: true, blank: true)
+        source(nullable: true, blank: true)
         title(nullable: true)
     }
 
