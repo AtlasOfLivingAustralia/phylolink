@@ -326,7 +326,7 @@
         listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
         height: 700,
         syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: '<g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>',
+        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
         graph: {
             url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
             type: 'GET',
