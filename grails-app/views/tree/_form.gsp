@@ -1,7 +1,8 @@
 <%@ page import="au.org.ala.phyloviz.Tree" %>
 %{--<g:hiddenField id="owner" name="owner.id" value="${tree?.owner?.id}"/>--}%
+<g:hiddenField name="formSubmitted" value="1"></g:hiddenField>
 <div class="control-group">
-    <label class="control-label" for="tree">Tree data</label>
+    <label class="control-label" for="tree">Tree data <div class="mandatory">*</div></label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'tree', 'error')}">
         <g:textArea name="tree" class="field span8" rows="8" value="${tree?.tree}"
@@ -10,16 +11,13 @@
                     <div class="row-fluid">Or, upload a file: <input type="file" name="file" value="Upload"/></div>
 
                 </div>
-    %{--<div id="treeInfo" class="span6">--}%
-    %{--</div>--}%
 </div>
 
 <div class="control-group">
-    <label class="control-label" for="treeFormat">Tree data format</label>
+    <label class="control-label" for="treeFormat">Tree data format <div class="mandatory">*</div></label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'treeFormat', 'error')}">
         <g:select name="treeFormat" from="${['newick','nexml']}" value="${tree?.treeFormat}" class="span2"/>
-        %{--<g:select name="treeFormat" from="${['nexml']}" value="${tree?.treeFormat}" class="span2"/>--}%
     </div>
 </div>
 
@@ -34,7 +32,7 @@
 </div>
 
 <div class="control-group">
-    <label class="control-label" for="title">Publication title</label>
+    <label class="control-label" for="title">Publication title <div class="mandatory">*</div></label>
 
     <div class="controls ${hasErrors(bean: tree, field: 'title', 'error')}">
         <g:textField name="title" class="span8" value="${tree?.title}" required="" placeholder="The evolution and phylogenetic placement of invasive Australian Acacia species."
@@ -58,10 +56,6 @@
         <g:textField name="doi" class="span8" value="${tree?.doi}" placeholder="10.1111/j.1472-4642.2011.00780.x"
          onfocus="utils.clearPlaceholder(this)"/>
     </div>
-
-    %{--<div id="doiField" class="span4">--}%
-
-    %{--</div>--}%
 </div>
 
 <div class="control-group">
@@ -83,28 +77,6 @@
 
 
 
-%{--<div class="row">--}%
-%{--<div class="span2">Is this an expert tree?</div>--}%
-%{--<div class="span8 control-group ${hasErrors(bean:tree, field:'expertTree', 'error')}">--}%
-%{--<g:checkBox name="expertTree" class="span8" checked="${tree?.expertTree?'true':'false'}"--}%
-%{--onclick="toggleExpert( this )"/>--}%
-%{--</div>--}%
-%{--</div>--}%
-%{--<div class="row">--}%
-%{--<div class="span2">Expert tree taxonomic group</div>--}%
-%{--<div class="span8 control-group ${hasErrors(bean:tree, field:'expertTreeTaxonomy', 'error')}">--}%
-%{--<g:textField name="expertTreeTaxonomy" class="span8" value="${tree?.expertTreeTaxonomy}"--}%
-%{--disabled="${tree?.expertTree?'false':'true'}"/>--}%
-%{--</div>--}%
-%{--</div>--}%
-%{--<g:hiddenField name="expertTreeLSID" class="span8" value="${tree?.expertTreeLSID}"/>--}%
-%{--<div class="row">--}%
-%{--<div class="span2">Expert Tree ID</div>--}%
-%{--<div class="span8 control-group ${hasErrors(bean:tree, field:'expertTreeID', 'error')}">--}%
-%{--<g:textField name="expertTreeID" class="span8" value="${tree?.expertTreeID}"--}%
-%{--disabled="${tree?.expertTree?'false':'true'}"/>--}%
-%{--</div>--}%
-%{--</div>--}%
 <script>
     $("#expertTreeTaxonomy").autocomplete({
         source: function (request, response) {
@@ -194,14 +166,4 @@
             }
         })
     }
-
-    //    function StudyViewModel(){
-    //        this.citation = ko.observable();
-    //        this.year = ko.observable();
-    //        this.title = ko.observable();
-    //        this.format = ko.observable();
-    //        this.doi  = ko.observable();
-    //        this.tree = ko.observable();
-    //    }
-    //    ko.applyBindings( new StudyViewModel() )
 </script>

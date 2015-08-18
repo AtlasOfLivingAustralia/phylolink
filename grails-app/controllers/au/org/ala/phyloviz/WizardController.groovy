@@ -49,51 +49,46 @@ class WizardController {
 
     def start() {
         def userId = authService.getUserId()
-        
+
         //number of trees for this user
         def numberOfTrees = userId != null ? myTrees().trees.size() : 0
-        
+
         //number of visualisations for this user
         def numberOfVisualisations = userId != null ? myViz().viz.size() : 0
-        
-        render(view: '/wizard/pick', contentType: 'text/html', 
+
+        render(view: '/wizard/pick', contentType: 'text/html',
                 model: [numberOfTrees: numberOfTrees, numberOfVisualisations: numberOfVisualisations, loggedIn: userId != null])
     }
-
-//    def create() {
-//        userService.registerCurrentUser()
-//        def userId = authService.getUserId()
-//        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
-//        log.debug('creating form for user: ' + authService.getUserId())
-//        if (user) {
-//            def tree = new Tree(params);
-//            tree.owner = user;
-//            render(view: 'create', model: [back: createLink(action: 'start'), tree: tree])
-//        } else {
-//            def msg = "Failed to detect current user details. Are you logged in?"
-//            flash.message = msg
-//            redirect(controller: 'wizard', action: 'start');
-//        }
-//    }
 
     def create() {
         log.debug('params are ' + params)
 
         def tree
-        params.tree = getTreeFromMultipartFile()
-        try{
-            tree = treeService.createTreeInstance(params);
-            if (tree && !tree.hasErrors() && tree.validate()) {
-                tree.save(flush: true)
-                flash.message = message(code: 'default.created.message',
-                        args: [message(code: 'tree.label', default: 'Tree'), tree.id])
-                redirect(controller: 'tree', action: 'mapOtus', id: tree.id)
+        if (!params.tree && params.file) {
+            params.tree = getTreeFromMultipartFile()
+        }
+
+        try {
+            if (params.tree) {
+                tree = treeService.createTreeInstance(params);
+                if (tree && !tree.hasErrors() && tree.validate()) {
+                    tree.save(flush: true)
+                    flash.message = message(code: 'default.created.message',
+                            args: [message(code: 'tree.label', default: 'Tree'), tree.id])
+                    redirect(controller: 'tree', action: 'mapOtus', id: tree.id)
+                } else {
+                    log.debug('error creating tree')
+                    flash.message = 'Error saving tree to database.'
+                    render(view: 'create', model: [back: createLink(action: 'start'), tree: params])
+                }
             } else {
-                log.debug('error creating tree')
-                flash.message = 'Error saving tree to database.'
+                if (params.formSubmitted && !params.tree) {
+                    flash.error = true;
+                    flash.message = 'Tree not provided';
+                }
                 render(view: 'create', model: [back: createLink(action: 'start'), tree: params])
             }
-        } catch ( Exception e){
+        } catch (Exception e) {
             log.debug('error creating tree')
             flash.message = 'Error creating/storing tree to database. Check if tree format is correct?'
             render(view: 'create', model: [back: createLink(action: 'start'), tree: params])
@@ -101,8 +96,8 @@ class WizardController {
     }
 
     private String getTreeFromMultipartFile() {
-        if ((params.tree == null || params.tree == '') && request) {
-            return request.getFile('file').inputStream.text
+        if (params.file) {
+            return request.getFile('file')?.inputStream.text
         }
     }
 
@@ -158,7 +153,7 @@ class WizardController {
         } else {
             name = owner.getDisplayName() + "'s"
         }
-        def myTrees = Tree.findAllByOwner(owner ?: -1)?:[]
+        def myTrees = Tree.findAllByOwner(owner ?: -1) ?: []
         if (myTrees.size() == 0) {
             flash.message = 'You do not have any trees uploaded.'
         }
@@ -178,47 +173,45 @@ class WizardController {
         } else {
             name = owner.getDisplayName() + "'s"
         }
-        def myViz = Phylo.findAllByOwner(owner ?: -1)?:[]
+        def myViz = Phylo.findAllByOwner(owner ?: -1) ?: []
         if (myViz.size() == 0) {
             flash.message = 'You have not created any visualisations.'
         }
         [viz: myViz, name: name, isDemonstration: false]
     }
 
-
-
     /**
      * displays a ui to search TreeBASE
      */
-    def searchTB(){
+    def searchTB() {
 
     }
 
     /**
      * TreeBASE study import
      */
-    def importTB(){
+    def importTB() {
         def url = params.url
         params.tree = treeService.importTB(url)
         log.debug('nexml value')
-        log.debug( params.tree )
+        log.debug(params.tree)
         params.treeFormat = 'nexml'
-        forward( action: 'save', params: params)
+        forward(action: 'save', params: params)
     }
 
     /**
      * demo
      */
-    def demo(){
+    def demo() {
         def owner = utilsService.guestAccount();
         def name;
         if (owner == null) {
             flash.message = 'No demonstration visualisations found.'
         }
-        def myViz = Phylo.findAllByOwner(owner ?: -1)?:[]
+        def myViz = Phylo.findAllByOwner(owner ?: -1) ?: []
         if (myViz.size() == 0) {
             flash.message = 'You do not have any trees uploaded.'
         }
-        render(view:'myViz', model: [viz: myViz, name: 'Demonstration', isDemonstration: true])
+        render(view: 'myViz', model: [viz: myViz, name: 'Demonstration', isDemonstration: true])
     }
 }

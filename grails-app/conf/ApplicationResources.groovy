@@ -32,6 +32,7 @@ modules = {
     create{
         resource url: [dir:'thirdparty', file: 'jquery.validate.min.js']
         resource url: [dir:'thirdparty', file: 'additional-methods.min.js']
+        resource url:[dir: 'css', file: 'main.css']
     }
 
     application {
