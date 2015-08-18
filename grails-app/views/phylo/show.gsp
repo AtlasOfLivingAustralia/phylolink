@@ -68,7 +68,7 @@
                     <div id="map"></div>
                     <div id="mapControls">
                         <div class="text-right">
-                            <a id="spLink" class="btn btn-link" data-bind="attr:{href:config.spUrl.url}" target="_blank" ><i class="fa fa-external-link"></i>&nbsp;Open in Spatial Portal</a>
+                            <a id="spLink" class="btn btn-link" data-bind="attr:{href:spUrl.url}" target="_blank" ><i class="fa fa-external-link"></i>&nbsp;Open in Spatial Portal</a>
                             <a id="downloadMapDataLink" class="btn btn-link" data-toggle="modal" href="#mapOccurrenceDownloadModal"><i class="fa fa-download"></i>&nbsp;Download occurrence data</a>
                         </div>
 
