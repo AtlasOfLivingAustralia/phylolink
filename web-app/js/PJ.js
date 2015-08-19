@@ -878,7 +878,7 @@ var PJ = function (params) {
         var navHTML = config.bootstrap == 2 ? navHTML2 : navHTML3;
         var jitcontainer, rightJitContainer, centerJitContainer,
             id = typeof (opt.injectInto) == 'string' ? opt.injectInto : opt.injectInto.id,
-            infovis, parent, popup, navigation, menu, border;
+            infovis, parent, navigation, border;
 
         border = opt.width * 100 / 90;
         jitcontainer = $E('div', {
@@ -901,36 +901,7 @@ var PJ = function (params) {
             'className': ''
         });
         infovis = jQuery('#' + id)[0];
-
         parent = infovis.parentNode;
-
-        popup = $E('div', {
-            'id': 'popup',
-            'className': '',
-            'style': {
-                'color': 'black',
-                'display': 'none',
-                'border': '1px solid green',
-                'background-color': '#B5D397',
-                'position': 'absolute',
-                'left': '50px',
-                'top': '90px',
-                'overflow': 'auto',
-                'text-align': 'left'
-            }
-        });
-        centerJitContainer.appendChild(popup);
-        jQuery(popup).resizable({
-            maxHeight: 450,
-            maxWidth: 350,
-            minHeight: 250,
-            minWidth: 170
-        });
-        jQuery(popup).draggable({
-            handle: '#popup-close',
-            containment: '#' + opt.injectInto
-        });
-
         navigation = $E('div', {
             'id': 'navigationPanel',
             'style': {
