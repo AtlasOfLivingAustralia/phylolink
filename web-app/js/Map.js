@@ -474,7 +474,7 @@ function Map(options) {
         options.env.color = options.legend.defaultValue[0].hex;
         this.updateEnv(layer);
         lmap.addLayer(layer);
-        this.setSpUrl('&q=' + pj.getQid(true) + '&cm=' + map.getColorMode())
+        this.setSpUrl('&q=' + pj.getQid(true) + '&cm=' + map.getColorMode() + '&qname=Phylolink')
     }
 
     this.mapWithCharacter = function(query, char){
