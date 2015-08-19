@@ -93,5 +93,80 @@ var utils={
             pj.hData.selectedClade('' + list.length + ' taxa selected')
             pj.hData.selectedCladeNumber(list.length)
         }
+    },
+    setupTree: function(config, tree, input) {
+        if (config === undefined || config.list === undefined || config.list.length == 0) {
+            setTimeout(function() {utils.setupTree(config, tree, input)}, 200)
+            return
+        }
+
+        var source = []
+        var i
+        for (i = 0; i < config.list.length; i++) {
+            var class1 = config.list[i].classification1
+            var class2 = config.list[i].classification2
+            var label = config.list[i].displayname
+            config.list[i].label = label
+
+            if (class1 === undefined || class1 === '') class1 = 'Other'
+            if (class2 === undefined || class2 === '') class2 = 'Other'
+
+            var sclass1 = undefined
+            var sclass2 = undefined
+            var j
+            for (j = 0; j < source.length; j++) {
+
+                if (source[j].label === class1) {
+                    sclass1 = source[j]
+
+                    var k
+                    for (k = 0; k < source[j].items.length; k++) {
+                        if (source[j].items[k].label === class2) {
+                            sclass2 = source[j].items[k]
+                        }
+                    }
+                }
+            }
+            var item = {label: label, value: config.list[i]}
+            if (sclass1 === undefined) {
+                source.push({label: class1, items: [{label: class2, items: [item]}]})
+            } else if (sclass2 === undefined) {
+                sclass1.items.push({label: class2, items: [item]})
+            } else {
+                sclass2.items.push(item)
+            }
+        }
+
+        source = source.sort(function (a, b) {
+            return a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+        })
+        for (i = 0; i < source.length; i++) {
+            source[i].items = source[i].items.sort(function (a, b) {
+                return a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+            })
+            var j
+            for (j = 0; j < source[i].items.length; j++) {
+                source[i].items[j].items = source[i].items[j].items.sort(function (a, b) {
+                    return a.label < b.label ? -1 : a.label > b.label ? 1 : 0
+                })
+            }
+        }
+        console.log($('#tabs').width() - 50 + 'px')
+        tree.jqxTree({
+            source: [{label: 'Layers', items: source, expanded: true}],
+            height: '300px',
+            width: $('#tabs').width() - 50 + 'px',
+            allowDrag: false,
+            toggleMode: "click"
+        });
+        tree.on('select', function (event) {
+            var args = event.args;
+            if (args.element !== undefined) {
+                var item = tree.jqxTree('getItem', args.element);
+                if (item.value !== undefined && item.value != null && item.value.label !== undefined) {
+                    input.treeSelect(item.value)
+                }
+            }
+        });
     }
 };

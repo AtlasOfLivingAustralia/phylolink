@@ -596,22 +596,8 @@ var Habitat = function (c) {
                     })
                 }
             }
-            tree.jqxTree({
-                source: [{label: 'Layers', items: source, expanded: true}],
-                height: '300px',
-                width: $('#' + config.tabId).width - 30,
-                allowDrag: false,
-                toggleMode: "click"
-            });
-            tree.on('select', function (event) {
-                var args = event.args;
-                if (args.element !== undefined) {
-                    var item = tree.jqxTree('getItem', args.element);
-                    if (item.value !== undefined && item.value != null && item.value.label !== undefined) {
-                        input.treeSelect(item.value)
-                    }
-                }
-            });
+            
+            utils.setupTree(config, tree, input)
         },
         update: function (element, valueAccessor, innerFn, data, koObj) {
             console.log('update function');
