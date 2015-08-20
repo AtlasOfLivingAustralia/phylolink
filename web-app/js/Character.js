@@ -474,7 +474,7 @@ var Character = function (options) {
             var opt = {
                 width: width,
                 height: height,
-                legend: { position: 'right' },
+                legend: { position: 'none' },
                 chartArea: { top: 30, chartAreaHeight: options.chartAreaHeight },
                 vAxis: {
                     title: options.graph.yAxis

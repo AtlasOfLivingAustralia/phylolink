@@ -20,7 +20,9 @@ L.Control.Select = L.Control.extend({
         /**
          * callback when select is clicked.
          */
-        onClick:null
+        onClick:null,
+        defaultValue: null,
+        currentValue: null
     },
     /**
      * select dom element
@@ -63,7 +65,8 @@ L.Control.Select = L.Control.extend({
     },
 
     _create: function (container) {
-        var that = this;
+        var that = this,
+            colorbyInput = this;
         this.el = container;
         for(var i in this.options.style){
             container.style[i] = this.options.style[i];
@@ -76,7 +79,14 @@ L.Control.Select = L.Control.extend({
         }else if(this.options.initialValue){
             this.updateData(this.options.initialValue)
         }
+
         this.viewModel.text(this.options.text);
+        this.viewModel.selectedValue.subscribe(function(colorBy){
+            if(colorBy){
+                colorbyInput.options.currentValue = colorBy.name();
+            }
+        },'change');
+        
         ko.applyBindings(this.viewModel,container);
 
         $(container).find('select').on('change',function(){
@@ -85,15 +95,20 @@ L.Control.Select = L.Control.extend({
     },
 
     updateData:function(data){
-        var defval = null;
+        var defval = null,
+            currentVal = null;
         this.viewModel.facets.removeAll();
         for(var i in data){
             var modelValue = new this.Model(data[i]);
             this.viewModel.facets.push(modelValue);
-            if (data[i].name === this.options.defaultValue) {
+            if(data[i].name === this.options.currentValue){
+                currentVal = modelValue
+            }else if (data[i].name === this.options.defaultValue) {
                 defval = modelValue;
             }
         }
+
+        defval = currentVal || defval;
 
         if (defval != this.viewModel.selectedValue()) {
             this.viewModel.selectedValue(defval);

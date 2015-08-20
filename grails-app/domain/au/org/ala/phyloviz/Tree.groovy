@@ -42,8 +42,4 @@ class Tree {
         reference type: 'text'
         notes type: "text"
     }
-
-//    def beforeValidate(){
-//        return false;
-//    }
 }

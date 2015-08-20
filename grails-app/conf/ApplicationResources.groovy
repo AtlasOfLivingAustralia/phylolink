@@ -36,10 +36,12 @@ modules = {
     }
 
     application {
+        dependsOn('jquery');
         resource url: [dir: 'css', file: "maingsp.css"]
         resource url: [dir: 'css', file: "jquery-ui.css"]
-        resource url: [dir: "thirdparty", file: "jquery-ui.min.js"]
-        resource url: [dir:'thirdparty', file: 'jquery.cookie.js']
+        resource url: [dir: "thirdparty", file: "jquery-ui.min.js"], disposition: 'head'
+        resource url: 'thirdparty/bootstrap-slider.js', disposition: 'head'
+        resource url: [dir:'thirdparty', file: 'jquery.cookie.js'], disposition: 'head'
     }
 
     bugherd {
@@ -114,7 +116,6 @@ modules = {
         resource url: 'thirdparty/spin.min.v2.0.1.js'
         resource url: 'thirdparty/leaflet.v0.7.3.js', disposition: 'head'
         resource url: 'thirdparty/Leaflet.fullscreen.v0.0.2.min.js', disposition: 'head'
-        resource url: 'thirdparty/bootstrap-slider.js', disposition: 'head'
     }
 
     phylojive {

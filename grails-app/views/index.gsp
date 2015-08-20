@@ -58,7 +58,7 @@
 
                         <p class="small">
                             Phylolink is the result of <a href="#" id="collaborationTip" data-toggle="popover" data-original-title="Phylolink Team">collaboration</a> between the Atlas of Living Australia and scientists at CSIRO, the Australian National University and the National Science Foundation (USA).
-                            Phylolink builds upon <a href="http://trin.github.io/phyloJIVE/" target="_blank">PhyloJIVE</a>, which was developed by <a href="www.csiro.au" target="_blank">CSIRO</a>,
+                            Phylolink builds upon <a href="http://trin.github.io/phyloJIVE/" target="_blank">PhyloJIVE</a>, which was developed by <a href="http://www.csiro.au" target="_blank">CSIRO</a>,
                             the Taxonomy Research and Information Network (<a href="http://www.taxonomy.org.au/" target="_blank">TRIN</a>), and the Centre for Australian National Biodiversity Research
                             (<a href="http://www.cpbr.gov.au/cpbr/" target="_blank">CANBR</a>).
                         </p>

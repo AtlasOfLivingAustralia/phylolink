@@ -18,7 +18,11 @@ var Habitat = function (c) {
     /**
      * save state to database
      */
-        'sync'
+        'sync',
+    /**
+     * when layer metadata is successfully loaded
+     */
+        'layermetadataadded'
     ]
     var config = $.extend({
         bootstrap: 2,
@@ -85,7 +89,10 @@ var Habitat = function (c) {
         }],
         records: undefined
     }, c);
-    var pj = config.pj, hab = this, id = config.id;
+    var pj = config.pj,
+        hab = this,
+        id = config.id,
+        updateMetadata = [];
 
     /**
      * stores query id for a node.
@@ -105,6 +112,7 @@ var Habitat = function (c) {
                     data[i].value = data[i].id;
                     config.list.push(data[i]);
                 }
+                hab.emit('layermetadataadded')
             }
         })
     }
@@ -196,13 +204,20 @@ var Habitat = function (c) {
          * @param init
          */
         self.initialize = function (init) {
-            var habitats = init.habitats, temp, habitat, count = init.count;
-            if( !habitats || (count === undefined)){
+            var habitats = init.habitats,
+                temp, habitat,
+                metadata,
+                count = init.count || 0;
+
+            if( !habitats || (count === undefined)) {
                 return;
             }
 
             for (var i in habitats) {
                 temp = habitats[i];
+                temp.id = temp.id || this.generateHabitatId(i);
+                temp.id_metadata = temp.id_metadata || temp.id + 'metadata';
+
 
                 //var rename catch
                 if (temp.description === undefined) temp.description = temp.mdDescription
@@ -212,14 +227,29 @@ var Habitat = function (c) {
                 if (temp.environmentalvaluemin === undefined) temp.environmentalvaluemin = temp.mdMin
                 if (temp.environmentalvalueunits === undefined) temp.environmentalvalueunits = temp.mdUnits
 
+
                 habitat = new Habitat(temp);
                 self.habitats.push(habitat);
                 self.emit('changed', habitat, true);
+
+                // add habitat to this list so that after layer metadata loads, metadata for this habitat is populated.
+                if(!temp.description && !temp.mdDescription){
+                    updateMetadata.push(habitat);
+                }
+
             }
             self.count(count);
             self.selectedHabitat(null);
         };
 
+        /**
+         * auto generate habitat id
+         * @returns {string}
+         */
+        self.generateHabitatId = function(num){
+            var count = num || this.count()
+            return 'habitat-' + count;
+        }
         /**
          * add a habitat to list
          */
@@ -719,6 +749,34 @@ var Habitat = function (c) {
     this.setHabitats = function(data){
         data && view.initialize(data);
     };
+    /**
+     * get layer metadata for the requested id
+     * @param layerid
+     * @returns {*}
+     */
+    this.getLayerMetadata = function(layerid){
+        if(config.list.length){
+            for(var i in config.list ){
+                if( config.list[i].value === layerid){
+                    return config.list[i];
+                }
+            }
+        }
+    }
+
+    this.updateMetadataForInitializedHabitats = function(){
+        if(updateMetadata.length){
+            var habitat,
+                metadata;
+            for(var i in updateMetadata){
+                habitat = updateMetadata[i]
+                view.selectedHabitat(habitat);
+                metadata = hab.getLayerMetadata(habitat.name());
+                metadata && view.changeHabitat(metadata);
+                view.selectedHabitat(null);
+            }
+        }
+    }
 
     function initPopover(){
         var pops = config.popOver, i,id;
@@ -758,6 +816,8 @@ var Habitat = function (c) {
 //    $("body").on("shown.bs.tab", "#"+config.tabId, function() {
 //        initPopover();
 //    });
+
+    this.on('layermetadataadded', this.updateMetadataForInitializedHabitats)
 
 
     /**
