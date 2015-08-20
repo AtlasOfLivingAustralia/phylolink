@@ -7,7 +7,8 @@
 <head>
     <meta name="layout" content="main"/>
     <title><g:message code="viewer.show"/></title>
-    <r:require modules="application,phylojive,contextmenu,bugherd"/>
+    %{--<r:require modules="application,phylojive,contextmenu,bugherd,select2"/>--}%
+    <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree,select2,css"/>
 </head>
 
 <body>
@@ -21,11 +22,15 @@
         </div>
     </div>
 
-    <div id="vizTitle"></div>
+    <div class="row-fluid">
+        <div id="vizTitle"><g:render template="../phylo/title"></g:render></div>
+    </div>
 
     <div class="row-fluid">
         <div class="span6">
             <div id="info"></div>
+            <g:render template="../phylo/settings"></g:render>
+            <g:render template="../phylo/trimming"></g:render>
         </div>
         <div class="span6">
             <g:render template="../phylo/metadata"></g:render>
@@ -58,7 +63,11 @@
                 edit: config.edit
             },
             titleUrl: config.titleUrl,
-            edit: config.edit
+            edit: config.edit,
+            listToolBaseURL: "${grailsApplication.config.listToolBaseURL}",
+            heading:'vizTitle',
+            settingsId:'pjSettings',
+            trimmingId:'pjTrimming'
         });
 </r:script>
 </body>

@@ -252,11 +252,12 @@ class AlaService {
         def data, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
             fq;
         matchingCol = matchingCol ?: 'taxon_name';
-        data = filterQuery(clade, null, matchingCol);
         if (drid != null && !drid.isEmpty()) {
             fq = data;
             data = "data_resource_uid:${drid}"
+            matchingCol = 'raw_taxon_name'
         }
+        data = filterQuery(clade, null, matchingCol);
 
         Map result = [:]
         result.qid = getQid(data, url, fq);
