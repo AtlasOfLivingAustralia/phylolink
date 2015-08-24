@@ -255,7 +255,7 @@ class AlaService {
         if (drid != null && !drid.isEmpty()) {
             fq = data;
             data = "data_resource_uid:${drid}"
-            matchingCol = 'raw_taxon_name'
+            matchingCol = 'raw_name'
         }
         data = filterQuery(clade, null, matchingCol);
 

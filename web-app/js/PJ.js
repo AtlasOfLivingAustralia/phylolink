@@ -354,7 +354,7 @@ var PJ = function (params) {
             },
 
             onMouseLeave: function () {
-                st.canvas.getElement().style.cursor = 'move';
+                st.canvas.getElement().style.cursor = '';
                 st.tips.hide(true);
             },
 
