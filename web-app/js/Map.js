@@ -516,7 +516,8 @@ function Map(options) {
                     layer.color = options.env.color = ajx.color.replace('#', '');
                     that.updateEnv(layer);
                     lmap.addLayer(layer)
-                    spUrl += '&ly.' + c + '=' + list[0] + '&ly.' + c + '.s=' + parseInt('0x' + layer.color) + '&ly.' + c + '.q=' + qid
+                    spUrl += '&ly.' + c + '=' + groups[ajx.color].name + '&ly.' + c + '.s=' + parseInt('0x' + layer.color) + '&ly.' + c + '.q=' + qid
+                    that.setSpUrl(spUrl)
                     c = c + 1
                     that.emit('updateend');
 
@@ -526,7 +527,6 @@ function Map(options) {
                 });
             }
         }
-        this.setSpUrl(spUrl)
     }
 
     this.removeLayers = function () {
