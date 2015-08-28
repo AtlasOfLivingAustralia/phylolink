@@ -696,15 +696,15 @@ class TreeService {
 
         switch (option) {
             case TrimOption.AUSTRALIAN_ONLY:
-                Set australianSpecies = getAustralianSpecies(treeId)
+                List australianSpecies = getAustralianSpecies(treeId)
                 trimmedTree = trim(treeId, australianSpecies, trimToInclude)
                 break
             case TrimOption.ALA_ONLY:
-                Set alaRecognisedSpecies = getAlaRecognisedSpecies(treeId)
+                List alaRecognisedSpecies = getAlaRecognisedSpecies(treeId)
                 trimmedTree = trim(treeId, alaRecognisedSpecies, trimToInclude)
                 break
             case TrimOption.SPECIES_LIST:
-                Set species = getSpeciesFromList(data as String)
+                List species = getSpeciesFromList(data as String)
                 trimmedTree = trim(treeId, species, trimToInclude)
                 break
             case TrimOption.NONE:
@@ -716,15 +716,52 @@ class TreeService {
         trimmedTree
     }
 
-    private Set getAustralianSpecies(Integer treeId) {
-        getBieSpecies(treeId).findResults { it?.name } as HashSet
+    private List getAustralianSpecies(Integer treeId) {
+        List speciesNames = getSpeciesNamesFromTree(treeId)
+
+        matchNames(getBieSpecies(speciesNames), speciesNames)
     }
 
-    private Set getAlaRecognisedSpecies(Integer treeId) {
-        getBiocacheSpecies(treeId).findResults { it?.count > 0 ? it?.name : null } as HashSet
+    private List getAlaRecognisedSpecies(Integer treeId) {
+        List speciesNames = getSpeciesNamesFromTree(treeId)
+
+        matchNames(getBiocacheSpecies(speciesNames), speciesNames)
     }
 
-    private Set getSpeciesFromList(String listDataResourceId) {
+    /**
+     * Finds all items from the speciesInTree list where there is a corresponding item in the targetList, regardless of
+     * the value.
+     *
+     * This allows the targetList to contain names in a different format (e.g. names returned from calls to the BIE or
+     * Biocache may not be exactly the same as the name used for the search).
+     *
+     * For example, sending [Amytornis dorotheae] to the BIE will result in a targetList of [Amytornis (Amytornis) dorotheae]
+     * due to the name matching rules that the BIE uses.
+     *
+     * This method assumes:
+     * <ol>
+     *     <li>That indices of the two lists match: i.e. the value in cell x of the speciesInTree list was used to find/produce the value in cell x of the targetList.</li>
+     *     <li>If there was no match for the value from speciesInTree, then the corresponding cell in the target list will be null.</li>
+     *     <li>We are only interested in finding items from speciesInTree list that have a match in targetList: we don't care what the value in the target list is.</li>
+     * </ol>
+     *
+     * @param targetList
+     * @param speciesInTree
+     * @return
+     */
+    List matchNames(List targetList, List speciesInTree) {
+        int index = 0
+        targetList.collect {
+            if (it?.name) {
+                speciesInTree[index++]
+            } else {
+                index++
+                null
+            }
+        }
+    }
+
+    private List getSpeciesFromList(String listDataResourceId) {
         if (!listDataResourceId) {
             throw new IllegalArgumentException("List Data Resource Id is required")
         }
@@ -733,15 +770,11 @@ class TreeService {
         data.findResults { it?.name } as HashSet
     }
 
-    private getBieSpecies(Integer treeId) {
-        List speciesNames = getSpeciesNamesFromTree(treeId)
-
+    private List getBieSpecies(List speciesNames) {
         webService.doJsonPost("${grailsApplication.config.bieRoot}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"],\"vernacular\":true}").data
     }
 
-    private getBiocacheSpecies(Integer treeId) {
-        List speciesNames = getSpeciesNamesFromTree(treeId).collect { it }
-
+    private List getBiocacheSpecies(List speciesNames) {
         String query = alaService.filterQuery(speciesNames, null, "taxon_name")
 
         String url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", grailsApplication.config.biocacheServiceUrl)
@@ -750,7 +783,7 @@ class TreeService {
         webService.getJson("${grailsApplication.config.biocacheServiceUrl}/mapping/legend?q=qid:${qid}&cm=taxon_name&type=application/json")
     }
 
-    private Tree trim(Integer treeId, Set species, boolean trimToInclude) {
+    private Tree trim(Integer treeId, List species, boolean trimToInclude) {
         JadeTree tree = toJadeTree(treeId)
 
         List leavesToTrim = tree.iterateExternalNodes().findAll { trimToInclude ? !species.contains(it.getName()) : species.contains(it.getName()) }
