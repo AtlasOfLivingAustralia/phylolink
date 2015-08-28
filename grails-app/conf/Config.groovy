@@ -92,6 +92,7 @@ listCsvForKeys = "${listToolBaseURL}/ws/speciesListItems/byKeys?druid=DRID&keys=
 listKeys = "${listToolBaseURL}/ws/speciesListItems/keys?druid=DRID"
 listsPermUrl = "${listToolBaseURL}/speciesListItem/list/DRID"
 legendAla = 'BIOCACHE_HUB/legend'
+lsidBulkLookup = "${bieRoot}/ws/species/lookup/bulk.json"
 
 //opentree configs
 find_all_studies= "${oti_address}/db/data/ext/QueryServices/graphdb/findAllStudies"

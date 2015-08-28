@@ -23,13 +23,24 @@ class AlaService {
      * alaService needs utilsService and utilsService needs alaService
      */
 
+    /**
+     * bulk LSID look up. The webservice returns null for those species it could not find an LSID.
+     * @param names
+     * @return
+     */
     def getLsid(names) {
-        def url = "http://bie.ala.org.au/ws/species/lookup/bulk.json"
-        def post = '{"names":["Macropus rufus","Macropus greyi"]}'
+        def url = grailsApplication.config.lsidBulkLookup;
+        // POST request body format
+        // '{"names":["Macropus rufus","Macropus greyi"]}'
         names = (['names': names] as JSON).toString(true);
         return webService.doPost(url, '', '', names)
     }
 
+    /**
+     * get taxon info from guid
+     * @param guid
+     * @return
+     */
     def getTaxonInfo(guid) {
         def url = grailsApplication.config.bieInfo;
         log.debug(guid)
@@ -39,6 +50,14 @@ class AlaService {
         return result?.taxonConcept;
     }
 
+    /**
+     * creates charjson using records in sandbox
+     * @param baseUrl
+     * @param drid
+     * @param key
+     * @param fields
+     * @return
+     */
     def getSandboxCharJson(baseUrl, drid, key, fields) {
         def url = "${baseUrl}/ws/occurrences/search?q=${drid}"
         def facet = [], keys = [], result = [:], fq = [];
@@ -136,6 +155,12 @@ class AlaService {
         results
     }
 
+    /**
+     * get fields that are not indexed
+     * @param baseUrl
+     * @param drid
+     * @return
+     */
     def getDynamicFacets(baseUrl, drid) {
         def url = "${baseUrl}/upload/dynamicFacets?q=${drid}";
         def facets = webService.get(url);
@@ -150,6 +175,10 @@ class AlaService {
         return result;
     }
 
+    /**
+     * get indexed fields
+     * @return
+     */
     def getFields() {
         def url = grailsApplication.config.biocacheServiceUrl + "/index/fields"
         def fields = JSON.parse(webService.get(url));
@@ -160,6 +189,11 @@ class AlaService {
         return fields;
     }
 
+    /**
+     * create a hash with field name as key and display name as value
+     * @param fields
+     * @return
+     */
     def inverse(fields) {
         def result = [:];
         fields.eachWithIndex { field, i ->
@@ -187,6 +221,13 @@ class AlaService {
         return output
     }
 
+    /**
+     * get sandbox points for a query.
+     * @param baseUrl
+     * @param q
+     * @param fq
+     * @return
+     */
     def getSandboxPoints(baseUrl, q, fq) {
         def url = "${baseUrl}/occurrences/search";
         def p = [];
@@ -246,7 +287,9 @@ class AlaService {
     }
 
     /**
-     *
+     * post query to a biochache service and get a query id. All subsequent request are done using this query id.
+     * When a node on tree is clicked on phylojive, this function is called. Since some trees have thousands of
+     * taxa and some queries can easily exceed the get request limit.
      */
     def saveQuery(JSONArray clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol, boolean characterQuery = false) {
         def data, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
@@ -269,6 +312,12 @@ class AlaService {
         return result
     }
 
+    /**
+     * get total number of occurrences
+     * @param qid
+     * @param biocacheServiceUrl
+     * @return
+     */
     int getOccurrenceCount(String qid, String biocacheServiceUrl) {
         String url = grailsApplication.config.occurrencesSearch.replace("BIOCACHE_SERVICE", biocacheServiceUrl)
 
@@ -382,6 +431,12 @@ class AlaService {
         return result
     }
 
+    /**
+     * make an entry to character table when character matrix is uploaded to list tool.
+     * @param title
+     * @param drid
+     * @return
+     */
     def addCharacterToDB(String title, String drid) {
         Owner own = Owner.findByUserId(authService.getUserId() ?: -1);
         def charList = [
