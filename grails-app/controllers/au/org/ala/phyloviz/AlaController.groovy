@@ -194,8 +194,7 @@ class AlaController {
     def getAlaLsid(){
         def study = params.study
         def tree = params.tree
-        utilsService.lookupLeafName( study, tree);
-        render( contentType: 'application/json', text: utilsService.lookupLeafName( study, tree) as JSON )
+        render( contentType: 'application/json', text: ([resp: utilsService.lookupLeafName( study, tree)] as JSON) )
     }
 
     /**

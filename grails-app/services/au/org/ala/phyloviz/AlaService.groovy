@@ -13,6 +13,7 @@ class AlaService {
     def charactersService
     def sandboxService
     def authService
+    NameService nameService
     
     def allLayersMaxAge = 0
     def allLayersCached = []
@@ -24,16 +25,15 @@ class AlaService {
      */
 
     /**
-     * bulk LSID look up. The webservice returns null for those species it could not find an LSID.
-     * @param names
-     * @return
+     * Retrieves a list of LSIDs for the provided list of names. The resulting list will be of the same length as the
+     * provided list of names, and each cell will contain the LSID for the corresponding cell in the names list, or null
+     * if there is no matching LSID.
+     *
+     * @param names List of names to search for
+     * @return a list of LSIDs corresponding to the items in the provided names list, or null if there was no match.
      */
-    def getLsid(names) {
-        def url = grailsApplication.config.lsidBulkLookup;
-        // POST request body format
-        // '{"names":["Macropus rufus","Macropus greyi"]}'
-        names = (['names': names] as JSON).toString(true);
-        return webService.doPost(url, '', '', names)
+    List getLsid(List names) {
+        names?.collect { nameService.getLSID(it) }
     }
 
     /**

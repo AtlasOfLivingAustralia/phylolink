@@ -38,6 +38,7 @@ grails.project.dependency.resolution = {
         runtime 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
         runtime 'org.apache.httpcomponents:httpclient:4.3.5'
         runtime 'org.apache.httpcomponents:httpmime:4.3.5'
+        runtime 'au.org.ala:ala-name-matching:2.1'
         compile 'org.apache.commons:commons-math3:3.5'
     }
 

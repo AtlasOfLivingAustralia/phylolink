@@ -36,23 +36,19 @@ class TreeService {
         }
 
         def lsid = alaService.getLsid(names)
-        if (lsid?.error) {
-            result = lsid
-        } else {
-            lsid = lsid.resp;
-            log.debug(lsid)
-            (0..<lsid.size()).each { index ->
-                if (lsid[index]) {
-                    taxon = lsid[index]
 
-                    // check if taxon is in australia
-                    taxon.isAustralian == 'recorded' ? isAussie++ : 0;
-                    recogNames++;
-                }
+        log.debug(lsid)
+        (0..<lsid.size()).each { index ->
+            if (lsid[index]) {
+                taxon = lsid[index]
+
+                // check if taxon is in australia
+                taxon.isAustralian == 'recorded' ? isAussie++ : 0;
+                recogNames++;
             }
-            result['recognisedNames'] = recogNames;
-            result['australianCount'] = isAussie;
         }
+        result['recognisedNames'] = recogNames;
+        result['australianCount'] = isAussie;
 
         return result
     }
