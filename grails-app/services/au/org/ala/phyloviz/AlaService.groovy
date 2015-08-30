@@ -33,7 +33,13 @@ class AlaService {
      * @return a list of LSIDs corresponding to the items in the provided names list, or null if there was no match.
      */
     List getLsid(List names) {
-        names?.collect { nameService.getLSID(it) }
+        names?.collect {
+            try {
+                nameService.getLSID(it)
+            } catch (Exception e) {
+                log.error("Unable to match LSID to name ${it}", e)
+            }
+        }
     }
 
     /**

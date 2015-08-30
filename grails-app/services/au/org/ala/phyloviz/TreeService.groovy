@@ -771,7 +771,8 @@ class TreeService {
     }
 
     private List getBiocacheSpecies(List speciesNames) {
-        String query = alaService.filterQuery(speciesNames, null, "taxon_name")
+        List lsids = alaService.getLsid(speciesNames)
+        String query = alaService.filterQuery(lsids, null, "lsid")
 
         String url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", grailsApplication.config.biocacheServiceUrl)
         String qid = alaService.getQid(query, url, null)
