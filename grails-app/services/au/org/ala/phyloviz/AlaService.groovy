@@ -17,6 +17,7 @@ class AlaService {
     
     def allLayersMaxAge = 0
     def allLayersCached = []
+    def i18nProperties
     
     /**
      * //    def utilsService
@@ -47,7 +48,7 @@ class AlaService {
      * @param guid
      * @return
      */
-    def getTaxonInfo(guid) {
+    def getTaxonInfo( String guid) throws Exception {
         def url = grailsApplication.config.bieInfo;
         log.debug(guid)
         log.debug(url)
@@ -118,8 +119,7 @@ class AlaService {
         }
         return result;
     }
-    
-    def i18nProperties
+
     def i18n() {
         if (i18nProperties == null || i18nProperties.size() == 0) {
             def p = new Properties()
