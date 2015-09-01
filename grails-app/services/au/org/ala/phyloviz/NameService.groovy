@@ -16,10 +16,12 @@ class NameService {
     }
 
     String getLSID(String name) {
-        nameSearcher.searchForLSID(name)
+        LinnaeanRankClassification rankClassification = new LinnaeanRankClassification()
+        rankClassification.setScientificName(name)
+        nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, true);
     }
 
-    String matchedName(String providedName) {
+    String matchName(String providedName) {
         LinnaeanRankClassification rankClassification = new LinnaeanRankClassification()
         rankClassification.setScientificName(providedName)
         NameSearchResult result = nameSearcher.searchForAcceptedRecordDefaultHandling(rankClassification, true, true)

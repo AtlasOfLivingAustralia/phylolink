@@ -1,4 +1,5 @@
 package au.org.ala.phyloviz
+
 import au.com.bytecode.opencsv.CSVReader
 import grails.converters.JSON
 import grails.transaction.Transactional
@@ -14,11 +15,11 @@ class AlaService {
     def sandboxService
     def authService
     NameService nameService
-    
+
     def allLayersMaxAge = 0
     def allLayersCached = []
     def i18nProperties
-    
+
     /**
      * //    def utilsService
      * adding utilsService will cause the program to termiate. I think it is because of cyclical dependencies.
@@ -44,11 +45,35 @@ class AlaService {
     }
 
     /**
+     * check if a name can be matched to an lsid and returns a list of all matched lsid and a list of all
+     * unmatched names.
+     * @param names
+     * @return
+     */
+    Map matchNames(List names) {
+        Map matches = ['matched': [], 'unmatched': []]
+        String lsid
+        names.each { name ->
+            try{
+                lsid = nameService.getLSID(name)
+                if (lsid) {
+                    matches['matched'].push(lsid)
+                } else {
+                    matches['unmatched'].push(name)
+                }
+            } catch (Exception e){
+                matches['unmatched'].push(name)
+            }
+        }
+        matches
+    }
+
+    /**
      * get taxon info from guid
      * @param guid
      * @return
      */
-    def getTaxonInfo( String guid) throws Exception {
+    def getTaxonInfo(String guid) throws Exception {
         def url = grailsApplication.config.bieInfo;
         log.debug(guid)
         log.debug(url)
@@ -143,21 +168,21 @@ class AlaService {
         }
         return results;
     }
-    
+
     def getFacets(baseUrl) {
         def results = []
-        
+
         def url = "${baseUrl}/search/grouped/facets";
         def facets = webService.get(url);
         facets = JSON.parse(facets);
-        
+
         //merge with group names
         facets.each { g ->
             g.facets.each { f ->
                 results.add([group: g.title, name: f.field, displayName: i18n().getAt('facet.' + f.field) ?: f.field])
             }
         }
-        
+
         results
     }
 
@@ -284,11 +309,11 @@ class AlaService {
                 }
             }
             if (result.size() > 0) allLayersCached = result
-            
+
             //refresh in an hour
-            allLayersMaxAge = System.currentTimeMillis() + 60*60*1000
+            allLayersMaxAge = System.currentTimeMillis() + 60 * 60 * 1000
         }
-        
+
         allLayersCached
     }
 
@@ -297,19 +322,37 @@ class AlaService {
      * When a node on tree is clicked on phylojive, this function is called. Since some trees have thousands of
      * taxa and some queries can easily exceed the get request limit.
      */
-    def saveQuery(JSONArray clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol, boolean characterQuery = false) {
-        def data, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
-            fq;
-        matchingCol = matchingCol ?: 'taxon_name';
-        if (drid != null && !drid.isEmpty()) {
-            fq = data;
-            data = "data_resource_uid:${drid}"
-            matchingCol = 'raw_name'
+    def saveQuery(List clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol, boolean characterQuery = false) {
+        def q, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
+            fqs = [], fq , matchNamesResult;
+
+        // trim species selected to maxLimit to prevent solr error.
+        clade = trimSpeciesListToMax(clade);
+        matchNamesResult = matchNames(clade)
+        if (matchNamesResult['matched'].size()) {
+            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid').replace('(','').replace(')',''))
         }
-        data = filterQuery(clade, null, matchingCol);
+
+        if (matchNamesResult['unmatched'].size()) {
+            fqs.push(filterQuery(matchNamesResult['unmatched'], null, 'raw_name').replace('(','').replace(')',''))
+        }
+
+        fq = '(' + fqs.join(' OR ') + ')'
+//        matchingCol = matchingCol ?: 'taxon_name';
+        if (drid != null && !drid.isEmpty()) {
+            q = "data_resource_uid:${drid}"
+//            matchingCol = 'raw_name'
+        }
+
+//        fq = filterQuery(clade, null, matchingCol);
+        // if q is empty then transfer fq params to q
+        if (!q) {
+            q = fq;
+            fq = null;
+        }
 
         Map result = [:]
-        result.qid = getQid(data, url, fq);
+        result.qid = getQid(q, url, fq);
 
         if (characterQuery) {
             result.count = getOccurrenceCount(result.qid, biocacheServiceUrl)
@@ -331,21 +374,31 @@ class AlaService {
     }
 
     /**
+     * trimming the number of scientific names sent from server.
+     * @param list
+     * @return
+     */
+    def trimSpeciesListToMax(List list) {
+        //truncate q OR terms to avoid SOLR error
+        //TODO: rewrite all biocache/ws usage to collate multiple qid queries to avoid loss of OR terms
+        if (list.size() >= Integer.parseInt(grailsApplication.config.biocache.maxBooleanClauses + '')) {
+            list = list.subList(0, grailsApplication.config.biocache.maxBooleanClauses)
+        }
+
+        list as JSONArray;
+    }
+
+    /**
      * makes a post request and returns a qid as string.
      * @param data
      * @return
      */
     def getQid(String q, String url, String fq) {
         NameValuePair[] nameValuePairs = new NameValuePair[2];
-        
-        //truncate q OR terms to avoid SOLR error
-        //TODO: rewrite all biocache/ws usage to collate multiple qid queries to avoid loss of OR terms
-        def qsplit = q.split(' OR ')
-        if (qsplit.length >= Integer.parseInt(grailsApplication.config.biocache.maxBooleanClauses + '')) {
-            qsplit = (qsplit as List).subList(0, grailsApplication.config.biocache.maxBooleanClauses)
-            q = (qsplit as List).join(' OR ')
-            if (q.startsWith('(')) q += ')'
-        }
+
+        // moved code to limiting the number of filter query to saveQuery function.
+        // it is better to put it there than do it here.
+
         nameValuePairs[0] = new NameValuePair("q", q);
         nameValuePairs[1] = new NameValuePair("fq", fq);
         return webService.postNameValue(url, nameValuePairs);
@@ -491,7 +544,7 @@ class AlaService {
      * @param userId
      * @return
      */
-    def getRecordsList(userId, phyloId){
+    def getRecordsList(userId, phyloId) {
         def result = [grailsApplication.config.alaDataresourceInfo];
         if (userId != null) {
             result.addAll(sandboxService.getAllDataresourceInfo(userId));
@@ -511,11 +564,11 @@ class AlaService {
      * @param cm
      * @return
      */
-    List getLegends(String source, String q, String fq, String type, String cm, String biocacheHubUrl){
+    List getLegends(String source, String q, String fq, String type, String cm, String biocacheHubUrl) {
         List result = [];
         String url;
         List params = [];
-        type = type?:'application/json';
+        type = type ?: 'application/json';
         url = grailsApplication.config.legendAla.replace('BIOCACHE_HUB', biocacheHubUrl);
 
         params.push("cm=${cm}");

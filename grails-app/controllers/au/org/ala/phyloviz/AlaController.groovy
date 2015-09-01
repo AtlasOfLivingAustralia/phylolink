@@ -270,7 +270,7 @@ class AlaController {
         String drid = params.drid;
         boolean characterQuery = params.characterQuery?.toBoolean()
         log.debug(list);
-        def json = JSON.parse(list);
+        List json = JSON.parse(list) as List;
         def result;
         if(json){
             result = alaService.saveQuery(json, dataLocationType, biocacheServiceUrl, drid, matchingCol, characterQuery);
