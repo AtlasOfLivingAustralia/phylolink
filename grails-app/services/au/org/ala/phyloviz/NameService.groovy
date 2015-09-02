@@ -18,7 +18,7 @@ class NameService {
     String getLSID(String name) {
         LinnaeanRankClassification rankClassification = new LinnaeanRankClassification()
         rankClassification.setScientificName(name)
-        nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, true);
+        nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, false);
     }
 
     String matchName(String providedName) {
