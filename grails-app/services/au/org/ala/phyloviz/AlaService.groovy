@@ -7,8 +7,9 @@ import groovyx.net.http.ContentType
 import org.apache.commons.httpclient.NameValuePair
 import org.codehaus.groovy.grails.web.json.JSONArray
 
-@Transactional
 class AlaService {
+    static transactional = true
+
     def webService
     def grailsApplication
     def charactersService
