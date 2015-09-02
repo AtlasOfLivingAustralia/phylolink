@@ -474,14 +474,16 @@ var Habitat = function (c) {
          * @param habitat The model of the selected plot
          */
         self.downloadSummaryCsv = function (habitat) {
-            var qid = pj.getQid(true);
+            var qid = pj.getQid(true),
+                biocacheServiceUrl = config.records.getDataresource().biocacheServiceUrl;
 
             $.ajax({
                 url: config.downloadSummaryUrl,
                 type: 'GET',
                 data: {
                     q: qid,
-                    config: habitat.name()
+                    config: habitat.name(),
+                    biocacheServiceUrl: biocacheServiceUrl
                 },
                 success: function (csv) {
                     var uri = 'data:application/csv;charset=UTF-8,' + encodeURIComponent(csv);
