@@ -7,7 +7,7 @@ import groovyx.net.http.ContentType
 
 @Transactional
 class SpeciesListService {
-    def webService, grailsApplication
+    def webService, grailsApplication, authService
 
     /**
      * save a csv file into list tool
