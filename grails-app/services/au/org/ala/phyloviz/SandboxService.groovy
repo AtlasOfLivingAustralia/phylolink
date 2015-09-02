@@ -54,7 +54,7 @@ class SandboxService {
                     'title'         : title,
                     'scientificName': scName,
                     'drid'          : result.uid,
-                    'serverInstance': serverInstance,
+                    'serverInstance': grailsApplication.config.sandboxBiocacheServiceUrl,
                     'biocacheServiceUrl' : grailsApplication.config.sandboxBiocacheServiceUrl,
                     'biocacheHubUrl' : grailsApplication.config.sandboxHubUrl,
                     'owner'         : owner,

@@ -4,7 +4,8 @@
             <i class="icon icon-chevron-down"></i> <a>Upload my occurrence records</a>
         </h4>
         <div id="minimizeUploadRecords" style="display:none">
-            <div id="csvFormRecordsUnavailable" class="alert-error"><i>Login to enable character upload.</i></div>
+            <div id="csvFormRecordsUnavailable" class="alert-error"><i>Login to enable occurrence upload or,
+            you are authorized to upload for this visualisation.</i></div>
             <form id="csvFormRecords" class="form-horizontal" enctype="multipart/form-data" >
                 <i>You need modern browser such as Google Chrome 40 or Safari 8</i>
                 <div class="control-group">
