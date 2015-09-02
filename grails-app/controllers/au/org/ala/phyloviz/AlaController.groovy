@@ -11,7 +11,7 @@ class AlaController {
     def utilsService
     def layerService
     def alaService
-    def sandboxService
+    def speciesListService
     def authService
 
     static allowedMethods = [saveAsList: 'POST', uploadData: 'POST']
@@ -321,7 +321,7 @@ class AlaController {
         colIndex = formParams['column']['id']
         colName  = formParams['column']['displayname']
         reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
-        result = alaService.createList(reader, title, colIndex, cookie);
+        result = speciesListService.createList(reader, title, colIndex, cookie);
         if(result?.druid){
             def url = getUrl(result.druid);
             id = result.id

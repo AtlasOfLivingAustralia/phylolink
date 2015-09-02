@@ -9,7 +9,7 @@ import java.util.regex.Pattern
 
 @Transactional
 class CharactersService {
-    def alaService
+    def speciesListService
     def g
     def webService
     def grailsApplication
@@ -156,7 +156,7 @@ class CharactersService {
 //        colIndex = Integer.parseInt(colIndex);
         colName  = formParams['column']['displayname']
         reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
-        result = alaService.createList(reader, title, colIndex, cookie);
+        result = speciesListService.createList(reader, title, colIndex, cookie);
         if(result?.druid){
             def url = getUrl(result.druid);
             id = result.id
