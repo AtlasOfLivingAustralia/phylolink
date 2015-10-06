@@ -11,8 +11,7 @@ before_install:
 - ~/install_gvm.sh
 - echo "gvm_auto_answer=true" > ~/.gvm/etc/config
 - source ~/.gvm/bin/gvm-init.sh
-- GRAILS_VERSION=`grep '^app\.grails\.version=' ./application.properties | sed -e
-  's/^app\.grails\.version=//g'`
+- GRAILS_VERSION=`grep '^app\.grails\.version=' ./application.properties | sed -e 's/^app\.grails\.version=//g'`
 - gvm install grails $GRAILS_VERSION || true
 before_script:
 - export DISPLAY=:99.0
