@@ -38,7 +38,7 @@ class NexsonService {
         log.debug( names )
 
         // query webservice
-        def lsids = alaService.getLsid( names )
+        def lsids = alaService.getRecords( names )
         log.debug('lsids found')
         log.debug( lsids )
 

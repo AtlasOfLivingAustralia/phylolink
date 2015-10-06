@@ -21,6 +21,15 @@ class NameService {
         nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, false);
     }
 
+    Map getRecord(String name){
+        NameSearchResult result = nameSearcher.searchForRecord(name);
+        [
+                lsid: result.lsid,
+                guid: result.lsid,
+                name: result.rankClass?.scientificName
+        ]
+    }
+
     String matchName(String providedName) {
         LinnaeanRankClassification rankClassification = new LinnaeanRankClassification()
         rankClassification.setScientificName(providedName)

@@ -42,6 +42,16 @@ class AlaService {
         }
     }
 
+    List getRecords(List names){
+        names?.collect {
+            try {
+                nameService.getRecord(it)
+            } catch (Exception e) {
+                log.error("Unable to match LSID to name ${it}", e)
+            }
+        }
+    }
+
     /**
      * check if a name can be matched to an lsid and returns a list of all matched lsid and a list of all
      * unmatched names.
