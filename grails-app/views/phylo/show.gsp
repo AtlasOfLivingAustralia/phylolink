@@ -9,6 +9,9 @@
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages: ["corechart"]});
+    </script>
     <r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree,select2,css"/>
     <r:require modules="bugherd"/>
 </head>
@@ -111,7 +114,7 @@
 </div>
 
 <script id="templateOccurrence" type="text/html">
-<g:render template="occurrence"></g:render>
+    <g:render template="occurrence"></g:render>
 </script>
 
 <r:script disposition="defer">
@@ -163,8 +166,6 @@
         },
         chartWidth: $('#tabs').width() - 30
     }
-
-    google.load("visualization", "1", {packages: ["corechart"]});
 
     var pj = new PJ({
         width: $('#'+config.pjId).width()-10,
@@ -259,6 +260,42 @@
         chartWidth: config.chartWidth
 
     });
+    google.setOnLoadCallback(character.googleChartsLoaded);
+
+    var habitat = new Habitat({
+        id:'habitat',
+        tabId:'habitatTab',
+        pj: pj,
+        doSync: ${edit},
+        syncData: {
+            id: ${phyloInstance.getId()},
+        },
+        listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
+        height: 700,
+        syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
+        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
+        graph: {
+            url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
+            type: 'GET',
+            dataType: 'JSON',
+            xAxisContextual: 'Habitat states',
+            xAxisEnvironmental: 'values',
+            yAxis: 'Occurrence count'
+        },
+        saveQuery:{
+            url: '${createLink(controller: 'ala', action: 'saveQuery')}',
+            type: 'POST',
+            dataType: 'JSONP'
+        },
+        downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
+        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
+        downloadReasonsUrl: config.downloadReasonsUrl,
+        records: records,
+        // dynamic chart size. the default chart width is too small.
+        chartWidth: config.chartWidth,
+        tabId: 'tab'
+    });
+    google.setOnLoadCallback(habitat.googleChartsLoaded);
 
     var map = new Map({
         id: 'map',
@@ -315,41 +352,6 @@
         }
     });
 
-    var habitat = new Habitat({
-        id:'habitat',
-        tabId:'habitatTab',
-        pj: pj,
-        doSync: ${edit},
-        syncData: {
-            id: ${phyloInstance.getId()},
-        },
-        listUrl: '${createLink(controller: 'ala', action: 'getAllLayers')}',
-        height: 700,
-        syncUrl: "${createLink(controller: 'phylo', action: 'saveHabitat')}",
-        initialState: <g:message message="${JSON.parse(phyloInstance.getHabitat() ?: '{}') as grails.converters.JSON}"/>,
-        graph: {
-            url: '${createLink(controller: 'phylo', action: 'getHabitat')}',
-            type: 'GET',
-            dataType: 'JSON',
-            xAxisContextual: 'Habitat states',
-            xAxisEnvironmental: 'values',
-            yAxis: 'Occurrence count'
-        },
-        saveQuery:{
-            url: '${createLink(controller: 'ala', action: 'saveQuery')}',
-            type: 'POST',
-            dataType: 'JSONP'
-        },
-        downloadSummaryUrl: '${createLink(controller: "phylo", action:"getHabitat" )}/?download=true',
-        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
-        downloadReasonsUrl: config.downloadReasonsUrl,
-        records: records,
-        // dynamic chart size. the default chart width is too small.
-        chartWidth: config.chartWidth,
-        tabId: 'tab'
-    });
-
-
     $( "#tabs" ).tab('show');
     // a fix to display map tiles properly. Without it map is grey colored for majority of area.
     $("body").on("shown.bs.tab", "#mapTab", function() {
@@ -359,9 +361,6 @@
         // abort previous save query calls since this is a new query
         habitat.redraw()
     });
-
-    google.setOnLoadCallback(character.googleChartsLoaded);
-    google.setOnLoadCallback(habitat.googleChartsLoaded);
 </r:script>
 <g:render template="keepSessionAlive"/>
 </body>
