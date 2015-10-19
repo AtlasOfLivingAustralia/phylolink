@@ -414,6 +414,7 @@ var PJ = function (params) {
                             queryObj = pj.saveQuery(node, names);
                         }
 
+
                         node && self.emit('click', node, names, queryObj);
                     }
                 }
@@ -764,19 +765,23 @@ var PJ = function (params) {
 
     var smitsNode2JSON = function (node) {
         var childJSON = [];
+        var childrenName = []
         var leaves = 0;
         for (var i = 0; i < node.children.length; i++) {
             var j = smitsNode2JSON(node.children[i])
             childJSON.push(j);
+            childrenName = childrenName.concat(j.childrenName);
             leaves += j.data.leaf;
             leaves += j.data.leaves;
         }
+
         var that = node;
         var sampleid = '';
         if (childJSON.length !== 0) {
             return {
-                "id": node.id,
+                "id": md5(childrenName.join('')),
                 "name": node.name,
+                "md5":md5(childrenName.join('')),
                 "data": {
                     'leaves': leaves,
                     'leaf': 0,
@@ -785,7 +790,8 @@ var PJ = function (params) {
                     '$dim': 5,
                     '$color': '#fff'
                 },
-                "children": childJSON
+                "children": childJSON,
+                childrenName: childrenName
             };
         } else {
             node.name = node.name.replace(/_/g, ' ');
@@ -795,8 +801,9 @@ var PJ = function (params) {
             }
             var name = sampleArray[0];
             var nodeJSON = {
-                "id": node.id,
+                "id": md5(node.name),
                 "name": node.name,
+                "md5":md5(node.name),
                 "data": {
                     'leaves': 0,
                     'leaf': 1,
@@ -806,7 +813,8 @@ var PJ = function (params) {
                     'sampleid': sampleid,
                     'name': name
                 },
-                "children": childJSON
+                "children": childJSON,
+                childrenName: [node.name]
             };
             return nodeJSON;
         }
@@ -1051,7 +1059,7 @@ var PJ = function (params) {
      * url - url to the tree data
      */
     var setTree = function (obj) {
-        var dataObject, json, d, id, node;
+        var dataObject, json, d, id, node, prevId;
         config.treeloaded = false;
         switch (obj.format) {
             case 'newick':
@@ -1074,7 +1082,9 @@ var PJ = function (params) {
             json = smitsNode2JSON(dataObject.getRoot());
             st.loadJSON(json)
             st.compute();
-            id = pj.getNodeFromUrl();
+            // check if pj setting is present. if yes, use node id from it.
+            prevId = (config.pjSettings || {} ).nodeId
+            id =  prevId || pj.getNodeFromUrl();
             st.onClick(st.root, true);
 
             // if zoomIndex is not set, the rendering will go crazy. make sure zoomIndex is set when a node is clicked
@@ -1359,7 +1369,7 @@ var PJ = function (params) {
         var hash = window.location.hash;
         var nodeId = hash.split("#node/");
         if (nodeId.length > 1) {
-            return parseInt(nodeId[1]);
+            return nodeId[1];
         }
     }
 
@@ -1734,8 +1744,29 @@ var PJ = function (params) {
         st.plot();
     };
 
-    this.on('treeloaded', initPopover);
+    /**
+     *
+     */
+    this.savePjSettings = function(){
+        if(config.edit){
+            var data = {nodeId:(pj.getSelection()||{}).id}
+            $.ajax({
+                url: config.settingsUrl,
+                data: {
+                    json: JSON.stringify(data)
+                },
+                success: function(){
+                    console.log('saved clicked node to workbook!')
+                },
+                error: function(){
+                    console.error('could not save selected node to workbook')
+                }
+            })
+        }
+    }
 
+    this.on('treeloaded', initPopover);
+    pj.on('click', pj.savePjSettings)
 
     $(window).on('hashchange', function () {
         if (!config.setNodeToUrlFlag) {

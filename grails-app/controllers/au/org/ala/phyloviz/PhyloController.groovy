@@ -339,4 +339,23 @@ class PhyloController extends BaseController {
             render(contentType: 'text/plain', text: data)
         }
     }
+
+    /**
+     * save pj settings to the database. currently only saving clicked node id.
+     */
+    def savePjSettings(Phylo phyloInstance){
+        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+            notAuthorised "Only owner can edit this visualisation";
+        }
+
+        String pjSetting = params.json
+        log.debug(pjSetting);
+        phyloInstance.setPjSettings(JSON.parse(pjSetting).toString());
+        phyloInstance.save(flush: true);
+        if(!phyloInstance.hasErrors()){
+            render(contentType: 'application/json',text: ["message":"success"] as JSON);
+        } else {
+            render(contentType: 'application/json',text: ["message":"failed"] as JSON, status: 500);
+        }
+    }
 }

@@ -188,6 +188,7 @@
             selectedCladeNumber: ko.observable(-1)
         },
         titleUrl: config.titleUrl,
+        settingsUrl: "${createLink(controller: 'phylo', action: 'savePjSettings')}/${phyloInstance.getId()}",
         edit: config.edit,
         runSaveQuery: false,
         saveQuery:{
@@ -201,7 +202,8 @@
                 drid: undefined // drt121
             }
         },
-        listToolBaseURL: "${grailsApplication.config.listToolBaseURL}"
+        listToolBaseURL: "${grailsApplication.config.listToolBaseURL}",
+        pjSettings: <g:message message="${JSON.parse(phyloInstance.getPjSettings() ?: '{}') as grails.converters.JSON}"/>
     });
 
     var filter = new Filter($.extend(config.filterParams, {
