@@ -367,6 +367,7 @@ var Habitat = function (c) {
                 data: params,
                 success: function (temp) {
                     habitat.stopLoading();
+
                     var data = temp.data;
 
                     var len = Math.min(5, temp.statisticSummary.leastFrequent.items.length) + 1;
@@ -404,9 +405,10 @@ var Habitat = function (c) {
                     hab.columnchart(id, data, view.getOptions(habitat), habitat);
                 },
                 error: function () {
+                    // if failed to load resource stop loading gif
                     habitat.stopLoading();
                 }
-            });
+            })
         };
 
         /**
@@ -424,7 +426,8 @@ var Habitat = function (c) {
                     title: habitat.yAxis()
                 },
                 hAxis: {
-                    title: habitat.displayName() + '(' + habitat.mdUnits() + ')'
+                    title: habitat.displayName() + '(' + habitat.mdUnits() + ')',
+                    slantedText: true
                 }
             };
             if (typeof habitat.getFrequency()[1][0] !== 'number') {
@@ -710,6 +713,9 @@ var Habitat = function (c) {
      */
     this.columnchart = function (id, data, opt, habitat) {
         if (config.googleChartsLoaded) {
+            // sometimes google chart get loaded after finishing data request. this ensures loading is stopped
+            // when chart is rendered
+            habitat && habitat.stopLoading();
             var chart = new google.visualization.ColumnChart(document.getElementById(id));
             var tdata = google.visualization.arrayToDataTable(data);
             chart.draw(tdata, opt)
@@ -720,6 +726,7 @@ var Habitat = function (c) {
             }
         } else {
             // some times google chart is not ready when this function is called
+            habitat.startLoading();
             config.delayedChartCall.push([arguments.callee, this, arguments]);
         }
 
