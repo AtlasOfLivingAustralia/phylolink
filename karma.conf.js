@@ -51,6 +51,7 @@ module.exports = function (config) {
             'web-app/jqwidgets/jqxpanel.js',
             'web-app/jqwidgets/jqxtree.js',
             'web-app/jqwidgets/jqxexpander.js',
+            'web-app/thirdparty/md5.js',
             'web-app/js/utils.js',
             'web-app/js/Control.Checkbox.js',
             'web-app/js/Control.Legend.js',

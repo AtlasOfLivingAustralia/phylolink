@@ -45,7 +45,9 @@ phylolink.pj = null;
                 instanceUrl: null, // "http://sandbox.ala.org.au",
                 drid: null // drt121
             }
-        }
+        },
+        pjSettings: null,
+        settingsUrl: null
     });
     pj = phylolink.pj;
 

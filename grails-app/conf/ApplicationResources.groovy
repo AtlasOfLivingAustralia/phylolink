@@ -124,6 +124,7 @@ modules = {
         resource url: 'css/PhyloJive.css', disposition: 'head'
         resource url: 'thirdparty/jsphylosvg-min.js', disposition: 'head'
         resource url: 'thirdparty/jit.js', disposition: 'head'
+        resource url: 'thirdparty/md5.js', disposition: 'head'
         resource url: 'js/PJ.js', disposition: 'head'
         resource url: 'js/Filter.js', disposition: 'head'
         resource url: 'js/Habitat.js', disposition: 'head'
