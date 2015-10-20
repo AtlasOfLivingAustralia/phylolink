@@ -1084,7 +1084,8 @@ var PJ = function (params) {
             st.compute();
             // check if pj setting is present. if yes, use node id from it.
             prevId = (config.pjSettings || {} ).nodeId
-            id =  prevId || pj.getNodeFromUrl();
+            // if node id is set on url then use it, otherwise use the settings.
+            id =  pj.getNodeFromUrl() || prevId;
             st.onClick(st.root, true);
 
             // if zoomIndex is not set, the rendering will go crazy. make sure zoomIndex is set when a node is clicked
