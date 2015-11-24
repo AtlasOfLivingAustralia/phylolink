@@ -498,11 +498,12 @@ class AlaService {
         if (userId != null) {
             result.addAll(sandboxService.getAllDataresourceInfo(userId));
         } else {
-            Owner own = Phylo.findById(phyloId).owner
-            result.addAll(sandboxService.getAllDataresourceInfoByOwner(own));
             //add phyloId instance uploads when no user is logged in
             result.addAll(sandboxService.getAllDataresourceInfoByPhyloId(phyloId.toString()))
         }
+        // check the owner of visualisation. load all owners occurrence data since anyone could have been selected for visualisation.
+        Owner own = Phylo.findById(phyloId).owner
+        result.addAll(sandboxService.getAllDataresourceInfoByOwner(own));
         result
     }
 

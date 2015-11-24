@@ -41,9 +41,16 @@
                         </div>
                     </div>
                 </td>
-                <td><a
-                        href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
-                        target="_blank">${tree.getExpertTreeTaxonomy()}</a></td>
+                <td>
+                    <g:if test="${tree.expertTreeLSID}">
+                        <a
+                                href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
+                                target="_blank">${tree.getExpertTreeTaxonomy()}</a>
+                    </g:if>
+                    <g:else>
+                        ${tree.getExpertTreeTaxonomy()}
+                    </g:else>
+                </td>
                 <td style="justify: center">
                     <div class="btn btn-small btn-primary"
                          onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">

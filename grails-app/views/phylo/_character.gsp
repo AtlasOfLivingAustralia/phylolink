@@ -2,7 +2,7 @@
     <div class="bs-callout" id="uploadCharacters" style="position: relative">
         <h4 style="cursor:pointer" id="uploadCharactersTitle" data-bind="click: onClick"><i class="icon icon-chevron-down"></i> <a>Upload your character data</a></h4>
         <div id="minimizeUpload" style="display:none">
-            <div id="csvFormUnavailable" class="alert-error"><i>Login to enable character upload.</i></div>
+            <div id="csvFormUnavailable" class="alert-error"><i>Is this your visualisation? If yes, login to upload your characters.</i></div>
             <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">
                 <i>You need modern browser such as Google Chrome 40 or Safari 8</i>
                 <div class="control-group">

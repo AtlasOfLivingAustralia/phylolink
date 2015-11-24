@@ -52,9 +52,11 @@
                                            id="mapTab">Map</a></li>
                 <li role="presentation"><a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="habitatTab">Analysis</a></li>
-                <li role="presentation" ><a href="#records" aria-controls="profile" role="tab"
-                                                          data-toggle="tab"
-                                                          id="recordsTab">Occurrences</a></li>
+                <g:if test="${edit}">
+                    <li role="presentation" ><a href="#records" aria-controls="profile" role="tab"
+                                                data-toggle="tab"
+                                                id="recordsTab">Occurrences</a></li>
+                </g:if>
                 <li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="metadataTab">Metadata</a></li>
                 <li role="presentation"><a href="#help" aria-controls="profile" role="tab" data-toggle="tab"
