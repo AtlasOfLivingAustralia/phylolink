@@ -493,13 +493,15 @@ class AlaService {
      * @param userId
      * @return
      */
-    def getRecordsList(userId, phyloId) {
+    def getRecordsList(userId, Integer phyloId) {
         def result = [grailsApplication.config.alaDataresourceInfo];
         if (userId != null) {
             result.addAll(sandboxService.getAllDataresourceInfo(userId));
         } else {
+            Owner own = Phylo.findById(phyloId).owner
+            result.addAll(sandboxService.getAllDataresourceInfoByOwner(own));
             //add phyloId instance uploads when no user is logged in
-            result.addAll(sandboxService.getAllDataresourceInfoByPhyloId(phyloId))
+            result.addAll(sandboxService.getAllDataresourceInfoByPhyloId(phyloId.toString()))
         }
         result
     }

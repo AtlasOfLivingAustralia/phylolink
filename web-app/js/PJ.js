@@ -1766,7 +1766,7 @@ var PJ = function (params) {
         }
     }
 
-    this.on('treeloaded', initPopover);
+    //this.on('treeloaded', initPopover);
     pj.on('click', pj.savePjSettings)
 
     $(window).on('hashchange', function () {

@@ -394,7 +394,8 @@ class AlaController {
      */
     def getRecordsList(){
         def userId = authService.getUserId();
-        def result = alaService.getRecordsList(userId, params.phyloId);
+        Integer phyloId= params.int('phyloId');
+        def result = alaService.getRecordsList(userId, phyloId);
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {

@@ -73,7 +73,6 @@ var Character = function (options) {
                 placement: 'top',
                 trigger: 'manual',
                 html: true,
-//                title : 'Choose character set',
                 content: 'Select from a list of available character data. It could be a default list of characters , ' +
                     'or character data uploaded by you.'
             }
@@ -153,7 +152,6 @@ var Character = function (options) {
          * serial number of the next character
          * @type {number}
          */
-//        var count = 1;
         self.newChar = false;
         self.characters = ko.observableArray([]);
         self.count = ko.observable(1);
@@ -376,7 +374,6 @@ var Character = function (options) {
                 } else {
                     character.chartQualitativeChars(charName, temp, id);
                 }
-//                google.visualization.events.addListener(chart, 'onmouseover', that.chartHover);
             }
         }
     };
@@ -871,12 +868,6 @@ var Character = function (options) {
     this.uploadCharacter= function(){
         var spinner = new Spinner(options.spinner);
         upload.message('');
-//        $('#csvFrom').validate()
-//        if($('#csvFrom').valid()){
-//            $(upload.alertId).alert();
-//            upload.message('Form not filled')
-//            return false;
-//        }
 
         var param = {
             title: upload.title(),
@@ -1120,15 +1111,6 @@ var Character = function (options) {
         console.log('elapsed time for numeric char:' + (new Date() - startTime)/1000);
     }
 
-//    $('#'+options.id).on('show',initPopover);
-    $("body").on("show.bs.tab", "#"+options.tabId, function() {
-        initPopover();
-    });
-
-    if($('#'+options.id).hasClass('active')){
-        initPopover()
-    }
-
     //set style
     $('#' + id).css('max-height', options.height - options.headerHeight);
     $('#' + id).css('overflow-y', 'auto');
@@ -1163,7 +1145,6 @@ var Character = function (options) {
      * adding event listeners
      */
     view.on('newchar', this.checkCharJson)
-//    view.on('newchar', this.addChart)
     pj.on('click', this.updateCharts);
     this.on('setcharacterlist',this.initCharacters)
     this.on('setcharacters',this.initCharacters)
@@ -1174,7 +1155,6 @@ var Character = function (options) {
     this.on('asynccharjsonfinish', this.onAsyncCharJsonFinish)
 
     pj.on('treeloaded', this.initCharacters);
-//    pj.on('treeloaded',this.colorTreeWithCharacter)
 
     // sync handler
     this.on('sync', this.save);
@@ -1195,8 +1175,6 @@ var Character = function (options) {
 
         $("#csvFormUnavailable").hide();
     } else {
-        //$("#uploadCharacters").hide();
-       // $("#pickFromList").hide();
         $("#csvForm").hide();
         $('#charactermain .alert').hide();
     }

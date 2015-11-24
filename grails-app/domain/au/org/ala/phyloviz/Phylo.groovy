@@ -48,9 +48,4 @@ class Phylo {
         title(nullable: true)
     }
 
-
-//    def beforeValidate(){
-//            log.debug( 'match found!' )
-//            treeid = treeid.replaceAll(studyid + '_','' );
-//    }
 }

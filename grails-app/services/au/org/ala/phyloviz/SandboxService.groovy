@@ -241,6 +241,27 @@ class SandboxService {
     }
 
     /**
+     * get dataresource by owner. this is used by anonymous user.
+     * @param userId
+     * @return
+     */
+    List getAllDataresourceInfoByOwner(Owner owner){
+        def status = true;
+
+        def s = Sandbox.findAll {
+            owner == owner && status == status
+        };
+        def result = [], cs =  new ConvertSandbox();
+        s.each{ item ->
+            def c = cs.convert(item)
+            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
+            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl) c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
+            result.push(c)
+        }
+        return result;
+    }
+
+    /**
      * get sandbox uploads for Guest and phyloId
      */
     def getAllDataresourceInfoByPhyloId(String phyloId){
