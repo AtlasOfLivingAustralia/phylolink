@@ -27,6 +27,7 @@ var Character = function (options) {
         characterloaded: false,
         primaryClass: 'label label-primary',
         defaultClass: 'label label-default',
+        characterUndefinedColor: '#fff',
         /**
          * sync flag
          *
@@ -416,7 +417,9 @@ var Character = function (options) {
         ],
             oneD=[];
         temp.forEach(function(it){
-            oneD.push(it[1]);
+            if(it[1] != undefined){
+                oneD.push(it[1]);
+            }
         });
         temp = that.frequencyCount(oneD);
         temp.forEach(function (it) {
@@ -502,10 +505,9 @@ var Character = function (options) {
         legends && legends.forEach(function(it){
             if( it['name'] == state){
                result = it;
-               //continue
            }
         });
-        return result;
+        return result || options.characterUndefinedColor;
     }
 
     //get charJson
@@ -591,11 +593,36 @@ var Character = function (options) {
             url: options.charOnRequestBaseUrl,
             data: params,
             success: function(data){
+                data = that.preprocessCharJson(data);
                 var charjson = that.charJsonMerge(charJson, data);
                 that.setCharJson( charjson, true );
                 that.emit('asynccharjsonset',keys);
             }
         })
+    }
+
+    /**
+     * converts string undefined values into JS undefined value. It is used to represent unknown values.
+     * @param charJson
+     * @returns {*}
+     */
+    this.preprocessCharJson = function(charJson){
+        var values, i;
+        if(charJson){
+            for(var species in charJson){
+                if(charJson[species]){
+                    for(var char in charJson[species]){
+                        values = charJson[species][char]
+                        for(i=0;i<values.length;i++){
+                            if(values[i]==='undefined'){
+                                values[i] = undefined;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return charJson;
     }
 
     /**

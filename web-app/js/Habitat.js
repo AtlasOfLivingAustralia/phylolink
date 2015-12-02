@@ -426,8 +426,7 @@ var Habitat = function (c) {
                     title: habitat.yAxis()
                 },
                 hAxis: {
-                    title: habitat.displayName() + '(' + habitat.mdUnits() + ')',
-                    slantedText: true
+                    title: habitat.displayName() + '(' + habitat.mdUnits() + ')'
                 }
             };
             if (typeof habitat.getFrequency()[1][0] !== 'number') {
