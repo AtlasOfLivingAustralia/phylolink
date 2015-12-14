@@ -53,7 +53,7 @@ grails.project.dependency.resolution = {
         runtime ":csv:0.3.1"
         runtime ":resources:1.2.1"
 
-        runtime ":ala-bootstrap2:2.2"
+        runtime ":ala-bootstrap2:2.4.1"
         runtime ":ala-auth:1.2"
         // plugins for the build system only
         build ":tomcat:7.0.50"
