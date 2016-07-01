@@ -885,6 +885,18 @@ class TreeService {
                     }
                 }
 
+                // match LSID for expert tree
+                if(tree.expertTree && tree.expertTreeTaxonomy) {
+                    String expertLSID
+                    Map expertMatch
+                    expertMatch = nameService.getRecord(tree.expertTreeTaxonomy)
+                    if(expertMatch.lsid) {
+                       tree.expertTreeLSID = expertMatch.lsid
+                    } else {
+                        tree.expertTreeLSID = ''
+                    }
+                }
+
                 // convert the updated JSON to string
                 tree.nexson = nex.toString()
                 tree.save(flush: flush)
