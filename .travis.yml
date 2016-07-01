@@ -4,6 +4,7 @@ jdk:
 branches:
   only:
   - master
+  - new-nameindex
 before_install:
 - export TZ=Australia/Canberra
 - date
