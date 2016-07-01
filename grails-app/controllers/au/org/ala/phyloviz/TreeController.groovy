@@ -16,7 +16,7 @@ class TreeController extends BaseController {
     def alaService
     def nexsonService
     def userService
-    def webService
+    def webServiceService
 
     Boolean stackTrace = true
     def index() {
@@ -357,6 +357,76 @@ class TreeController extends BaseController {
             Tree tree = treeService.toggleExpertTree(params.treeId, params.expertTreeTaxonomy, params.expertTreeLSID, params.expertTreeId)
 
             render template: "adminTableRow", model: [tree: tree]
+        }
+    }
+
+    /**
+     * Rematch a tree to ALA taxonomy. This web service is called for a user create tree.
+     * @param treeId - {@link Tree#id}
+     * @return
+     */
+    @AlaSecured(value = ["ROLE_USER"], redirectUri = "/403", anyRole = true)
+    def rematchMyTree(){
+        if(params.treeId){
+            try {
+                Integer id = Integer.parseInt(params.treeId)
+                String userId = authService.getUserId()
+                Owner owner = Owner.findByUserId(userId)
+                List<Tree> trees = Tree.findAllByIdAndOwner(id, owner)
+                if(trees.size()){
+                    treeService.rematchTrees(trees, true)
+                    flash.message = 'Successfully re-matched tree'
+                    redirect( controller: 'wizard', action: 'myTrees')
+                } else {
+                    notFound("Could not find tree for the given id or you do not have permission")
+                }
+            } catch (Exception e){
+                log.error(e.message)
+                e.printStackTrace()
+                flash.message = 'Internal Server error - Could not rematch tree. ' + e.message
+                redirect( controller: 'wizard', action: 'myTrees')
+            }
+        } else {
+            badRequest "treeId is a required parameter"
+        }
+    }
+
+    /**
+     * Rematch an expert tree to ALA taxonomy. This web service can only be called by a user with appropriate role.
+     * @param treeId - {@link Tree#id}
+     * @param redirect - Decides the page to redirect to after completing the request.
+     * @return
+     */
+    @AlaSecured(value = ["ROLE_ADMIN", "ROLE_PHYLOLINK_ADMIN"], redirectUri = "/403", anyRole = true)
+    def rematchExpertTree(){
+        if(params.treeId){
+            String controller = 'wizard', action = 'expertTrees'
+            switch (params.redirect){
+                case 'treeAdmin':
+                    controller = 'tree'
+                    action = 'treeAdmin'
+                    break
+            }
+
+            try {
+                Integer id = Integer.parseInt(params.treeId)
+                List<Tree> trees = Tree.findAllById(id)
+
+                if(trees.size()){
+                    treeService.rematchTrees(trees, true)
+                    flash.message = 'Successfully re-matched tree'
+                    redirect( controller: controller, action: action)
+                } else {
+                    notFound("Could not find tree for the given id")
+                }
+            } catch (Exception e) {
+                log.error(e.message)
+                e.printStackTrace()
+                flash.message = 'Internal Server error - Could not rematch tree. ' + e.message
+                redirect( controller: controller, action: action)
+            }
+        } else {
+            badRequest "treeId is a required parameter"
         }
     }
 }

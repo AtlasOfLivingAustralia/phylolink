@@ -7,7 +7,6 @@ import spock.lang.Specification
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
 @TestFor(TreeService)
-//@Mock([WebService, UtilsService])
 class TreeServiceSpec extends Specification {
     private static  final log = LogFactory.getLog( this )
     public  def opentreeControl
@@ -15,7 +14,6 @@ class TreeServiceSpec extends Specification {
         service.grailsApplication = grailsApplication
         opentreeControl = mockFor(OpentreeService, true)
         opentreeControl.demand.convertNexmlToNexson(3..3){ String tree }
-//        service.opentreeService.webService = mockFor(WebService, true).createMock()
     }
 
     def cleanup() {

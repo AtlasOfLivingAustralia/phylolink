@@ -29,7 +29,6 @@ class NexsonService {
             otu = otus[i]
 
             if( !otu['@ala'] ){
-//                log.debug(otu['@ala'] )
                 names.push( otu['^ot:originalLabel'] )
                 mapper[i] = count
                 count ++

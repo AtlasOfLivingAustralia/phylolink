@@ -7,7 +7,7 @@ import jade.tree.TreeReader
 
 class MetricsService {
     def grailsApplication
-    def webService
+    def webServiceService
 
     def getJadeTreeFromNewick(String newick) {
         def tReader = new TreeReader();
@@ -111,7 +111,7 @@ class MetricsService {
 
     def getTree( String format, String treeId, String studyId){
         def treeUrl = this.getTreeUrl(format, treeId , studyId )
-        return  webService.get( treeUrl )
+        return  webServiceService.get( treeUrl )
     }
 
     /**

@@ -22,6 +22,10 @@
 
         <a href="${createLink(controller: 'viewer', action: 'show')}?studyId=${tree.getId()}"
            class="btn btn-small"><i class="icon icon-camera"></i> Preview tree</a>
+        <div class="btn btn-small" onclick="window.location =
+                '${createLink( controller: 'tree', action: 'rematchExpertTree')}?treeId=${tree.getId()}&redirect=treeAdmin'">
+            <i class="icon-repeat"></i> Rematch
+        </div>
     </td>
 </tr>
 <tr id="info-${tree.id}" class="hide">

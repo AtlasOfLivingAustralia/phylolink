@@ -6,8 +6,8 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
-class AlaController {
-    def webService
+class AlaController extends BaseController {
+    def webServiceService
     def utilsService
     def layerService
     def alaService
@@ -28,7 +28,7 @@ class AlaController {
                 replace('SEARCH', speciesName.encodeAsURL()).
                 replace('LAYER',layer.encodeAsURL()).
                 replace('REGION',region.encodeAsURL())
-        def occurrencesResult = JSON.parse( webService.get( occurrenceUrl ) );
+        def occurrencesResult = JSON.parse( webServiceService.get( occurrenceUrl ) );
         return occurrencesResult;
     }
 
@@ -106,7 +106,7 @@ class AlaController {
     def getLayers( type ){
         def result =[]
         def url = grailsApplication.config.layers
-        def data = JSON.parse( webService.get( url ) )
+        def data = JSON.parse( webServiceService.get( url ) )
         def code='';
 
         switch ( type ){
@@ -224,7 +224,7 @@ class AlaController {
     def jsonp(){
         // do not use decodeUrl function since it converts + to whitespace.
         def url = params.url
-        def result = webService.get(url);
+        def result = webServiceService.get(url);
         log.debug(result);
         log.debug(url);
         result = JSON.parse(result)
@@ -268,17 +268,20 @@ class AlaController {
         String biocacheServiceUrl = params.biocacheServiceUrl;
         String matchingCol = params.matchingCol;
         String drid = params.drid;
+        String treeId = params.treeId;
         boolean characterQuery = params.characterQuery?.toBoolean()
         log.debug(list);
         List json = JSON.parse(list) as List;
         def result;
-        if(json){
-            result = alaService.saveQuery(json, dataLocationType, biocacheServiceUrl, drid, matchingCol, characterQuery);
+        if(json && treeId){
+            result = alaService.saveQuery(json, dataLocationType, biocacheServiceUrl, drid, matchingCol, treeId, characterQuery);
             if(params.callback){
                 render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
             } else {
                 render(contentType: 'application/json', text: result as JSON)
             }
+        } else {
+            badRequest('Bad request: ensure you have provided a post body and treeId')
         }
     }
 

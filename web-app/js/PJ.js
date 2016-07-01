@@ -1418,6 +1418,7 @@ var PJ = function (params) {
     this.saveQuery = function (node, names, characterQuery) {
         var params = config.saveQuery.data;
         params.characterQuery = characterQuery;
+        params.treeId = config.treeId;
         if (config.doSaveQuery) {
             if (!characterQuery) {
                 qid = undefined;

@@ -4,12 +4,13 @@ import au.org.ala.phylolink.TrimOption
 import grails.converters.JSON
 import grails.converters.XML
 import groovy.json.JsonSlurper
-import groovyx.net.http.ContentType
 import jade.tree.JadeTree
 import jade.tree.TreeReader
 import org.apache.commons.io.IOUtils
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import org.hibernate.Session
 
+import javax.annotation.PostConstruct
 import javax.xml.parsers.DocumentBuilderFactory
 
 class TreeService {
@@ -19,9 +20,17 @@ class TreeService {
     def authService
     def nexsonService
     def metricsService
-    def webService
+    def webServiceService
+    NameService nameService
 
     LinkGenerator grailsLinkGenerator
+    Integer BATCH_SIZE
+
+    @PostConstruct
+    init(){
+        BATCH_SIZE = Integer.parseInt((grailsApplication.config.batchSize?:20).toString())
+    }
+
 
     def treeInfo(nexson) {
         def result = [:], taxon
@@ -304,7 +313,7 @@ class TreeService {
         URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
         urlStr = uri.toURL().toString();
         log.debug(urlStr)
-        def rss = webService.get(urlStr);
+        def rss = webServiceService.get(urlStr);
         log.debug(rss);
         if (rss) {
             def df = DocumentBuilderFactory.newInstance();
@@ -372,7 +381,7 @@ class TreeService {
      * get nexml from TreeBASE
      */
     def importTB(url) {
-        return webService.getXml(url)
+        return webServiceService.getXml(url)
     }
 
     /**
@@ -657,7 +666,7 @@ class TreeService {
 
         String url = "${grailsApplication.config.listToolBaseURL}/ws/speciesList/filter"
 
-        def filteredDrIds = webService.doJsonPost(url, (request as JSON).toString())?.data
+        def filteredDrIds = webServiceService.doJsonPost(url, (request as JSON).toString())?.data
 
         characterLists.removeAll { !filteredDrIds.contains(it.dataResourceId) }
 
@@ -761,13 +770,13 @@ class TreeService {
         if (!listDataResourceId) {
             throw new IllegalArgumentException("List Data Resource Id is required")
         }
-        def data = webService.getJson("${grailsApplication.config.listToolBaseURL}/ws/speciesListItems/${listDataResourceId}")
+        def data = webServiceService.getJson("${grailsApplication.config.listToolBaseURL}/ws/speciesListItems/${listDataResourceId}")
 
         data.findResults { it?.name } as HashSet
     }
 
     private List getBieSpecies(List speciesNames) {
-        webService.doJsonPost("${grailsApplication.config.bieRoot}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"],\"vernacular\":true}").data
+        webServiceService.doJsonPost("${grailsApplication.config.bieRoot}/ws/species/lookup/bulk", "{\"names\": [\"${speciesNames.join("\",\"")}\"],\"vernacular\":true}").data
     }
 
     private List getBiocacheSpecies(List speciesNames) {
@@ -777,7 +786,7 @@ class TreeService {
         String url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", grailsApplication.config.biocacheServiceUrl)
         String qid = alaService.getQid(query, url, null)
 
-        webService.getJson("${grailsApplication.config.biocacheServiceUrl}/mapping/legend?q=qid:${qid}&cm=taxon_name&type=application/json")
+        webServiceService.getJson("${grailsApplication.config.biocacheServiceUrl}/mapping/legend?q=qid:${qid}&cm=taxon_name&type=application/json")
     }
 
     private Tree trim(Integer treeId, List species, boolean trimToInclude) {
@@ -815,5 +824,80 @@ class TreeService {
         trimmedTree.tree = newTreeText
 
         trimmedTree
+    }
+
+    /**
+     * match the scientific name and LSID for all trees in database
+     * @return Map []
+     */
+    public Map rematchAll(){
+        Integer offset = 0
+        Integer total = Tree.count()
+        log.debug('Started rematching')
+
+        // batch processing - faster and more memory efficient
+        while (offset < total ){
+            Tree.withSession { Session session ->
+                // sorting on id since sometimes GORM/Hibernate returns a tree multiple times
+                List trees = Tree.list(offset: offset, max: BATCH_SIZE, sort: 'id', order: 'asc')
+                rematchTrees(trees)
+
+                // commit to DB and free memory
+                session.flush()
+                session.clear()
+            }
+
+            offset = offset + BATCH_SIZE
+            log.debug("Offset increased - ${offset}. Total iterations - ${total}.")
+        }
+
+        log.debug('Completed rematching')
+        return [success: true, message: "The number of re-matched trees - ${total}"]
+    }
+
+    /**
+     * For the provided list of trees, match scientific name and LSID
+     * @param trees - [{@link Tree}, {@link Tree}]
+     * @param flush - commit changes to db - Boolean
+     * @return
+     */
+    public rematchTrees(List<Tree> trees, Boolean flush = false){
+        Boolean flag = false
+        trees?.each { Tree tree ->
+            if(tree.nexson){
+                Nexson nex = new Nexson(tree.nexson)
+                // get node names
+                List otus = nex.getOtus()
+                otus?.each{ Map otu ->
+                    if(otu){
+                        String name = otu['^ot:altLabel'] ?: otu['^ot:originalLabel']
+                        name = cleanNodeName(name)
+                        // search name against ala name index
+                        Map record = nameService.getRecord(name)
+                        if(record.lsid && record.name){
+                            // save matched name and LSID
+                            nex.setAltLabel(otu.otuId, record.name)
+                            nex.setAlaId(otu.otuId, record.lsid)
+                        } else {
+                            nex.setAltLabel(otu.otuId, name)
+                            nex.setAlaId(otu.otuId, null)
+                        }
+                    }
+                }
+
+                // convert the updated JSON to string
+                tree.nexson = nex.toString()
+                tree.save(flush: flush)
+            }
+        }
+    }
+
+    /**
+     * Clean terminal node name. Usually names have underscore and other unnecessary characters
+     * @param name
+     * @return
+     */
+    String cleanNodeName(String name){
+        return name?.replaceAll("_", " ").replaceAll("'", "");
     }
 }

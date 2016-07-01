@@ -12,6 +12,15 @@
 </head>
 <body>
 <div class="container"  style="min-height: 700px">
+
+    <g:if test="${flash.message}">
+        <div class="row-fluid">
+            <div class="alert top-buffer">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>${flash.message}
+            </div>
+        </div>
+    </g:if>
+
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -49,6 +58,7 @@
                                 <div class="span3 verticalLineLeft wizard-option-group">
                                     <h5>Administration</h5>
                                     <label class="radio"><input type="radio" name="options" value="treeAdmin" required=""> Tree administration</label>
+                                    <label class="radio"><input type="radio" name="options" value="rematchAll" required=""> Rematch all trees</label>
                                 </div>
                             </g:if>
                         </div>

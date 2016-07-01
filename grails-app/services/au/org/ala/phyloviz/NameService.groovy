@@ -9,32 +9,42 @@ import javax.annotation.PostConstruct
 class NameService {
     def grailsApplication
     ALANameSearcher nameSearcher
+    LinnaeanRankClassification rankClassification
 
     @PostConstruct
     def init() {
         nameSearcher = new ALANameSearcher("${grailsApplication.config.name.index.location}")
+        rankClassification = new LinnaeanRankClassification()
     }
 
     String getLSID(String name) {
-        LinnaeanRankClassification rankClassification = new LinnaeanRankClassification()
-        rankClassification.setScientificName(name)
-        nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, false);
+        try{
+            rankClassification.setScientificName(name)
+            nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, false)
+        } catch (Exception e){
+            log.error(e)
+            e.printStackTrace()
+        }
     }
 
     Map getRecord(String name){
-        NameSearchResult result = nameSearcher.searchForRecord(name);
+        String sName = matchName(name)
+        String lsid = getLSID(sName)
         [
-                lsid: result.lsid,
-                guid: result.lsid,
-                name: result.rankClass?.scientificName
+                lsid: lsid,
+                guid: lsid,
+                name: sName
         ]
     }
 
     String matchName(String providedName) {
-        LinnaeanRankClassification rankClassification = new LinnaeanRankClassification()
-        rankClassification.setScientificName(providedName)
-        NameSearchResult result = nameSearcher.searchForAcceptedRecordDefaultHandling(rankClassification, true, true)
-
-        result?.getRankClassification()?.getScientificName()
+        try {
+            rankClassification.setScientificName(providedName)
+            NameSearchResult result = nameSearcher.searchForAcceptedRecordDefaultHandling(rankClassification, true, true)
+            result?.getRankClassification()?.getScientificName()
+        } catch (Exception e){
+            log.error(e)
+            e.printStackTrace()
+        }
     }
 }

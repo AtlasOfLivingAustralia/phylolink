@@ -1,17 +1,19 @@
 package au.org.ala.phyloviz
 
+import au.org.ala.ws.service.WebService
 import grails.converters.JSON
 import org.apache.commons.httpclient.NameValuePair
+import org.apache.http.entity.ContentType
 import org.codehaus.groovy.grails.web.json.JSONArray
 //@Transactional
 class AlaService {
     static transactional = true
 
-    def webService
+    def webServiceService
+    WebService webService
     def grailsApplication
     def charactersService
     def sandboxService
-    def authService
     NameService nameService
 
     def allLayersMaxAge = 0
@@ -58,12 +60,18 @@ class AlaService {
      * @param names
      * @return
      */
-    Map matchNames(List names) {
+    Map matchNames(List names, Nexson nex = null) {
         Map matches = ['matched': [], 'unmatched': []]
         String lsid
+        Map lookup = nex?.getOtuNameLookupTable()
         names.each { name ->
             try{
-                lsid = nameService.getLSID(name)
+                if(lookup && lookup[name] && lookup[name]['@ala']){
+                    lsid = lookup[name]['@ala']
+                } else {
+                    lsid = nameService.getLSID(name)
+                }
+
                 if (lsid) {
                     matches['matched'].push(lsid)
                 } else {
@@ -86,7 +94,7 @@ class AlaService {
         log.debug(guid)
         log.debug(url)
         url = url.replace('QUERY', guid)
-        def result = JSON.parse(webService.get(url))
+        def result = JSON.parse(webServiceService.get(url))
         return result?.taxonConcept;
     }
 
@@ -115,7 +123,7 @@ class AlaService {
         fieldFacet = facet.join('&');
 
         // facet on key
-        def keyValues = webService.get(url + "&facets=${key}");
+        def keyValues = webServiceService.get(url + "&facets=${key}");
         keyValues = JSON.parse(keyValues);
         keyValues = keyValues.facetResults[0].fieldResult;
         keyValues.eachWithIndex { value, index ->
@@ -131,7 +139,7 @@ class AlaService {
                     result[kname][dynamicFields[value]] = []
                 }
             }
-            keyValues = webService.get(url + "&fq=${key}:\"${kname}\"&" + fieldFacet);
+            keyValues = webServiceService.get(url + "&fq=${key}:\"${kname}\"&" + fieldFacet);
             keyValues = JSON.parse(keyValues);
             keyValues = keyValues.facetResults;
             keyValues.eachWithIndex { value, i ->
@@ -156,7 +164,8 @@ class AlaService {
     def i18n() {
         if (i18nProperties == null || i18nProperties.size() == 0) {
             def p = new Properties()
-            p.load(new StringReader(webService.get(grailsApplication.config.biocacheServiceUrl + '/facets/i18n')))
+            Map result = webService.get(grailsApplication.config.biocacheServiceUrl + '/facets/i18n',[:],ContentType.DEFAULT_TEXT)
+            p.load(new StringReader(result.resp))
             i18nProperties = p
         }
         i18nProperties
@@ -181,7 +190,7 @@ class AlaService {
         def results = []
 
         def url = "${baseUrl}/search/grouped/facets";
-        def facets = webService.get(url);
+        def facets = webServiceService.get(url);
         facets = JSON.parse(facets);
 
         //merge with group names
@@ -202,7 +211,7 @@ class AlaService {
      */
     def getDynamicFacets(baseUrl, drid) {
         def url = "${baseUrl}/upload/dynamicFacets?q=${drid}";
-        def facets = webService.get(url);
+        def facets = webServiceService.get(url);
         facets = JSON.parse(facets);
         def result = [];
         facets.eachWithIndex { value, i ->
@@ -220,7 +229,7 @@ class AlaService {
      */
     def getFields() {
         def url = grailsApplication.config.biocacheServiceUrl + "/index/fields"
-        def fields = JSON.parse(webService.get(url));
+        def fields = JSON.parse(webServiceService.get(url));
         fields.eachWithIndex { def field, int i ->
             field['displayName'] = field['description'];
             fields[i] = field;
@@ -283,7 +292,7 @@ class AlaService {
         }
 
         url = "${url}?${p.join('&')}";
-        def result = webService.get(url);
+        def result = webServiceService.get(url);
         result = JSON.parse(result);
         return result;
     }
@@ -300,8 +309,8 @@ class AlaService {
     def getAllLayers() {
         if (allLayersCached.size() == 0 || System.currentTimeMillis() > allLayersMaxAge) {
             def result = []
-            def layers = JSON.parse(webService.get(grailsApplication.config.layers))
-            def fields = JSON.parse(webService.get(grailsApplication.config.fields))
+            def layers = JSON.parse(webServiceService.get(grailsApplication.config.layers))
+            def fields = JSON.parse(webServiceService.get(grailsApplication.config.fields))
 
             fields.eachWithIndex { def entry, int i ->
                 if (entry.indb && entry.defaultlayer && entry.enabled) {
@@ -330,15 +339,25 @@ class AlaService {
      * When a node on tree is clicked on phylojive, this function is called. Since some trees have thousands of
      * taxa and some queries can easily exceed the get request limit.
      */
-    def saveQuery(List clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol, boolean characterQuery = false) {
+    def saveQuery(List clade, String dataLocationType, String biocacheServiceUrl, String drid, String matchingCol, String treeId,boolean characterQuery = false) {
         def q, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
             fqs = [], fq , matchNamesResult;
+        Tree tree
+        Nexson nex
+
+        if(treeId){
+            Integer treeIdInt = Integer.parseInt(treeId)
+            tree = Tree.findById(treeId)
+            if(tree){
+                nex = new Nexson(tree.nexson)
+            }
+        }
 
         // trim species selected to maxLimit to prevent solr error.
         clade = trimSpeciesListToMax(clade);
-        matchNamesResult = matchNames(clade)
+        matchNamesResult = matchNames(clade, nex)
         if (matchNamesResult['matched'].size()) {
-            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid').replace('(','').replace(')',''))
+            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid',false).replace('(','').replace(')',''))
         }
 
         if (matchNamesResult['unmatched'].size()) {
@@ -346,13 +365,12 @@ class AlaService {
         }
 
         fq = '(' + fqs.join(' OR ') + ')'
-//        matchingCol = matchingCol ?: 'taxon_name';
+//        fq = fq.encodeAsURL()
+//        fq = '(' + fqs.join(' OR ') + ')'
         if (drid != null && !drid.isEmpty()) {
             q = "data_resource_uid:${drid}"
-//            matchingCol = 'raw_name'
         }
 
-//        fq = filterQuery(clade, null, matchingCol);
         // if q is empty then transfer fq params to q
         if (!q) {
             q = fq;
@@ -378,7 +396,7 @@ class AlaService {
     int getOccurrenceCount(String qid, String biocacheServiceUrl) {
         String url = grailsApplication.config.occurrencesSearch.replace("BIOCACHE_SERVICE", biocacheServiceUrl)
 
-        webService.getJson("${url}?q=qid:${qid}&pageSize=0&facet=off").totalRecords
+        webServiceService.getJson("${url}?q=qid:${qid}&pageSize=0&facet=off").totalRecords
     }
 
     /**
@@ -409,13 +427,13 @@ class AlaService {
 
         nameValuePairs[0] = new NameValuePair("q", q);
         nameValuePairs[1] = new NameValuePair("fq", fq);
-        return webService.postNameValue(url, nameValuePairs);
+        return webServiceService.postNameValue(url, nameValuePairs);
     }
 
     /**
      * create a filter query
      */
-    def filterQuery(list, op, field) {
+    def filterQuery(list, op, field, Boolean useQuote = true) {
         if (!list) {
             return '';
         }
@@ -424,7 +442,7 @@ class AlaService {
         op = op ?: ' OR ';
         log.debug(list.toString());
         for (i = 0; i < list.size(); i++) {
-            fq.push("${field}:\"${list[i]}\"");
+            fq.push("${field}:${useQuote?'\"':''}${list[i]}${useQuote ? '\\\"' : ''}");
         }
 
         return '(' + fq.join(op) + ')';
@@ -439,7 +457,7 @@ class AlaService {
         def url = grailsApplication.config.listCSV;
         def charJson;
         url = url.replace('DRID', drid);
-        def csv = webService.get(url, cookie);
+        def csv = webServiceService.get(url, cookie);
         charJson = charactersService.convertCharCsvToJson(csv, '||');
         return charJson;
     }
@@ -453,7 +471,7 @@ class AlaService {
         def url = grailsApplication.config.listCsvForKeys;
         def charJson;
         url = url.replace('DRID', drid).replace('KEYS', keys).replaceAll(' ', '+');
-        def csv = webService.get(url, cookie);
+        def csv = webServiceService.get(url, cookie);
         charJson = charactersService.convertCharCsvToJson(csv, '||');
         return charJson;
     }
@@ -528,6 +546,6 @@ class AlaService {
         params.push("q=${q}");
         params.push("fq=${fq}");
         url = "${url}?${params.join('&')}";
-        result = webService.getJson(url) as List;
+        result = webServiceService.getJson(url) as List;
     }
 }

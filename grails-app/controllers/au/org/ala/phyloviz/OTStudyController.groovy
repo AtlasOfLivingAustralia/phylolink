@@ -3,7 +3,7 @@ import grails.converters.JSON
 
 class OTStudyController {
     def opentreeService
-    def webService
+    def webServiceService
     def utilsService
 
     def listStudies() {
@@ -40,7 +40,7 @@ class OTStudyController {
         meta = meta?:[:]
         def post
         post = opentreeService.getAllStudiesUrl();
-        def studies = webService.postData(  post.url, (post.data as JSON).toString() );
+        def studies = webServiceService.postData(  post.url, (post.data as JSON).toString() );
         meta[grailsApplication.config.jsonkey.stList] = studies
         return meta
     }
@@ -49,7 +49,7 @@ class OTStudyController {
         meta = meta?:[:]
         def post
         post = opentreeService.getSearchTreeUrl( search );
-        def studies = webService.postData(  post.url, (post.data as JSON).toString() );
+        def studies = webServiceService.postData(  post.url, (post.data as JSON).toString() );
         meta[grailsApplication.config.jsonkey.stList] = studies[grailsApplication.config.opentree_jsonvars.searchTree]
         return meta
     }

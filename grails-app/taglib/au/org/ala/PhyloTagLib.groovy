@@ -6,7 +6,7 @@ class PhyloTagLib {
     //static encodeAsForTags = [tagName: 'raw']
     static namespace = 'phy'
     def grailsApplication
-    def webService
+    def webServiceService
     /**
      * a json output of regions. These are mostly state boundaries and IBRA regions.
      */
@@ -25,7 +25,7 @@ class PhyloTagLib {
         def regions = [], json;
         def regionsUrl = grailsApplication.config.regionsUrl[typeS];
         if( regionsUrl ) {
-            json = JSON.parse(webService.get( regionsUrl ) );
+            json = JSON.parse(webServiceService.get( regionsUrl ) );
             for (name in json.names) {
                 regions.push(["value": name, "type": typeS, "code":"${typeS}:${name}"]);
             }

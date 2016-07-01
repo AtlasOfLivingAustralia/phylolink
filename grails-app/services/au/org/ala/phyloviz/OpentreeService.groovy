@@ -7,21 +7,15 @@ import jade.tree.JadeTree
 @Transactional
 class OpentreeService {
     def grailsApplication
-    def webService
+    def webServiceService
     def metricsService
 
     def getStudyMetadata( id, addMeta ) {
         def i
         addMeta = addMeta?:[:]
-//        def url = grailsApplication.config['studyMeta']
-//        url = url.replaceAll( 'STUDYID', id.toString() )
-//        log.debug ( url )
-//        def meta = webService.getJson( url )
         ConvertTreeToObject cv = new ConvertTreeToObject();
         Tree t = Tree.findById(id);
         def result = cv.convert(t);
-//        def result
-//        result = this.mapStudyFields( meta, addMeta )
         // do some processing now
         result = this.getAuthor( result );
         return result
@@ -125,13 +119,11 @@ class OpentreeService {
      * @return
      */
     def getNexson( String studyId, String format = '0.0.0'){
-//        def treeUrl = this.getTreeUrl(format, treeId , studyId )
-
         def url = grailsApplication.config['studyUrl']
         url = url.replaceAll( 'STUDYID', studyId.toString() )
         url = url.replaceAll( 'FORMAT', format )
         log.debug( url )
-        return  webService.getJson( url )
+        return  webServiceService.getJson( url )
     }
 
     def convertNexmlToNexson( nexml ){
@@ -158,7 +150,7 @@ class OpentreeService {
         data['output'] = 'nexson'
         data['inputFormat'] = format
         data['nexml2json'] = grailsApplication.config[ 'nexml2json' ]
-        def nexson = webService.postData( url, data, ['Accepts':'application/json'])
+        def nexson = webServiceService.postData( url, data, ['Accepts':'application/json'])
         log.debug('nexson returned is : '+nexson)
         return JSON.parse( nexson ) ;
     }

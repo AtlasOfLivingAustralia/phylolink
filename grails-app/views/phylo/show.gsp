@@ -140,6 +140,7 @@
                 case 'ala': return config.biocacheLayer;
             }
         },
+        treeId: ${tree.id},
         treeUrl:"${createLink(controller: 'tree', action: 'getTree')}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
         initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
@@ -175,6 +176,7 @@
         codeBase: '../..',
         dataType:'json',
         bootstrap: 2,
+        treeId: config.treeId,
         url: config.treeUrl,
         id: config.pjId ,
         format: config.format,

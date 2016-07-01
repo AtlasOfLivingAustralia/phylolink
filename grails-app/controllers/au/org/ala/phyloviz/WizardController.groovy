@@ -44,6 +44,9 @@ class WizardController {
             case 'treeAdmin':
                 redirect(controller: "tree", action: 'treeAdmin')
                 break;
+            case 'rematchAll':
+                redirect(controller: 'admin', action: 'rematchAll')
+                break;
         }
     }
 
@@ -137,7 +140,7 @@ class WizardController {
     def expertTrees() {
         def expertTrees = Tree.findAllByExpertTree(true)
         log.debug(expertTrees)
-        render(view: 'listExpertTrees', model: [trees: expertTrees])
+        render(view: 'listExpertTrees', model: [trees: expertTrees, isAdmin: params.isAdmin])
     }
 
     /**

@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 class CharactersService {
     def speciesListService
     def g
-    def webService
+    def webServiceService
     def grailsApplication
     AuthService authService
 
@@ -126,7 +126,7 @@ class CharactersService {
         def url = grailsApplication.config.listKeys.replace('DRID', drid)
         def result = [];
         try{
-            result = webService.get( url );
+            result = webServiceService.get( url );
             if( result instanceof String){
                 result = JSON.parse(result);
             }

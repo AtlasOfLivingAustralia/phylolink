@@ -7,7 +7,7 @@ import groovyx.net.http.ContentType
 
 @Transactional
 class SpeciesListService {
-    def webService, grailsApplication, authService
+    def webServiceService, grailsApplication, authService
 
     /**
      * save a csv file into list tool
@@ -41,7 +41,7 @@ class SpeciesListService {
         }
         log.debug(data);
         data = data as JSON
-        result = webService.postData(grailsApplication.config.listPost, data.toString(), ['cookie': cookie], ContentType.JSON);
+        result = webServiceService.postData(grailsApplication.config.listPost, data.toString(), ['cookie': cookie], ContentType.JSON);
         if (result.druid) {
             ch = addCharacterToDB(name, result.druid)
             result.id = ch.id;

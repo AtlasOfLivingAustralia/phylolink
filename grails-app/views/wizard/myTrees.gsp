@@ -13,6 +13,14 @@
 
 <body>
 <div class="container"  style="min-height: 700px">
+    <g:if test="${flash.message}">
+        <div class="row-fluid">
+            <div class="alert top-buffer">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>${flash.message}
+            </div>
+        </div>
+    </g:if>
+
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -21,9 +29,6 @@
             </ul>
         </div>
     </div>
-    <g:if test="${flash.message}">
-        <div class="message alert-info" role="status">${flash.message}</div>
-    </g:if>
     <legend>${name} trees</legend>
     <p >List of all trees that you have uploaded.</p>
     <g:if test="${trees.size() != 0}">
@@ -57,6 +62,10 @@
                         <a
                                 href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
                                 class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
+                        <div class="btn btn-small" onclick="window.location =
+                                '${createLink( controller: 'tree', action: 'rematchMyTree')}?treeId=${tree.getId()}'">
+                            <i class="icon-repeat"></i> Rematch
+                        </div>
                         <a id="deleteTreeLink${tree.getId()}" class="btn btn-default btn-small" data-toggle="modal" href="#${tree.getId()}ConfirmationModal"><i class="fa fa-trash"></i>&nbsp;Delete tree</a>
 
                         <div id="${tree.getId()}ConfirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Confirmation" aria-hidden="true">

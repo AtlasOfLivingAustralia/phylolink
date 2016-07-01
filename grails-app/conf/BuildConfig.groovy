@@ -38,13 +38,15 @@ grails.project.dependency.resolution = {
         runtime 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
         runtime 'org.apache.httpcomponents:httpclient:4.3.5'
         runtime 'org.apache.httpcomponents:httpmime:4.3.5'
-        runtime 'au.org.ala:ala-name-matching:2.1'
+        runtime 'au.org.ala:ala-name-matching:2.3.3-SNAPSHOT'
         compile 'org.apache.commons:commons-math3:3.5'
     }
 
     plugins {
         build ":release:3.0.1"
         compile ':cache:1.1.1'
+        compile ":ala-auth:1.3.3"
+        compile ":ala-ws-plugin:1.0"
         // plugins needed at runtime but not for compilation
         runtime ":hibernate:3.6.10.7" // or ":hibernate4:4.3.4"
         runtime ":database-migration:1.3.8"
@@ -52,9 +54,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery-ui:1.10.4"
         runtime ":csv:0.3.1"
         runtime ":resources:1.2.1"
-
         runtime ":ala-bootstrap2:2.4.1"
-        runtime ":ala-auth:1.2"
         // plugins for the build system only
         build ":tomcat:7.0.50"
     }

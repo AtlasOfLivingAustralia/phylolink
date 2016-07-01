@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 class UtilsService {
     def grailsApplication
     def opentreeService
-    def webService
+    def webServiceService
     def alaService
     def treeService
     def authService
@@ -184,7 +184,7 @@ class UtilsService {
         log.debug(url)
         url = url.replaceAll('SEARCH', terms);
         log.debug(url)
-        def json = webService.getJson(url);
+        def json = webServiceService.getJson(url);
         return json;
     }
 
@@ -220,7 +220,7 @@ class UtilsService {
         def data = [
                 'citation': cite
         ]
-        def xml = webService.postData(url, data, ['Accept': 'application/json'])
+        def xml = webServiceService.postData(url, data, ['Accept': 'application/json'])
         log.debug(xml.toString())
         def result = [:]
         result['title'] = xml[0]?.title;
@@ -238,7 +238,7 @@ class UtilsService {
         def url = grailsApplication.config.autocompleteUrl
         log.debug(url)
         url = url.replace('QUERY', q)
-        def result = webService.get(url)
+        def result = webServiceService.get(url)
         result = JSON.parse(result)
         log.debug(result)
         return result?.searchResults?.results

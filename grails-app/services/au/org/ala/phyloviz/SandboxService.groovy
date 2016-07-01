@@ -8,7 +8,7 @@ import org.apache.commons.httpclient.methods.PostMethod
 import org.apache.http.entity.mime.content.FileBody
 
 class SandboxService {
-    def webService;
+    def webServiceService;
     def authService;
     def grailsApplication;
 
@@ -40,7 +40,7 @@ class SandboxService {
 
         FileBody fbody = new FileBody(file);
         String uUrl = "${serverInstance}/upload/uploadFile";
-        result = webService.postMultipart(uUrl, ['myFile': fbody], null);
+        result = webServiceService.postMultipart(uUrl, ['myFile': fbody], null);
         preview = getFileId(result.location);
         if (preview.fileId == null) {
             return ['error'  : 'Failed to upload file.',
@@ -154,7 +154,7 @@ class SandboxService {
         def url = grailsApplication.config.sandboxCollectoryUrl;
         if (alaId) {
             url = url.replace('ALAID', alaId);
-            result = webService.getJson(url);
+            result = webServiceService.getJson(url);
         }
         result;
     }
@@ -162,7 +162,7 @@ class SandboxService {
     def findByDrtId(drtId) {
         def result = [];
         def url = grailsApplication.config.sandboxCollectoryUrl.replace("?alaId=ALAID", '/' + drtId);
-        result = webService.getJson(url);
+        result = webServiceService.getJson(url);
         result;
     }
 
@@ -171,7 +171,7 @@ class SandboxService {
      */
     def checkStatus(uid) {
         def url = grailsApplication.config.sandboxBiocacheServiceUrl + "/upload/status/${uid}.json";
-        webService.get(url);
+        webServiceService.get(url);
     }
 
     def getDataresourceInfo(String druid, String ownerId, String biocacheServiceUrl, String biocacheHubUrl, String phyloId) {

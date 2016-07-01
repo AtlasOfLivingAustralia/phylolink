@@ -30,7 +30,7 @@ import org.springframework.beans.factory.InitializingBean
 
 import static groovyx.net.http.Method.POST
 
-class WebService implements InitializingBean {
+class WebServiceService implements InitializingBean {
 
     public void afterPropertiesSet() {
         JSONObject.NULL.metaClass.asBoolean = { -> false }

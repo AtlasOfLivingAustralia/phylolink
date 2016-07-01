@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.*
  * Created by Temi Varghese on 19/06/2014.
  */
 class PhyloController extends BaseController {
-    def webService;
+    def webServiceService;
     def utilsService
     def userService
     def treeService
@@ -143,7 +143,7 @@ class PhyloController extends BaseController {
         data.region = region;
         def dr = ''
         def widgetObject = new WidgetFactory();
-        widgetObject = widgetObject.createWidget(data, grailsApplication, webService, utilsService, applicationContext, dr);
+        widgetObject = widgetObject.createWidget(data, grailsApplication, webServiceService, utilsService, applicationContext, dr);
 
         data = widgetObject.process(data, null);
         data.statisticSummary = utilsService.statisticSummary(data.data, true)
@@ -195,7 +195,7 @@ class PhyloController extends BaseController {
         def regions = [], json;
         def regionsUrl = grailsApplication.config.regionsUrl[typeS];
         if( regionsUrl ) {
-            json = JSON.parse(webService.get( regionsUrl ) );
+            json = JSON.parse(webServiceService.get( regionsUrl ) );
             for (name in json.names) {
                 regions.push(["value": name, "type": typeS, "code":"${typeS}:${name}"]);
             }
@@ -238,7 +238,7 @@ class PhyloController extends BaseController {
 
     public def params(){
         def url = 'http://biocache.ala.org.au/ws/webportal/params'
-        def ret = webService.postData(url, [fq:params.fq])
+        def ret = webServiceService.postData(url, [fq:params.fq])
         render ( text: ret.toString() )
     }
 
@@ -333,7 +333,7 @@ class PhyloController extends BaseController {
         if (!params.qid) {
             badRequest "qid is a required parameter"
         } else {
-            def data = webService.get("${params.biocacheServiceUrl}?q=qid:${params.qid}")
+            def data = webServiceService.get("${params.biocacheServiceUrl}?q=qid:${params.qid}")
 
             response.setHeader('Content-disposition', 'attachment; filename=data.csv')
             render(contentType: 'text/plain', text: data)

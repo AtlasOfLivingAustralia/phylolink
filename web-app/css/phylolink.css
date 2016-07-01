@@ -212,3 +212,11 @@ h1, h2, h3, h4, h5 {
     width: 600px;
     max-width: 600px;
 }
+
+body > div.navbar.navbar-inverse.navbar-fixed-top > div > div > a.navbar-brand > img{
+    max-height: 28px;
+}
+
+.btn-small{
+    margin-bottom: 5px;
+}

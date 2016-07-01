@@ -13,6 +13,14 @@
 <body>
 
 <div class="container"  style="min-height: 700px">
+    <g:if test="${flash.message}">
+        <div class="row-fluid">
+            <div class="alert top-buffer">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>${flash.message}
+            </div>
+        </div>
+    </g:if>
+
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -58,6 +66,12 @@
                     <a
                             href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
                             class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
+                    <g:if test="${isAdmin}">
+                        <div class="btn btn-small" onclick="window.location =
+                                '${createLink( controller: 'tree', action: 'rematchExpertTree')}?treeId=${tree.getId()}'">
+                            <i class="icon-repeat"></i> Rematch
+                        </div>
+                    </g:if>
                 </td>
             </tr>
             <tr>

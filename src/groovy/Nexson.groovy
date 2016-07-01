@@ -28,19 +28,19 @@ class Nexson {
         text = nexson
         json = JSON.parse(nexson)
         init()
-        log.debug('logging works')
+        log.debug('created nexson object using string')
     }
 
     public Nexson(JSON json) {
         this.json = json
         init()
-        log.debug('logging works')
+        log.debug('created nexson object using JSON object')
     }
 
     public Nexson(JSONElement json) {
         this.json = json
         init()
-        log.debug('logging works')
+        log.debug('created nexson object using JSONElement')
     }
 
     private init() {
@@ -77,8 +77,8 @@ class Nexson {
                 otusById = json.data.nexml.otusById
                 def count = 0;
                 otusById?.each { k, node ->
-                    node.otuById.each { otuId, meta ->
-                        log.debug( 'otu value' + meta)
+                    node?.otuById?.each { otuId, meta ->
+//                        log.debug( 'otu value' + meta)
                         if(!meta['^ot:originalLabel']  && meta['@label']){
                             meta['^ot:originalLabel'] = meta['@label']
                             meta['^ot:altLabel'] = null;
@@ -185,10 +185,11 @@ class Nexson {
                 otus = this.getOtus12()
                 break;
         }
+
         return otus;
     }
 
-    public getOtus12() {
+    private getOtus12() {
         def otus = []
         def otu;
         def otusById;
@@ -208,6 +209,16 @@ class Nexson {
         }
 
         return otus
+    }
+
+    public Map getOtuNameLookupTable(){
+        Map lookup = [:]
+        List otus = getOtus()
+        otus?.each { otu ->
+            lookup[otu['^ot:originalLabel']] = otu
+        }
+
+        lookup
     }
 
     public setAlaId(id, lsid) {
@@ -246,7 +257,6 @@ class Nexson {
                 otusById.each { k, otuById ->
                     otu = otuById.otuById
                     if (otu[id]['^ot:taxonLink'] != null) {
-                        log.debug(otu[id]['^ot:taxonLink']['@ala'])
                         res = otu[id]['^ot:taxonLink']['@ala']
                     }
                 }
@@ -291,6 +301,10 @@ class Nexson {
     }
 
     public getTree() {
+        return json.toString()
+    }
+
+    public String toString(){
         return json.toString()
     }
 
