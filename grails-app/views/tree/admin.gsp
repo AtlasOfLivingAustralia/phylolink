@@ -13,14 +13,6 @@
 <body>
 
 <div class="container" style="min-height: 700px">
-    <g:if test="${flash.message}">
-        <div class="row-fluid">
-            <div class="alert top-buffer">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>${flash.message}
-            </div>
-        </div>
-    </g:if>
-
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">

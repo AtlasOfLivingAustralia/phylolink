@@ -21,9 +21,6 @@
             </ul>
         </div>
     </div>
-    <g:if test="${flash.message}">
-        <div class="message alert-info" role="status">${flash.message}</div>
-    </g:if>
     <legend>${name} Visualisations</legend>
     <g:if test="${!isDemonstration}">
         <p style="font-size:14px; max-width: 60em">List of all visualisation you created.</p>

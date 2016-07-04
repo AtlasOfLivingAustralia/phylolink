@@ -406,4 +406,13 @@ class UtilsService {
         summary
     }
 
+    /**
+     * Get current user details from Phylolink database
+     * @return
+     */
+    public Owner getOwner(){
+        String userId = authService.getUserId()
+        Owner.findByUserId(userId)
+    }
+
 }

@@ -21,9 +21,6 @@
             </ul>
         </div>
     </div>
-    <g:if test="${flash.message}">
-        <div class="alert <g:if test="${flash.error}">alert-error</g:if>" role="status">${flash.message}</div>
-    </g:if>
 
     <g:form action="create" class="form-horizontal" method="POST" enctype="multipart/form-data">
         <legend>Upload a tree</legend>

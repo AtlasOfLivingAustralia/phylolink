@@ -20,7 +20,7 @@
             <ul class="breadcrumb">
                 <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
                 <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'myTrees')}">My Trees</a></li>
+                <li>Tree</li>
             </ul>
         </div>
     </div>

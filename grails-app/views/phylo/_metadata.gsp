@@ -47,6 +47,14 @@
                 <a class="btn" href="${createLink(controller: 'tree', action: 'download')}?id=${studyId}"><i class="icon icon-download"></i> Download</a>
             </td>
         </tr>
+        <tr>
+            <td>
+                Reconcile tree nodes with ALA taxonomy manually:
+            </td>
+            <td>
+                <g:render template="/tree/mapOtu"  model="${[id:studyId]}"></g:render>
+            </td>
+        </tr>
         <tr <g:if test="${edit || phyloInstance != null}">style="display:none"</g:if>>
             <td>
                 Link tree with data:

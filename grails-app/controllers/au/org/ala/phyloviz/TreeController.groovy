@@ -50,35 +50,50 @@ class TreeController extends BaseController {
         redirect( action:'mapOtus', id: tree.id)
     }
 
+    /**
+     * Web service to map a tree nodes to ALA taxonomy. It does automatic mapping on the following coniditions.
+     * This function can be accessed by admin or by owner of a tree.
+     * 1. Checks if tree nodes are mapped to ALA taxonomy, then cancel auto mapping and return only tree nodes.
+     * 2. If ALA taxonomy mapping not done, then do auto mapping and return all tree nodes.
+     * @param id {@link Tree#id}
+     * @return
+     */
     def mapOtus(){
-        def id = params.id;
-        def tree = Tree.findById( id );
-        def nex;
-        def otus;
+        try{
+            if(params.id){
+                List otus
+                Integer id = Integer.parseInt(params.id)
+                Tree tree = Tree.findById( id )
+                Owner owner = utilsService.getOwner()
 
-        //TODO: check for permissions
-        if( tree ){
-            log.debug( 'nexson retrieved: '+ tree.nexson )
-            nex = new Nexson( tree.nexson )
-            otus = nex.getOtus()
-            otus = nexsonService.autoSuggest( otus )
-            withFormat {
-                html {
-                    render( view: 'mapOtus', model: [ otus: otus, id: id ])
+                if( tree && ((tree.ownerId == owner?.id) || params.isAdmin)) {
+                    otus = treeService.getMappedOtus(tree)
+                    withFormat {
+                        html {
+                            render( view: 'mapOtus', model: [ otus: otus, id: id ])
+                        }
+                        json {
+                            render(contentType: 'application/json', text: otus as JSON)
+                        }
+                    }
+                } else {
+                    flash.message = "Tree not found or you do not have permission"
+                    redirect(controller: 'wizard', action: 'start')
                 }
-                json {
-                    render(contentType: 'application/json', text: otus as JSON)
-                }
+            } else {
+                badRequest "Parameter id must be provided"
             }
-
-        } else {
-            flash.message = message( code: "tree.not.found")
+        } catch (Exception e){
+            log.error(e)
+            e.printStackTrace()
+            badRequest "Could not process request"
         }
     }
 
     def show(){
         render ( text: "temi ${params.id}" )
     }
+
     def searchDoi(){
         def terms = params.q;
         log.debug( terms );
@@ -370,8 +385,7 @@ class TreeController extends BaseController {
         if(params.treeId){
             try {
                 Integer id = Integer.parseInt(params.treeId)
-                String userId = authService.getUserId()
-                Owner owner = Owner.findByUserId(userId)
+                Owner owner = utilsService.getOwner()
                 List<Tree> trees = Tree.findAllByIdAndOwner(id, owner)
                 if(trees.size()){
                     treeService.rematchTrees(trees, true)

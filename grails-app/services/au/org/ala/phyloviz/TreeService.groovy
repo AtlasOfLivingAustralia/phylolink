@@ -912,4 +912,42 @@ class TreeService {
     String cleanNodeName(String name){
         return name?.replaceAll("_", " ").replaceAll("'", "");
     }
+
+    /**
+     * Function to map a tree nodes to ALA taxonomy. It does automatic mapping on the following conditions.
+     * This function can be accessed by admin or by owner of a tree.
+     * 1. Checks if tree nodes are mapped to ALA taxonomy, then cancel auto mapping and return only tree nodes.
+     * 2. If ALA taxonomy mapping not done, then do auto mapping and return all tree nodes.
+     * @param tree {@link Tree}
+     * @return
+     */
+    public List getMappedOtus(Tree tree){
+        Nexson nex;
+        List otus = [];
+        if(tree.nexson){
+            nex = new Nexson( tree.nexson )
+            otus = nex.getOtus()
+            if(!areOtusMapped(otus)){
+                otus = nexsonService.autoSuggest( otus )
+            }
+        }
+
+        otus
+    }
+
+    /**
+     * Checks if otus are mapped to a ALA taxonomy. True if mapped and false otherwise.
+     * @param otus {@link List<Map>}
+     * @return
+     */
+    public Boolean areOtusMapped(List otus){
+        Boolean isMapped = false
+        otus?.each { otu ->
+            if(otu['@ala']){
+                isMapped = true
+            }
+        }
+
+        isMapped
+    }
 }

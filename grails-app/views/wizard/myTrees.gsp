@@ -13,14 +13,6 @@
 
 <body>
 <div class="container"  style="min-height: 700px">
-    <g:if test="${flash.message}">
-        <div class="row-fluid">
-            <div class="alert top-buffer">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>${flash.message}
-            </div>
-        </div>
-    </g:if>
-
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -66,6 +58,7 @@
                                 '${createLink( controller: 'tree', action: 'rematchMyTree')}?treeId=${tree.getId()}'">
                             <i class="icon-repeat"></i> Rematch
                         </div>
+                        <g:render template="/tree/mapOtu"  model="${[id:tree.getId()]}"></g:render>
                         <a id="deleteTreeLink${tree.getId()}" class="btn btn-default btn-small" data-toggle="modal" href="#${tree.getId()}ConfirmationModal"><i class="fa fa-trash"></i>&nbsp;Delete tree</a>
 
                         <div id="${tree.getId()}ConfirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Confirmation" aria-hidden="true">
