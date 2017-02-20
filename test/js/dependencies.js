@@ -47,7 +47,8 @@ phylolink.pj = null;
             }
         },
         pjSettings: null,
-        settingsUrl: null
+        settingsUrl: null,
+        listToolBaseURL: 'https://lists.ala.org.au'
     });
     pj = phylolink.pj;
 
