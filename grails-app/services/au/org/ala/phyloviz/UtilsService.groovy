@@ -129,7 +129,12 @@ class UtilsService {
         summary = summary.sort { it.key }
         if (isNumber) {
             summary.each() { k, v ->
-                result.push([Double.parseDouble(k), v]);
+                try{
+                    result.push([Double.parseDouble(k), v]);
+                } catch (Exception e){
+                    // do nothing
+                }
+
             }
         } else {
             summary.each() { k, v ->

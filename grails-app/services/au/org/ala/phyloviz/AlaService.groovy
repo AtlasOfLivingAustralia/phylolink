@@ -357,7 +357,7 @@ class AlaService {
         clade = trimSpeciesListToMax(clade);
         matchNamesResult = matchNames(clade, nex)
         if (matchNamesResult['matched'].size()) {
-            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid',false).replace('(','').replace(')',''))
+            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid').replace('(','').replace(')',''))
         }
 
         if (matchNamesResult['unmatched'].size()) {
@@ -442,7 +442,7 @@ class AlaService {
         op = op ?: ' OR ';
         log.debug(list.toString());
         for (i = 0; i < list.size(); i++) {
-            fq.push("${field}:${useQuote?'\"':''}${list[i]}${useQuote ? '\\\"' : ''}");
+            fq.push("${field}:${useQuote?'\"':''}${list[i]}${useQuote ? '\"' : ''}");
         }
 
         return '(' + fq.join(op) + ')';
