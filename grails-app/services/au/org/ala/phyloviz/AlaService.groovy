@@ -541,10 +541,10 @@ class AlaService {
         type = type ?: 'application/json';
         url = grailsApplication.config.legendAla.replace('BIOCACHE_HUB', biocacheHubUrl);
 
-        params.push("cm=${cm}");
-        params.push("type=${type}");
-        params.push("q=${q}");
-        params.push("fq=${fq}");
+        cm != null ? params.push("cm=${cm}") : null;
+        type != null ? params.push("type=${type}") : null;
+        q != null ? params.push("q=${q}") : null;
+        fq != null ? params.push("fq=${fq}") : null;
         url = "${url}?${params.join('&')}";
         result = webServiceService.getJson(url) as List;
     }
