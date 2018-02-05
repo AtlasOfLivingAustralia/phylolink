@@ -26,6 +26,8 @@ before_script:
 - echo "MAVEN_REPO:$MAVEN_REPO"
 - node --version
 - npm install
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 script:
 - node_modules/karma/bin/karma start karma.conf.js --single-run --browsers Chrome
 - grails clean && grails refresh-dependencies --non-interactive && grails test-app --non-interactive && grails prod war --non-interactive && grails prod maven-deploy --repository=$MAVEN_REPO --non-interactive
