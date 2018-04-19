@@ -434,4 +434,30 @@ class AlaController extends BaseController {
             render( text: result as JSON, contentType: 'application/json');
         }
     }
+
+    /**
+     * Build the login link
+     * @param attrs any specified params to override defaults
+     * @return The login url
+     */
+    def login () {
+        def casLoginUrl = grailsApplication.config.security.cas.loginUrl
+        def grailServerURL = grailsApplication.config.grails.serverURL
+        def loginReturnToUrl = (removeContext(grailServerURL) + request.forwardURI + (request.queryString ? "?" + URLEncoder.encode(request.queryString, "UTF-8") : ""))
+        String loginUrl = "${casLoginUrl}?service=${loginReturnToUrl}"
+        redirect(url: loginUrl);
+    }
+
+    /**
+     * Remove the context path and params from the url.
+     * @param urlString
+     * @return
+     */
+    private String removeContext(urlString) {
+        def url = urlString.toURL()
+        def protocol = url.protocol != -1 ? url.protocol + "://" : ""
+        def port = url.port != -1 ? ":" + url.port : ""
+        return protocol + url.host + port
+    }
+
 }
