@@ -434,14 +434,4 @@ class AlaController extends BaseController {
             render( text: result as JSON, contentType: 'application/json');
         }
     }
-
-    /**
-     * redirect to auth
-     */
-    def login () {
-        def casLoginUrl = grailsApplication.config.security.cas.loginUrl
-        def grailServerURL = grailsApplication.config.grails.serverURL
-        String loginUrl = "${casLoginUrl}?service=${grailServerURL}"
-        redirect(url: loginUrl);
-    }
 }

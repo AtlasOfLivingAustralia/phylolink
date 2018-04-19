@@ -1,7 +1,5 @@
 package au.org.ala.phyloviz
 
-import au.org.ala.web.AlaSecured
-
 class WizardController {
     def treeService
     def phyloService
@@ -107,19 +105,25 @@ class WizardController {
     }
 
     def visualize() {
-        def tree = Tree.findById(params.id)
-        def nex = new Nexson(tree.getNexson())
-        def viz, id, treeId = params.treeId;
-        def treeIds = nex.getTreeList()
         def owner = userService.registerCurrentUser();
 
-        if ((treeIds.size() > 1) && (params.treeId == null)) {
-            redirect(action: 'pickTree', params: params)
+        if (owner == null) {
+            flash.message = 'Something went wrong while registering you. Are you logged in?'
+            redirect( action: 'start')
         } else {
-            treeId = treeId ?: treeIds[0].id
-            viz = phyloService.createVisualization(tree.id, treeId, owner);
-            id = viz.getId();
-            redirect(controller: 'phylo', action: 'show', params: [id: viz.id])
+            def tree = Tree.findById(params.id)
+            def nex = new Nexson(tree.getNexson())
+            def viz, id, treeId = params.treeId;
+            def treeIds = nex.getTreeList()
+
+            if ((treeIds.size() > 1) && (params.treeId == null)) {
+                redirect(action: 'pickTree', params: params)
+            } else {
+                treeId = treeId ?: treeIds[0].id
+                viz = phyloService.createVisualization(tree.id, treeId, owner);
+                id = viz.getId();
+                redirect(controller: 'phylo', action: 'show', params: [id: viz.id])
+            }
         }
     }
 
