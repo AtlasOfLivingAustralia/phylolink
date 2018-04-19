@@ -106,7 +106,6 @@ class WizardController {
         }
     }
 
-    @AlaSecured(redirectController = "ala", redirectAction = "login")
     def visualize() {
         def tree = Tree.findById(params.id)
         def nex = new Nexson(tree.getNexson())

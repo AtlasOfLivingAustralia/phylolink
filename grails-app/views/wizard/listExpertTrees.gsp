@@ -11,7 +11,7 @@
 </head>
 
 <body>
-
+<g:set var="userLoggedIn"><fc:userIsLoggedIn/></g:set>
 <div class="container"  style="min-height: 700px">
     <div class="row-fluid">
         <div class="span12">
@@ -52,9 +52,11 @@
                     </g:else>
                 </td>
                 <td style="justify: center">
-                    <div class="btn btn-small btn-primary"
-                         onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
-                        <i class="icon icon-ok"></i> Open</div>
+                    <g:if test="${userLoggedIn}">
+                        <div class="btn btn-small btn-primary"
+                             onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
+                            <i class="icon icon-ok"></i> Open</div>
+                    </g:if>
                     <a
                             href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
                             class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
