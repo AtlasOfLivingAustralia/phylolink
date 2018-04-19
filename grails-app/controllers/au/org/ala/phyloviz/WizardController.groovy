@@ -106,7 +106,7 @@ class WizardController {
         }
     }
 
-    @AlaSecured(redirectUri = "${grailsApplication.config.security.cas.loginUrl}?service=${grailsApplication.config.grails.serverURL}/wizard/start")
+    @AlaSecured(redirectController = "ala", redirectAction = "login")
     def visualize() {
         def tree = Tree.findById(params.id)
         def nex = new Nexson(tree.getNexson())
