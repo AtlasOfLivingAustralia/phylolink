@@ -443,7 +443,7 @@ class AlaController extends BaseController {
     def login () {
         def casLoginUrl = grailsApplication.config.security.cas.loginUrl
         def grailServerURL = grailsApplication.config.grails.serverURL
-        def loginReturnToUrl = (removeContext(grailServerURL) + request.forwardURI + (request.queryString ? "?" + URLEncoder.encode(request.queryString, "UTF-8") : ""))
+        def loginReturnToUrl = (removeContext(grailServerURL) + request.requestURI + (request.queryString ? "?" + URLEncoder.encode(request.queryString, "UTF-8") : ""))
         String loginUrl = "${casLoginUrl}?service=${loginReturnToUrl}"
         redirect(url: loginUrl);
     }
