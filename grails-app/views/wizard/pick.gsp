@@ -30,9 +30,9 @@
                         <div class="row-fluid">
                             <div class="span3 verticalLine wizard-option-group">
                                 <h5>Load a tree</h5>
-                                <label class="radio"><input type="radio" name="options" value="expertTrees" required=""> Select an expert recommended tree</input></label>
+                                <label class="radio" <g:if test="${!loggedIn}">disabled</g:if>><input type="radio" name="options" value="expertTrees" required="" <g:if test="${!loggedIn}">disabled</g:if>/> Select an expert recommended tree<g:if test="${!loggedIn}"> (login required)</g:if></label>
                                 <label class="radio" <g:if test="${numberOfTrees <= 0}">disabled</g:if>><input <g:if test="${numberOfTrees <= 0}">disabled</g:if>
-                                                                       type="radio" name="options" value="myTrees" required=""> Select from my trees</input></label>
+                                                                       type="radio" name="options" value="myTrees" required=""/> Select from my trees<g:if test="${!loggedIn}"> (login required)</g:if></label>
                                 <label class="radio" <g:if test="${!loggedIn}">disabled</g:if>><input <g:if test="${!loggedIn}">disabled</g:if>
                                                             type="radio" name="options" value="addTree" required=""> Add a new tree
                                     <g:if test="${!loggedIn}"> (login required)</g:if></input></label>
@@ -41,7 +41,7 @@
                             <div class="span3 wizard-option-group">
                                 <h5>Select a visualisation</h5>
                                 <label class="radio" <g:if test="${numberOfVisualisations <= 0}">disabled</g:if>><input <g:if test="${numberOfVisualisations <= 0}">disabled</g:if>
-                                                            type="radio" name="options" value="myViz" required=""> Select from my previous visualisations</label>
+                                                            type="radio" name="options" value="myViz" required=""> Select from my previous visualisations<g:if test="${!loggedIn}"> (login required)</g:if></label>
                                 <label class="radio"><input type="radio" name="options" value="demo" required=""> View a demonstration visualisation</label>
 
                             </div>
