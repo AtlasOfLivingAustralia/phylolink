@@ -1,38 +1,22 @@
 language: groovy
-sudo: false
 jdk:
-- openjdk7
+  - oraclejdk8
+sudo: false
 branches:
   only:
-  - master
-  - new-nameindex
-before_install:
-- export TZ=Australia/Canberra
-- date
-- rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
-- rm -rf ~/.sdkman
-- curl -s get.sdkman.io > ~/install_sdkman.sh
-- chmod 775 ~/install_sdkman.sh
-- "~/install_sdkman.sh"
-- echo "sdkman_auto_answer=true" > ~/.sdkman/etc/config
-- source ~/.sdkman/bin/sdkman-init.sh
-- GRAILS_VERSION=`grep '^app\.grails\.version=' ./application.properties | sed -e 's/^app\.grails\.version=//g'`
-- echo "GRAILS_VERSION:$GRAILS_VERSION"
-- sdk install grails $GRAILS_VERSION || true
-before_script:
-- mkdir -p ~/.grails; wget -q -O ~/.grails/settings.groovy https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_settings_new.groovy
-- MAVEN_REPO="ala-repo-snapshot"; grep '^app\.version=' ./application.properties |
-  grep -q "\-SNAPSHOT"; if [ "$?" = "1" ]; then MAVEN_REPO="ala-repo-release"; fi;
-- echo "MAVEN_REPO:$MAVEN_REPO"
-- node --version
-- npm install
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-script:
-#- node_modules/karma/bin/karma start karma.conf.js --single-run --browsers Chrome
-- grails clean && grails refresh-dependencies --non-interactive && grails test-app --non-interactive && grails prod war --non-interactive && grails prod maven-deploy --repository=$MAVEN_REPO --non-interactive
+  - grails3
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+
+after_success:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish --stacktrace --info '
 env:
   global:
-  - TRAVIS_NODE_VERSION="0.10"
   - secure: hPmG2SGmylGFsb/C5sBxJlAFt/GFLa1Ncg/PU7q8oBvVwu3GXkH4QRO4a6Jl7yTsNw/hEG4UZp/WFd+BfzCmo3oKvUWSIvQrweAKzNEiiVKArOw3LFJ8+CMiPhkfhMg3CXurDm/fzUkl5getSz00Me2WdPk3obG+nKY39rGpoBQ=
   - secure: Gjro7XSNjemHc8WokUkiraQ729iLfzjBYTuT00Y+aa6zN+XeQHOj59WBOItap5w+Kp34FHEBNExc6jAizlyIWG/qM/g6GROyGFkzMO9QNUsBvEFpfhQKvdQwOndvxarQrEI5MiRJrT7dm3gFqjq5mswcCW6sRc2FTQLci/0Bl6g=
