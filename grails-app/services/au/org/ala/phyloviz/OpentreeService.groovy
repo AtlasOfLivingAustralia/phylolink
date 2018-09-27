@@ -13,7 +13,7 @@ class OpentreeService {
     def getStudyMetadata( id, addMeta ) {
         def i
         addMeta = addMeta?:[:]
-        ConvertTreeToObject cv = new ConvertTreeToObject();
+        au.org.ala.phyloviz.ConvertTreeToObject cv = new au.org.ala.phyloviz.ConvertTreeToObject();
         Tree t = Tree.findById(id);
         def result = cv.convert(t);
         // do some processing now

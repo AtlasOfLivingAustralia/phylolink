@@ -2,7 +2,7 @@ package au.org.ala.phyloviz
 import au.org.ala.soils2sat.LayerDefinition
 import au.org.ala.soils2sat.LayerTreeNode
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.web.json.JSONObject
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
@@ -246,11 +246,11 @@ class AlaController extends BaseController {
     }
 
     def facets(){
-        def drid = params.drid
-        def source = params.source;
-        def baseUrl = params.biocacheServiceUrl;
-        def result ;
-        result = alaService.getSandboxFacets(baseUrl, params.q, params.fq);
+        def baseUrl = params.biocacheServiceUrl
+        def result = []
+        if(baseUrl) {
+            result = alaService.getSandboxFacets(baseUrl, params.q, params.fq)
+        }
         
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")

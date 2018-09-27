@@ -1,9 +1,10 @@
 package au.org.ala.phyloviz
 
+import au.com.bytecode.opencsv.CSVReader
 import au.org.ala.web.AuthService
 import grails.converters.JSON
 import grails.transaction.Transactional
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.web.json.JSONObject
 
 import java.util.regex.Pattern
 
@@ -22,20 +23,21 @@ class CharactersService {
         def lists = Characters.findAllByOwner(owner);
         def slist = Characters.findAllByOwner(Owner.findByUserId(1));
         lists.addAll(slist);
-        log.debug(lists)
-
         getCharUrl(lists);
     }
 
     def getCharUrl( ArrayList<Characters> lists ) {
         def result=[]
         lists.each{ list->
+
+            def listsUrl = grailsApplication.config.listsPermUrl
+
             result.push([
                 'dataResourceId': list.drid,
                 'url': getUrl(list.drid),
                 'title':list.title,
                 'id': list.id,
-                'listurl': grailsApplication.config.listsPermUrl.replace('DRID', list.drid)
+                'listurl': listsUrl.replace('DRID', list.drid)
             ]);
         }
         return result
@@ -48,7 +50,7 @@ class CharactersService {
      */
     def getUrl(druid){
         if(!g) {
-            g = new org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib()
+            g = grailsApplication.mainContext.getBean('org.grails.plugins.web.taglib.ApplicationTagLib')
         }
         return g.createLink(controller: 'ala', action: 'getCharJson') + '?drid=' + druid;
     }
@@ -77,7 +79,11 @@ class CharactersService {
         def charMap = [:] // Map version of JSON format
         internalSeparator = Pattern.quote(internalSeparator?:"||") // separator string needs escaping as per a regex
 //        log.debug "input csv = " + charCsv
-        charCsv.eachCsvLine { tokens ->
+
+        def csvReader = new CSVReader(new StringReader(charCsv))
+
+        def tokens = csvReader.readNext()
+        while (tokens) {
 //            log.debug "tokens = " + tokens
             if (lineCount == 0) {
                 // assume first line is header with character names
@@ -107,15 +113,11 @@ class CharactersService {
 
                 charMap.put(name, thisChars)
             }
-//            log.debug(lineCount + ". " + charMap);
-
+            tokens = csvReader.readNext()
             lineCount++;
         }
 
-        //def jsonOutput = new groovy.json.JsonBuilder( charMap ).toString()
-        //log.debug("JSON output: " + jsonOutput);
-
-        return charMap
+        charMap
     }
 
     /**

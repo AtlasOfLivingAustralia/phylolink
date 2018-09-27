@@ -117,7 +117,7 @@
     }
 </script>
 
-<div class="span6" id="pubSuggestions">
+<div class="col-sm-6 col-md-6" id="pubSuggestions">
 
 </div>
 

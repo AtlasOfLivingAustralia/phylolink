@@ -2,9 +2,10 @@ package au.org.ala.phyloviz
 
 import au.org.ala.ws.service.WebService
 import grails.converters.JSON
-import org.apache.commons.httpclient.NameValuePair
+import org.apache.http.NameValuePair
 import org.apache.http.entity.ContentType
-import org.codehaus.groovy.grails.web.json.JSONArray
+import org.apache.http.message.BasicNameValuePair
+import org.grails.web.json.JSONArray
 //@Transactional
 class AlaService {
     static transactional = true
@@ -189,14 +190,16 @@ class AlaService {
     def getFacets(baseUrl) {
         def results = []
 
-        def url = "${baseUrl}/search/grouped/facets";
-        def facets = webServiceService.get(url);
-        facets = JSON.parse(facets);
+        if(baseUrl) {
+            def url = "${baseUrl}/search/grouped/facets";
+            def facets = webServiceService.get(url);
+            facets = JSON.parse(facets);
 
-        //merge with group names
-        facets.each { g ->
-            g.facets.each { f ->
-                results.add([group: g.title, name: f.field, displayName: i18n().getAt('facet.' + f.field) ?: f.field])
+            //merge with group names
+            facets.each { g ->
+                g.facets.each { f ->
+                    results.add([group: g.title, name: f.field, displayName: i18n().getAt('facet.' + f.field) ?: f.field])
+                }
             }
         }
 
@@ -425,8 +428,8 @@ class AlaService {
         // moved code to limiting the number of filter query to saveQuery function.
         // it is better to put it there than do it here.
 
-        nameValuePairs[0] = new NameValuePair("q", q);
-        nameValuePairs[1] = new NameValuePair("fq", fq);
+        nameValuePairs[0] = new BasicNameValuePair("q", q);
+        nameValuePairs[1] = new BasicNameValuePair("fq", fq);
         return webServiceService.postNameValue(url, nameValuePairs);
     }
 

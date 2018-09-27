@@ -7,7 +7,7 @@ import groovy.json.JsonSlurper
 import jade.tree.JadeTree
 import jade.tree.TreeReader
 import org.apache.commons.io.IOUtils
-import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import grails.web.mapping.LinkGenerator
 import org.hibernate.Session
 
 import javax.annotation.PostConstruct

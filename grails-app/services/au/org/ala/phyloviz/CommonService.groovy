@@ -1,7 +1,7 @@
 package au.org.ala.phyloviz
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import grails.web.mapping.LinkGenerator
 
 import javax.xml.bind.DatatypeConverter
 import java.text.SimpleDateFormat

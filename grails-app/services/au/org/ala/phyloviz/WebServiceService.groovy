@@ -19,21 +19,23 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
-import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.NameValuePair
-import org.apache.commons.httpclient.methods.PostMethod
+import org.apache.http.NameValuePair
 import org.apache.commons.io.IOUtils
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.MultipartEntity
-import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.apache.http.impl.client.HttpClients
+import org.grails.web.converters.exceptions.ConverterException
+import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
 
 import static groovyx.net.http.Method.POST
 
 class WebServiceService implements InitializingBean {
 
-    public void afterPropertiesSet() {
-        JSONObject.NULL.metaClass.asBoolean = { -> false }
+    void afterPropertiesSet() {
+//        JSONObject.NULL.metaClass.asBoolean = { -> false }
     }
 
     def get(String url, String cookie) {
@@ -241,11 +243,23 @@ class WebServiceService implements InitializingBean {
      * @return
      */
     def postNameValue(String url, NameValuePair[] nameValuePairs ){
-        def post = new PostMethod(url)
-        post.setRequestBody(nameValuePairs)
 
-        def http = new HttpClient()
-        http.executeMethod(post)
-        return post.getResponseBodyAsString();
+        def client = HttpClients.createDefault()
+        def httpPost = new HttpPost(url)
+
+        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs as List));
+
+        CloseableHttpResponse response = client.execute(httpPost);
+
+        StringBuffer buffer = new StringBuffer()
+        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))
+        String dataLine = null
+        while((dataLine = reader.readLine()) != null){
+            buffer.append(dataLine)
+        }
+        String responseMsg = buffer.toString()
+        client.close()
+
+        responseMsg
     }
 }

@@ -7,7 +7,6 @@
 <head>
     <meta name="layout" content="main"/>
     <title>${name} trees</title>
-    <r:require modules="bugherd"/>
     <r:require modules="css"/>
 </head>
 
@@ -30,6 +29,7 @@
             <thead>
             <tr>
                 <th>Visualisation</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>

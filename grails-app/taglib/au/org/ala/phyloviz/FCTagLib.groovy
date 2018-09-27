@@ -3,9 +3,9 @@ package au.org.ala.phyloviz
 import au.org.ala.cas.util.AuthenticationCookieUtils
 import grails.util.Environment
 import groovy.xml.MarkupBuilder
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.codehaus.groovy.grails.web.json.JSONObject
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.grails.web.json.JSONArray
+import org.grails.web.json.JSONObject
+import grails.web.servlet.mvc.GrailsParameterMap
 
 
 import static au.org.ala.phyloviz.Attribute.outputAttributes
@@ -152,7 +152,7 @@ class FCTagLib {
             def inputAttrs = [
                 name:"${attrs.name}",
                 id:"${attrs.id ?: attrs.name}",
-                class: (attrs.size ?: 'span6') + ' printed-form-field'
+                class: (attrs.size ?: 'col-sm-6 col-md-6') + ' printed-form-field'
             ]
 
             def ignoreList = ['name', 'id']

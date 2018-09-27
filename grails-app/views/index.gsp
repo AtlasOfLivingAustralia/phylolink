@@ -5,27 +5,21 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title>Phylogenetic Toolbox</title>
+    <title>Phylolink</title>
     <meta name="layout" content="main"/>
-    <r:require modules="jquery"/>
-    <r:require modules="bugherd"/>
-    <r:require modules="css"/>
-    <r:require modules="bootstrapApp"/>
 </head>
 
 <body>
 
-<div class="border-bottom margin-left-3 margin-right-3">
-    <h1>Phylolink</h1>
-</div>
+<h1>Phylolink</h1>
 
-<div class="panel panel-default padding-left-3 padding-right-3">
-    <h4>Overview</h4>
+<div class="panelXX panel-defaultXX">
 
-    <div class="panel-body">
 
-        <div class="row-fluid">
-            <div class="span6 padding-right-1">
+    <div class="panel-bodyXX">
+
+        <div class="row">
+            <div class="col-sm-6 col-md-6">
                 <div class="word-limit">
                     <p>
                         Phylolink is a collection of tools through which biodiversity can be explored from  a <a href="http://www.ala.org.au/what-is-phylogeny/">phylogenetic</a>    (or tree of life) perspective.
@@ -71,9 +65,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="span6 padding-left-1">
-                <image src="${resource(dir: 'images', file: 'phylolink_promo.jpg')}"
+            <div class="col-sm-6 col-md-6">
+                <asset:image src="phylolink_promo.jpg"/>
             </div>
         </div>
 
@@ -92,7 +85,7 @@
 </div>
 
 
-<r:script disposition="defer">
+<g:javascript>
     $('#collaborationTip').popover({
         html: true,
         content: '<ul>' +
@@ -107,7 +100,7 @@
             $('#collaborationTip').popover('hide');
         }
     });
-</r:script>
+</g:javascript>
 
 </body>
 </html>

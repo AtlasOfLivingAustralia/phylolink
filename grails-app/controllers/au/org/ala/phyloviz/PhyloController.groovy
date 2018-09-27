@@ -1,4 +1,5 @@
 package au.org.ala.phyloviz
+
 import grails.converters.JSON
 import groovy.json.JsonBuilder
 
@@ -9,7 +10,6 @@ import static org.springframework.http.HttpStatus.*
 class PhyloController extends BaseController {
     def webServiceService;
     def utilsService
-    def userService
     def treeService
     def phyloService
     def authService
@@ -23,8 +23,6 @@ class PhyloController extends BaseController {
 
     def show(Phylo phyloInstance) {
         def tree = Tree.findById(phyloInstance.getStudyid());
-//        def user = userService.getUser();
-//        log.debug("current user: "+user);
         def userId = authService.getUserId();
         if(userId != ""){
             userId = userId instanceof String?Long.parseLong(userId):userId;
@@ -38,7 +36,7 @@ class PhyloController extends BaseController {
             log.debug('editable');
         }
 
-        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid()]
+        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid(), phyloInstance: phyloInstance]
     }
 
     def deleteViz() {
@@ -142,19 +140,18 @@ class PhyloController extends BaseController {
         def data = params
         data.region = region;
         def dr = ''
-        def widgetObject = new WidgetFactory();
+        def widgetObject = new au.org.ala.phyloviz.WidgetFactory();
         widgetObject = widgetObject.createWidget(data, grailsApplication, webServiceService, utilsService, applicationContext, dr);
 
         data = widgetObject.process(data, null);
         data.statisticSummary = utilsService.statisticSummary(data.data, true)
-        log.debug(data)
         if (download) {
             response.setHeader('Content-disposition', 'attachment; filename=data.csv')
             render(contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data?.data))
         } else if (params.callback) {
             render(contentType: 'text/javascript', text: "${params.callback}(${data as JSON})")
         } else {
-            render(contentType: 'application/json', text: data as JSON)
+            render(contentType: 'application/json', text: "${data as JSON}")
         }
     }
 

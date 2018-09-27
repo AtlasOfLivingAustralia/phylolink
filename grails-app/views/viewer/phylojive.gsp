@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<div class="container-fluid">
+<div class="container-fluid" style="margin-left:-20px; margin-right:-20px;">
     <div class="row-fluid">
         <div class="span12">
             <ul class="breadcrumb">
@@ -27,12 +27,12 @@
     </div>
 
     <div class="row-fluid">
-        <div class="span6">
+        <div class="col-sm-6 col-md-6">
             <div id="info"></div>
             <g:render template="../phylo/settings"></g:render>
             <g:render template="../phylo/trimming"></g:render>
         </div>
-        <div class="span6">
+        <div class="col-sm-6 col-md-6">
             <g:render template="../phylo/metadata"></g:render>
         </div>
     </div>

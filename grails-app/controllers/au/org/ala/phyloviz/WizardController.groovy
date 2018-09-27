@@ -18,7 +18,6 @@ class WizardController {
      * @return
      */
     def pickMethod() {
-        log.debug(params)
         switch (params.options) {
             case 'addTree':
                 redirect(action: 'create')
@@ -163,9 +162,9 @@ class WizardController {
             name = owner.getDisplayName() + "'s"
         }
         def myTrees = Tree.findAllByOwner(owner ?: -1) ?: []
-        if (myTrees.size() == 0) {
-            flash.message = 'You do not have any trees uploaded.'
-        }
+//        if (myTrees.size() == 0) {
+//            flash.message = 'You do not have any trees uploaded.'
+//        }
         [trees: myTrees, name: name]
     }
 

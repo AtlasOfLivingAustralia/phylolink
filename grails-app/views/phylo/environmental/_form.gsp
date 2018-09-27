@@ -1,6 +1,6 @@
 <script id="_tmplEnvironmental" type="text/html">
 <div class="row">
-    <div class="span6">
+    <div class="col-sm-6 col-md-6">
         <div data-bind="attr:{id: widgetId, name: widgetId}" class="panel">
             <div class="fieldcontain ${hasErrors(bean: phyloInstance, field: 'widgets', 'error')} panel-heading">
                 <g:message code="phylo.widget.environment.label" default="Environmental Histogram Widget"/>
@@ -11,7 +11,7 @@
                     <div class="span10">
                         <div class="container-fluid">
                             <div class="row-fluid">
-                                <div class="span6">
+                                <div class="col-sm-6 col-md-6">
                                     <input type="hidden" data-bind="attr:{id: typeId, name:typeId, value:type}"
                                            value=""
                                            readonly="true"/>

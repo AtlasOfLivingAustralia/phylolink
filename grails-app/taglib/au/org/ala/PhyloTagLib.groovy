@@ -5,7 +5,7 @@ class PhyloTagLib {
 //    static defaultEncodeAs = 'html'
     //static encodeAsForTags = [tagName: 'raw']
     static namespace = 'phy'
-    def grailsApplication
+
     def webServiceService
     /**
      * a json output of regions. These are mostly state boundaries and IBRA regions.

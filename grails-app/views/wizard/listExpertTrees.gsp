@@ -7,7 +7,6 @@
 <head>
     <meta name="layout" content="main"/>
     <title>Expert Trees</title>
-    <r:require modules="bugherd"/>
 </head>
 
 <body>
@@ -28,14 +27,17 @@
             <th>Tree name</th>
             <th>Species covered</th>
             <th>Action</th>
+            <g:if test="${isAdmin}">
+                <th>Admin functions</th>
+            </g:if>
         </tr>
         </thead>
         <tbody>
         <g:each in="${trees}" var="tree" status="i">
             <tr>
-                <td class="span6">
+                <td class="col-sm-6 col-md-6">
                     <div>
-                        <div class="btn btn-link"  onclick="showInfo(${i})">
+                        <div class="btn btn-link" style="text-align: left; " onclick="showInfo(${i})">
                             ${tree.getTitle()}
                             <i class="icon-info-sign" title="Show more information"></i>
                         </div>
@@ -52,22 +54,27 @@
                     </g:else>
                 </td>
                 <td style="justify: center">
+
+
                     <g:if test="${userLoggedIn}">
                         <div class="btn btn-small btn-primary"
                              onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
-                            <i class="icon icon-ok"></i> Open</div>
+                            <i class="icon icon-ok icon-white"></i> Open</div>
                     </g:if>
                     <a
                             href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
                             class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
-                    <g:if test="${isAdmin}">
+
+                </td>
+                <g:if test="${isAdmin}">
+                <td>
                         <div class="btn btn-small" onclick="window.location =
                                 '${createLink( controller: 'tree', action: 'rematchExpertTree')}?treeId=${tree.getId()}'">
                             <i class="icon-repeat"></i> Rematch
                         </div>
                         <g:render template="/tree/mapOtu"  model="${[id:tree.getId()]}"></g:render>
-                    </g:if>
                 </td>
+                </g:if>
             </tr>
             <tr>
                 <td colspan="3" style="display: none" class="info" id="info-${i}">

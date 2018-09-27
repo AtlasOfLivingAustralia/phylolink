@@ -15,12 +15,9 @@
 </style>
 
 <div id="habitatMain">
-    <div class="bs-callout">
+    <div>
         <p>Display histograms of information like precipitation, temperature, State etc. of occurrences in the selected clade.</p>
-
         <div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i>Add histogram</div>
-        <div id="downloadPlotDataLink" class="btn btn-default" data-toggle="modal" href="#plotOccurrenceDownloadModal"
-             data-bind="visible: habitats().length > 0"><i class="fa fa-download"></i>&nbsp;Download raw data</div>
     </div>
 
     <div data-bind="sortable:{data:habitats, afterMove: $root.onMove, options: { cancel: '.no-sort'}}">
@@ -36,7 +33,10 @@
 
             <div class="no-sort panel panel-default" data-bind="select: $root.isHabitatSelected($data), visible: $root.isHabitatSelected($data)">
                 <button type="button" class="close" data-bind="click: $root.clearHabitat">&times;</button>
-                <div><input class='pull-left' data-bind="value: displayName" id="layerCombobox"/><div>&nbsp;Search for a layer by name or browse the tree.</div></div>
+                <div>
+                    <input class='pull-left' data-bind="value: displayName" id="layerCombobox"/>
+                    <div>&nbsp;&nbsp;Search for a layer by name or browse the tree.</div>
+                </div>
                 <div>&nbsp;</div>
                 <div id='jqxTree'></div>
             </div>

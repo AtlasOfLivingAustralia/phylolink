@@ -37,7 +37,7 @@
 
     </div>
 
-    <div id="alaProfile" class="span6">
+    <div id="alaProfile" class="col-sm-6 col-md-6">
 
     </div>
 </div>

@@ -5,9 +5,8 @@ import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import net.sf.json.JSONObject
 import org.apache.commons.io.FileUtils
-import org.apache.commons.logging.LogFactory
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
-import org.codehaus.groovy.grails.web.mapping.LinkGenerator
+import grails.web.mapping.LinkGenerator
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 import java.util.regex.Pattern
@@ -20,7 +19,6 @@ class UtilsService {
     def treeService
     def authService
 
-    def log = LogFactory.getLog(getClass())
     LinkGenerator grailsLinkGenerator
 
     def getViewerUrl(treeId, studyId, meta) {

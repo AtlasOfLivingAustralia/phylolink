@@ -1,16 +1,17 @@
 package au.org.ala.phyloviz
 
 import grails.converters.JSON
-import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.NameValuePair
-import org.apache.commons.httpclient.methods.GetMethod
-import org.apache.commons.httpclient.methods.PostMethod
+import org.apache.http.HttpHost
+import org.apache.http.NameValuePair
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.message.BasicNameValuePair
 import org.apache.http.entity.mime.content.FileBody
 
 class SandboxService {
-    def webServiceService;
-    def authService;
-    def grailsApplication;
+
+    def webServiceService
+    def authService
+    def grailsApplication
 
     /**
      * upload file to sandbox. it is a two part process. uploading file and uploading to sandbox for indexing.
@@ -122,26 +123,34 @@ class SandboxService {
                    String firstLineIsData, String customIndexedFields) {
 
         NameValuePair[] nameValuePairs = new NameValuePair[7]
-        nameValuePairs[0] = new NameValuePair("csvZippedUrl", csvUrl)
-        nameValuePairs[1] = new NameValuePair("headers", headers)
-        nameValuePairs[2] = new NameValuePair("datasetName", datasetName)
-        nameValuePairs[3] = new NameValuePair("separator", separator)
-        nameValuePairs[4] = new NameValuePair("firstLineIsData", firstLineIsData)
-        nameValuePairs[5] = new NameValuePair("customIndexedFields", customIndexedFields)
-        nameValuePairs[6] = new NameValuePair("alaId", authService.getUserId())
+        nameValuePairs[0] = new BasicNameValuePair("csvZippedUrl", csvUrl)
+        nameValuePairs[1] = new BasicNameValuePair("headers", headers)
+        nameValuePairs[2] = new BasicNameValuePair("datasetName", datasetName)
+        nameValuePairs[3] = new BasicNameValuePair("separator", separator)
+        nameValuePairs[4] = new BasicNameValuePair("firstLineIsData", firstLineIsData)
+        nameValuePairs[5] = new BasicNameValuePair("customIndexedFields", customIndexedFields)
+        nameValuePairs[6] = new BasicNameValuePair("alaId", authService.getUserId())
 
-        def post = new PostMethod(url)
+        def targetHost = new HttpHost(url)
+        def client = HttpClientBuilder.create().build();
+        def httpResponse = client.execute(targetHost, post);
+
+
+
+//        StringEntity messageEntity = new StringEntity( message,
+//                ContentType.create("text/plain", "UTF-8"));
+//        post.setEntity(messageEntity);
+
+//        def post = new PostMethod(url)
         post.setRequestBody(nameValuePairs)
-
-        def http = new HttpClient()
-        http.executeMethod(post)
+        client.executeMethod(post)
 
         //TODO check the response
         log.debug(post.getResponseBodyAsString())
 
         //reference the UID caches
-        def get = new GetMethod(grailsApplication.config.sandboxBiocacheServiceUrl + "/cache/refresh")
-        http.executeMethod(get)
+        def sandboxGet = new HttpHost(grailsApplication.config.sandboxBiocacheServiceUrl + "/cache/refresh")
+        def sandboxResponse = client.execute( targetHost, sandboxGet)
 
         post.getResponseBodyAsString()
     }
@@ -194,7 +203,7 @@ class SandboxService {
         }
         
         if (s.size() > 0) {
-            return new ConvertSandbox().convert(s.get(0));
+            return new au.org.ala.phyloviz.ConvertSandbox().convert(s.get(0));
         } else {
             //not found in Sandbox, use default sandbox
             def d = findByDrtId(druid)
@@ -214,7 +223,7 @@ class SandboxService {
             if (dr.hasErrors()) {
                 return ['error': "Failed to create an entry into database for dataresource ${druid}." + dr.errors]
             }
-            return new ConvertSandbox().convert(dr);
+            return new au.org.ala.phyloviz.ConvertSandbox().convert(dr);
         }
     }
 
@@ -230,7 +239,7 @@ class SandboxService {
         def s = Sandbox.findAll {
             owner == owner && status == status
         };
-        def result = [], cs =  new ConvertSandbox();
+        def result = [], cs =  new au.org.ala.phyloviz.ConvertSandbox();
         s.each{ item ->
             def c = cs.convert(item)
             if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
@@ -246,19 +255,21 @@ class SandboxService {
      * @return
      */
     List getAllDataresourceInfoByOwner(Owner owner){
-        def status = true;
+
+        def status = true
 
         def s = Sandbox.findAll {
             owner == owner && status == status
-        };
-        def result = [], cs =  new ConvertSandbox();
-        s.each{ item ->
+        }
+
+        def result = [], cs =  new au.org.ala.phyloviz.ConvertSandbox()
+        s.each { item ->
             def c = cs.convert(item)
             if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
             if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl) c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
             result.push(c)
         }
-        return result;
+        result
     }
 
     /**
@@ -270,7 +281,7 @@ class SandboxService {
         def s = Sandbox.findAll {
             owner == Owner.findByDisplayName("Guest") && status == status && phyloId == phyloId
         };
-        def result = [], cs =  new ConvertSandbox();
+        def result = [], cs =  new au.org.ala.phyloviz.ConvertSandbox()
         s.each{ item ->
             def c = cs.convert(item)
             if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)

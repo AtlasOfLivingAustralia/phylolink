@@ -3,7 +3,7 @@
 --%>
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span6">
+        <div class="col-sm-6 col-md-6">
         <div class="tabbable">
             <ul class="nav nav-tabs">
                 <li class="active">
@@ -22,7 +22,7 @@
                             type="text"
                             placeholder="Choose a layer here"
                             onfocus="utils.clearPlaceholder(this)"/>
-                    <div class="span6">
+                    <div class="col-sm-6 col-md-6">
                         <div class="well">
 
                         </div>

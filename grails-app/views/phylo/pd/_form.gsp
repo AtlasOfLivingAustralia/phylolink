@@ -1,6 +1,6 @@
 <script id="_tmplPd" type="text/html">
     <div class="row">
-    <div class="span6">
+    <div class="col-sm-6 col-md-6">
     <div data-bind="attr:{id: widgetId}" class="panel">
         <div class="panel-heading">
             <g:message code="phylo.widget.pd.label" default="Phylogenetic Diversity Widget" />
