@@ -8,6 +8,7 @@ branches:
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
   - $HOME/.m2
@@ -15,7 +16,7 @@ cache:
   - $HOME/.gradle/wrapper/
 
 after_success:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish --stacktrace --info '
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && travis_retry ./gradlew publish'
 env:
   global:
   - secure: hPmG2SGmylGFsb/C5sBxJlAFt/GFLa1Ncg/PU7q8oBvVwu3GXkH4QRO4a6Jl7yTsNw/hEG4UZp/WFd+BfzCmo3oKvUWSIvQrweAKzNEiiVKArOw3LFJ8+CMiPhkfhMg3CXurDm/fzUkl5getSz00Me2WdPk3obG+nKY39rGpoBQ=
