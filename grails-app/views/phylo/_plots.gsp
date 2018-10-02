@@ -25,7 +25,7 @@
     %{--<h4 data-bind="visible: habitats().length > 0">Selected histograms (drag to changeorder)</h4>--}%
     <div data-bind="sortable:{data:habitats, afterMove: $root.onMove, options: { cancel: '.no-sort'}}">
         <div class="item top-buffer">
-            <div class="label label-default" data-bind="visible: !$root.isHabitatSelected($data)">
+            <div class=" hide  label label-default" data-bind="visible: !$root.isHabitatSelected($data)">
                 <i class="glyphicon glyphicon-white glyphicon glyphicon-resize-vertical" aria-hidden="true" style="cursor: move"></i>
 
                 <div class="label label-default" style="color: #ffffff;display:inline-block;cursor: pointer" href="#"

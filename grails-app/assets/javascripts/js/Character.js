@@ -359,18 +359,24 @@ var Character = function (options) {
             var obj = $('#'+minUploadId)
             obj.toggle('hide', function(){
                 if(!obj.is(':visible')){
-                    $('#'+uploadTitleId +' i').addClass('icon-chevron-down');
-                    $('#'+uploadTitleId+' i').removeClass('icon-chevron-up');
+                    $('#'+uploadTitleId +' i').addClass('glyphicon-chevron-down');
+                    $('#'+uploadTitleId+' i').removeClass('glyphicon-chevron-up');
                 } else {
-                    $('#'+uploadTitleId+' i').removeClass('icon-chevron-down');
-                    $('#'+uploadTitleId+' i').addClass('icon-chevron-up');
+                    $('#'+uploadTitleId+' i').removeClass('glyphicon-chevron-down');
+                    $('#'+uploadTitleId+' i').addClass('glyphicon-chevron-up');
                 }
             });
+        }
+        this.cancelCharUpload = function(model, e){
+            $("#csvFile").val('');
+            this.headers([]);
         }
     }
 
     var upload = new UploadViewModel();
     ko.applyBindings(upload, document.getElementById('uploadCharacters'));
+
+
     /**
      * transform data to be able to be displayed by chart. i.e. convert qualitative character to term frequency
      * to display as histogram.
@@ -1168,8 +1174,6 @@ var Character = function (options) {
     });
     if (options.edit){
         $("#csvFile").on('change', function(event){
-
-
             var file = event.target.files[0];
             that.readFile(file, that.showHeaders);
         });
