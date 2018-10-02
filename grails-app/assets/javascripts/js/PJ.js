@@ -835,35 +835,43 @@ var PJ = function (params) {
 
         opt.codeBase = opt.codeBase || '';
         var navHTML2 = '<div style="position:relative">' +
-            '<div style="position: absolute; left: -153px; top: 5px; width:50px; height: 20px; cursor: pointer;">' +
-            '<div class="input-append">' +
-            '<input style="width:150px;" id="searchText" type="text" placeholder="Search tree" onfocus="utils.clearPlaceholder(this)">' +
-            '<button class="btn btn-primary" type="button" id="searchBtn"><i class="icon icon-white icon-search"></i> </button>' +
-            '</div></div>' +
-            '<div id="panup" style="position: absolute; left: 13px; top: 42px;' +
-            ' width: 18px; height: 18px; cursor: pointer;"><div id="north" title="Pan up"><i class="icon-arrow-up"' +
-            ' aria-hidden="true"></i></div></div><div id="panleft" title="Pan left" style="position: absolute; left: 4px; top: 56px;' +
-            ' width: 18px; height: 18px; cursor: pointer;"><div id="west"><i class="icon-arrow-left"' +
+            '<div style="position: absolute; left: -170px; top: 10px; width:50px; height: 20px; cursor: pointer;">' +
+                '<div class="input-group input-group-sm">' +
+                    '<input type="text" id="searchText" style="width:180px;" class="form-control input-sm" placeholder="Search tree" name="srch-term" id="srch-term" onfocus="utils.clearPlaceholder(this)"> ' +
+                    '<div class="input-group-btn">' +
+                        '<button class="btn btn-default btn-sm" id="searchBtn" type="submit"><i class="glyphicon glyphicon-search"></i></button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="pj-nav-controls" style="position: absolute; left: -10px; top: 15px; width:50px; height: 20px; cursor: pointer;">' +
+            '<div id="panup" style="position: absolute; left: 10px; top: 42px; cursor: pointer;">' +
+            '<div id="north" title="Pan up"><i class="glyphicon glyphicon-arrow-up"' +
+            ' aria-hidden="true"></i></div></div><div id="panleft" title="Pan left" style="position: absolute; left: 0px; top: 56px;' +
+            ' cursor: pointer;"><div id="west"><i class="glyphicon glyphicon-arrow-left"' +
             ' aria-hidden="true"></i></div></div><div id="panright" title="Pan right" style="position: absolute; left: 22px; ' +
-            'top: 56px; width: 18px; height: 18px; cursor: pointer;"><div id="east"><i class=" ' +
-            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
-            'icon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
-            'absolute; left: 13px; top: 70px; width: 18px; height: 18px; cursor: pointer;"><div id="south"><i ' +
-            'class="icon-arrow-down" aria-hidden="true"></i></div></div>' +
-            '<div id="zoomout" title="Zoom out" style="position: absolute; left: 13px; top: 129px; width: 18px; height: 18px; ' +
-            'cursor: pointer;"><div id="zoomOUT"><i class="icon-zoom-out"></i></div></div>' +
-            '<div id="zoomworld" style="position: absolute; left: 13px; top: 93px; width: 18px; height: 18px; cursor: pointer;"><div id="world" style="position: relative; width: 18px; height: ' +
-            '18px;" ><i class="icon-resize-small"></i></div></div>' +
-            '<div id="zoomin" title="Zoom in" style="position: absolute; left: 13px; top: 111px; width: 18px; height: 18px; cursor: ' +
+            'top: 56px; cursor: pointer;"><div id="east"><i class=" ' +
+            'glyphicon glyphicon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
+            'absolute; left: 10px; top: 70px; cursor: pointer;"><div id="south"><i ' +
+            'class="glyphicon glyphicon-arrow-down" aria-hidden="true"></i></div></div>' +
+            '<div id="zoomout" title="Zoom out" style="position: absolute; left: 13px; top: 169px;  ' +
+            'cursor: pointer;"><div id="zoomOUT"><i class="glyphicon glyphicon-zoom-out"></i></div></div>' +
+            '<div id="zoomworld" style="position: absolute; left: 13px; top: 103px;  cursor: pointer;"><div id="world" style="position: relative;" >' +
+            '<i class="glyphicon glyphicon-resize-small"></i></div></div>' +
+            '<div id="zoomin" title="Zoom in" style="position: absolute; left: 13px; top: 141px;  cursor: ' +
             'pointer;">' +
-            '<div id="zoomIN"><i class="icon-zoom-in"></i></div></div>' +
-            '<div id="settingsBtn" title="Tree display options"> <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
-            '   <i class="icon icon-cog"></i>' +
-            '</a></div>' +
-            '<div id="trimmingBtn" title="Tree trimming options"> <a href="#' + config.trimmingId + '" role="button" data-toggle="modal">' +
-            '   <i class="icon icon-leaf icon-green"></i>' +
-            '</a></div>' +
+            '<div id="zoomIN" margin-top="10px;"><i class="glyphicon glyphicon-zoom-in"></i></div></div>' +
+            '<div id="settingsBtn" title="Tree display options" style="margin-top:70px;">' +
+                ' <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
+                    '<i class="glyphicon glyphicon-cog"></i>' +
+                '</a>' +
+            '</div>' +
+            '<div id="trimmingBtn" title="Tree trimming options" style="margin-top:90px;"> ' +
+                '<a href="#' + config.trimmingId + '" role="button" data-toggle="modal">' +
+                    '<i class="glyphicon glyphicon-leaf"></i>' +
+                '</a>' +
+            '</div>' +
             '</div>';
+
 
         var navHTML3 = '<div style="position:relative"><div id="panup" style="position: absolute; left: 13px; top: 4px;' +
             ' width: 18px; height: 18px; cursor: pointer;"><div id="north"><span class="glyphicon glyphicon-arrow-up"' +

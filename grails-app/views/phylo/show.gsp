@@ -8,52 +8,35 @@
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
-    <meta name="breadcrumb" content="My Visualisations">
+    <meta name="breadcrumb" content="${g.message(code:'default.show.label', args:[entityName])}">
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
+    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},My Visualisations"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages: ["corechart"]});
     </script>
-    %{--<r:require modules="application,leaflet,phylojive,character,map,contextmenu,records,appSpecific,jqxTree,select2,css"/>--}%
-
     <asset:stylesheet src="PhyloJive.css" />
     <asset:stylesheet src="phylolink.css" />
     <asset:stylesheet src="jquery.contextMenu.css" />
     <asset:stylesheet src="dparty/select2/select2-3.5.8.css" />
     <asset:stylesheet src="jqwidgets/styles/jqx.base.css" />
     <asset:stylesheet src="maingsp.css" />
-
     <asset:stylesheet src="jquery-ui.css" />
-
     <asset:stylesheet src="slider.css" />
     <asset:stylesheet src="leaflet.v0.7.3.css" />
     <asset:stylesheet src="leaflet.fullscreen.v0.0.2.css" />
     <asset:stylesheet src="Control.Legend.css" />
     <asset:stylesheet src="Control.Loading.css" />
-
 </head>
 
-
-<body>
-%{--padding top since breadcrumb is hidden by the new nav bar--}%
-<div class="container-fluid" style="display:none;">
-    <div class="row">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri: '/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span
-                        class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'myViz')}">My Visualisations</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+<body class="fluid">
+<g:render template="settings"></g:render>
+<g:render template="trimming"></g:render>
 
 <div class="container-fluid" style="margin-left:-10px; margin-right:-20px;">
     <div class="row" style="margin-top: -20px">
         <div class="col-sm-5 col-md-5" style="padding-right:0px;padding-left:0px;">
             <div id="info"></div>
-            <g:render template="settings"></g:render>
-            <g:render template="trimming"></g:render>
         </div>
 
         <style type="text/css">
@@ -87,7 +70,7 @@
                 <li role="presentation">
                     <a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab" id="habitatTab">Analysis</a>
                 </li>
-                <g:if test="${true  || edit}">
+                <g:if test="${edit}">
                     <li role="presentation" >
                         <a href="#records" aria-controls="profile" role="tab"
                                                 data-toggle="tab"
@@ -156,7 +139,6 @@
 <script id="templateOccurrence" type="text/html">
     <g:render template="occurrence"></g:render>
 </script>
-
 
 <asset:javascript src="thirdparty/jsphylosvg-min.js" />
 <asset:javascript src="thirdparty/jit.js" />

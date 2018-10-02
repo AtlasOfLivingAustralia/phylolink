@@ -171,26 +171,6 @@ function Map(options) {
         }
     }
 
-    //add map here
-    var RecordLayerControl = L.Control.extend({
-        options: {
-            position: 'topright',
-            collapsed: false
-        },
-        onAdd: function (map) {
-            var container = L.DomUtil.create('div', 'leaflet-control-layers');
-            var $container = $(container);
-            $container.attr("id", "recordLayerControl");
-            $('#mapLayerControls').prependTo($container);
-            // Fix for Firefox select bug
-            var stop = L.DomEvent.stopPropagation;
-            L.DomEvent
-                .on(container, 'click', stop)
-                .on(container, 'mousedown', stop);
-            return container;
-        }
-    });
-
     var lmap = L.map(id, {
         fullscreenControl: true,
         fullscreenControlOptions: {
@@ -216,16 +196,16 @@ function Map(options) {
     });
 
     var outlineCtrl = new L.Control.Checkbox({
-        position: 'bottomleft',
-        text: 'Outline: ',
+        position: 'topleft',
+        text: 'Outline ',
         onClick: function () {
             that.updateLayersEnv();
         }
     })
 
-    var opactiySlider = new L.Control.Slider({
-        position: 'bottomleft',
-        text: 'Opacity:&nbsp;',
+    var opacitySlider = new L.Control.Slider({
+        position: 'topleft',
+        text: 'Opacity',
         onChange: function (val) {
             env.opacity = val;
             that.updateLayersEnv();
@@ -240,8 +220,8 @@ function Map(options) {
     });
 
     var sizeSlider = new L.Control.Slider({
-        text: 'Size:&nbsp;',
-        position: 'bottomleft',
+        text: 'Size',
+        position: 'topleft',
         onChange: function (val) {
             env.size = parseInt(val);
             that.updateLayersEnv();
@@ -271,12 +251,12 @@ function Map(options) {
     var legendCtrl = new L.Control.Legend(options.legend);
     // initializing
     env.colormode = legendCtrl.options.urlParams.cm = colorBy.getValue();
-    lmap.addControl(loadingControl);
-    lmap.addControl(new RecordLayerControl());
-    lmap.addControl(outlineCtrl);
-    lmap.addControl(opactiySlider);
-    lmap.addControl(sizeSlider);
     colorBy.addTo(lmap);
+    lmap.addControl(loadingControl);
+    lmap.addControl(outlineCtrl);
+    lmap.addControl(opacitySlider);
+    lmap.addControl(sizeSlider);
+    // colorBy.addTo(lmap);
     lmap.addControl(legendCtrl);
 
     pj.on('click', function (node, list, ajax) {

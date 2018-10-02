@@ -135,23 +135,27 @@ class PhyloController extends BaseController {
      * @return
      */
     def getHabitat() {
-        def region = '';
+
         def download = ( params.download?:false ) as Boolean
         def data = params
-        data.region = region;
+        data.region = '';
         def dr = ''
-        def widgetObject = new au.org.ala.phyloviz.WidgetFactory();
-        widgetObject = widgetObject.createWidget(data, grailsApplication, webServiceService, utilsService, applicationContext, dr);
+
+        def widgetFactory = new au.org.ala.phyloviz.WidgetFactory();
+        def widgetObject = widgetFactory.createWidget(data, grailsApplication, webServiceService, utilsService, applicationContext, dr)
 
         data = widgetObject.process(data, null);
         data.statisticSummary = utilsService.statisticSummary(data.data, true)
+
+        def filteredData = data.findAll { it.key }
+
         if (download) {
             response.setHeader('Content-disposition', 'attachment; filename=data.csv')
-            render(contentType: 'text/plain', text: utilsService.convertJSONtoCSV(data?.data))
+            render(contentType: 'text/plain', text: utilsService.convertJSONtoCSV(filteredData?.data))
         } else if (params.callback) {
-            render(contentType: 'text/javascript', text: "${params.callback}(${data as JSON})")
+            render(contentType: 'text/javascript', text: "${params.callback}(${filteredData as JSON})")
         } else {
-            render(contentType: 'application/json', text: "${data as JSON}")
+            render(contentType: 'application/json', text: "${filteredData as JSON}")
         }
     }
 

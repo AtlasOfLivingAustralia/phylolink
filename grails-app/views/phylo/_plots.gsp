@@ -15,19 +15,22 @@
 </style>
 
 <div id="habitatMain">
+
+    <div style="margin-top:10px;" class="btn btn-primary pull-right" data-bind="click:addHabitat"><i class="glyphicon glyphicon-white glyphicon glyphicon-plus-sign"></i>Add new histogram</div>
     <div>
-        <p>Display histograms of information like precipitation, temperature, State etc. of occurrences in the selected clade.</p>
-        <div class="btn btn-primary" data-bind="click:addHabitat"><i class="icon-white icon-plus-sign"></i>Add histogram</div>
+        <p style="padding-top:10px;">Display histograms of information like precipitation, temperature, State etc. of occurrences in the selected clade.</p>
+        %{--<div class="btn btn-primary pull-right" data-bind="click:addHabitat"><i class="glyphicon glyphicon-white glyphicon glyphicon-plus-sign"></i>Add new histogram</div>--}%
     </div>
 
+    %{--<h4 data-bind="visible: habitats().length > 0">Selected histograms (drag to changeorder)</h4>--}%
     <div data-bind="sortable:{data:habitats, afterMove: $root.onMove, options: { cancel: '.no-sort'}}">
         <div class="item top-buffer">
             <div class="label label-default" data-bind="visible: !$root.isHabitatSelected($data)">
-                <i class="icon-white icon-resize-vertical" aria-hidden="true" style="cursor: move"></i>
+                <i class="glyphicon glyphicon-white glyphicon glyphicon-resize-vertical" aria-hidden="true" style="cursor: move"></i>
 
-                <div class="ellipselabel" style="color: #ffffff;display:inline-block;cursor: pointer" href="#"
+                <div class="label label-default" style="color: #ffffff;display:inline-block;cursor: pointer" href="#"
                      data-bind="text: displayName, click: $root.selectedHabitat"></div>
-                <i class="icon-white icon-remove" data-bind="click: $root.removeHabitat"
+                <i class="glyphicon glyphicon-remove" data-bind="click: $root.removeHabitat"
                    style="cursor: pointer"></i>
             </div>
 
@@ -38,7 +41,7 @@
                     <div>&nbsp;&nbsp;Search for a layer by name or browse the tree.</div>
                 </div>
                 <div>&nbsp;</div>
-                <div id='jqxTree'></div>
+                <div id='jqxTree' class=""></div>
             </div>
         </div>
     </div>
@@ -50,9 +53,12 @@
 
                 <div class="pull-right">
                     <div data-bind="text: name" style="display:none"></div>
-                    <i class="icon-download-alt" title="Download plot's raw data" data-bind="click: $root.downloadSummaryCsv, visible: !loading()"></i>
-                    <i class="icon-info-sign" title="Show more information"
+
+                    <i class="glyphicon glyphicon-download-alt" title="Download plot's raw data" data-bind="click: $root.downloadSummaryCsv, visible: !loading()"></i>
+                    <i class="glyphicon glyphicon-info-sign" title="Show more information"
                        data-bind="attr: { id: id_metadata }, click: $root.showInfo"></i>
+                    <i class="glyphicon glyphicon-remove" data-bind="click: $root.removeHabitat"
+                       style="cursor: pointer"></i>
                 </div>
 
                 <div>&nbsp;</div>
@@ -76,9 +82,9 @@
                 </tbody></table>
             </div>
 
-            <div class="panel-body">
+            <div class="panel-body" style="padding:0px;">
                 <div data-bind="attr:{id: id}, addHabitatChart: !$root.isHabitatSelected($data)"
-                     style="width: 100%; height: 200px;"></div>
+                     style="width: 100%; height: 200px; "></div>
             </div>
 
             <g:render template="plotDataSummary"></g:render>

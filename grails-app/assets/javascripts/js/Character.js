@@ -158,6 +158,7 @@ var Character = function (options) {
         self.count = ko.observable(1);
         self.selectedCharacter = ko.observable();
         self.lists = ko.observableArray([]);
+        self.activeCharacterList = ko.observableArray(["dave", "dave2"]);
         self.list = ko.observable({});
         self.edit = ko.observable(options.edit);
         self.listLoading = ko.observable(false);
@@ -180,22 +181,23 @@ var Character = function (options) {
             self.emit('statechange', self.charlist());
         };
 
-        self.addCharacter = function (name, e) {
-            if(e && !!$(e.target).attr('disabled')){
-                return;
-            }
-            if(typeof name != 'string'){
-                name = "";
-            }
-
+        self.addCharacter = function (e) {
+            var name = $('#selectChar').val();
             var opt = {name: name, id: 'charChart-' + self.count()}
-            self.count(self.count()+1);
+            self.count(self.count() + 1);
             var character = new Character(opt);
             self.selectedCharacter(character);
             self.characters.push(character);
-            self.newChar = true;
+            self.emit('newchar', self.charlist());
             return character;
         };
+
+        self.setActiveCharacterList = function(list){
+            self.activeCharacterList.removeAll();
+            for (var i = 0; i< list.length; i++){
+                self.activeCharacterList.push(list[i]);
+            }
+        }
 
         self.removeAllCharacters = function(silent){
             self.characters.removeAll();
@@ -211,6 +213,7 @@ var Character = function (options) {
         };
 
         self.isCharacterSelected = function (character) {
+            console.log(character);
             return character === self.selectedCharacter();
         };
 
@@ -246,7 +249,7 @@ var Character = function (options) {
 
         self.changeName = function (name, char) {
             char.name(name);
-            self.newChar && self.emit('newchar',self.charlist());
+            self.newChar && self.emit('newchar', self.charlist());
             self.newChar = false;
             self.emit('statechange', self.charlist());
         }
@@ -274,7 +277,8 @@ var Character = function (options) {
             }
         }
 
-        self.loadNewCharacters= function(){
+        self.loadNewCharacters = function(){
+            self.activeCharacterList.removeAll();
             if(self.list()){
                 self.characters.removeAll()
                 that.loadCharacterFromUrl(self.list().url);
@@ -307,48 +311,8 @@ var Character = function (options) {
         }
     };
 
-    ko.bindingHandlers.visibleAndSelect = {
-        init: function (element, valueAccessor, innerFn, data, koObj) {
-            console.log('init visible and select handler');
-            var input  = $(element).find("input");
-            input.autocomplete({
-                source: characterList,
-                minLength: 0,
-                minChars: 0,
-                select: function (event, ui) {
-                    var self = koObj.$root;
-                    self.changeName(ui.item.value,data)
-                    input.blur();
-                }
-            }).on('focus', function (event) {
-                var self = this;
-                $(self).autocomplete("search", "");
-                koObj.$root.newChar = true;
-            });
-            input.focus();
-            $("#"+options.id).scroll(function(e){
-                if( input.is(':visible')){
-                    $('.ui-autocomplete').position({
-                        my: "left top",
-                        at: "left bottom",
-                        collision: "none",
-                        of: input,
-                        within: '#'+options.id
-                    });
-                }
-            });
-        },
-        update: function (element, valueAccessor, innerFn, data, koObj) {
-            console.log('update function');
-            ko.bindingHandlers.visible.update(element, valueAccessor);
-            if (valueAccessor()) {
-                // focus on input tag once clicked to edit
-                $(element).find("input").focus();
-            } else {
-                $(element).find("input").blur();
-            }
-        }
-    };
+
+    this.getCharacterViewModel = function(){ return CharacterViewModel;}
 
     ko.bindingHandlers.addChart = {
         update: function (el, valueAccessor, innerFn, data, koObj) {
@@ -380,6 +344,7 @@ var Character = function (options) {
     };
 
     var view = new CharacterViewModel();
+
     ko.applyBindings(view, document.getElementById('charactermain'));
 
     var UploadViewModel = function(){
@@ -532,6 +497,7 @@ var Character = function (options) {
     this.setCharList = function( list ){
         characterList = list;
         view.removeAllCharacters();
+        view.setActiveCharacterList(list);
         this.setCharacterListLoaded(true);
         this.emit('setcharacterlist');
     }
@@ -778,6 +744,9 @@ var Character = function (options) {
     }
 
     this.setCharacterListLoaded = function(flag){
+
+
+
         return characterListLoaded = !!flag;
     }
 
@@ -868,9 +837,17 @@ var Character = function (options) {
         var headers, i;
         headers = this.getHeaders( text );
         upload.headers.removeAll();
-        for(i=0;i<headers.length;i++){
+        for (i = 0; i < headers.length; i++){
             upload.headers.push(headers[i]);
         }
+    }
+
+    /**
+     * show header values
+     * @param text
+     */
+    this.clearHeaders = function(text){
+        upload.headers([]);
     }
 
     /**
@@ -914,6 +891,7 @@ var Character = function (options) {
             success: function(data){
                 spinner.stop();
                 view.addNewSource(data)
+                view.clearHeaders()
             },
             error: function(){
                 spinner.stop();
@@ -927,7 +905,7 @@ var Character = function (options) {
 
     this.loadCharacterFromUrl = function(url, select){
         var drid, params = options.charOnRequestParams;
-        if(!options.charOnRequest){
+        if (!options.charOnRequest){
             view.listLoading(true)
             var spinner = new Spinner(options.spinner);
             spinner.spin();
@@ -946,12 +924,11 @@ var Character = function (options) {
                     spinner.stop();
                 }
             })
-        } else if(options.charOnRequest){
+        } else if (options.charOnRequest){
             drid = url.match(/[^\d=]+\d+/g);
             params.drid = drid.length && drid[0];
             this.getCharListFromUrl(options.charOnRequestListKeys, params);
         }
-
     }
 
     this.startSpinner = function(id, opt){
@@ -1189,8 +1166,10 @@ var Character = function (options) {
         // do not save when initializing the charts. changed event is fired there too.
         !init && that.emit('sync');
     });
-    if(options.edit){
+    if (options.edit){
         $("#csvFile").on('change', function(event){
+
+
             var file = event.target.files[0];
             that.readFile(file, that.showHeaders);
         });

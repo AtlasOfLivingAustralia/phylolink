@@ -148,7 +148,8 @@ class WebServiceService implements InitializingBean {
     }
 
     /**
-     * posts data to url. Data is provided in a Map Object.
+     * Posts data to url. Data is provided in a Map Object.
+     *
      * @param url - address to post to
      * @param data - data to post
      * @return data from post response
@@ -156,9 +157,9 @@ class WebServiceService implements InitializingBean {
     def postData( String url, data, head = [:], enc = ContentType.URLENC ){
         def http = new HTTPBuilder( url )
         def resp = ''
-        log.debug('cookie:'+head['cookie']);
-        http.getHeaders()['Cookie']= head['cookie'];
-        def response = http.request( POST){
+        log.debug('cookie:' + head['cookie']);
+        http.getHeaders()['Cookie'] = head['cookie'];
+        def response = http.request(POST){
             requestContentType = enc;
             body = data;
             log.debug(head['cookie'])
@@ -167,16 +168,17 @@ class WebServiceService implements InitializingBean {
                 return [error:'Internal server problem'];
             }
         }
-        def ch;
+
         if( response instanceof  StringReader){
+            def ch;
             while((ch = response.read())!= -1){
                 resp += (char)ch;
             }
-        } else if(response instanceof String ) {
+        } else if (response instanceof String ) {
             resp = response;
-        } else if(response instanceof  java.util.HashMap){
+        } else if (response instanceof java.util.Map){
             resp = response
-        }else {
+        } else {
             resp = response?.text();
         }
         return resp

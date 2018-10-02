@@ -11,8 +11,6 @@
 
 <body>
 
-<h1>Phylolink</h1>
-
 <div class="panelXX panel-defaultXX">
 
 
@@ -20,6 +18,8 @@
 
         <div class="row">
             <div class="col-sm-6 col-md-6">
+                <h1>Phylolink</h1>
+
                 <div class="word-limit">
                     <p>
                         Phylolink is a collection of tools through which biodiversity can be explored from  a <a href="http://www.ala.org.au/what-is-phylogeny/">phylogenetic</a>    (or tree of life) perspective.
@@ -38,12 +38,12 @@
                     </p>
                     <br/>
                     <div class="text-center padding-top-1">
-                        <button type="button" style="height: 40px; width: 80%" class="btn btn-primary btn-lg"
+                        <button type="button" style="width: 80%" class="btn btn-primary btn-lg"
                                 onclick="window.location = '${createLink(controller: 'wizard', action: 'start')}'">Start Phylolink</button>
                     </div>
                     <br/>
                     <div class="text-center">
-                        <button type="button" style="height: 40px; width: 80%" class="btn btn-primary btn-lg" onclick="window.location ='http://www.ala.org.au/explore-phylogenetic-diversity/'">Explore Phylogenetic Diversity</button>
+                        <button type="button" style="width: 80%" class="btn btn-primary btn-lg" onclick="window.location ='http://www.ala.org.au/explore-phylogenetic-diversity/'">Explore Phylogenetic Diversity</button>
                     </div>
                     <br/>
 
@@ -66,7 +66,7 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-6">
-                <asset:image src="phylolink_promo.jpg"/>
+                <asset:image src="phylolink_promo.jpg" style="width:100%;"/>
             </div>
         </div>
 

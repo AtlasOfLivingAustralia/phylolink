@@ -10,10 +10,8 @@ L.Control.Slider = L.Control.extend({
         position: 'topright',
         title:'click me',
         text:'slider: ',
-        style:{
-//            height:'25px',
-            padding: '5px'
-//            width:'75px'
+        style: {
+            padding: '2px'
         },
         sliderLength:'75px',
         /**
@@ -69,8 +67,8 @@ L.Control.Slider = L.Control.extend({
         }
 
         var label = L.DomUtil.create('label','', cont);
-        label.innerHTML = this.options.text + ' ' + this.options.sliderOpt.value+'&nbsp&nbsp&nbsp';
-        label.style['display']='inline-block'
+        label.innerHTML = this.options.text; // + ' ' + this.options.sliderOpt.value+'&nbsp&nbsp&nbsp';
+        label.style['display'] ='inline-block'
         this._label = label;
 
         var div = L.DomUtil.create('div', '', cont);
@@ -98,9 +96,6 @@ L.Control.Slider = L.Control.extend({
 
         L.DomEvent
             .on(div, 'mousedown dblclick', L.DomEvent.stopPropagation)
-////            .on(input, 'click', L.DomEvent.stop)
-//            .on(input, 'click', fn, this)
-//            .on(input, 'click', this._refocusOnMap, this);
     },
 
     setValue: function(val){

@@ -1,6 +1,8 @@
+import static org.springframework.boot.gradle.SpringBootPluginExtension.LayoutType.*
 buildscript {
     repositories {
         mavenLocal()
+        maven { url "https://nexus.ala.org.au/content/groups/public/" }
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
@@ -10,6 +12,10 @@ buildscript {
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.6"
     }
+}
+
+plugins {
+    id "com.gorylenko.gradle-git-properties" version "1.4.17"
 }
 
 version "0.6-SNAPSHOT"
@@ -100,6 +106,18 @@ tasks.withType(Test) {
     systemProperty "geb.env", System.getProperty('geb.env')
     systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
     systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
+}
+
+
+springBoot {
+    buildInfo()
+    layout = WAR
+}
+
+bootRepackage {
+    enabled = true
+    executable = true
+    classifier = 'exec'
 }
 
 assets {

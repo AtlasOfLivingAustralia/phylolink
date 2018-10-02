@@ -32,7 +32,6 @@ var Habitat = function (c) {
             url: 'http://localhost:8080/phylolink/phylo/getHabitat',
             type: 'GET',
             dataType: 'JSONP',
-//            title:'Habitat',
             xAxisContextual: 'Habitat states',
             xAxisEnvironmental: 'values',
             yAxis: 'Occurrence count'
@@ -89,6 +88,7 @@ var Habitat = function (c) {
         }],
         records: undefined
     }, c);
+
     var pj = config.pj,
         hab = this,
         id = config.id,
@@ -102,17 +102,20 @@ var Habitat = function (c) {
     if (config.listUrl) {
         $.ajax({
             url: config.listUrl,
-            dataType: config.dataType || 'JSON',
+            dataType: 'JSON',
             success: function (data) {
                 while (config.list.pop()) {
                     // empty list
                 }
-                var i = 0;
-                for (i = 0; i < data.length; i++) {
+                for (var i = 0; i < data.length; i++) {
                     data[i].value = data[i].id;
                     config.list.push(data[i]);
                 }
                 hab.emit('layermetadataadded')
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log("Error retrieving lists of layers: " + xhr.responseText);
             }
         })
     }
@@ -541,23 +544,27 @@ var Habitat = function (c) {
             console.log('init visible and select handler');
             var input = $(element).find("input");
             var tree = $(element).parent().find('div[id="jqxTree"]');
-            input.autocomplete({
-                source: config.list,
-                minLength: 1,
-                select: function (event, ui) {
-                    event.preventDefault();
-                    $(this).val(ui.item.label);
-                    var self = koObj.$root;
-                    self.changeHabitat(ui.item, data)
-                    self.selectedHabitat(null);
-                },
-                _renderItem: function (ul, item) {
-                    return $("<li>")
-                        .attr("data-value", item.value)
-                        .append(item.label)
-                        .appendTo(ul);
-                }
-            });
+
+            input.autocomplete(config.list);
+
+            // input.autocomplete({
+            //     source: config.list,
+            //     minLength: 1,
+            //     select: function (event, ui) {
+            //         event.preventDefault();
+            //         $(this).val(ui.item.label);
+            //         var self = koObj.$root;
+            //         self.changeHabitat(ui.item, data)
+            //         self.selectedHabitat(null);
+            //     },
+            //     _renderItem: function (ul, item) {
+            //         return $("<li>")
+            //             .attr("data-value", item.value)
+            //             .append(item.label)
+            //             .appendTo(ul);
+            //     }
+            // });
+            //
             input.focus();
             $("#"+config.id).scroll(function(e){
                 if( input.is(':visible')){
@@ -587,7 +594,8 @@ var Habitat = function (c) {
             if (valueAccessor()) {
                 // focus on input tag once clicked to edit
                 $(element).find("input[id='layerCombobox']").focus().select();
-                $(element).find("input[id='layerCombobox']").autocomplete("search", "")
+                // $(element).find("input[id='layerCombobox']").autocomplete("search", "")
+                $(element).find("input[id='layerCombobox']").autocomplete(config.list);
                 
             }
         }
@@ -602,10 +610,10 @@ var Habitat = function (c) {
                     return;
                 }
                 hab.columnchart(id, temp, view.getOptions(data));
-//                google.visualization.events.addListener(chart, 'onmouseover', that.chartHover);
             }
         }
     };
+
     var view = new HabitatViewModel();
     ko.applyBindings(view, document.getElementById(config.id));
 

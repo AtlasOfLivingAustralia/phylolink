@@ -144,7 +144,7 @@ class WizardController {
 
     def expertTrees() {
         def expertTrees = Tree.findAllByExpertTree(true)
-        log.debug(expertTrees)
+//        log.debug(expertTrees)
         render(view: 'listExpertTrees', model: [trees: expertTrees, isAdmin: params.isAdmin])
     }
 

@@ -7,23 +7,18 @@
 <head>
     <meta name="layout" content="main"/>
     <title>Add tree</title>
+    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
     <r:require modules="knockout,jquery-ui,create"/>
 </head>
 
 <body>
 <div class="container"  style="min-height: 700px">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
-            </ul>
-        </div>
-    </div>
+
+    <h1>Upload a tree</h1>
 
     <g:form action="create" class="form-horizontal" method="POST" enctype="multipart/form-data">
-        <legend>Upload a tree</legend>
-        <p style="font-size:14px">Enter your tree here by completing the form below. Tree data can be provided by uploading a file or by pasting the data into the box below. Supported formats are NEXML and NEWICK.<p/>
+
+        <p>Enter your tree here by completing the form below. Tree data can be provided by uploading a file or by pasting the data into the box below. Supported formats are NEXML and NEWICK.<p/>
 
         <fieldset class="form">
             <div class="row-fluid">

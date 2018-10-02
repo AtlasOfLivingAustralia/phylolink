@@ -266,7 +266,7 @@ class UtilsService {
      * @param file
      * @return
      */
-    String detectSeparator(CommonsMultipartFile file) {
+    String detectSeparator(file) {
         file.getInputStream().withReader { r -> getSeparator(r.readLine()) }
     }
 
@@ -276,7 +276,7 @@ class UtilsService {
      * @param separator
      * @return
      */
-    def getCSVReaderForCSVFileUpload(CommonsMultipartFile file, char separator) {
+    def getCSVReaderForCSVFileUpload(file, char separator) {
         new CSVReader(new InputStreamReader(file.getInputStream()), separator)
     }
 

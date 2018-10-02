@@ -69,10 +69,9 @@ class AlaController extends BaseController {
      */
     def getQidIntersections( qid, layer, region, biocacheServiceUrl ){
         def summary = []
-        def occurrencesResult
-        occurrencesResult = this.getOccurrenceRecords( qid, layer, region, biocacheServiceUrl)
+        def occurrencesResult = this.getOccurrenceRecords( qid, layer, region, biocacheServiceUrl)
         summary.addAll( this.extractFacets( occurrencesResult, qid ))
-        return  summary;
+        return summary;
     }
 
     def getOccurrenceIntersections(){

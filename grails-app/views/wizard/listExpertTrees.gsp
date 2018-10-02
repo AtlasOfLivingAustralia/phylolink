@@ -7,20 +7,13 @@
 <head>
     <meta name="layout" content="main"/>
     <title>Expert Trees</title>
+    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
 </head>
 
 <body>
 <g:set var="userLoggedIn"><fc:userIsLoggedIn/></g:set>
 <div class="container"  style="min-height: 700px">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
-            </ul>
-        </div>
-    </div>
-    <legend>Select an expert recommended tree</legend>
+    <h1>Select an expert recommended tree</h1>
     <table class="table table-hover table-bordered">
         <thead>
         <tr>
@@ -35,7 +28,7 @@
         <tbody>
         <g:each in="${trees}" var="tree" status="i">
             <tr>
-                <td class="col-sm-6 col-md-6">
+                <td class="col-sm-5 col-md-5">
                     <div>
                         <div class="btn btn-link" style="text-align: left; " onclick="showInfo(${i})">
                             ${tree.getTitle()}
@@ -53,17 +46,16 @@
                         ${tree.getExpertTreeTaxonomy()}
                     </g:else>
                 </td>
-                <td style="justify: center">
-
-
-                    <g:if test="${userLoggedIn}">
-                        <div class="btn btn-small btn-primary"
-                             onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
-                            <i class="icon icon-ok icon-white"></i> Open</div>
-                    </g:if>
-                    <a
-                            href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
-                            class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
+                <td>
+                    <div class="btn-group-vertical" role="group">
+                        <g:if test="${userLoggedIn}">
+                            <a class="btn btn-small btn-primary"
+                                 onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
+                                <i class="icon icon-ok icon-white"></i> Open</a>
+                        </g:if>
+                        <a href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
+                                class="btn btn-default btn-small"><i class="icon icon-camera"></i> Preview</a>
+                    </div>
 
                 </td>
                 <g:if test="${isAdmin}">

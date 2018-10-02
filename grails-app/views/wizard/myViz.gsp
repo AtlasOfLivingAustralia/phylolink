@@ -6,21 +6,13 @@
 <html>
 <head>
     <meta name="layout" content="main"/>
-    <title>${name} trees</title>
-    <r:require modules="css"/>
+    <title>${name} Visualisations</title>
+    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
 </head>
 
 <body>
 <div class="container"  style="min-height: 700px">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
-            </ul>
-        </div>
-    </div>
-    <legend>${name} Visualisations</legend>
+    <h1>${name} Visualisations</h1>
     <g:if test="${!isDemonstration}">
         <p style="font-size:14px; max-width: 60em">List of all visualisation you created.</p>
     </g:if>
@@ -55,7 +47,7 @@
                             </div>
                             <div class="modal-footer">
                                 <g:form method="DELETE" controller="phylo" action="deleteViz" params="[id: v.id]" class="inline-block">
-                                    <g:actionSubmit value="Delete" controller="phylo" action="deleteViz" params="[id: v.id]" class="btn btn-warning"/>
+                                    <g:actionSubmit value="Delete" controller="phylo" action="deleteViz" params="[id: v.id]" class="btn btn-danger"/>
                                 </g:form>
                                 <button id="closeDownloadModal" class="btn closeDownloadModal" data-dismiss="modal" aria-hidden="true">Close</button>
                             </div>
@@ -70,7 +62,7 @@
         <div>
         </div>
     </g:else>
-    <div name="back" class="btn" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
+    <div name="back" class="btn btn-default" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
             class="icon icon-arrow-left"></i> Back</div>
 </div>
 </body>

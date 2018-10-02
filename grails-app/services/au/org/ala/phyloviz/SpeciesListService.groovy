@@ -39,7 +39,7 @@ class SpeciesListService {
             data['listItems'].push(row);
             rcount++;
         }
-        log.debug(data);
+//        log.debug(data);
         data = data as JSON
         result = webServiceService.postData(grailsApplication.config.listPost, data.toString(), ['cookie': cookie], ContentType.JSON);
         if (result.druid) {

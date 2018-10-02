@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory
 
 class PDWidget implements au.org.ala.phyloviz.WidgetInterface{
 
-    private static final log = LogFactory( this )
     def webService
     def grailsApplication
     def utilsService
@@ -46,9 +45,9 @@ class PDWidget implements au.org.ala.phyloviz.WidgetInterface{
         this.config = config;
         this.layer = config.config
         this.region = config.region
-        this.regions = JSON.parse( config.data )
-        this.alaController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
-        this.phyloController =applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
+        this.regions = config.data ? JSON.parse( config.data ) : []
+        this.alaController = applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','ala').clazz.name );
+        this.phyloController = applicationContext.getBean( this.grailsApplication.getArtefactByLogicalPropertyName('Controller','phylo').clazz.name );
         this.dr = dr
         this.biocacheServiceUrl = config.biocacheServiceUrl?:this.grailsApplication.config.biocacheServiceUrl
     }
@@ -63,22 +62,22 @@ class PDWidget implements au.org.ala.phyloviz.WidgetInterface{
 
     def process( data, phylo ){
 
-        log.debug('pd widgets')
+//        log.debug('pd widgets')
         def result = []
         def threads =[]
         def removeTree = (data.removeTree?:true) as Boolean
 
-        regions.each{ r->
+        regions.each { r->
             def th
             th = Thread.start {
                 def speciesList,pd ;
                 speciesList = this.getSpeciesList( r.code, biocacheServiceUrl );
-                log.debug( r.code )
-                log.debug( 'convert to array ' + r.code)
-                log.debug( speciesList )
+//                log.debug( r.code )
+//                log.debug( 'convert to array ' + r.code)
+//                log.debug( speciesList )
                 pd = this.phyloController.getPDCalc( phylo.treeid, phylo.studyid, null, JsonOutput.toJson( speciesList ) );
                 pd = pd[0]
-                log.debug( 'printing region code')
+//                log.debug( 'printing region code')
                 pd['region'] = r.code.split(":")[1];
                 if( removeTree ){
                     pd.remove(grailsApplication.config.treeMeta.treeText)
@@ -91,13 +90,11 @@ class PDWidget implements au.org.ala.phyloviz.WidgetInterface{
         for( def th in threads){
             th.join();
         }
-        log.debug('completed!')
+//        log.debug('completed!')
         return result;
     }
 
-    def getRegions(){
-
-    }
+    def getRegions(){}
 
     def getSpeciesList( region, biocacheServiceUrl ){
         def startTime, deltaTime;
@@ -107,16 +104,16 @@ class PDWidget implements au.org.ala.phyloviz.WidgetInterface{
             url = grailsApplication.config.drUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl)
         }
         url = url.replaceAll( 'REGION', region.encodeAsURL() )
-        log.debug( url )
+//        log.debug( url )
 
         startTime = System.currentTimeMillis()
         def species =  webService.get( url );
         deltaTime = System.currentTimeMillis() - startTime
-        log.debug( "download time: ${deltaTime}")
+//        log.debug( "download time: ${deltaTime}")
         startTime = System.currentTimeMillis()
         species = utilsService.convertCsvToArray( species, null, grailsApplication.config.alaWebServiceMeta['speciesfacet'])
         deltaTime = System.currentTimeMillis() - startTime
-        log.debug( "convert time: ${deltaTime}")
+//        log.debug( "convert time: ${deltaTime}")
         return  species;
     }
 

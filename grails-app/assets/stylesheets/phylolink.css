@@ -220,3 +220,5 @@ body > div.navbar.navbar-inverse.navbar-fixed-top > div > div > a.navbar-brand >
 .btn-small{
     margin-bottom: 5px;
 }
+
+.pj-nav-controls .glyphicon { font-size: 25px; }
