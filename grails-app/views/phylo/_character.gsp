@@ -41,13 +41,13 @@
                                 <div class="form-group row">
                                     <label for="characters-title" class="col-sm-3 col-form-label">Title*:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="characters-title" data-bind="value: title" placeholder="My acacia characters" required>
+                                        <input type="text" class="form-control" id="characters-title" data-bind="value: charactersTitle" placeholder="My acacia characters" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label for="sciNameColumn" class="col-sm-3 col-form-label">Column with scientific name*:</label>
                                     <div class="col-sm-9">
-                                        <select id="sciNameColumn" class="form-control"  data-bind="options:headers,optionsText:'displayname',value:selectedValue,optionsCaption:'Choose..'" required></select>
+                                        <select id="sciNameColumn" class="form-control"  data-bind="options:headers,optionsText:'displayname',value:selectedValue" required></select>
                                     </div>
                                 </div>
 
@@ -60,11 +60,12 @@
                                 </button>
 
                             </form>
+
+                            <div class="alert alert-danger" id="uploadMessage" data-bind="visible:message">
+                                <div data-bind="text:message"></div>
+                            </div>
                         </div>
 
-                        <div class="alert" id="uploadMessage" data-bind="visible:message">
-                            <div data-bind="text:message"></div>
-                        </div>
                     </div>
 
                     <div class="small pull-right">

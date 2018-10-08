@@ -318,16 +318,16 @@ class AlaController extends BaseController {
      * column: column with scientific name
      */
     def saveAsList(){
-        def result = [:], id;
+
+        def id
         def file = isMultipartRequest() ? request.getFile('file') : null;
-        def reader, colIndex, colName, title;
+
         String cookie = request.getHeader('Cookie');
         JSONObject formParams = JSON.parse(request.getParameter("formParms"));
-        title = formParams['title']
-        colIndex = formParams['column']['id']
-        colName  = formParams['column']['displayname']
-        reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
-        result = speciesListService.createList(reader, title, colIndex, cookie);
+        def title = formParams['title']
+        def colIndex = formParams['column']['id']
+        def reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
+        def result = speciesListService.createList(reader, title, colIndex, cookie);
         if(result?.druid){
             def url = getUrl(result.druid);
             id = result.id
@@ -337,6 +337,7 @@ class AlaController extends BaseController {
             result['id'] = id;
         } else {
             result['error'] = 'error executing function';
+            response.sendError(400)
         }
 
         if(params.callback){

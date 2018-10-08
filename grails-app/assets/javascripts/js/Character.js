@@ -350,7 +350,7 @@ var Character = function (options) {
     var UploadViewModel = function(){
         this.headers = ko.observableArray();
         this.selectedValue = ko.observable();
-        this.title = ko.observable();
+        this.charactersTitle = ko.observable();
         this.message = ko.observable();
         this.alertId = '#uploadMessage';
         this.sampleCSV = options.sampleCSV;
@@ -750,9 +750,6 @@ var Character = function (options) {
     }
 
     this.setCharacterListLoaded = function(flag){
-
-
-
         return characterListLoaded = !!flag;
     }
 
@@ -843,9 +840,16 @@ var Character = function (options) {
         var headers, i;
         headers = this.getHeaders( text );
         upload.headers.removeAll();
+        upload.message('');
         for (i = 0; i < headers.length; i++){
             upload.headers.push(headers[i]);
         }
+    }
+
+    this.initialiseTitleAndSelected = function(title){
+        upload.charactersTitle(title);
+        upload.selectedValue(upload.headers()[0]);
+        console.log("selected: " + upload.headers())
     }
 
     /**
@@ -875,12 +879,12 @@ var Character = function (options) {
         return headers;
     }
 
-    this.uploadCharacter= function(){
+    this.uploadCharacter = function(){
         var spinner = new Spinner(options.spinner);
         upload.message('');
 
         var param = {
-            title: upload.title(),
+            title: upload.charactersTitle(),
             column: upload.selectedValue()
         };
         var data = new FormData(document.getElementById('csvForm'));
@@ -1176,7 +1180,7 @@ var Character = function (options) {
         $("#csvFile").on('change', function(event){
             var file = event.target.files[0];
             that.readFile(file, that.showHeaders);
-            $('#characters-title').val(file.name);
+            that.initialiseTitleAndSelected(file.name)
             $('#sciNameColumn').focus();
         });
 

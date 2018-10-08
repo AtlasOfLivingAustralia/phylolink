@@ -1,6 +1,7 @@
 package au.org.ala.phyloviz
 
 import au.com.bytecode.opencsv.CSVReader
+import au.org.ala.ws.service.WebService
 import grails.converters.JSON
 import grails.transaction.Transactional
 import groovyx.net.http.ContentType
@@ -13,6 +14,7 @@ class SpeciesListService {
      * save a csv file into list tool
      */
     def createList(CSVReader reader, String name, Integer colIndex, String cookie) {
+
         def data = [:], ch
         def result, next, rcount = 0, ccount = 0, item, row, items, header
         data['listType'] = 'SPECIES_CHARACTERS'
@@ -39,12 +41,15 @@ class SpeciesListService {
             data['listItems'].push(row);
             rcount++;
         }
-//        log.debug(data);
-        data = data as JSON
-        result = webServiceService.postData(grailsApplication.config.listPost, data.toString(), ['cookie': cookie], ContentType.JSON);
+
+        result = webServiceService.postData(grailsApplication.config.listPost, data, ['cookie': cookie], org.apache.http.entity.ContentType.APPLICATION_JSON);
+
         if (result.druid) {
             ch = addCharacterToDB(name, result.druid)
             result.id = ch.id;
+            result
+        } else {
+
         }
         return result
     }

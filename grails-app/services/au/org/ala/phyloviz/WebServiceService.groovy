@@ -14,6 +14,9 @@
  */
 
 package au.org.ala.phyloviz
+
+import au.org.ala.ws.service.WebService
+import com.opensymphony.module.sitemesh.filter.HttpContentType
 import grails.converters.JSON
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
@@ -27,16 +30,15 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.impl.client.HttpClients
 import org.grails.web.converters.exceptions.ConverterException
-import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.InitializingBean
 
 import static groovyx.net.http.Method.POST
 
 class WebServiceService implements InitializingBean {
 
-    void afterPropertiesSet() {
-//        JSONObject.NULL.metaClass.asBoolean = { -> false }
-    }
+    WebService webService
+
+    void afterPropertiesSet() {}
 
     def get(String url, String cookie) {
         log.debug "GET on " + url
@@ -154,48 +156,9 @@ class WebServiceService implements InitializingBean {
      * @param data - data to post
      * @return data from post response
      */
-    def postData( String url, data, head = [:], enc = ContentType.URLENC ){
-        def http = new HTTPBuilder( url )
-        def resp = ''
-        log.debug('cookie:' + head['cookie']);
-        http.getHeaders()['Cookie'] = head['cookie'];
-        def response = http.request(POST){
-            requestContentType = enc;
-            body = data;
-            log.debug(head['cookie'])
-            response.'500' = { HttpResponseDecorator r ->
-                log.error("POST to ${url} with data ${data} failed with HTTP 500.");
-                return [error:'Internal server problem'];
-            }
-        }
-
-        if( response instanceof  StringReader){
-            def ch;
-            while((ch = response.read())!= -1){
-                resp += (char)ch;
-            }
-        } else if (response instanceof String ) {
-            resp = response;
-        } else if (response instanceof java.util.Map){
-            resp = response
-        } else {
-            resp = response?.text();
-        }
-        return resp
-    }
-
-    /**
-     * posts data to url. Data is provided in a Map Object.
-     * @param url - address to post to
-     * @param data - data to post
-     * @return data from post response
-     */
-    def postData( String url){
-        def http = new HTTPBuilder( url )
-        http.post( body:"" ) { resp, result ->
-            log.debug( "POST Success: ${resp.statusLine} ${result}" )
-            return  result
-        }
+    def postData( String url, body, head = [:], enc = org.apache.http.entity.ContentType.APPLICATION_FORM_URLENCODED  ){
+        def response = webService.post(url, body, [:], enc, true, true, head)
+        response.resp
     }
 
     def postMultipart(url, multi, String cookie) {
