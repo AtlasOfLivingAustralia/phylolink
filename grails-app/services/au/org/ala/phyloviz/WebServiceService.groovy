@@ -54,7 +54,7 @@ class WebServiceService implements InitializingBean {
             return error as JSON
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}."]
-            log.debug error.error
+            log.error error.error
             return error as JSON
         }
     }
@@ -206,6 +206,8 @@ class WebServiceService implements InitializingBean {
             if(cookie){
                 headers.put('Cookie', cookie)
             }
+            headers.put('Accept', 'application/json')
+
             requestContentType = 'multipart/form-data';
             MultipartEntity entity = new MultipartEntity();
             entity.addPart('myFile',multi['myFile']);

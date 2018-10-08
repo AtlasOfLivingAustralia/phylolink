@@ -6,8 +6,8 @@
 <html>
 <head>
     <meta name="layout" content="main"/>
-    <title>Add tree</title>
-    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
+    <title>Add Phylogenetic Tree</title>
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
     <r:require modules="knockout,jquery-ui,create"/>
 </head>
 

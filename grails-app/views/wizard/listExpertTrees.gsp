@@ -7,7 +7,7 @@
 <head>
     <meta name="layout" content="main"/>
     <title>Expert Trees</title>
-    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
 </head>
 
 <body>

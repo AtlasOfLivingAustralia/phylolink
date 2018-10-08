@@ -741,9 +741,9 @@ var Habitat = function (c) {
 
     this.googleChartsLoaded = function () {
         var delay;
-        console.log('google chart loaded');
+        // console.log('google chart loaded');
         config.googleChartsLoaded = true;
-        console.log(config.delayedChartCall.length)
+        // console.log(config.delayedChartCall.length)
         while (delay = config.delayedChartCall.shift()) {
             delay[0].apply(delay[1], delay[2]);
         }

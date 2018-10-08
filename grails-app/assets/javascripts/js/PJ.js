@@ -184,7 +184,7 @@ var colourScheme = {
 }
 
 var PJ = function (params) {
-    console.log('in pj');
+    // console.log('in pj');
     var self = new Emitter(this);
     var pj = this;
     this.hData = params.hData
@@ -486,15 +486,15 @@ var PJ = function (params) {
         },
 
         onBeforeCompute: function (node) {
-            console.log("loading " + node.name);
+            // console.log("loading " + node.name);
         },
 
         onAfterCompute: function (msg) {
-            if (msg) {
-                console.log(msg);
-            } else {
-                console.log("done");
-            }
+            // if (msg) {
+            //     console.log(msg);
+            // } else {
+            //     console.log("done");
+            // }
         },
 
         //This method is called on DOM label creation.
@@ -1086,7 +1086,7 @@ var PJ = function (params) {
         }
 
         if (dataObject) {
-            console.log('converting using smits library');
+            // console.log('converting using smits library');
             json = smitsNode2JSON(dataObject.getRoot());
             st.loadJSON(json)
             st.compute();
@@ -1427,7 +1427,11 @@ var PJ = function (params) {
         var params = config.saveQuery.data;
         params.characterQuery = characterQuery;
         params.treeId = config.treeId;
-        if (config.doSaveQuery) {
+        if (config.doSaveQuery && typeof(config.saveQuery) != "undefined" && typeof(config.saveQuery.url) != "undefined") {
+
+            console.log("Running save query with " + config.saveQuery.url);
+            console.log(config.saveQuery)
+
             if (!characterQuery) {
                 qid = undefined;
             }
@@ -1758,6 +1762,7 @@ var PJ = function (params) {
      *
      */
     this.savePjSettings = function(){
+        console.log("Save PJ settings " + config.settingsUrl);
         if(config.edit){
             var data = {nodeId:(pj.getSelection()||{}).id}
             $.ajax({
@@ -1768,7 +1773,8 @@ var PJ = function (params) {
                 success: function(){
                     console.log('saved clicked node to workbook!')
                 },
-                error: function(){
+                error: function(error){
+                    console.log(error);
                     console.error('could not save selected node to workbook')
                 }
             })
@@ -1789,11 +1795,11 @@ var PJ = function (params) {
     // add this class to make the labels disappear outside the bounds of canvas
     $('#' + config.injectInto).addClass('infovis');
 
-    console.log('before jit initialized')
-    console.log(config)
+    // console.log('before jit initialized')
+    // console.log(config)
     st = new $jit.Phylo(config);
     navigation(config)
     setTree(config)
     setTitle(config);
-    console.log('after jit initialized')
+    // console.log('after jit initialized')
 };

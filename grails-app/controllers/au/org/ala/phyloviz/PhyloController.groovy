@@ -46,11 +46,10 @@ class PhyloController extends BaseController {
             Phylo phylo = Phylo.findById(params.id)
             if (!phylo) {
                 notFound "No visualisation was found for id ${params.id}"
-            } else if (!params.isAdmin && phylo.owner != treeService.getCurrentOwner()) {
+            } else if (!params.isAdmin && phylo.owner.id != treeService.getCurrentOwner().id) {
                 notAuthorised "Only the visualisation owner or an administrator can delete this profile"
             } else {
                 phyloService.deleteVisualisation(params.id as int)
-
                 redirect controller: "wizard", action: "myViz"
             }
         }

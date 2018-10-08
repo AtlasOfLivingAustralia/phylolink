@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta name="layout" content="main">
-    <title>Load Phylogenetic Tree or Visualisation</title>
+    <title>Start Phylolink</title>
     <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'phylolink.css')}" type="text/css" media="screen"/>
 </head>

@@ -61,7 +61,8 @@ var Records = function (c) {
         this.indexingProgress = ko.observable(opt.indexingProgress || undefined);
         this.indexingMessage = ko.observable(opt.indexingMessage || '');
         this.indexingClass = ko.observable(opt.indexingClass || '');
-        this.sampleFile = ko.observable(opt.sampleFile||'')
+        this.sampleFile = ko.observable(opt.sampleFile||'');
+        this.uploadedFileName = ko.observable('');
         this.formDisabled = ko.computed(function(){
             if((this.indexingProgress() == undefined) && (this.progress() == undefined)){
                 return false;
@@ -108,6 +109,7 @@ var Records = function (c) {
                 },
                 error: function (xhr) {
                     var data = xhr.responseJSON;
+                    console.log(data);
                     model.message(data.error + ' ' + data.message);
                     model.error(true);
                     setTimeout(function () {
@@ -135,6 +137,9 @@ var Records = function (c) {
                 var headers = records.getHeaders(fr.result);
                 that.addHeaders(headers);
             }
+
+            this.uploadedFileName(file.name);
+            this.title(file.name);
 
             fr.readAsText(file);
         }
@@ -268,8 +273,11 @@ var Records = function (c) {
                 viewModel.indexingProgress(data.percentage);
                 switch (data.status) {
                     case 'LOADING':
+                        viewModel.indexingProgress(25);
                     case 'SAMPLING':
+                        viewModel.indexingProgress(75);
                     case 'PROCESSING':
+                        viewModel.indexingProgress(50);
                     case 'INDEXING':
                         viewModel.indexingClass('alert-info');
                         break;
@@ -280,6 +288,7 @@ var Records = function (c) {
                             viewModel.resetForm();
                         },config.messageDelay);
                         records.findDataresourceInfo(config.uid, records.addDataresource);
+                        $('#sourceCharRecords').focus();
                         return;
                     case 'FAILED':
                     default :

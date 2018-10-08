@@ -3,7 +3,13 @@ package au.org.ala.phyloviz
 import grails.converters.JSON
 import org.apache.http.HttpHost
 import org.apache.http.NameValuePair
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.CloseableHttpResponse
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.client.HttpClients
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.entity.mime.content.FileBody
 
@@ -14,7 +20,7 @@ class SandboxService {
     def grailsApplication
 
     /**
-     * upload file to sandbox. it is a two part process. uploading file and uploading to sandbox for indexing.
+     * Upload file to sandbox. it is a two part process. uploading file and uploading to sandbox for indexing.
      *
      * @param file
      * @param title
@@ -22,12 +28,10 @@ class SandboxService {
      * @return
      */
     def upload(File file, String title, String scName, String phyloId) {
+
         //upload and get drid
-        def result;
-        def headers = "scientific name,lineage ID,Location,Latitude,Longitude,phenotype"
-        def preview, dr;
         def serverInstance = grailsApplication.config.sandboxUrl;
-        def alaId = authService.getUserId();
+        def alaId = authService.getUserId()
         def owner = alaId != null ? Owner.findByUserId(alaId) : Owner.findByDisplayName('Guest')
         if (owner == null) {
             return ['error': 'Unrecognised user', message: 'User is not registered on Phylolink.'];
@@ -35,35 +39,39 @@ class SandboxService {
 
         // read header
         BufferedReader bf = new BufferedReader(new FileReader(file));
-        headers = bf.readLine();
+        def headers = bf.readLine();
         headers = headers.replaceFirst(scName, 'scientific name');
 
-
         FileBody fbody = new FileBody(file);
-        String uUrl = "${serverInstance}/upload/uploadFile";
-        result = webServiceService.postMultipart(uUrl, ['myFile': fbody], null);
-        preview = getFileId(result.location);
-        if (preview.fileId == null) {
+        String uUrl = "${serverInstance}/dataCheck/uploadFile";
+        def result = webServiceService.postMultipart(uUrl, ['myFile': fbody], null)
+
+        if (result.fileId == null) {
             return ['error'  : 'Failed to upload file.',
                     'message': 'Failed uploading file to sandbox. Contact administrator.']
         }
 
-        result = uploadToSandbox(preview.fileId, title, headers, "false");
+        def sandboxUploadResult = uploadToSandbox(result.fileId, title, headers, "false");
+
         //update database
         if (!result.error) {
-            dr = new Sandbox([
+            result.uid = sandboxUploadResult.uid
+
+            def props = [
                     'title'         : title,
                     'scientificName': scName,
-                    'drid'          : result.uid,
+                    'drid'          : sandboxUploadResult.uid,
                     'serverInstance': grailsApplication.config.sandboxBiocacheServiceUrl,
                     'biocacheServiceUrl' : grailsApplication.config.sandboxBiocacheServiceUrl,
                     'biocacheHubUrl' : grailsApplication.config.sandboxHubUrl,
                     'owner'         : owner,
                     'status'        : true,
                     'phyloId'       : phyloId
-            ]);
+            ]
 
-            dr.save(flush: true);
+            result = result + props
+            def dr = new Sandbox(props)
+            dr.save(flush: true)
             if (dr.hasErrors()) {
                 return ['error': "Failed to create an entry into database for dataresource ${result.uid}." + dr.errors]
             } else {
@@ -93,10 +101,8 @@ class SandboxService {
      */
     def uploadToSandbox(String id, String title, String headers, String firstLineIsData) {
         def sandboxBiocacheServiceUrl = grailsApplication.config.sandboxBiocacheServiceUrl
-        String url = "${sandboxBiocacheServiceUrl}/upload/post";
-
-        def result;
-        result = uploadFile(url, csvFileUrl(id), id, headers, title, 'COMMA', firstLineIsData, '');
+        def url = "${sandboxBiocacheServiceUrl}/upload/post";
+        def result = uploadFile(url, csvFileUrl(id), headers, title, 'COMMA', firstLineIsData, '');
         JSON.parse(result);
     }
 
@@ -106,12 +112,12 @@ class SandboxService {
      * @return String
      */
     def csvFileUrl(String fileId) {
-        def biocache = grailsApplication.config.sandboxUrl;
-        return "${biocache}/upload/serveFile?fileId=${fileId}";
+        return "${grailsApplication.config.sandboxUrl}/dataCheck/serveFile?fileId=${fileId}";
     }
 
     /**
-     * Upload the data to the biocache, passing back the response
+     * Upload the data to the biocache, passing back the response.
+     *
      * @param csvData
      * @param headers
      * @param datasetName
@@ -119,7 +125,7 @@ class SandboxService {
      * @param firstLineIsData
      * @return response as string
      */
-    def uploadFile(String url, String csvUrl, String fileId, String headers, String datasetName, String separator,
+    def uploadFile(String url, String csvUrl, String headers, String datasetName, String separator,
                    String firstLineIsData, String customIndexedFields) {
 
         NameValuePair[] nameValuePairs = new NameValuePair[7]
@@ -131,28 +137,29 @@ class SandboxService {
         nameValuePairs[5] = new BasicNameValuePair("customIndexedFields", customIndexedFields)
         nameValuePairs[6] = new BasicNameValuePair("alaId", authService.getUserId())
 
-        def targetHost = new HttpHost(url)
-        def client = HttpClientBuilder.create().build();
-        def httpResponse = client.execute(targetHost, post);
 
+        CloseableHttpClient client = HttpClients.createDefault()
 
+        def httpPost = new HttpPost(url)
+        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs as List))
+        CloseableHttpResponse response = client.execute(httpPost)
 
-//        StringEntity messageEntity = new StringEntity( message,
-//                ContentType.create("text/plain", "UTF-8"));
-//        post.setEntity(messageEntity);
+        StringBuffer buffer = new StringBuffer()
+        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))
+        String dataLine = null
+        while((dataLine = reader.readLine()) != null){
+            buffer.append(dataLine)
+        }
+        String responseMsg = buffer.toString()
 
-//        def post = new PostMethod(url)
-        post.setRequestBody(nameValuePairs)
-        client.executeMethod(post)
-
-        //TODO check the response
-        log.debug(post.getResponseBodyAsString())
 
         //reference the UID caches
-        def sandboxGet = new HttpHost(grailsApplication.config.sandboxBiocacheServiceUrl + "/cache/refresh")
-        def sandboxResponse = client.execute( targetHost, sandboxGet)
+        def sandboxGet = new HttpGet(grailsApplication.config.sandboxBiocacheServiceUrl + "/cache/refresh")
+        def sandboxResponse = client.execute(sandboxGet)
 
-        post.getResponseBodyAsString()
+        client.close()
+
+        responseMsg
     }
 
     /**

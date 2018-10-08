@@ -7,10 +7,8 @@
 <head>
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
-    <title><g:message code="default.show.label" args="[entityName]"/></title>
-    <meta name="breadcrumb" content="${g.message(code:'default.show.label', args:[entityName])}">
-    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
-    <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},My Visualisations"/>
+    <title data-bind='text: title'>${phyloInstance.title}</title>
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'myViz')},My Visualisations"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages: ["corechart"]});
@@ -93,7 +91,7 @@
                 <div role="tabpanel" class="tab-pane active" id="mapTabContent">
                     <div id="map"></div>
                     <div id="mapControls">
-                        <div class="text-right">
+                        <div class="text-right" style="display:none;">
                             <a id="spLink" class="btn btn-link" data-bind="attr:{href:spUrl.url}" target="_blank" ><i class="fa fa-external-link"></i>&nbsp;Open in Spatial Portal</a>
                             <a id="downloadMapDataLink" class="btn btn-link" data-toggle="modal" href="#mapOccurrenceDownloadModal"><i class="fa fa-download"></i>&nbsp;Download occurrence data</a>
                         </div>
@@ -201,8 +199,6 @@
         treeUrl:"${raw(createLink(controller: 'tree', action: 'getTree'))}?id=${phyloInstance.studyid}&treeid=${phyloInstance.treeid}",
         format: "${tree.treeFormat}",
         initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
-
-        // initCharacters: {"listLoading":false,"selectedCharacter":null,"count":3,"events":["statechange","moved","edited","newchar","removed"],"edit":true,"newChar":true,"list":{"id":5,"title":"Acacia Characters","listurl":"http://lists.ala.org.au/speciesListItem/list/dr2116","url":"/ala/getCharJson?drid=dr2116"},"characters":[{"id":"charChart-2","name":"Inflorescence_arrangement"},{"id":"charChart-1","name":"annual_mean_rad"}],"lists":[{"id":5,"title":"Acacia Characters","listurl":"http://lists.ala.org.au/speciesListItem/list/dr2116","url":"/ala/getCharJson?drid=dr2116"}],"_callbacks":{"statechange":[null,null],"newchar":[null]}},
         filterParams: {
             q: '',
             fq:{
@@ -226,6 +222,7 @@
             baseUrl: '${raw(grailsApplication.config.spatialPortalRoot)}',
             url: ko.observable('${raw(grailsApplication.config.spatialPortalRoot)}')
         },
+        runSaveQuery: false,
         chartWidth: $('#tabs').width() - 30
     }
 
@@ -386,7 +383,7 @@
                 q: undefined,
                 source: undefined
             },
-            icon:'<i class="icon icon-list"></i> <label style="display: inline-block">Legend</label>',
+            icon:'<i class="glyphicon glyphicon-list"></i> <label style="display: inline-block">Legend - click to show</label>',
             defaultValue: [{
                 red: 223,
                 green: 74,

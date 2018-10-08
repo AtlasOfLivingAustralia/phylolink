@@ -101,9 +101,9 @@ L.Control.Select = L.Control.extend({
         for(var i in data){
             var modelValue = new this.Model(data[i]);
             this.viewModel.facets.push(modelValue);
-            if(data[i].name === this.options.currentValue){
+            if (data[i].name === this.options.currentValue){
                 currentVal = modelValue
-            }else if (data[i].name === this.options.defaultValue) {
+            } else if (data[i].name === this.options.defaultValue) {
                 defval = modelValue;
             }
         }

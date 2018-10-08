@@ -215,9 +215,8 @@ class AlaService {
     def getDynamicFacets(baseUrl, drid) {
         def url = "${baseUrl}/upload/dynamicFacets?q=${drid}";
         def facets = webServiceService.get(url);
-        facets = JSON.parse(facets);
         def result = [];
-        facets.eachWithIndex { value, i ->
+        JSON.parse(facets).eachWithIndex { value, i ->
             log.debug(value);
             if (!value.name.endsWith('_RNG')) {
                 result.push(facets[i]);
@@ -346,13 +345,13 @@ class AlaService {
         def q, url = grailsApplication.config.qidUrl.replace("BIOCACHE_SERVICE", biocacheServiceUrl),
             fqs = [], fq , matchNamesResult;
         Tree tree
-        Nexson nex
+        au.org.ala.phyloviz.Nexson nex
 
         if(treeId){
             Integer treeIdInt = Integer.parseInt(treeId)
             tree = Tree.findById(treeId)
             if(tree){
-                nex = new Nexson(tree.nexson)
+                nex = new au.org.ala.phyloviz.Nexson(tree.nexson)
             }
         }
 
@@ -360,16 +359,23 @@ class AlaService {
         clade = trimSpeciesListToMax(clade);
         matchNamesResult = matchNames(clade, nex)
         if (matchNamesResult['matched'].size()) {
-            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid').replace('(','').replace(')',''))
+            fqs.push(filterQuery(matchNamesResult['matched'], null, 'lsid', true).replace('(','').replace(')',''))
         }
 
         if (matchNamesResult['unmatched'].size()) {
-            fqs.push(filterQuery(matchNamesResult['unmatched'], null, 'raw_name').replace('(','').replace(')',''))
+            fqs.push(filterQuery(matchNamesResult['unmatched'], null, 'raw_name', true).replace('(','').replace(')',''))
         }
 
-        fq = '(' + fqs.join(' OR ') + ')'
-//        fq = fq.encodeAsURL()
-//        fq = '(' + fqs.join(' OR ') + ')'
+        if(fqs){
+            if(fqs.size() > 1) {
+                fq = '(' + fqs.join(' OR ') + ')'
+            } else {
+                fq = fqs[0]
+            }
+        } else {
+            fq = ""
+        }
+
         if (drid != null && !drid.isEmpty()) {
             q = "data_resource_uid:${drid}"
         }
@@ -482,11 +488,22 @@ class AlaService {
     /**
      * function that calls respective function to upload data
      */
-    def uploadData(String type, String title, String scName, File file, String cookie, String phyloId) {
+    def uploadData(String type, String title, String scName, File file, String phyloId) {
         def result;
 
         switch (type) {
             case 'character':
+                if (file == null || !file.exists()) {
+                    return ['error': 'File not found.', 'message': 'Did you click a file to upload?']
+                }
+
+                if (title == null || title.isEmpty()) {
+                    return ['error': 'No title provided', 'message': 'Please give a title to upload']
+                }
+
+                if (scName == null || scName.isEmpty()) {
+                    return ['error': 'No species name or otu number provided', 'message': 'Please select from the list provided.']
+                }
                 charactersService.upload(title, scName, file);
                 break;
             case 'occurrence':

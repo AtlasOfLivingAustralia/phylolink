@@ -35,7 +35,10 @@ class PhyloService {
 
     def isAuthorised(Owner owner){
         def userId = authService.getUserId();
-        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest');
-        return user == owner;
+        if(owner && owner.getUserId() && userId) {
+            userId.toString() == owner.getUserId().toString()
+        } else {
+            false
+        }
     }
 }

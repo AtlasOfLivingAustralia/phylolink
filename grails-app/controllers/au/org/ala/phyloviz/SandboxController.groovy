@@ -3,6 +3,7 @@ package au.org.ala.phyloviz
 import grails.converters.JSON;
 
 class SandboxController {
+
     def authService;
     def sandboxService
 

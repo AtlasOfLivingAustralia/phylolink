@@ -32,22 +32,29 @@ class AlaController extends BaseController {
         return occurrencesResult;
     }
 
-    def extractFacets( occurrencesResult,speciesName ){
+    def extractFacets( occurrencesResults, speciesName ){
+
         def v, var, summary = []
+
         def config = grailsApplication.config.intersectionMeta
-        occurrencesResult = occurrencesResult?.facetResults[0]
-        if ( occurrencesResult?.fieldResult ) {
-            for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
-                var = [:]
-                v = occurrencesResult.fieldResult[ i ];
-                v.label = v.label?: 'n/a';
-                var[config.name] = speciesName
-                var[config.var] = v.label
-                var[config.count] = v.count
-                summary.push( var )
+
+        if (occurrencesResults && occurrencesResults.facetResults){
+            def occurrencesResult = occurrencesResults?.facetResults[0]
+            if (occurrencesResult?.fieldResult) {
+                for( def i = 0 ; i < occurrencesResult.fieldResult?.size(); i++ ){
+                    var = [:]
+                    v = occurrencesResult.fieldResult[ i ];
+                    v.label = v.label?: 'n/a';
+                    var[config.name] = speciesName
+                    var[config.var] = v.label
+                    var[config.count] = v.count
+                    summary.push( var )
+                }
             }
+        } else {
+            log.error("No facet results available...")
         }
-        return summary
+        summary
     }
 
     def getIntersections( species, layer, region, biocacheServiceUrl ){
@@ -236,7 +243,7 @@ class AlaController extends BaseController {
 
     def dynamicFacets(){
         def drid = params.drid
-        def result = alaService.getDynamicFacets(drid);
+        def result = alaService.getDynamicFacets(grailsApplication.config.biocacheServiceUrl, drid);
         if(params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
@@ -315,9 +322,6 @@ class AlaController extends BaseController {
         def file = isMultipartRequest() ? request.getFile('file') : null;
         def reader, colIndex, colName, title;
         String cookie = request.getHeader('Cookie');
-        log.debug('cooike: '+cookie);
-        log.debug(isMultipartRequest());
-        log.debug('cookies:'+request.getCookies());
         JSONObject formParams = JSON.parse(request.getParameter("formParms"));
         title = formParams['title']
         colIndex = formParams['column']['id']
@@ -373,22 +377,24 @@ class AlaController extends BaseController {
      * upload data
      */
     def uploadData(){
-        def result;
         String type = params.type?:'occurrence';
         String title = params.title;
         String scientificName = params.scientificName;
-        String cookie = request.getHeader('Cookie')
         String phyloId = params?.phyloId
 
-        CommonsMultipartFile file = request.getFile('file');
-        File tempFile = utilsService.getFileFromCommonsMultipartFile(file);
-        result = alaService.uploadData(type, title, scientificName, tempFile, cookie, phyloId);
-        if( result.error ){
-            render(status: 405, contentType: 'application/json', text: result as JSON);
-        } else{
-            render(contentType: 'application/json', text: result as JSON);
-        }
+        def file = request.getFile('file');
 
+        if(file) {
+            File tempFile = utilsService.getFileFromCommonsMultipartFile(file);
+            def result = alaService.uploadData(type, title, scientificName, tempFile, phyloId)
+            if (result.error) {
+                render(status: 405, contentType: 'application/json', text: result as JSON);
+            } else {
+                render(contentType: 'application/json', text: result as JSON);
+            }
+        } else {
+            render(status: 400, contentType: 'application/json', text: [success:false, message:'Missing file!'] as JSON);
+        }
     }
 
     /**

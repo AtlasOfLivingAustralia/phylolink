@@ -63,14 +63,17 @@ L.Control.Legend = L.Control.extend({
     viewmodel: function(){
       this.legends = ko.observableArray([]);
       this.icon = ko.observable();
+      this.title = ko.observable();
+      this.message = ko.observable();
     },
     view : undefined,
     html: '<div>\
                    <div class="legend-short btn btn-xs" style="margin: 5px; display: none" data-bind="html:icon"></div>\
                    <div class="legend-full leaflet-control-layers-overlays" style="margin:5px;">\
                         <div class="pull-right close" style="padding-left:10px; border: 0;">&times;</div>\
-                        <label><strong>Legend</strong></label>\
-                        <div style="overflow:auto; max-height:400px; width: 170px;">\
+                        <label><strong id="map-records-datasource" style="word-wrap: break-word;" data-bind="html: title">Map Legend</strong></label>\
+                        <div id="no-records-matching" data-bind="html: message"> </div>\
+                        <div style="overflow:auto; max-height:400px; width: 100%;">\
                             <table class="legendTable"><tbody  data-bind="foreach: legends">\
                                 <tr><td><i class="legendColour" data-bind="attr:{style:style}"></i><span class="legendItemName" data-bind="text: name"></span>&nbsp;(<span data-bind="text: count"></span>)</td></tr>\
                                 </tbody>\
@@ -120,13 +123,24 @@ L.Control.Legend = L.Control.extend({
         ko.applyBindings(this.view,container);
     },
 
-    legend: function(data){
+    legend: function (data){
         var that = this;
         var newData = ko.utils.arrayMap(data, function(d){
             return new that.model(d)
         });
         this.view.legends.removeAll();
         this.view.legends.push.apply(this.view.legends, newData);
+
+        if(newData.length == 0){
+            this.view.message('No record matching this selected node on the tree.')
+        } else {
+            this.view.message('');
+        }
+
+    },
+
+    title: function (title){
+        this.view.title(title);
     }
 });
 

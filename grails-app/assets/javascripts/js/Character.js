@@ -158,7 +158,7 @@ var Character = function (options) {
         self.count = ko.observable(1);
         self.selectedCharacter = ko.observable();
         self.lists = ko.observableArray([]);
-        self.activeCharacterList = ko.observableArray(["dave", "dave2"]);
+        self.activeCharacterList = ko.observableArray([]);
         self.list = ko.observable({});
         self.edit = ko.observable(options.edit);
         self.listLoading = ko.observable(false);
@@ -790,9 +790,9 @@ var Character = function (options) {
 
     this.googleChartsLoaded = function(){
         var delay;
-        console.log('google chart loaded');
+        // console.log('google chart loaded');
         options.googleChartsLoaded = true;
-        console.log(options.delayedChartCall.length)
+        // console.log(options.delayedChartCall.length)
         while( delay = options.delayedChartCall.shift()){
             delay[0].apply(delay[1],delay[2]);
         }
@@ -1176,6 +1176,8 @@ var Character = function (options) {
         $("#csvFile").on('change', function(event){
             var file = event.target.files[0];
             that.readFile(file, that.showHeaders);
+            $('#characters-title').val(file.name);
+            $('#sciNameColumn').focus();
         });
 
         $("#uploadBtn").on('click', function(){

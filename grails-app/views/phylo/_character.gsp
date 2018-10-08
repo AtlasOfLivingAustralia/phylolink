@@ -26,22 +26,22 @@
                 <div class="panel-body" style="border:none;">
                     <div id="minimizeUploadXX">
                         <div id="csvFormUnavailable" class="alert-error"><i>Is this your visualisation? If yes, login to upload your characters.</i></div>
+
+                        <!-- upload file form -->
                         <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">
-                            <div class="control-group">
-                                <div class="controls">
-                                    <label class="btn btn-default btn-file">
-                                        <i class="glyphicon glyphicon-upload"> </i> Upload a CSV file of characters
-                                        <input id="csvFile" type="file" name="file" value="Upload" accept=".csv" style="display: none;" required/>
-                                    </label>
-                                </div>
-                            </div>
+                            <label class="btn btn-default btn-file">
+                                <i class="glyphicon glyphicon-upload"> </i> Upload a CSV file of characters
+                                <input id="csvFile" type="file" name="file" value="Upload" accept=".csv" style="display: none;" required/>
+                            </label>
                         </form>
+
+
                         <div data-bind="visible: headers().length > 0" style="margin-top:15px;">
                             <form>
                                 <div class="form-group row">
-                                    <label for="title" class="col-sm-3 col-form-label">Title*:</label>
+                                    <label for="characters-title" class="col-sm-3 col-form-label">Title*:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="title" data-bind="value: title" placeholder="My acacia characters" required>
+                                        <input type="text" class="form-control" id="characters-title" data-bind="value: title" placeholder="My acacia characters" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -51,14 +51,14 @@
                                     </div>
                                 </div>
 
-                                <button id="clearBtn" class="btn btn-small btn-default" data-bind="click: cancelCharUpload">
-                                    Cancel
-                                </button>
-
                                 <button id="uploadBtn" class="btn btn-small btn-primary">
                                     <i class="glyphicon glyphicon-floppy-save"> </i>
                                     Save character list
                                 </button>
+                                <button id="clearBtn" class="btn btn-small btn-default" data-bind="click: cancelCharUpload">
+                                    Cancel
+                                </button>
+
                             </form>
                         </div>
 

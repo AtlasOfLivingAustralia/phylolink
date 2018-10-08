@@ -311,7 +311,7 @@ function Map(options) {
                     biocacheServiceUrl: drProp.biocacheServiceUrl
                 }
                 if(!qid){
-                    data.q = 'q=data_resource_uid:' + drProp.drid;
+                    data.q = 'data_resource_uid:' + drProp.drid;
                     data.fq = f.formatFq()
                 }
                 break;
@@ -380,6 +380,7 @@ function Map(options) {
         data.q = pj.getQid(true);
         data.source = dr.type;
         data.biocacheHubUrl = dr.biocacheHubUrl;
+        data.title = dr.title ? dr.title : '' ;
         // if query id is not present.
         if(!data.q){
             data.q = filter.formatQuery();
@@ -392,8 +393,9 @@ function Map(options) {
             xhrLegend  = $.ajax({
                 url: url,
                 data: data,
-                success: function (data) {
-                    legendCtrl.legend(data);
+                success: function (dataResp) {
+                    legendCtrl.title(data.title);
+                    legendCtrl.legend(dataResp);
                     that.emit('updateend');
                 },
                 error: function(){
@@ -422,8 +424,7 @@ function Map(options) {
             return;
         }
 
-        var qid = pj.getQid(true),
-            cm = colorBy.getSelectState(),
+        var cm = colorBy.getSelectState(),
             url,
             type,
             dr = options.records.getDataresource();
@@ -585,7 +586,7 @@ function Map(options) {
             if(Array.isArray(data)){
                 data = cols.concat(data);
             } else {
-                data =cols;
+                data = cols;
             }
         }
         colorBy.updateData(data);
