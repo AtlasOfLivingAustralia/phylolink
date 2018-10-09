@@ -289,6 +289,18 @@ var Character = function (options) {
             self.lists.push(list);
             self.list(list)
             $("#sourceChar").trigger('change');
+            $("#sourceChar").focus();
+        }
+
+        /**
+         * show header values
+         * @param text
+         */
+        self.resetForm = function(){
+            upload.headers([]);
+            upload.charactersTitle('');
+            upload.selectedValue('');
+            $('#characterUploadPanel').attr('aria-expanded', false).removeClass('in');
         }
 
         /**
@@ -813,6 +825,9 @@ var Character = function (options) {
             data: sync,
             success: function (data) {
                 console.log('saved!');
+                upload.headers([]);
+                upload.charactersTitle('');
+                upload.selectedValue('');
             },
             error: function () {
                 //TODO: popup error?
@@ -850,14 +865,6 @@ var Character = function (options) {
         upload.charactersTitle(title);
         upload.selectedValue(upload.headers()[0]);
         console.log("selected: " + upload.headers())
-    }
-
-    /**
-     * show header values
-     * @param text
-     */
-    this.clearHeaders = function(text){
-        upload.headers([]);
     }
 
     /**
@@ -900,8 +907,8 @@ var Character = function (options) {
             contentType: false,
             success: function(data){
                 spinner.stop();
-                view.addNewSource(data)
-                view.clearHeaders()
+                view.addNewSource(data);
+                view.resetForm();
             },
             error: function(){
                 spinner.stop();

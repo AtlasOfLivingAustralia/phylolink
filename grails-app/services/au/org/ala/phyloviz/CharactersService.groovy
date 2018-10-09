@@ -159,7 +159,7 @@ class CharactersService {
         colName  = formParams['column']['displayname']
         reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
         result = speciesListService.createList(reader, title, colIndex, cookie);
-        if(result?.druid){
+        if(result && result?.druid){
             def url = getUrl(result.druid);
             id = result.id
             result = [:]

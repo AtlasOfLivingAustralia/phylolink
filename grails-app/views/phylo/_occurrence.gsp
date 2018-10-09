@@ -1,9 +1,13 @@
-<div >
-    <div class="bs-callout" id="uploadRecords" style="position: relative">
-        <h4 style="cursor:pointer" id="uploadRecordsTitle" data-bind="click: onToggleForm">
-            <i class="glyphicon glyphicon-chevron-down"></i> <a>Upload my occurrence records</a>
-        </h4>
-            <div id="csvFormRecordsUnavailable" class="alert-error"><i>Login to enable occurrence upload or,
+<div>
+<div class="panel-group" id="uploadRecords" style="margin-top:20px;">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
+            <i class="glyphicon glyphicon-chevron-down"></i> <a>Upload your occurrence records</a>
+        </div>
+        <div id="characterUploadPanel" class="panel-collapse">
+
+            <div id="csvFormRecordsUnavailable" class="alert-error hide">
+                <i>Login to enable occurrence upload or,
             you are unauthorized to upload for this visualisation.</i></div>
 
             <!-- upload file form -->
@@ -44,7 +48,7 @@
                     <button id="uploadBtnRecords" class="btn btn-primary" data-bind="click: uploadFile, attr:{disabled: formDisabled}">
                         <i class="glyphicon glyphicon-upload"></i> Upload my file
                     </button>
-                        <button id="resetBtnRecords" class="btn btn-default" data-bind="click: resetForm, attr:{disabled: formDisabled}">Clear form</button>
+                    <button id="resetBtnRecords" class="btn btn-default" data-bind="click: resetForm, attr:{disabled: formDisabled}">Clear form</button>
                 </div>
             </form>
 
@@ -79,24 +83,37 @@
             <div class="pull-right">
                 <a id="csvSampleRecords" target="_blank" data-bind="attr:{href: sampleFile}">Download sample CSV file from here.</a>
             </div>
-
         </div>
     </div>
 </div>
-<div id="recordsmain">
-    <div class="bs-callout" style="position: relative" id="pickFromListRecords">
-        <div>
-            <h4><a>Or, pick a records dataset from the available list:</a></h4>
+
+<div id="recordsmain" class="panel-group"  style="margin-top:20px;">
+    <div class="panel panel-default">
+        <div class="panel-heading" id="pickFromListRecordsHeader">
+            Select records dataset from the available list
         </div>
-        <br/>
-        <div>
+        <p>
+            Select the source of occurrence data from the options below.
+            <br/>
+            This will affect the records displayed on the map, and the records used
+            to populate histograms in the Analysis section.
+        </p>
+
+        <div id="pickFromListRecords" class="panel-collapse">
             <form id="sourceToolbarRecords" >
-                <select id="sourceCharRecords"
-                        class="form-control"
-                        data-bind="options:lists,optionsText:'title',value:selectedValue,
-                optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+
+                <div class="form-group row">
+                    <label for="sourceCharRecords" class="col-sm-3 col-form-label">Occurrence dataset:</label>
+                    <div class="col-sm-9">
+                        <select id="sourceCharRecords"
+                                class="form-control"
+                                data-bind="options:lists,optionsText:'title',value:selectedValue,
+                    optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+                    </div>
+                </div>
             </form>
         </div>
         <div >&nbsp;</div>
     </div>
+</div>
 </div>

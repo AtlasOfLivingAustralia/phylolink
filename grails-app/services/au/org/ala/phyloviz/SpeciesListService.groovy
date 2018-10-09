@@ -44,12 +44,10 @@ class SpeciesListService {
 
         result = webServiceService.postData(grailsApplication.config.listPost, data, ['cookie': cookie], org.apache.http.entity.ContentType.APPLICATION_JSON);
 
-        if (result.druid) {
+        if (result && result.druid) {
             ch = addCharacterToDB(name, result.druid)
             result.id = ch.id;
             result
-        } else {
-
         }
         return result
     }

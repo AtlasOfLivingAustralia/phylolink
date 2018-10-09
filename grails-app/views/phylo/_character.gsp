@@ -1,28 +1,15 @@
 <div >
 
-
-    %{--<div class="panel-group" style="margin-top:20px;">--}%
-        %{--<div class="panel panel-default">--}%
-            %{--<div class="panel-heading">--}%
-                %{--<a data-toggle="collapse" href="#collapse1">Collapsible panel</a>--}%
-            %{--</div>--}%
-            %{--<div id="collapse1" class="panel-collapse collapse">--}%
-                %{--<div class="panel-body">Panel Body</div>--}%
-                %{--<div class="panel-footer">Panel Footer</div>--}%
-            %{--</div>--}%
-        %{--</div>--}%
-    %{--</div>--}%
-
-
-
     <div class="panel-group" id="uploadCharacters" style="margin-top:20px;">
 
         <div class="panel panel-default">
-            <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" data-bind="click: onClick">
-                    %{--<i class="glyphicon glyphicon-chevron-down"></i>--}%
+            <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
+                <a data-toggle="collapse" href="#characterUploadPanel">
+                    <i class="glyphicon glyphicon-chevron-right"></i>
                      Upload your character data
+                </a>
              </div>
-            <div id="collapse1" class="panel-collapseXX">
+            <div id="characterUploadPanel" class="panel-collapse collapse">
                 <div class="panel-body" style="border:none;">
                     <div id="minimizeUploadXX">
                         <div id="csvFormUnavailable" class="alert-error"><i>Is this your visualisation? If yes, login to upload your characters.</i></div>
@@ -87,7 +74,7 @@
 
                 <div class="form-group row">
                     <label  for="sourceChar" class="col-sm-3 col-form-label">Character datasets:</label>
-                    <div class="col-sm-3">
+                    <div class="col-sm-9">
                         <select id="sourceChar"
                                 class="form-control"
                                 data-bind="options:lists,optionsText:'title',value:list,optionsCaption:'Choose..', event:{change:loadNewCharacters}" required>
@@ -104,7 +91,7 @@
                 </div>
 
                 <div class="btn btn-primary top-buffer offset4"
-                     data-bind="click: addCharacter, visible:list(), attr:{disabled:listLoading()}">
+                     data-bind="click: addCharacter, enable:list(), attr:{disabled:listLoading()}">
                     <i class="glyphicon glyphicon-white glyphicon-plus-sign"></i>
                     Add Character to Tree
                 </div>
