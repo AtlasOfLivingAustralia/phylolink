@@ -181,7 +181,10 @@ class WizardController {
         } else {
             name = owner.getDisplayName() + "'s"
         }
-        def myViz = Phylo.findAllByOwner(owner ?: -1) ?: []
+        def myViz = []
+        if (owner){
+            myViz = Phylo.findAllByOwner(owner)
+        }
         if (myViz.size() == 0) {
             flash.message = 'You have not created any visualisations.'
         }

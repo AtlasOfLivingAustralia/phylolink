@@ -1112,7 +1112,7 @@ var PJ = function (params) {
             config.treeloaded = true;
             // fire event after tree is loaded
             pj.emit('treeloaded');
-            console.log('successfully completed')
+            // console.log('successfully completed')
         } else if (obj.url) {
             // if no format is given, then get it from url. remember the url should provide tree and format.
             getTree(obj.url, setTree, obj)
@@ -1429,8 +1429,8 @@ var PJ = function (params) {
         params.treeId = config.treeId;
         if (config.doSaveQuery && typeof(config.saveQuery) != "undefined" && typeof(config.saveQuery.url) != "undefined") {
 
-            console.log("Running save query with " + config.saveQuery.url);
-            console.log(config.saveQuery)
+            // console.log("Running save query with " + config.saveQuery.url);
+            // console.log(config.saveQuery)
 
             if (!characterQuery) {
                 qid = undefined;
@@ -1443,12 +1443,12 @@ var PJ = function (params) {
                 dataType: config.saveQuery.dataType,
                 data: params,
                 success: function (q) {
-                    console.log(JSON.stringify(q))
+                    // console.log(JSON.stringify(q))
                     if (!characterQuery) {
                         qid = q.qid;
                     }
                     pj.emit('savequeryend');
-                    console.log(qid);
+                    // console.log(qid);
                 },
                 error: function () {
                     console.log('failed!');
@@ -1762,7 +1762,7 @@ var PJ = function (params) {
      *
      */
     this.savePjSettings = function(){
-        console.log("Save PJ settings " + config.settingsUrl);
+        // console.log("Save PJ settings " + config.settingsUrl);
         if(config.edit){
             var data = {nodeId:(pj.getSelection()||{}).id}
             $.ajax({
@@ -1771,7 +1771,7 @@ var PJ = function (params) {
                     json: JSON.stringify(data)
                 },
                 success: function(){
-                    console.log('saved clicked node to workbook!')
+                    // console.log('saved clicked node to workbook!')
                 },
                 error: function(error){
                     console.log(error);

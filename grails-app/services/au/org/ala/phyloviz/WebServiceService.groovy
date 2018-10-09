@@ -16,8 +16,8 @@
 package au.org.ala.phyloviz
 
 import au.org.ala.ws.service.WebService
-import com.opensymphony.module.sitemesh.filter.HttpContentType
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.HttpResponseDecorator
@@ -28,10 +28,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.impl.client.HttpClients
 import org.grails.web.converters.exceptions.ConverterException
 import org.springframework.beans.factory.InitializingBean
-
 import static groovyx.net.http.Method.POST
 
 class WebServiceService implements InitializingBean {
@@ -140,15 +140,6 @@ class WebServiceService implements InitializingBean {
         }
     }
     
-    def postStrData(String url, String data, String cookie) {
-        def uri = new URL(url);
-        log.debug(uri.host)
-        log.debug(uri.path)
-        log.debug(uri.port.toString())
-        log.debug(data)
-        this.doJsonPost("http://${uri.host}", uri.path, uri.port?.toString(), data, cookie)
-    }
-
     /**
      * Posts data to url. Data is provided in a Map Object.
      *
@@ -161,29 +152,9 @@ class WebServiceService implements InitializingBean {
         response.resp
     }
 
-    def postMultipart(url, multi, String cookie) {
-        def http = new HTTPBuilder(url)
-        def ch, resp ='';
-
-        def response = http.request(POST) { req ->
-            if(cookie){
-                headers.put('Cookie', cookie)
-            }
-            headers.put('Accept', 'application/json')
-
-            requestContentType = 'multipart/form-data';
-            MultipartEntity entity = new MultipartEntity();
-            entity.addPart('myFile',multi['myFile']);
-            req.entity = entity;
-
-            response.'302' = { r ->
-                Map <String, List> loc = [:];
-                HttpResponseDecorator.HeadersDecorator headers = r.getHeaders();
-                loc['location']= headers['Location'];
-                log.debug( r );
-                return loc;
-            }
-        }
+    def postMultipart(url, file) {
+        def response = webService.postMultipart(url, [:], [:], [file], org.apache.http.entity.ContentType.APPLICATION_JSON, true, true, ['Accept':'application/json'])
+        response.resp
     }
 
     /**

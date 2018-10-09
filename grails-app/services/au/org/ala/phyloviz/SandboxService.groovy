@@ -42,11 +42,10 @@ class SandboxService {
         def headers = bf.readLine();
         headers = headers.replaceFirst(scName, 'scientific name');
 
-        FileBody fbody = new FileBody(file);
-        String uUrl = "${serverInstance}/dataCheck/uploadFile";
-        def result = webServiceService.postMultipart(uUrl, ['myFile': fbody], null)
+        String uUrl = "${serverInstance}/api/uploadFile";
+        def result = webServiceService.postMultipart(uUrl, file)
 
-        if (result.fileId == null) {
+        if (result == null || !result['fileId']) {
             return ['error'  : 'Failed to upload file.',
                     'message': 'Failed uploading file to sandbox. Contact administrator.']
         }
@@ -206,7 +205,7 @@ class SandboxService {
         }
         
         def s = Sandbox.findAll {
-            drid == druid && owner == owner && serverInstance == biocacheServiceUrl
+            it.drid == druid && owner == owner && it.serverInstance == biocacheServiceUrl
         }
         
         if (s.size() > 0) {
@@ -296,13 +295,5 @@ class SandboxService {
             result.push(c)
         }
         return result;
-    }
-
-    /**
-     * get qid url for sandbox instance provided
-     *
-     */
-    def getQidUrl(String biocacheServiceUrl){
-        "${biocacheServiceUrl}/webportal/params";
     }
 }
