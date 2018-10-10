@@ -205,7 +205,7 @@ class SandboxService {
         }
         
         def s = Sandbox.findAll {
-            it.drid == druid && owner == owner && it.serverInstance == biocacheServiceUrl
+            drid == druid && owner == owner && serverInstance == biocacheServiceUrl
         }
         
         if (s.size() > 0) {
