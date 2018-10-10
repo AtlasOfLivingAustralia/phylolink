@@ -4,7 +4,8 @@ jdk:
 - openjdk7
 branches:
   only:
-  - master
+  - master  
+  - grails3
   - new-nameindex
 before_install:
 - export TZ=Australia/Canberra
