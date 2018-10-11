@@ -50,7 +50,7 @@ class Nexson {
         parseCitation()
     }
 
-    public def initVersion() {
+    def initVersion() {
         if (json == null || json['data']['nexml'][this.versionProp] == null ||
                 !(json.data.nexml[this.versionProp] in supportedVersions)) {
             version = null

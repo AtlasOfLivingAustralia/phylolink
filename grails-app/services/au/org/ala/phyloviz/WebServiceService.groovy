@@ -163,6 +163,41 @@ class WebServiceService implements InitializingBean {
      * @param data - data to post
      * @return data from post response
      */
+    def postData2( String url, data, head = [:], enc = ContentType.URLENC ){
+        def http = new HTTPBuilder( url )
+        def resp = ''
+        log.debug('cookie:'+head['cookie']);
+        http.getHeaders()['Cookie']= head['cookie'];
+        def response = http.request( POST){
+            requestContentType = enc;
+            body = data;
+            log.debug(head['cookie'])
+            response.'500' = { HttpResponseDecorator r ->
+                log.error("POST to ${url} with data ${data} failed with HTTP 500.");
+                return [error:'Internal server problem'];
+            }
+        }
+        def ch;
+        if( response instanceof  StringReader){
+            while((ch = response.read())!= -1){
+                resp += (char)ch;
+            }
+        } else if(response instanceof String ) {
+            resp = response;
+        } else if(response instanceof  java.util.HashMap){
+            resp = response
+        }else {
+            resp = response?.text();
+        }
+        return resp
+    }
+
+    /**
+     * posts data to url. Data is provided in a Map Object.
+     * @param url - address to post to
+     * @param data - data to post
+     * @return data from post response
+     */
     def delete( String url){
         def cl = new RESTClient( url )
         try {
