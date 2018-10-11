@@ -1,4 +1,5 @@
 package au.org.ala.phyloviz
+
 import javax.annotation.PostConstruct
 
 class UserService {
@@ -18,12 +19,12 @@ class UserService {
         getUser()?.userId?:""
     }
 
-    public UserDetails getUser() {
+    au.org.ala.phyloviz.UserDetails getUser() {
         def u = authService.userDetails()
         def user
 
         if (u?.userId) {
-            user = new UserDetails(u.userDisplayName, u.email, u.userId)
+            user = new au.org.ala.phyloviz.UserDetails(u.displayName, u.email, u.userId)
         }
 
         return user
@@ -116,7 +117,7 @@ class UserService {
                 user.userId = userId
                 user.created = new Date()
                 user.email = userDetails?.email
-                user.displayName = userDetails?.userDisplayName
+                user.displayName = userDetails?.displayName
                 user.role = role
                 user.save(flush: true)
                 log.debug('after save')
