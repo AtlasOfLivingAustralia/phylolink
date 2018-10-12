@@ -175,7 +175,7 @@ function Map(options) {
         fullscreenControlOptions: {
             position: 'topleft'
         }
-    }).setView([-27, 142], 4);
+    }).setView([-27, 148], 4);
 
     //add base layer
     L.tileLayer('https://{s}.tiles.mapbox.com/{version}/{id}/{z}/{x}/{y}.png?access_token={token}', {
@@ -196,7 +196,7 @@ function Map(options) {
     });
 
     var outlineCtrl = new L.Control.Checkbox({
-        position: 'topleft',
+        position: 'bottomleft',
         text: 'Outline ',
         onClick: function () {
             that.updateLayersEnv();
@@ -205,7 +205,7 @@ function Map(options) {
 
     var sizeSlider = new L.Control.Slider({
         text: 'Size',
-        position: 'topleft',
+        position: 'bottomleft',
         onChange: function (val) {
             env.size = parseInt(val);
             that.updateLayersEnv();

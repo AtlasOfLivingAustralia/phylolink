@@ -86,7 +86,7 @@
         </g:each>
         </tbody>
     </table>
-    <div name="back" class="btn" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
+    <div name="back" class="btn btn-default" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
             class="icon icon-arrow-left"></i> Back</div>
     <script>
         function showInfo(i){
