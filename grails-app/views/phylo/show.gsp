@@ -177,8 +177,8 @@
 <g:javascript disposition="defer">
     var config = {
         type: 'ala',
-        sandboxLayer: 'http://sandbox1.ala.org.au/ws/webportal/wms/reflect',
-        biocacheLayer: 'https://biocache.ala.org.au/ws/webportal/wms/reflect',
+        sandboxLayer: 'http://sandbox1.ala.org.au/ws/mapping/wms/reflect',
+        biocacheLayer: 'https://biocache.ala.org.au/ws/mapping/wms/reflect',
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'https://biocache.ala.org.au/occurrence/legend',
         downloadReasonsUrl: 'http://logger.ala.org.au/service/logger/reasons',
@@ -277,7 +277,7 @@
         uploadUrl: '${raw(createLink(controller: 'ala', action: 'uploadData'))}?phyloId=${phyloInstance.id}',
         indexingStatusUrl: "${raw(createLink(controller: 'sandbox', action: 'checkStatus'))}",
         sampleFile: "${raw(createLink(controller: 'artifacts', action: 'occurrenceRecords.csv'))}",
-        dataresrouceInfoUrl: "${raw(createLink(controller: 'sandbox', action: 'dataresourceInfo'))}?phyloId=${phyloInstance.id}",
+        dataresourceInfoUrl: "${raw(createLink(controller: 'sandbox', action: 'dataresourceInfo'))}?phyloId=${phyloInstance.id}",
         dataresourceListUrl: '${raw(createLink(controller: 'ala', action: 'getRecordsList'))}?phyloId=${phyloInstance.id}',
         pj: pj,
         selectResourceOnInit: true,

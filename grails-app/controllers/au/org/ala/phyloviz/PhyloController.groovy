@@ -236,8 +236,8 @@ class PhyloController extends BaseController {
         }
     }
 
-    public def params(){
-        def url = 'http://biocache.ala.org.au/ws/webportal/params'
+    def params(){
+        def url = 'http://biocache.ala.org.au/ws/mapping/params'
         def ret = webServiceService.postData(url, [fq:params.fq])
         render ( text: ret.toString() )
     }

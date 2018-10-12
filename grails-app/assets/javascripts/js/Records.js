@@ -20,9 +20,9 @@ var Records = function (c) {
             uploadMessageId: 'uploadMessage',
             messageDelay: 5000,
             sampleFile: undefined,
-            dataresrouceInfoUrl:undefined,
+            dataresourceInfoUrl: undefined,
             drListId:'recordsmain',
-            dataresourceListUrl:undefined,
+            dataresourceListUrl: undefined,
             pj: undefined,
             map: undefined,
             selectResourceOnInit: true,
@@ -322,7 +322,7 @@ var Records = function (c) {
     this.findDataresourceInfo = function(druid, callback){
         var that = this;
         $.ajax({
-            url: config.dataresrouceInfoUrl,
+            url: config.dataresourceInfoUrl,
             data:{
                 druid: druid
             },

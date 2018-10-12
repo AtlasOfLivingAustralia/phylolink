@@ -16,10 +16,6 @@ class BootStrap {
             return;
         }
 
-        if (Boolean.parseBoolean(grailsApplication.config.bootstrap?.skip?:"false") ) {
-            return;
-        }
-
         //update alaDataresourceInfo with biocache urls
         grailsApplication.config.alaDataresourceInfo.biocacheServiceUrl = grailsApplication.config.biocacheServiceUrl
         grailsApplication.config.alaDataresourceInfo.biocacheHubUrl = grailsApplication.config.biocacheHubUrl
@@ -28,6 +24,10 @@ class BootStrap {
         grailsApplication.config.alaDataresourceInfo.type = "ala"
         grailsApplication.config.alaDataresourceInfo.id = -1
 
+
+        if (Boolean.parseBoolean(grailsApplication.config.bootstrap?.skip?:"false") ) {
+            return;
+        }
 
         log.debug('checking for system user name')
         def systemUser = Owner.findByDisplayName("System")
