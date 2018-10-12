@@ -35,7 +35,7 @@ function Map(options) {
         env: {
             'colormode': undefined,
             'name': 'circle',
-            'size': 4,
+            'size': 7,
             'opacity': 0.8,
             'color': 'df4a21'
         },
@@ -102,12 +102,11 @@ function Map(options) {
     var env = options.env;
     var id = options.id;
     var pj = options.pj;
-    var filter = options.filter,
-        character = options.character;
+    var filter = options.filter;
+    var character = options.character;
 
     $('#' + id).height(options.height);
     $('#' + id).width(options.width);
-    var query = filter.getQuery();
 
     this.invalidateSize = function () {
         lmap.invalidateSize(false);
@@ -176,8 +175,9 @@ function Map(options) {
         fullscreenControlOptions: {
             position: 'topleft'
         }
-    }).setView([-27, 133], 3);
+    }).setView([-27, 142], 4);
 
+    //add base layer
     L.tileLayer('https://{s}.tiles.mapbox.com/{version}/{id}/{z}/{x}/{y}.png?access_token={token}', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -202,22 +202,6 @@ function Map(options) {
             that.updateLayersEnv();
         }
     })
-
-    var opacitySlider = new L.Control.Slider({
-        position: 'topleft',
-        text: 'Opacity',
-        onChange: function (val) {
-            env.opacity = val;
-            that.updateLayersEnv();
-        },
-        sliderOpt: {
-            min: 0.1,
-            max: 1.0,
-            step: 0.1,
-            value: env.opacity,
-            tooltip: 'hide'
-        }
-    });
 
     var sizeSlider = new L.Control.Slider({
         text: 'Size',
@@ -254,9 +238,8 @@ function Map(options) {
     colorBy.addTo(lmap);
     lmap.addControl(loadingControl);
     lmap.addControl(outlineCtrl);
-    lmap.addControl(opacitySlider);
+    // lmap.addControl(opacitySlider);
     lmap.addControl(sizeSlider);
-    // colorBy.addTo(lmap);
     lmap.addControl(legendCtrl);
 
     pj.on('click', function (node, list, ajax) {
@@ -556,6 +539,7 @@ function Map(options) {
         spinner && spinner.stop();
         spinner = spin;
     }
+
     this.endSpinner = function () {
         spinner && spinner.stop();
     }

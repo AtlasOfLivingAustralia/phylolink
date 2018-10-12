@@ -32,7 +32,7 @@
 
 <div class="container-fluid" style="margin-left:-10px; margin-right:-20px;">
     <div class="row" style="margin-top: -20px">
-        <div class="col-sm-5 col-md-5" style="padding-right:0px;padding-left:0px;">
+        <div class="col-sm-4 col-md-4" style="padding-right:0px;padding-left:0px;">
             <div id="info"></div>
         </div>
 
@@ -50,7 +50,7 @@
         #freshwidget-button { display:none; }
         </style>
 
-        <div role="tabpanel" id="tabs" class="col-sm-7 col-md-7" style="padding-left:0px; margin-left:0px; margin-right:0px;">
+        <div role="tabpanel" id="tabs" class="col-sm-8 col-md-8" style="padding-left:0px; margin-left:0px; margin-right:0px;">
 
             <div style="float:left;">
                 <div id="vizTitle"><g:render template="title"></g:render></div>
@@ -394,7 +394,7 @@
         env: {
             'colormode': undefined,
             'name': 'circle',
-            'size': 4,
+            'size': 7,
             'opacity': 0.8,
             'color': 'df4a21'
         },

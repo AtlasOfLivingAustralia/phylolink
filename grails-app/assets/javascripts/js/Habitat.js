@@ -30,8 +30,8 @@ var Habitat = function (c) {
         listUrl: 'http://localhost:8080/phylolink/ala/getAllLayers',
         graph: {
             url: 'http://localhost:8080/phylolink/phylo/getHabitat',
-            type: 'GET',
-            dataType: 'JSONP',
+            type: 'POST',
+            dataType: 'JSON',
             xAxisContextual: 'Habitat states',
             xAxisEnvironmental: 'values',
             yAxis: 'Occurrence count'
@@ -545,26 +545,8 @@ var Habitat = function (c) {
             var input = $(element).find("input");
             var tree = $(element).parent().find('div[id="jqxTree"]');
 
-            input.autocomplete(config.list);
+            // input.autocomplete(config.list);
 
-            // input.autocomplete({
-            //     source: config.list,
-            //     minLength: 1,
-            //     select: function (event, ui) {
-            //         event.preventDefault();
-            //         $(this).val(ui.item.label);
-            //         var self = koObj.$root;
-            //         self.changeHabitat(ui.item, data)
-            //         self.selectedHabitat(null);
-            //     },
-            //     _renderItem: function (ul, item) {
-            //         return $("<li>")
-            //             .attr("data-value", item.value)
-            //             .append(item.label)
-            //             .appendTo(ul);
-            //     }
-            // });
-            //
             input.focus();
             $("#"+config.id).scroll(function(e){
                 if( input.is(':visible')){
@@ -595,7 +577,7 @@ var Habitat = function (c) {
                 // focus on input tag once clicked to edit
                 $(element).find("input[id='layerCombobox']").focus().select();
                 // $(element).find("input[id='layerCombobox']").autocomplete("search", "")
-                $(element).find("input[id='layerCombobox']").autocomplete(config.list);
+                // $(element).find("input[id='layerCombobox']").autocomplete(config.list);
                 
             }
         }
