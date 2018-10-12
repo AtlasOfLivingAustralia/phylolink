@@ -213,7 +213,7 @@ var Character = function (options) {
         };
 
         self.isCharacterSelected = function (character) {
-            console.log(character);
+            // console.log(character);
             return character === self.selectedCharacter();
         };
 
@@ -1085,7 +1085,7 @@ var Character = function (options) {
             }
         }
         character.columnchart(id, data, name);
-        console.log('elapsed time for string char:' + (new Date() - startTime) / 1000);
+        // console.log('elapsed time for string char:' + (new Date() - startTime) / 1000);
     };
 
     this.chartQuantitativeChars = function(name, temp, id) {
@@ -1129,7 +1129,7 @@ var Character = function (options) {
             }
         }
         character.columnchart(id, data, name)
-        console.log('elapsed time for numeric char:' + (new Date() - startTime)/1000);
+        // console.log('elapsed time for numeric char:' + (new Date() - startTime)/1000);
     }
 
     //set style

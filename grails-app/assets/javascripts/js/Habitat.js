@@ -114,8 +114,8 @@ var Habitat = function (c) {
                 hab.emit('layermetadataadded')
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status);
-                console.log("Error retrieving lists of layers: " + xhr.responseText);
+                console.error(xhr.status);
+                console.error("Error retrieving lists of layers: " + xhr.responseText);
             }
         })
     }
@@ -302,14 +302,14 @@ var Habitat = function (c) {
             switch (data.type) {
                 case 'Contextual':
                     xaxis = config.graph.xAxisContextual;
-                    console.log('cont')
+                    // console.log('cont')
                     break;
                 case 'Environmental':
                     xaxis = data.environmentalvalueunits || config.graph.xAxisEnvironmental;
-                    console.log('env');
+                    // console.log('env');
                     break;
             }
-            console.log(xaxis);
+            // console.log(xaxis);
             self.selectedHabitat().displayName(data.label);
             self.selectedHabitat().name(data.value);
             self.selectedHabitat().xAxis(xaxis);
@@ -541,7 +541,7 @@ var Habitat = function (c) {
 
     ko.bindingHandlers.select = {
         init: function (element, valueAccessor, innerFn, data, koObj) {
-            console.log('init visible and select handler');
+            // console.log('init visible and select handler');
             var input = $(element).find("input");
             var tree = $(element).parent().find('div[id="jqxTree"]');
 
@@ -589,7 +589,7 @@ var Habitat = function (c) {
             utils.setupTree(config, tree, input)
         },
         update: function (element, valueAccessor, innerFn, data, koObj) {
-            console.log('update function');
+            // console.log('update function');
             ko.bindingHandlers.visible.update(element, valueAccessor);
             if (valueAccessor()) {
                 // focus on input tag once clicked to edit
@@ -648,7 +648,7 @@ var Habitat = function (c) {
                     }
 
                 }, function (qid) {
-                    console.log('failed')
+                    // console.log('failed')
                 });
             } else {
                 for (i = 0; i < habitats.length; i++) {
@@ -676,10 +676,10 @@ var Habitat = function (c) {
             type: config.syncType,
             data: data,
             success: function (data) {
-                console.log('saved!');
+                // console.log('saved!');
             },
             error: function () {
-                console.log('error saving!');
+                // console.log('error saving!');
             }
         });
     }
@@ -808,7 +808,7 @@ var Habitat = function (c) {
             $(id).popover('show');
         }
         $('body').on('click','.popover #habitatPopOverClose', function(){
-            console.log('clicked button')
+            // console.log('clicked button')
             that.popOver(false);
             $.cookie('habitatc',"ok")
         })

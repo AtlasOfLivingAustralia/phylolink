@@ -43,6 +43,7 @@ class SandboxService {
         headers = headers.replaceFirst(scName, 'scientific name');
 
         String uUrl = "${serverInstance}/api/uploadFile";
+        log.debug("Uploading data to " + uUrl)
         def result = webServiceService.postMultipart(uUrl, file)
 
         if (result == null || !result['fileId']) {

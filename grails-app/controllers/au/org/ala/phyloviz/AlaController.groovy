@@ -378,17 +378,18 @@ class AlaController extends BaseController {
      * upload data
      */
     def uploadData(){
-        String type = params.type?:'occurrence';
-        String title = params.title;
-        String scientificName = params.scientificName;
+        String type = params.type?:'occurrence'
+        String title = params.title
+        String scientificName = params.scientificName
         String phyloId = params?.phyloId
 
-        def file = request.getFile('file');
+        def file = request.getFile('file')
 
         if(file) {
             File tempFile = utilsService.getFileFromCommonsMultipartFile(file);
             def result = alaService.uploadData(type, title, scientificName, tempFile, phyloId)
             if (result.error) {
+                log.error("Unable to upload data: " + result.error)
                 render(status: 405, contentType: 'application/json', text: result as JSON);
             } else {
                 render(contentType: 'application/json', text: result as JSON);

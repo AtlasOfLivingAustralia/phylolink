@@ -151,7 +151,7 @@ var utils={
                 })
             }
         }
-        console.log($('#tabs').width() - 50 + 'px')
+        // console.log($('#tabs').width() - 50 + 'px')
         tree.jqxTree({
             source: [{label: 'Layers', items: source, expanded: true}],
             height: '300px',

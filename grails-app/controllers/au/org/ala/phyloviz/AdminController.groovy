@@ -8,13 +8,9 @@ import org.grails.io.support.GrailsResourceUtils
 class AdminController {
 
     def treeService
-    def nameService
     def alaService
 
-    def assetResourceLocator
-
-    def index(){
-    }
+    def index(){}
 
     def testSandboxLink(){
         String type = 'occurrence';

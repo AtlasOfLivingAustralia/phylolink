@@ -265,7 +265,7 @@ function Map(options) {
             ajax.then(function(){
                 that.update();
             }, function () {
-                console.log('failed to save query')
+                // console.log('failed to save query')
             })
         } else {
             that.update();
@@ -340,7 +340,7 @@ function Map(options) {
                 that.emit('updateend');
             },
             error: function () {
-                console.log('error communicating with colorby service.');
+                // console.log('error communicating with colorby service.');
                 that.emit('updateend');
             }
         });
@@ -477,7 +477,7 @@ function Map(options) {
                 ajax = pj.saveQuery(undefined, list, true);
                 ajax.color = i;
                 var legends = pj.getPJLegendData(char);
-                console.log(JSON.stringify(legends))
+                // console.log(JSON.stringify(legends))
 
                 ajax.then(function (data, status, ajx) {
                     var qid = 'qid:' + data.qid;
@@ -647,8 +647,6 @@ function Map(options) {
             if (email === undefined) {
                 email = '';
             }
-            console.log('url')
-            console.log(url)
 
             url = url + "?q=" + qid + "&reasonTypeId=" + self.downloadViewModel.reason().id() + "&email=" + email;
 

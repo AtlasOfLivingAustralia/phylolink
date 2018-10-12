@@ -1135,8 +1135,8 @@ var PJ = function (params) {
             }
         }
         stop = new Date();
-        console.log('elapsed time')
-        console.log(stop - start);
+        // console.log('elapsed time')
+        // console.log(stop - start);
     }
 
     var setTitle = function (config) {

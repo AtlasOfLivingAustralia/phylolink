@@ -16,7 +16,7 @@
     <asset:stylesheet src="PhyloJive.css" />
     <asset:stylesheet src="phylolink.css" />
     <asset:stylesheet src="jquery.contextMenu.css" />
-    <asset:stylesheet src="dparty/select2/select2-3.5.8.css" />
+    %{--<asset:stylesheet src="dparty/select2/select2-3.5.8.css" />--}%
     <asset:stylesheet src="jqwidgets/styles/jqx.base.css" />
     <asset:stylesheet src="maingsp.css" />
     <asset:stylesheet src="jquery-ui.css" />
