@@ -597,8 +597,6 @@ class TreeService {
         }
 
         def result = [:]
-        log.debug(user)
-        log.debug(phyloInstance.getOwner()?.userId)
         if (phyloInstance.getOwner()?.userId == user.userId) {
             phyloInstance.setTitle(title);
             phyloInstance.save(
@@ -612,7 +610,7 @@ class TreeService {
         } else {
             result['error'] = 'User not recognised'
         }
-        return result;
+        result
     }
 
     /**
