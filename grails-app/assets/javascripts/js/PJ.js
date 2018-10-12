@@ -731,7 +731,7 @@ var PJ = function (params) {
         this.init = function () {
             $.ajax({
                 url: url,
-                dataType: "jsonp",
+                dataType: "json",
                 success: function (data) {
                     var lists = [];
                     data.lists.forEach(function (list) {
