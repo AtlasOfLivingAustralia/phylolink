@@ -27,6 +27,8 @@
 
     <style type="text/css">
     body.fluid { max-width: none; width:auto; }
+    footer { display :none; }
+    .alert-creativecommons { display :none; }
     </style>
 </head>
 
@@ -235,7 +237,7 @@
 
     var pj = new PJ({
         width: $('#' + config.pjId).width()-10,
-        height: 620,
+        height: 590,
         codeBase: '../..',
         dataType:'json',
         bootstrap: 2,
@@ -370,7 +372,7 @@
         tabId:'mapTab',
         pj: pj,
         filter: filter,
-        height: 550,
+        height: $('.infovis').height() - 43,
         width: $('#tab-content').width(),
         layer: config.layer(),
         query: config.query,
