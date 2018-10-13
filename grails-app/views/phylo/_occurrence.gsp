@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-            <div class="pull-right">
+            <div class="pull-right small">
                 <a id="csvSampleRecords" target="_blank" data-bind="attr:{href: sampleFile}">Download sample CSV file from here.</a>
             </div>
         </div>

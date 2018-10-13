@@ -24,9 +24,14 @@
     <asset:stylesheet src="leaflet.fullscreen.v0.0.2.css" />
     <asset:stylesheet src="Control.Legend.css" />
     <asset:stylesheet src="Control.Loading.css" />
+
+    <style type="text/css">
+    body.fluid { max-width: none; width:auto; }
+    </style>
 </head>
 
-<body class="fluid">
+
+<body class="fluid" >
 <g:render template="settings"></g:render>
 <g:render template="trimming"></g:render>
 
@@ -37,6 +42,9 @@
         </div>
 
         <style type="text/css">
+        body.fluid .container.container-navbar, body.fluid #breadcrumb .container, body.fluid footer .container { max-width: none; width:auto; }
+
+        #breadcrumb .container-fluid { margin-left:0px; padding-left:0px; }
         .nav-tabs {
             text-align:right;
         }
