@@ -2,7 +2,7 @@
 <div class="panel-group" id="uploadRecords" style="margin-top:20px;">
     <div class="panel panel-default">
         <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
-            <a>Upload your occurrence records</a>
+            Upload your occurrence records
         </div>
         <div id="occurrenceUploadPanel" class="panel-body panel-collapse">
 

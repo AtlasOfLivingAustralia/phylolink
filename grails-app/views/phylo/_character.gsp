@@ -74,7 +74,7 @@
                 Add Character to Tree
             </a>
         </div>
-        <div id="addCharacterPanel" class="panel-body panel-collapse" style="border:none;">
+        <div id="addCharacterPanel" class="panel-body panel-collapse in" >
 
             <p>First, select a character dataset from the given list, or upload your character data. Then click on <i>Add Character to Tree</i>
             button. Tree branch color is determined by the first character on the list.

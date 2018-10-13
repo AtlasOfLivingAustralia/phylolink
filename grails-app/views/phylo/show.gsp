@@ -283,7 +283,7 @@
         template: $('#templateOccurrence').html(),
         uploadUrl: '${raw(createLink(controller: 'ala', action: 'uploadData'))}?phyloId=${phyloInstance.id}',
         indexingStatusUrl: "${raw(createLink(controller: 'sandbox', action: 'checkStatus'))}",
-        sampleFile: "${raw(createLink(controller: 'artifacts', action: 'occurrenceRecords.csv'))}",
+        sampleFile: "${raw(resource(dir: 'artifacts', file: 'occurrenceRecords.csv'))}",
         dataresourceInfoUrl: "${raw(createLink(controller: 'sandbox', action: 'dataresourceInfo'))}?phyloId=${phyloInstance.id}",
         dataresourceListUrl: '${raw(createLink(controller: 'ala', action: 'getRecordsList'))}?phyloId=${phyloInstance.id}',
         pj: pj,
