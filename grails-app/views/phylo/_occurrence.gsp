@@ -2,10 +2,14 @@
 <div class="panel-group" id="uploadRecords" style="margin-top:20px;">
     <div class="panel panel-default">
         <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
-            <i class="glyphicon glyphicon-chevron-down"></i> <a>Upload your occurrence records</a>
+            <a>Upload your occurrence records</a>
         </div>
-        <div id="characterUploadPanel" class="panel-collapse">
+        <div id="occurrenceUploadPanel" class="panel-body panel-collapse">
 
+            <p>
+                Upload your own occurrence data. Once you upload the dataset, you'll be able
+                to select this for viewing with the phylogenetic tree and map.
+            </p>
             <div id="csvFormRecordsUnavailable" class="alert-error hide">
                 <i>Login to enable occurrence upload or,
             you are unauthorized to upload for this visualisation.</i></div>
@@ -81,7 +85,7 @@
             </div>
 
             <div class="pull-right small">
-                <a id="csvSampleRecords" target="_blank" data-bind="attr:{href: sampleFile}">Download sample CSV file from here.</a>
+                <a id="csvSampleRecords" target="_blank" data-bind="attr:{href: sampleFile}">Download sample occurrence CSV file from here.</a>
             </div>
         </div>
     </div>
@@ -92,28 +96,30 @@
         <div class="panel-heading" id="pickFromListRecordsHeader">
             Select records dataset from the available list
         </div>
-        <p>
-            Select the source of occurrence data from the options below.
-            <br/>
-            This will affect the records displayed on the map, and the records used
-            to populate histograms in the Analysis section.
-        </p>
+        <div class="panel-body">
+            <p>
+                Select the source of occurrence data from the options below.
+                <br/>
+                This will affect the records displayed on the map, and the records used
+                to populate histograms in the Analysis section.
+            </p>
 
-        <div id="pickFromListRecords" class="panel-collapse">
-            <form id="sourceToolbarRecords" >
+            <div id="pickFromListRecords" class="panel-collapse">
+                <form id="sourceToolbarRecords" >
 
-                <div class="form-group row">
-                    <label for="sourceCharRecords" class="col-sm-3 col-form-label">Occurrence dataset:</label>
-                    <div class="col-sm-9">
-                        <select id="sourceCharRecords"
-                                class="form-control"
-                                data-bind="options:lists,optionsText:'title',value:selectedValue,
-                    optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+                    <div class="form-group row">
+                        <label for="sourceCharRecords" class="col-sm-3 col-form-label">Occurrence dataset:</label>
+                        <div class="col-sm-9">
+                            <select id="sourceCharRecords"
+                                    class="form-control"
+                                    data-bind="options:lists,optionsText:'title',value:selectedValue,
+                        optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div >&nbsp;</div>
         </div>
-        <div >&nbsp;</div>
     </div>
 </div>
 </div>

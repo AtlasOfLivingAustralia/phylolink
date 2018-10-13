@@ -1,18 +1,26 @@
-<div >
-
+<div>
     <div class="panel-group" id="uploadCharacters" style="margin-top:20px;">
 
         <div class="panel panel-default">
-            <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
+            <div class="panel-heading" id="uploadCharactersTitle" >
                 <a data-toggle="collapse" href="#characterUploadPanel">
                     <i class="glyphicon glyphicon-chevron-right"></i>
-                     Upload your character data
+                    Upload your character data
                 </a>
              </div>
             <div id="characterUploadPanel" class="panel-collapse collapse">
                 <div class="panel-body" style="border:none;">
                     <div id="minimizeUploadXX">
                         <div id="csvFormUnavailable" class="alert-error"><i>Is this your visualisation? If yes, login to upload your characters.</i></div>
+
+                        <p>
+                            Upload your own character data. Data should be in CSV format with the first column
+                            being a scientific name. You can supply any number of additional columns with each column being a trait/character.
+                            <br/>
+                            You can download an example CSV file
+                            <a data-bind="attr{href:sampleCSV}" target="_blank">here</a>.
+                            Once you've upload, you'll be able to select your character and add character to tree.
+                        </p>
 
                         <!-- upload file form -->
                         <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">
@@ -52,11 +60,6 @@
                                 <div data-bind="text:message"></div>
                             </div>
                         </div>
-
-                    </div>
-
-                    <div class="small pull-right">
-                        <label><a data-bind="attr{href:sampleCSV}" target="_blank">Download sample CSV file from here.</a></label>
                     </div>
                 </div>
             </div>
@@ -64,12 +67,21 @@
     </div>
 </div>
 <div id="charactermain">
-
     <div class="panel panel-default">
         <div class="panel-heading" id="pickFromList">
-        Add Character to Tree
+            <a data-toggle="collapse" href="#addCharacterPanel">
+                <i class="glyphicon glyphicon-chevron-right"></i>
+                Add Character to Tree
+            </a>
         </div>
-        <div class="panel-body" style="border:none;">
+        <div id="addCharacterPanel" class="panel-body panel-collapse" style="border:none;">
+
+            <p>First, select a character dataset from the given list, or upload your character data. Then click on <i>Add Character to Tree</i>
+            button. Tree branch color is determined by the first character on the list.
+            To color the tree using a character either drag that character to the top of the list, or
+            edit the first character by clicking on that character.</p>
+
+
             <form id="sourceToolbar" >
 
                 <div class="form-group row">
@@ -131,11 +143,4 @@
             </div>
         </div>
     </div>
-</div>
-<div class="alert top-buffer">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <h4>Note</h4><p>First, select a character dataset from the given list, or upload your character data. Then click on <i>Add Character to Tree</i>
-button. Tree branch color is determined by the first character on the list.
-To color the tree using a character either drag that character to the top of the list, or 
-edit the first character by clicking on that character.</p>
 </div>
