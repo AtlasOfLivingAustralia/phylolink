@@ -14,12 +14,13 @@
                         <div id="csvFormUnavailable" class="alert-error"><i>Is this your visualisation? If yes, login to upload your characters.</i></div>
 
                         <p>
-                            Upload your own character data. Data should be in CSV format with the first column
-                            being a scientific name. You can supply any number of additional columns with each column being a trait/character.
+                            Upload your own character data. Data should be in CSV format with the
+                            <b>first column being a scientific name</b>.
+                        You can supply any number of additional columns with each column being a trait/character.
                             <br/>
-                            You can download an example CSV file
-                            <a data-bind="attr{href:sampleCSV}" target="_blank">here</a>.
-                            Once you've upload, you'll be able to select your character and add character to tree.
+                            You can download an
+                            <a data-bind="attr{href:sampleCSV}" target="_blank">example CSV file here</a>.
+                            Once you've uploaded, you'll be able to <b>Add Character to Tree</b> with you character data.
                         </p>
 
                         <!-- upload file form -->
