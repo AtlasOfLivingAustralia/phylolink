@@ -330,6 +330,8 @@ function Map(options) {
     };
 
     this.updateLegend = function (f) {
+
+        console.log('Update legend...' + Date.now());
         // do not execute if records tab has not loaded data resource.
         if(!options.records.isDRLoaded()){
             return;
@@ -363,11 +365,11 @@ function Map(options) {
         data.q = pj.getQid(true);
         data.source = dr.type;
         data.biocacheHubUrl = dr.biocacheHubUrl;
-        data.title = dr.title ? dr.title : '' ;
+        data.title = (dr.title ? dr.title : ''); //  + ", selected taxa:" + pj.hData.selectedClade().length;
         // if query id is not present.
-        if(!data.q){
-            data.q = filter.formatQuery();
-            data.fq = filter.formatFq();
+        if (!data.q){
+            data.q = filter['query'];
+            data.fq = filter.fq;
         }
 
         // if cm is not defined, this url will produce an error.
@@ -376,6 +378,7 @@ function Map(options) {
             xhrLegend  = $.ajax({
                 url: url,
                 data: data,
+                method: 'POST',
                 success: function (dataResp) {
                     legendCtrl.title(data.title);
                     legendCtrl.legend(dataResp);
@@ -402,6 +405,7 @@ function Map(options) {
     }
 
     this.updateMap = function (f) {
+
         // do not execute if records tab has not loaded data resource.
         if(!options.records.isDRLoaded()){
             return;

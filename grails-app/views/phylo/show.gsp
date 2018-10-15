@@ -210,9 +210,7 @@
         initCharacters: <g:message message="${JSON.parse(phyloInstance.getCharacters() ?: '[]') as grails.converters.JSON}"/>,
         filterParams: {
             q: '',
-            fq:{
-
-            }
+            fq:{}
         },
         colorByUrl: '${raw(createLink(controller: 'ala', action: 'facets'))}',
         edit:${edit},
@@ -435,7 +433,6 @@
 <g:render template="keepSessionAlive"/>
 
 <style type="text/css">
-
 #freshwidget-button { display:none; top:700px !important;}
 #FreshWidget { display:none; }
 #freshwidget-button { display:none; }

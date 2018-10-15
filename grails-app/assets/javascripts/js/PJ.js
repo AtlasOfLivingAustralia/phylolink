@@ -401,8 +401,6 @@ var PJ = function (params) {
                         canvas.data("info", html);
                         canvas.contextMenu({x: e.pageX, y: e.pageY});
                     } else {
-                        //left click
-
                         // abort previous save query calls since this is a new query
                         queryObj && !queryObj.statusText && queryObj.abort();
                         queryObj = null;
@@ -413,7 +411,6 @@ var PJ = function (params) {
                         if (config.runSaveQuery) {
                             queryObj = pj.saveQuery(node, names);
                         }
-
 
                         node && self.emit('click', node, names, queryObj);
                     }

@@ -368,6 +368,7 @@ var Habitat = function (c) {
                 type: config.graph.type,
                 dataType: config.graph.dataType,
                 data: params,
+                method: 'POST',
                 success: function (temp) {
                     habitat.stopLoading();
 
@@ -715,7 +716,9 @@ var Habitat = function (c) {
             }
         } else {
             // some times google chart is not ready when this function is called
-            habitat.startLoading();
+            if(habitat){
+                habitat.startLoading();
+            }
             config.delayedChartCall.push([arguments.callee, this, arguments]);
         }
 

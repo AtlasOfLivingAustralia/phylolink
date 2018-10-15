@@ -7,30 +7,24 @@
             </div>
 
             <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="control-group">
+                <form>
+                    <div class="form-group">
                         <label for="trimToInclude" class="control-label">Trim the tree to </label>
-                        <div class="controls">
                             <label><input id="trimToInclude" type="radio" name="trimToInclude" value="true" data-bind="checked: trimToInclude" style="vertical-align: baseline"/>&nbsp;Include</label>
                             <label><input id="trimToExclude" type="radio" name="trimToInclude" value="false" data-bind="checked: trimToInclude" style="vertical-align: baseline"/>&nbsp;Exclude</label>
-                        </div>
                     </div>
 
-                    <div class="control-group">
+                    <div class="form-group">
                         <label for="trimOption" class="control-label">species from</label>
-                        <div class="controls">
                             <select id="trimOption"
                                     data-bind="options:trimOptions, optionsText:'displayName', optionsCaption:'Choose...', value:trimOption"></select>
-                        </div>
                     </div>
 
-                    <div class="control-group" data-bind="visible:trimOption() == TRIM_LIST">
+                    <div class="form-group" data-bind="visible:trimOption() == TRIM_LIST">
                         <label for="trimByList" class="control-label">Select a list</label>
-                        <div class="controls">
-                            <input id="trimByList" type="text" class="input-xlarge" data-bind="value:trimData"/>
-                        </div>
+                        <input id="trimByList" type="text" class="input-xlarge" data-bind="value:trimData"/>
                     </div>
-                </div>
+                </form>
             </div>
 
             <div class="modal-footer">
