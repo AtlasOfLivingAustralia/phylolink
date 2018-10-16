@@ -3,6 +3,7 @@ import au.org.ala.phyloviz.Owner
 import au.org.ala.phyloviz.Phylo
 import au.org.ala.phyloviz.Tree
 import grails.util.Environment
+import org.grails.io.support.GrailsResourceUtils
 
 class BootStrap {
     def opentreeService
@@ -23,7 +24,6 @@ class BootStrap {
         grailsApplication.config.alaDataresourceInfo.title = "All occurrences"
         grailsApplication.config.alaDataresourceInfo.type = "ala"
         grailsApplication.config.alaDataresourceInfo.id = -1
-
 
         if (Boolean.parseBoolean(grailsApplication.config.bootstrap?.skip?:"false") ) {
             return;
@@ -86,8 +86,8 @@ class BootStrap {
 
     def acaciaTree() {
         log.debug('loading acacia tree')
-        def result = [:], filename = 'acacia.newick'
-        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
+        def result = [:]
+        def file = getTreeFile('acacia.newick')
         result['tree'] = file.text
         result['year'] = 2011
         result['hide'] = false
@@ -106,8 +106,8 @@ class BootStrap {
 
     def mammalsTree() {
         log.debug('adding mammals tree to map object')
-        def result = [:], filename = 'mammals.newick'
-        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
+        def result = [:]
+        def file = getTreeFile('mammals.newick')
         result['tree'] = file.text
         log.debug('mammals tree' + result['tree'])
         result['treeFormat'] = 'newick'
@@ -128,8 +128,8 @@ class BootStrap {
 
     def amphibianTree() {
         log.debug('loading amphibians tree')
-        def result = [:], filename = 'amp.newick'
-        def file = grailsApplication.mainContext.getResource('artifacts/' + filename).file;
+        def result = [:]
+        def file = getTreeFile('amp.newick')
         result['tree'] = file.text
         log.debug('amphibians tree' + result['tree'])
         result['treeFormat'] = 'newick'
@@ -150,7 +150,7 @@ class BootStrap {
     def marsupialsTree() {
         log.debug('creating marsupials tree metadata')
         def result = [:]
-        def file = grailsApplication.mainContext.getResource('artifacts/marsupials.newick').file;
+        def file = getTreeFile('marsupials.newick')
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
         log.debug(result['nexson'])
@@ -171,7 +171,7 @@ class BootStrap {
     def hornwortsTree() {
         log.debug('creating Australian Hornworts tree metadata')
         def result = [:]
-        def file = grailsApplication.mainContext.getResource('artifacts/hornworts.newick').file;
+        def file = getTreeFile('hornworts.newick')
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
         log.debug(result['nexson'])
@@ -191,7 +191,7 @@ class BootStrap {
     def maluridaeTree() {
         log.debug('creating Maluridae tree metadata')
         def result = [:]
-        def file = grailsApplication.mainContext.getResource('artifacts/Maluridae.newick').file;
+        def file = getTreeFile('Maluridae.newick')
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
         result['year'] = 2012
@@ -206,6 +206,10 @@ class BootStrap {
         result['expertTreeLSID'] = 'urn:lsid:biodiversity.org.au:afd.taxon:e0c1a995-d168-468f-8270-8299043212c5'
         result['notes'] = 'Tree provided by Scott Edwards sedwards@fas.harvard.edu'
         return result
+    }
+
+    def getTreeFile(fileName){
+        GrailsResourceUtils.getFile(new URI( 'file://' + System.getProperty("user.dir") + '/grails-app/assets/trees/' + fileName))
     }
 
     def listCharacters() {
