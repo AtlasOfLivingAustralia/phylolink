@@ -44,23 +44,28 @@ class BootStrap {
         log.debug('in bootstrap init func')
         def trees = [this.acaciaTree(), this.amphibianTree(), this.mammalsTree(),
                      this.marsupialsTree(), this.maluridaeTree(), hornwortsTree()]
-        trees.each {
-            def tree = it
-            tree.owner = systemUser;
-            def pt = Tree.findByReference(tree.reference)
-            if (!pt) {
-                log.debug('adding tree' + tree['title'])
-                tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
-                pt = new Tree(tree).save(flush: true, failOnError: true);
-            } else if (Boolean.parseBoolean(grailsApplication.config.bootstrap?.overwrite?:'false')) {
-                tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
-                tree.each { key, value ->
-                    pt[key] = value;
+
+        try {
+            trees.each {
+                def tree = it
+                tree.owner = systemUser;
+                def pt = Tree.findByReference(tree.reference)
+                if (!pt) {
+                    log.debug('adding tree' + tree['title'])
+                    tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
+                    pt = new Tree(tree).save(flush: true, failOnError: true);
+                } else if (Boolean.parseBoolean(grailsApplication.config.bootstrap?.overwrite ?: 'false')) {
+                    tree['nexson'] = opentreeService.convertNewickToNexson(tree['tree']).toString();
+                    tree.each { key, value ->
+                        pt[key] = value;
+                    }
+                    pt.save(flush: true);
+                } else {
+                    log.debug('tree already in database')
                 }
-                pt.save(flush: true);
-            } else {
-                log.debug('tree already in database')
             }
+        } catch (Exception e){
+            e.printStackTrace()
         }
 
         def chars = listCharacters()
@@ -209,7 +214,7 @@ class BootStrap {
     }
 
     def getTreeFile(fileName){
-        GrailsResourceUtils.getFile(new URI( 'file://' + System.getProperty("user.dir") + '/grails-app/assets/trees/' + fileName))
+        new File('/data/phylolink/bootstrap/' + fileName))
     }
 
     def listCharacters() {
