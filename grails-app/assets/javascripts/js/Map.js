@@ -431,6 +431,11 @@ function Map(options) {
     };
 
     this.mapWithFacets = function(query){
+
+        if(pj.getQid(true) === undefined){
+            return; //dont map if the query isnt yet defined
+        }
+
         query += '?q=' + pj.getQid(true);
         var layer = L.tileLayer.wms(query, {
             format: 'image/png',
