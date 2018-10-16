@@ -353,6 +353,7 @@ var Habitat = function (c) {
                 data: params,
                 dataType: config.saveQuery.dataType,
                 type: config.saveQuery.type,
+                method: 'POST',
                 success: function(qid){
                     //todo: how to pass this value?
                 }
