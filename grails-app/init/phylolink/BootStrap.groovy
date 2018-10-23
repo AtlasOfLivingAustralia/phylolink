@@ -214,7 +214,7 @@ class BootStrap {
     }
 
     def getTreeFile(fileName){
-        new File('/data/phylolink/bootstrap/' + fileName))
+        new File('/data/phylolink/bootstrap/' + fileName)
     }
 
     def listCharacters() {

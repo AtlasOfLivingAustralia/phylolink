@@ -213,6 +213,11 @@ class AlaService {
      * @return
      */
     def getDynamicFacets(baseUrl, drid) {
+
+        if(!drid){
+            return []
+        }
+
         def url = "${baseUrl}/upload/dynamicFacets?q=${drid}";
         def facets = webServiceService.get(url);
         def result = [];

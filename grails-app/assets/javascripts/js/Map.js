@@ -305,7 +305,7 @@ function Map(options) {
                     biocacheServiceUrl: drProp.biocacheServiceUrl
                 }
                 if(!qid){
-                    data.q = f.formatQuery(),
+                    data.q = f.getQuery(),
                     data.fq = f.formatFq()
                 }
                 break;
@@ -433,7 +433,7 @@ function Map(options) {
     this.mapWithFacets = function(query){
 
         if(pj.getQid(true) === undefined){
-            return; //dont map if the query isnt yet defined
+            return; //don't map if the query isn't yet defined
         }
 
         query += '?q=' + pj.getQid(true);

@@ -53,13 +53,17 @@ var Filter = function(options){
     }
 
     this.formatQuery = function(){
-        return this.opt.code['query']+this.opt.op.equal+filter['query'];
+        return this.opt.code['query'] + this.opt.op.equal + filter['query'];
+    }
+
+    this.getQuery = function(){
+        return  filter['query'];
     }
 
     this.formatFq = function( name ){
         var fq = this.getFq(name);
         if( fq ){
-            return this.opt.code['fq']+this.opt.op.equal + fq;
+            return this.opt.code['fq'] + this.opt.op.equal + fq;
         }
     }
 
