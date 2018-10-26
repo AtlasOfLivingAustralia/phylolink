@@ -227,9 +227,9 @@ function Map(options) {
 
     colorBy.on('change', function (val) {
         env.colormode = val;
-        that.updateMap();
         that.updateLegend();
         that.updateLayersEnv();
+        that.updateMap();
     });
 
     var legendCtrl = new L.Control.Legend(options.legend);
@@ -338,7 +338,7 @@ function Map(options) {
         }
 
         var cby = colorBy.getSelection();
-        if(cby){
+        if (cby){
             switch ( cby.type()){
                 case 'character':
                     this.showLegendsWithCharacter();
@@ -350,7 +350,6 @@ function Map(options) {
         } else {
             this.showLegendDefault();
         }
-
     };
 
     /**
@@ -365,7 +364,7 @@ function Map(options) {
         data.q = pj.getQid(true);
         data.source = dr.type;
         data.biocacheHubUrl = dr.biocacheHubUrl;
-        data.title = (dr.title ? dr.title : ''); //  + ", selected taxa:" + pj.hData.selectedClade().length;
+        data.title = (dr.title ? dr.title : ''); //   + ", selected taxa:" + data.speciesList.length;
         // if query id is not present.
         if (!data.q){
             data.q = filter['query'];
@@ -435,7 +434,6 @@ function Map(options) {
         if(pj.getQid(true) === undefined){
             return; //don't map if the query isn't yet defined
         }
-
         query += '?q=' + pj.getQid(true);
         var layer = L.tileLayer.wms(query, {
             format: 'image/png',

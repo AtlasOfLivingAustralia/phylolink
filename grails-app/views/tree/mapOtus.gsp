@@ -5,141 +5,99 @@
 <%@ page contentType="text/html;charset=UTF-8" defaultCodec="html" %>
 <html>
 <head>
-    <title>Name reconciliation</title>
-    <meta name="layout" content="mapotu"/>
-    <r:require modules="slickgrid, appSpecific"/>
-    <r:require modules="bugherd"/>
-    <jqui:resources theme="darkness"/>
+    <title>${tree.title} - Name reconciliation</title>
+    <meta name="layout" content="main"/>
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'tree', action: 'treeAdmin')},Tree admin"/>
+
 </head>
-
 <body>
-<div style="min-height: 700px">
 <div class="container">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a> <span class="divider">/</span></li>
-                <li>Tree</li>
-            </ul>
-        </div>
-    </div>
 
-    <legend>Reconcile names with ALA taxonomy</legend>
-    <p style="font-size:14px; max-width: 60em;">
-        On this page, you can reconcile the tip names of your tree with ALA taxonomy. The system-matched name is listed
-        in the <span class="label">Matched name</span> column. To edit, click on a cell. To save changes, click <span class="label">Save</span> button.
+    <h1>${tree.title} - Reconcile names with ALA taxonomy </h1>
+    <p>
+        On this page, you can reconcile the tip names of your tree with ALA taxonomy.
+        The system-matched name is listed in the <span class="strong">Matched name</span> column.
+        <br/>
+        To edit, click on a cell and save changes, click <span class="strong">Save</span> button.
+        <br/>
+        <strong>Note:</strong> The names and ALA matched name and ALA matched GUID are the values
+        used for querying occurrence data. Changes to the  ALA matched name will not
+        change what is displayed in the tree view.
     </p>
-    <div id="myGrid" style="width: 500px;height: 400px">
-
-
-
-
-    </div>
-
-    <div id="alaProfile" class="col-sm-6 col-md-6">
-
+    <div id="myGrid">
+        <table class="table">
+            <thead>
+                <th>Original name from tree</th>
+                <th>ALA matched name</th>
+                <th>ALA matched GUID</th>
+                <th></th>
+            </thead>
+            <tbody>
+            <g:each in="${otus}" var="otu">
+            <tr id="${otu.id}">
+                <td class="hide">
+                    <input type="text" class="nodeID" value="${otu.id}"/>
+                </td>
+                <td class="hide">
+                    <input type="text" class="nodeOtuID" value="${otu.otuId}"/>
+                </td>
+                <td>
+                    ${otu['^ot:originalLabel']}
+                </td>
+                <td>
+                    <input type="text" class="nodeLabel form-control" value="${otu['^ot:altLabel']}"/>
+                </td>
+                <td>
+                    <input type="text" class="nodeGuid form-control"  value="${otu['@ala']}"/>
+                </td>
+                <td>
+                    <button class="saveOtuChange btn btn-default" disabled>Save</button>
+                </td>
+                <td>
+                    <span class="status"></span>
+                </td>
+            </tr>
+            </g:each>
+            </tbody>
+        </table>
     </div>
 </div>
+    <g:javascript>
 
-<div class="container" style="padding-top: 10px">
-    <div class="control-group">
-        <div class="controls">
-            <g:form controller="tree" action="saveOtus" method="POST">
-                <input type="hidden" name="otus" id="otus">
-                <input type="hidden" name="id" value="${id}">
-                <g:submitButton name="Save" class="btn" onclick="saveOtus()"></g:submitButton>
-                <g:actionSubmit value="Visualise" action="visualize" onclick="saveOtus()" class="btn btn-primary"/>
-            </g:form>
-        </div>
-    </div>
-</div>
-</div>
+        $( ".nodeLabel, .nodeGuid" ).on("click change paste keyup", function(event) {
+            var $row = $(event.target).parent().parent();
+            $row.find('.saveOtuChange').addClass('btn-primary');
+            $row.find('.saveOtuChange').removeClass('btn-default');
+            $row.find('.saveOtuChange').removeAttr("disabled");
+        });
 
-<script>
-    var BVP_JS_URLS ={
-        picklistAutocompleteUrl:"${createLink(controller: 'tree', action: 'autocomplete')}"
-    };
-    var profileId = 'alaProfile'
-    var cache = []
-    var renderProfile = function (guid, data) {
-        if (guid == null) {
-            $('#' + profileId).html('');
-            return
-        }
-        if (cache[guid]) {
-            $('#' + profileId).html(cache[guid]);
-        } else {
+        $( ".saveOtuChange" ).click(function(event) {
+            var $row = $(event.target).parent().parent();
+            var data = {
+                id: ${params.id},
+                otus: JSON.stringify([{
+                    nodeID : $row.find('.nodeID').val(),
+                    'otuId' : $row.find('.nodeOtuID').val(),
+                    '@ala' : $row.find('.nodeGuid').val(),
+                    '^ot:altLabel' : $row.find('.nodeLabel').val()
+                }])
+            };
             $.ajax({
-                url: '${createLink( controller: 'PhylogeneticTree', action:'taxonInfo')}/',
-                data: {
-                    q: guid
-                },
-                success: function (data) {
-                    cache[guid] = data
-                    renderProfile(guid)
-                },
-                failure: function () {
-                    $('#' + profileId).html("<div class='error'>Error occurred</div>");
-                }
-            })
-        }
-    }
-    var otus = <g:message message="${otus as grails.converters.JSON}"/>;
+                method: "POST",
+                url: '${raw(createLink(controller: "tree", action:"saveOtus" ))}',
+                data: data
+            }).done(function() {
+                $row.find('.saveOtuChange').addClass('btn-default');
+                $row.find('.saveOtuChange').removeClass('btn-primary');
+                $row.find('.saveOtuChange').attr("disabled", true);
+            }).fail(function() {
+                alert( "There was a problem saving" );
+            });
+        });
 
-    var columns = [
-        {
-            name: 'Original name',
-            id: '^ot:originalLabel',
-            field: '^ot:originalLabel',
-            width: 250
-        },
-        {
-            name: 'Matched name',
-            id: '^ot:altLabel',
-            field: '^ot:altLabel',
-            editor: BVP.SlickGrid.Autocomplete(1, ''),
-            width: 250
-        }
-    ]
 
-    var options = {
-        editable: true,
-        enableAddRow: true,
-        enableCellNavigation: true,
-        asyncEditorLoading: false,
-        autoEdit: true,
-        syncColumnCellResize: true,
-        enableColumnReorder: false,
-        editCommandHandler: function (item, grid, autocomplete) {
-            console.log(arguments)
-            item['@ala'] = autocomplete.editor.selectedItem.data.guid;
-            renderProfile(item['@ala'])
-            autocomplete.execute()
-        }
-    };
-    var dataView = new Slick.Data.DataView();
-    var grid = new Slick.Grid("#myGrid", dataView, columns, options)
-    grid.onSelectedRowsChanged.subscribe(function (e, args) {
-//        console.log(args)
-//        debugger;
-        renderProfile(args.item['@ala'])
-    })
-    dataView.onRowCountChanged.subscribe(function (e, args) {
-        grid.updateRowCount();
-        grid.render();
-    })
-
-    dataView.onRowsChanged.subscribe(function (e, args) {
-        grid.invalidateRows(args.rows);
-        grid.render();
-    })
-
-    dataView.setItems(otus)
-
-    function saveOtus() {
-        $('#otus').val(JSON.stringify(otus))
-    }
-</script>
+    </g:javascript>
 </body>
+
+
 </html>

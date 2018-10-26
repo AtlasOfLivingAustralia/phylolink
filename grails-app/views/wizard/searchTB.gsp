@@ -7,10 +7,11 @@
 <head>
     <title>Search Treebase</title>
     <meta name="layout" content="main"/>
-    <r:require module="knockout"/>
+    <asset:javascript src="thirdparty/knockout-3.0.0.js" />
+    <asset:javascript src="thirdparty/knockout-custom-bindings.js" />
 </head>
 
-<body>
+<body class="fluid" >
 <div class="container" style="min-height: 700px">
     <span class="nav-collapse collapse">
         %{--Search TreeBASE--}%

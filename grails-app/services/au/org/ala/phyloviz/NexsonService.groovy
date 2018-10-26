@@ -4,15 +4,12 @@ import grails.transaction.Transactional
 
 @Transactional
 class NexsonService {
+
     def alaService
 
-    def updateOtus( otus, Nexson nex ) {
-        if( otus.size() > 0 ){
-            def i ;
-            def otu
-            for( i = 0; i < otus.size(); i++ ){
-                otu = otus[i]
-                log.debug( otu )
+    def updateOtus(otus, au.org.ala.phyloviz.Nexson nex ) {
+        if (otus){
+            otus.each { otu ->
                 nex.setAlaId( otu.otuId, otu['@ala'] )
                 nex.setAltLabel( otu.otuId, otu['^ot:altLabel'] )
             }

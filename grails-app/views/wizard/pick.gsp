@@ -9,7 +9,7 @@
     <meta name="breadcrumbParent" content="${g.createLink( controller: 'phylo', action: 'startPage')},Phylolink"/>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'phylolink.css')}" type="text/css" media="screen"/>
 </head>
-<body>
+<body class="fluid" >
 <div class="container"  >
 
     <h1>Load a tree or select a visualisation</h1>
@@ -41,9 +41,9 @@
                                 <label class="radio"><input type="radio" name="options" value="demo" required=""> View a demonstration visualisation</label>
                                 </div>
                             </div>
-                            <g:if test="${params.isAdmin}">
+                            <g:if test="${isAdmin}">
                                 <div class="col-sm-3 col-md-3 verticalLineLeft wizard-option-group" style="padding-left:50px;">
-                                    <h5>Administration</h5>
+                                    <h4>Administration</h4>
                                     <label class="radio"><input type="radio" name="options" value="treeAdmin" required=""> Tree administration</label>
                                     <label class="radio"><input type="radio" name="options" value="rematchAll" required=""> Rematch all trees</label>
                                 </div>

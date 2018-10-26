@@ -7,22 +7,13 @@
 <head>
     <meta name="layout" content="main"/>
     <title>${name} trees</title>
-    <r:require modules="css"/>
 </head>
 
-<body>
-<div class="container"  style="min-height: 700px">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri:'/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
-            </ul>
-        </div>
-    </div>
-    <legend>${name} trees</legend>
+<body class="fluid">
+<div class="container" >
+    <h1>${name} trees</h1>
     <p >List of all trees that you have uploaded.</p>
-    <g:if test="${trees.size() != 0}">
+    <g:if test="${trees}">
         <table class="table table-hover table-bordered">
             <thead>
             <tr>
@@ -97,9 +88,12 @@
     </g:if>
     <g:else>
         <div>
+            <p>
+                You have not yet uploaded a tree.
+            </p>
         </div>
     </g:else>
-    <div name="back" class="btn" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
+    <div name="back" class="btn btn-default" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
             class="icon icon-arrow-left"></i> Back</div>
     <script>
         function showInfo(i) {

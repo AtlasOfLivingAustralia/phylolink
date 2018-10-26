@@ -248,6 +248,10 @@ class TreeService {
         return meta;
     }
 
+    def saveTreeInstance(treep) {
+
+    }
+
     /**
      * create Tree instance
      * @param
@@ -257,7 +261,7 @@ class TreeService {
         def tree;
         log.debug('in create tree instance function:' + authService.getUserId())
         treep.created = new Date()
-//        userService.registerCurrentUser()
+
         def userId = authService.getUserId()
         def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
 
@@ -266,7 +270,6 @@ class TreeService {
             try {
                 log.debug('before convert nexson')
                 treep.nexson = opentreeService.convertToNexson(treep.tree, treep.treeFormat);
-//                return
                 if (treep.nexson == null) {
                     return;
                 }
@@ -278,7 +281,6 @@ class TreeService {
                 tree = new Tree(treep)
                 if (tree.save(flush: true)) {
                     log.debug('tree saved to database.' + tree.getId())
-//                    elasticService.indexDoc(elasticService.getNEXSON_INDEX(), tree.getId(), tree.getNexson());
                 }
             } catch (Exception e) {
                 log.debug('exception while converting tree to nexson' + e.getMessage(), e)
@@ -289,6 +291,8 @@ class TreeService {
         return tree;
     }
 
+
+
     /**
      * gets the updated otus and saves them to nexson object and then to database
      * @param otus
@@ -296,13 +300,10 @@ class TreeService {
      * @return
      */
     def saveOtus(otus, study) {
-        def nexson = new Nexson(study.getNexson())
-
+        def nexson = new au.org.ala.phyloviz.Nexson(study.getNexson())
         nexsonService.updateOtus(otus, nexson)
         study.setNexson(nexson.getTree())
-        if (study.save(flush: true)) {
-//            elasticService.indexDoc(elasticService.getNEXSON_INDEX(), study.getId(), study.getNexson());
-        }
+        study.save(flush: true)
     }
 
     def searchTreebase(query) {
@@ -859,11 +860,11 @@ class TreeService {
      * @param flush - commit changes to db - Boolean
      * @return
      */
-    public rematchTrees(List<Tree> trees, Boolean flush = false){
+    def rematchTrees(List<Tree> trees, Boolean flush = false){
         Boolean flag = false
         trees?.each { Tree tree ->
             if(tree.nexson){
-                Nexson nex = new Nexson(tree.nexson)
+                au.org.ala.phyloviz.Nexson nex = new au.org.ala.phyloviz.Nexson(tree.nexson)
                 // get node names
                 List otus = nex.getOtus()
                 otus?.each{ Map otu ->

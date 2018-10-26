@@ -7,16 +7,17 @@
 <head>
     <title>Phylolink</title>
     <meta name="layout" content="main"/>
+
+    <asset:stylesheet src="phylolink.css" />
 </head>
 
-<body>
+<body class="fluid" >
 
 <div class="panelXX panel-defaultXX">
 
-
     <div class="panel-bodyXX">
 
-        <div class="row">
+        <div class="row" style="margin-left:10px; margin-right:10px;">
             <div class="col-sm-6 col-md-6">
                 <h1>Phylolink</h1>
 

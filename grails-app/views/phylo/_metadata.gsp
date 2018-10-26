@@ -45,7 +45,9 @@
                 Download tree:
             </td>
             <td>
-                <a class="btn" href="${createLink(controller: 'tree', action: 'download')}?id=${studyId}"><i class="icon icon-download"></i> Download</a>
+                <a class="btn btn-default" href="${createLink(controller: 'tree', action: 'download')}?id=${studyId}">
+                    <i class="icon icon-download"></i> Download
+                </a>
             </td>
         </tr>
         <g:if test="${userLoggedIn}">

@@ -1425,15 +1425,17 @@ var PJ = function (params) {
         params.characterQuery = characterQuery;
         params.treeId = config.treeId;
         if (config.doSaveQuery && typeof(config.saveQuery) != "undefined" && typeof(config.saveQuery.url) != "undefined") {
-
-            // console.log("Running save query with " + config.saveQuery.url);
-            // console.log(config.saveQuery)
-
             if (!characterQuery) {
                 qid = undefined;
             }
             this.emit('savequerybegin');
-            params.speciesList = JSON.stringify(names);
+
+            // if(names.length < 200){
+                params.speciesList = JSON.stringify(names);
+            // } else {
+            //     params.speciesList = JSON.stringify(Array("Acacia"));
+            // }
+
             var obj = $.ajax({
                 url: config.saveQuery.url,
                 type: config.saveQuery.type,

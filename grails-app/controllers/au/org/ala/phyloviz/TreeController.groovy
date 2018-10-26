@@ -9,19 +9,18 @@ import org.apache.http.client.HttpResponseException
  */
 
 class TreeController extends BaseController {
+
     def utilsService
     def opentreeService
     def treeService
     def authService
     def alaService
-    def nexsonService
     def userService
     def webServiceService
 
     Boolean stackTrace = true
-    def index() {
 
-    }
+    def index() {}
 
     def create() {
         userService.registerCurrentUser()
@@ -29,7 +28,21 @@ class TreeController extends BaseController {
         def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         if( user ){
             params.user = user
-            [ tree: new Tree( params ) ]
+            [ tree: new Tree( params ), isAdmin:userService.userIsSiteAdmin() ]
+        } else {
+            def msg = "Failed to detect current user details. Are you logged in?"
+            flash.message = msg
+            redirect( controller: 'wizard', action: 'start');
+        }
+    }
+
+    def edit() {
+        userService.registerCurrentUser()
+        def userId = authService.getUserId()
+        def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
+        if( user ){
+            params.user = user
+            render( view: 'create', model:  [ tree: Tree.findById(params.id ? params.id : params.studyId ), isAdmin:userService.userIsSiteAdmin() ])
         } else {
             def msg = "Failed to detect current user details. Are you logged in?"
             flash.message = msg
@@ -38,16 +51,24 @@ class TreeController extends BaseController {
     }
 
     def save(){
-        def tree = treeService.createTreeInstance( params )
-        log.debug( tree?.getErrors() )
-        if( !tree || tree?.hasErrors() ){
-            render ( view: 'create', model: [ tree: tree ] )
-            return
+        def tree
+        if (params.id){
+            tree = Tree.findById(params.id)
+            bindData(tree, params)
+            if (tree.save(flush: true)) {
+                log.debug('tree saved to database.' + tree.getId())
+            }
+            redirect( action:'mapOtus', id: tree.id)
+        } else {
+            tree = treeService.createTreeInstance( params )
+            log.debug( tree?.getErrors() )
+            if( !tree || tree?.hasErrors() ){
+                render ( view: 'create', model: [ tree: tree ] )
+                return
+            }
+            flash.message = message( code:'default.created.message', args: [ message(code: 'tree.label', default: 'Tree')])
+            redirect( action:'mapOtus', id: tree.id)
         }
-
-        flash.message = message( code:'default.created.message', args: [ message(code: 'tree.label', default: 'Tree'),
-                                                                       tree.id] )
-        redirect( action:'mapOtus', id: tree.id)
     }
 
     /**
@@ -66,11 +87,11 @@ class TreeController extends BaseController {
                 Tree tree = Tree.findById( id )
                 Owner owner = utilsService.getOwner()
 
-                if( tree && ((tree.ownerId == owner?.id) || params.isAdmin)) {
+                if( tree && ((tree.ownerId == owner?.id) || userService.userIsSiteAdmin())) {
                     otus = treeService.getMappedOtus(tree)
                     withFormat {
                         html {
-                            render( view: 'mapOtus', model: [ otus: otus, id: id ])
+                            render( view: 'mapOtus', model: [ tree: tree, otus: otus.sort { it['^ot:originalLabel']}, id: id ])
                         }
                         json {
                             render(contentType: 'application/json', text: otus as JSON)
@@ -84,7 +105,6 @@ class TreeController extends BaseController {
                 badRequest "Parameter id must be provided"
             }
         } catch (Exception e){
-            log.error(e)
             e.printStackTrace()
             badRequest "Could not process request"
         }
@@ -107,18 +127,13 @@ class TreeController extends BaseController {
     def treeInfo( ) {
         def nexml = params.tree
         def treeFormat = params.treeFormat?:'nexml'
-        def info = ''
-//        log.debug( nexml )
-        def nexson = '';
         try{
-            nexson = opentreeService.convertToNexson( nexml, treeFormat )
-            info = treeService.treeInfo( nexson )
+            def nexson = opentreeService.convertToNexson( nexml, treeFormat )
+            def info = treeService.treeInfo( nexson )
             def study = treeService.studyInfo( nexson );
-            log.debug( study )
-            study.each{ key, value ->
+            study.each { key, value ->
                 info[key] = value
             }
-            log.debug( info )
             withFormat {
                 json {
                     render( contentType: 'application/json', text: info as JSON )
@@ -147,11 +162,6 @@ class TreeController extends BaseController {
 
     }
 
-    def extractStudyData(){
-        def nexml = params.tree
-        def treeFormat = params.treeFormat?:'nexml'
-    }
-
     private def basicExceptionHandler( Exception e ){
         response.status = 500;
         def resp = e.getMessage()
@@ -171,7 +181,7 @@ class TreeController extends BaseController {
         log.debug( 'in testcitation')
 
 
-        def nex = new Nexson( (new File( 'artifacts/ot_29.json.1.2.1.json'  ) ).text )
+        def nex = new au.org.ala.phyloviz.Nexson( (new File( 'artifacts/ot_29.json.1.2.1.json'  ) ).text )
         render ( contentType: 'text/html', text:  nex.getTitle())
     }
 
@@ -202,14 +212,14 @@ class TreeController extends BaseController {
         return result
     }
 
-    public def autocomplete(){
+    def autocomplete(){
         def q = params.q;
         q= q.replaceAll(' ', '+')
         def res = utilsService.autocomplete( q );
         render( contentType: 'application/json', text: ['autoCompleteList':res] as JSON );
     }
 
-    public def taxonInfo () {
+    def taxonInfo () {
         def q = params.q
         def taxon = alaService.getTaxonInfo( q )
 //        withFormat {
@@ -225,7 +235,7 @@ class TreeController extends BaseController {
     /**
      * save reconciled otus back into nexson
      */
-    public def saveOtus(){
+    def saveOtus(){
         def otus = params.otus
         def id = params.id
         def study = Tree.get( params.id )
@@ -239,7 +249,7 @@ class TreeController extends BaseController {
      * save OTUs and then redirect to wizard controller.
      * @return
      */
-    public def visualize(){
+    def visualize(){
         def otus = params.otus;
         def id = params.id;
         def study = Tree.get( params.id )
@@ -413,7 +423,8 @@ class TreeController extends BaseController {
      */
     @AlaSecured(value = ["ROLE_ADMIN", "ROLE_PHYLOLINK_ADMIN"], redirectUri = "/403", anyRole = true)
     def rematchExpertTree(){
-        if(params.treeId){
+
+        if (params.treeId){
             String controller = 'wizard', action = 'expertTrees'
             switch (params.redirect){
                 case 'treeAdmin':
@@ -429,6 +440,7 @@ class TreeController extends BaseController {
                 if(trees.size()){
                     treeService.rematchTrees(trees, true)
                     flash.message = 'Successfully re-matched tree'
+                    log.info('Successfully re-matched tree ' + params.treeId)
                     redirect( controller: controller, action: action)
                 } else {
                     notFound("Could not find tree for the given id")

@@ -222,3 +222,22 @@ body > div.navbar.navbar-inverse.navbar-fixed-top > div > div > a.navbar-brand >
 }
 
 .pj-nav-controls .glyphicon { font-size: 25px; }
+
+body.fluid { max-width: none; width:auto; }
+footer { display :none; }
+.alert-creativecommons { display :none; }
+
+body.fluid .container.container-navbar, body.fluid #breadcrumb .container, body.fluid footer .container { max-width: none; width:auto; }
+
+#breadcrumb .container-fluid { margin-left:0px; padding-left:0px; }
+.nav-tabs {
+    text-align:right;
+}
+
+.nav-tabs > li {
+    display:inline-block;
+    float:none;
+}
+
+#FreshWidget { display:none; }
+#freshwidget-button { display:none; }

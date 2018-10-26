@@ -10,7 +10,7 @@
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
 </head>
 
-<body>
+<body class="fluid" >
 <g:set var="userLoggedIn"><fc:userIsLoggedIn/></g:set>
 <div class="container"  style="min-height: 700px">
     <h1>Select an expert recommended tree</h1>

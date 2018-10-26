@@ -7,22 +7,20 @@
 <head>
     <meta name="layout" content="main"/>
     <title>Expert Tree Admin</title>
-    <r:require modules="phylojive, jquery-ui"/>
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink "/>
 </head>
+<body class="fluid">
+<div class="container">
+    <h1>Maintain the list of expert recommended trees</h1>
 
-<body>
-
-<div class="container" style="min-height: 700px">
-    <div class="row-fluid">
-        <div class="span12">
-            <ul class="breadcrumb">
-                <li><a href="${createLink(uri: '/')}">Home</a> <span class="divider">/</span></li>
-                <li><a href="${createLink(controller: 'wizard', action: 'start')}">Start PhyloLink</a></li>
-            </ul>
+    <g:if test="${flash.message}">
+        <div class="alert alert-success">
+         ${flash.message}
         </div>
-    </div>
+    </g:if>
 
-    <legend>Maintain the list of expert recommended trees</legend>
+
+
     <table id="treeTable" class="table table-hover table-bordered">
         <thead>
         <tr>
@@ -31,18 +29,15 @@
             <th>Action</th>
         </tr>
         </thead>
+        <tbody>
         <g:each in="${trees}" var="tree" status="i">
-            <tbody id="row${tree.id}">
-
-                <g:render template="adminTableRow" model="[tree: tree]"/>
-
-        </tbody>
+            <g:render template="adminTableRow" model="[tree: tree]"/>
         </g:each>
+        </tbody>
     </table>
-
-    <div name="back" class="btn" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'"><i
-            class="icon icon-arrow-left"></i> Back</div>
+    <div name="back" class="btn btn-default" onclick="window.location = '${createLink(controller: 'wizard',action: 'start')}'">
+        <i class="icon icon-arrow-left"></i> Back
+    </div>
 </div>
-
 </body>
 </html>

@@ -8,7 +8,14 @@
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
     <title data-bind='text: title'>${phyloInstance.title}</title>
-    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'myViz')},My Visualisations"/>
+
+    <g:if test="${isDemonstration}">
+        <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'demo')},Demonstration vizualisations"/>
+    </g:if>
+    <g:else>
+        <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'myViz')},My Visualisations"/>
+    </g:else>
+
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages: ["corechart"]});
@@ -24,12 +31,6 @@
     <asset:stylesheet src="leaflet.fullscreen.v0.0.2.css" />
     <asset:stylesheet src="Control.Legend.css" />
     <asset:stylesheet src="Control.Loading.css" />
-
-    <style type="text/css">
-    body.fluid { max-width: none; width:auto; }
-    footer { display :none; }
-    .alert-creativecommons { display :none; }
-    </style>
 </head>
 
 
@@ -42,24 +43,6 @@
         <div class="col-sm-4 col-md-4" style="padding-right:0px;padding-left:0px;">
             <div id="info"></div>
         </div>
-
-        <style type="text/css">
-        body.fluid .container.container-navbar, body.fluid #breadcrumb .container, body.fluid footer .container { max-width: none; width:auto; }
-
-        #breadcrumb .container-fluid { margin-left:0px; padding-left:0px; }
-        .nav-tabs {
-            text-align:right;
-        }
-
-        .nav-tabs > li {
-            display:inline-block;
-            float:none;
-        }
-
-        #FreshWidget { display:none; }
-        #freshwidget-button { display:none; }
-        </style>
-
         <div role="tabpanel" id="tabs" class="col-sm-8 col-md-8" style="padding-left:0px; margin-left:0px; margin-right:0px;">
 
             <div style="float:left;">

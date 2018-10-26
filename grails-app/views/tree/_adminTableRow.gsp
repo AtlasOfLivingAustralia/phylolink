@@ -16,16 +16,23 @@
     <td width="30%"><a href="http://bie.ala.org.au/species/${tree.expertTreeLSID}"
                        target="_blank">${tree.getExpertTreeTaxonomy()}</a></td>
     <td width="30%">
-        <a id="showHideDetailsBtn${tree.id}" class="btn btn-small btn-primary" data-toggle="modal" href="#"
-           onclick="showInfo('${tree.id}')">
-            <i class="fa fa-angle-double-down"></i>&nbsp;&nbsp;Details</a>
+
+        <a href="${createLink(controller: 'tree', action: 'edit')}?studyId=${tree.getId()}"
+           class="btn btn-default btn-small"><i class="icon icon-camera"></i> Edit metadata</a>
 
         <a href="${createLink(controller: 'viewer', action: 'show')}?studyId=${tree.getId()}"
-           class="btn btn-small"><i class="icon icon-camera"></i> Preview tree</a>
-        <div class="btn btn-small" onclick="window.location =
+           class="btn btn-default btn-small"><i class="icon icon-camera"></i> Preview tree</a>
+
+        <div class="btn btn-default btn-small" onclick="window.location =
                 '${createLink( controller: 'tree', action: 'rematchExpertTree')}?treeId=${tree.getId()}&redirect=treeAdmin'">
             <i class="icon-repeat"></i> Rematch
         </div>
+
+        <div class="btn btn-default btn-small" onclick="window.location =
+            '${createLink( controller: 'tree', action: 'mapOtus')}?id=${tree.getId()}&redirect=treeAdmin'">
+            <i class="icon-repeat"></i> Rematch manually
+        </div>
+
     </td>
 </tr>
 <tr id="info-${tree.id}" class="hide">
@@ -41,11 +48,11 @@
 <tr id="controls-${tree.id}" class="hide" width="100%">
     <td colspan="3" class="info">
         <g:if test="${tree.expertTree}">
-            <g:remoteLink params="[treeId: tree.id]" class="btn btn-primary btn-small"
+            <g:link params="[treeId: tree.id]" class="btn btn-primary btn-small"
                           action="toggleExpertTree" update="row${tree.id}"
                           title="Remove this tree from the list of expert trees' : ''}">
                 Change to Public Tree
-            </g:remoteLink>
+            </g:link>
         </g:if>
         <g:else>
             <g:formRemote name="bla" url="[action: 'toggleExpertTree']" controller="tree" action="toggleExpertTree"

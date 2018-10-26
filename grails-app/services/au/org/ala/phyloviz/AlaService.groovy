@@ -61,7 +61,7 @@ class AlaService {
      * @param names
      * @return
      */
-    Map matchNames(List names, Nexson nex = null) {
+    Map matchNames(List names, au.org.ala.phyloviz.Nexson nex = null) {
         Map matches = ['matched': [], 'unmatched': []]
         String lsid
         Map lookup = nex?.getOtuNameLookupTable()

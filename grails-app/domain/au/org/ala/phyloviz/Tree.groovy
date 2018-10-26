@@ -1,7 +1,7 @@
 package au.org.ala.phyloviz
 
 class Tree {
-    def Owner owner
+    Owner owner
     static belongsTo = [Owner]
     Integer id
     String reference

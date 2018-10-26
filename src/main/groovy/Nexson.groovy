@@ -211,7 +211,7 @@ class Nexson {
         return otus
     }
 
-    public Map getOtuNameLookupTable(){
+    Map getOtuNameLookupTable(){
         Map lookup = [:]
         List otus = getOtus()
         otus?.each { otu ->
@@ -221,7 +221,7 @@ class Nexson {
         lookup
     }
 
-    public setAlaId(id, lsid) {
+    def setAlaId(id, lsid) {
         if (json == null) {
             log.debug('nexml is null')
             return

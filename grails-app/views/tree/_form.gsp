@@ -1,6 +1,7 @@
 <%@ page import="au.org.ala.phyloviz.Tree" %>
 %{--<g:hiddenField id="owner" name="owner.id" value="${tree?.owner?.id}"/>--}%
 <g:hiddenField name="formSubmitted" value="1"></g:hiddenField>
+<g:hiddenField name="id" value="${tree?.id}"></g:hiddenField>
 <div class="control-group">
     <label class="control-label" for="tree">Tree data <span class="mandatory">*</span></label>
 
@@ -75,7 +76,15 @@
     </div>
 </div>
 
-
+<g:if test="${isAdmin}">
+<div class="control-group">
+    <div class="controls ${hasErrors(bean: tree, field: 'hide', 'error')}">
+        <label class="checkbox">
+            <g:checkBox name="expertTree" checked="${tree?.expertTree ? 'true' : 'false'}"/> Make this expert public
+        </label>
+    </div>
+</div>
+</g:if>
 
 <script>
     $("#expertTreeTaxonomy").autocomplete({

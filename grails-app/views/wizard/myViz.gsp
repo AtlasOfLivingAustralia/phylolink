@@ -10,7 +10,7 @@
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
 </head>
 
-<body>
+<body class="fluid" >
 <div class="container"  style="min-height: 700px">
     <h1>${name} Visualisations</h1>
     <g:if test="${!isDemonstration}">

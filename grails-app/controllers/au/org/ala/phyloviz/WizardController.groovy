@@ -59,7 +59,13 @@ class WizardController {
         def numberOfVisualisations = userId != null ? myViz().viz.size() : 0
 
         render(view: '/wizard/pick', contentType: 'text/html',
-                model: [numberOfTrees: numberOfTrees, numberOfVisualisations: numberOfVisualisations, loggedIn: userId != null])
+                model: [
+                    numberOfTrees: numberOfTrees,
+                    numberOfVisualisations: numberOfVisualisations,
+                    loggedIn: userId != null,
+                    isAdmin: userService.userIsSiteAdmin()
+                ]
+        )
     }
 
     def create() {
@@ -111,7 +117,7 @@ class WizardController {
             redirect( action: 'start')
         } else {
             def tree = Tree.findById(params.id)
-            def nex = new Nexson(tree.getNexson())
+            def nex = new au.org.ala.phyloviz.Nexson(tree.getNexson())
             def viz, id, treeId = params.treeId;
             def treeIds = nex.getTreeList()
 
@@ -128,7 +134,7 @@ class WizardController {
 
     def pickTree() {
         def study = Tree.findById(params.id)
-        def nex = new Nexson(tree.getNexson())
+        def nex = new au.org.ala.phyloviz.Nexson(tree.getNexson())
         def treeIds = nex.getTreeList()
 
         render(view: 'pickTree', model: [treeIds: treeIds])
@@ -144,7 +150,6 @@ class WizardController {
 
     def expertTrees() {
         def expertTrees = Tree.findAllByExpertTree(true)
-//        log.debug(expertTrees)
         render(view: 'listExpertTrees', model: [trees: expertTrees, isAdmin: params.isAdmin])
     }
 

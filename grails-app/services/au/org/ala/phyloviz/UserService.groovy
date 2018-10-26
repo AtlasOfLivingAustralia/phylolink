@@ -35,7 +35,9 @@ class UserService {
     }
 
     def userIsSiteAdmin() {
-        authService.userInRole(grailsApplication.config.security.cas.officerRole) || authService.userInRole(grailsApplication.config.security.cas.adminRole) || authService.userInRole(grailsApplication.config.security.cas.alaAdminRole)
+        return authService.userInRole(grailsApplication.config.security.cas.officerRole?:'ROLE_OFFICER') ||
+            authService.userInRole(grailsApplication.config.security.cas.adminRole?:'ROLE_PHYLOLINK_ADMIN') ||
+            authService.userInRole(grailsApplication.config.security.cas.alaAdminRole?:'ROLE_ADMIN')
     }
 
     def getRecentEditsForUserId(userId) {

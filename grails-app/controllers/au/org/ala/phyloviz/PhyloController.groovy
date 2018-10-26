@@ -36,7 +36,7 @@ class PhyloController extends BaseController {
             log.debug('editable');
         }
 
-        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid(), phyloInstance: phyloInstance]
+        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid(), phyloInstance: phyloInstance, isDemonstration: !edit]
     }
 
     def deleteViz() {
