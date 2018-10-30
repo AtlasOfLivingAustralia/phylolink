@@ -679,9 +679,9 @@ class TreeService {
      */
     void deleteTree(Integer treeId) {
         List<Phylo> visualisations = Phylo.findAllByStudyid(treeId)
-        visualisations*.delete()
+        visualisations*.delete(flush:true)
 
-        Tree.findById(treeId)?.delete()
+        Tree.findById(treeId)?.delete(flush:true)
     }
 
     /**

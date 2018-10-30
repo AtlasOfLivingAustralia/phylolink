@@ -330,11 +330,10 @@ class TreeController extends BaseController {
             Tree tree = Tree.findById(params.id)
             if (!tree) {
                 notFound "No tree found for id ${params.id}"
-            } else if (!params.isAdmin && tree.getOwner() != treeService.getCurrentOwner()) {
+            } else if (!userService.userIsSiteAdmin() && tree.getOwner().getUserId() != treeService.getCurrentOwner().getUserId()) {
                 notAuthorised "Only the tree owner or an administrator can delete this tree"
             } else {
                 treeService.deleteTree(params.id as int)
-
                 redirect controller: "wizard", action: "myTrees"
             }
         }

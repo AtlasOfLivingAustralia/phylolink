@@ -24,7 +24,7 @@
         change what is displayed in the tree view.
     </p>
     <div>
-        <div class="pull-right btn btn-small btn-primary" onclick="window.location ='${createLink( action: 'visualize')}?id=${tree.getId()}'">
+        <div class="pull-right btn btn-small btn-primary" onclick="window.location ='${createLink( action: 'visualize', controller: 'wizard')}?id=${tree.getId()}'">
             <i class="glyphicon glyphicon-arrow-right"></i> Create visualisation
         </div>
     </div>

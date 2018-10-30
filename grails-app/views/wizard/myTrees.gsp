@@ -46,24 +46,34 @@
                                 '${createLink( controller: 'tree', action: 'rematchMyTree')}?treeId=${tree.getId()}'">
                             <i class="glyphicon glyphicon-repeat"></i> Rematch
                         </div>
+
                         <g:render template="/tree/mapOtu"  model="${[id:tree.getId()]}"></g:render>
                         <a id="deleteTreeLink${tree.getId()}" class="btn btn-default btn-small" data-toggle="modal" href="#${tree.getId()}ConfirmationModal"><i class="fa fa-trash"></i>&nbsp;Delete tree</a>
 
-                        <div id="${tree.getId()}ConfirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Confirmation" aria-hidden="true">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                <h3 id="myModalLabel">Confirmation</h3>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you wish to delete this tree?</p><p>This operation cannot be undone.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <g:form method="DELETE" controller="Tree" action="deleteTree" params="[id: tree.getId()]" class="inline-block">
-                                    <g:actionSubmit value="Delete tree" controller="Tree" action="deleteTree" params="[id: tree.getId()]" class="btn btn-warning" />
-                                </g:form>
-                                <button id="closeDownloadModal" class="btn closeDownloadModal" data-dismiss="modal" aria-hidden="true">Close</button>
+
+                        <div id="${tree.getId()}ConfirmationModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="Confirmation" aria-hidden="true">
+
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h3 id="myModalLabel">Confirmation</h3>
+                                </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you wish to delete this tree?</p><p>This operation cannot be undone.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <g:form method="DELETE" controller="Tree" action="deleteTree" params="[id: tree.getId()]" class="inline-block">
+                                            <g:actionSubmit value="Delete tree" controller="Tree" action="deleteTree" params="[id: tree.getId()]" class="btn btn-danger" />
+                                            <button id="closeDownloadModal" class="btn btn-default closeDownloadModal" data-dismiss="modal" aria-hidden="true">Close</button>
+                                        </g:form>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+
                     </td>
                 </tr>
                 <tr>
