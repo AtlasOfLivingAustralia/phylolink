@@ -341,7 +341,8 @@ var Habitat = function (c) {
                     });
 
                 } else {
-                    self.updateChartDirect(habitat, data);
+                    console.log('Not updating chart....');
+                    // self.updateChartDirect(habitat, data);
                 }
                 utils.updateCladeInfo(list)
             }
@@ -458,13 +459,14 @@ var Habitat = function (c) {
                     };
                     self.updateChartDirect(habitat, data);
                 } else {
-                    list = pj.getChildrenName(pj.getSelection());
-                    data = {
-                        speciesList: JSON.stringify(list),
-                        config: habitat.name()
-                    };
-                    self.updateChartDirect(habitat, data);
-                    utils.updateCladeInfo(list)
+                    console.log('No QID for updating charts.....')
+                    // list = pj.getChildrenName(pj.getSelection());
+                    // data = {
+                    //     speciesList: JSON.stringify(list),
+                    //     config: habitat.name()
+                    // };
+                    // self.updateChartDirect(habitat, data);
+                    // utils.updateCladeInfo(list)
                 }
             }
         };
@@ -635,16 +637,19 @@ var Habitat = function (c) {
                     // console.log('failed')
                 });
             } else {
-                for (i = 0; i < habitats.length; i++) {
-                    data = {
-                        speciesList: JSON.stringify(list),
-                        config: habitats[i].name(),
-                        biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
-                    };
-
-                    view.updateChartDirect(habitats[i], data);
-                }
+                console.log("Save query is null -  not updating charts....");
             }
+            // } else {
+            //     for (i = 0; i < habitats.length; i++) {
+            //         data = {
+            //             speciesList: JSON.stringify(list),
+            //             config: habitats[i].name(),
+            //             biocacheServiceUrl: config.records.getDataresource().biocacheServiceUrl
+            //         };
+            //
+            //         view.updateChartDirect(habitats[i], data);
+            //     }
+            // }
             utils.updateCladeInfo(list)
         }
     };
