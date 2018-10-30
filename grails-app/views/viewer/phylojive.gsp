@@ -10,7 +10,7 @@
 
 </head>
 
-<body>
+<body class="fluid">
 <div class="container">
 
     <div class="row">
@@ -18,7 +18,7 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-6 col-md-6">
+        <div class="col-sm-6 col-md-6" style="padding-left:0px;">
             <div id="info"></div>
             <g:render template="/phylo/settings"></g:render>
             <g:render template="/phylo/trimming"></g:render>

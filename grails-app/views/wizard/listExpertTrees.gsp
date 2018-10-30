@@ -8,8 +8,8 @@
     <meta name="layout" content="main"/>
     <title>Expert Trees</title>
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
+    <asset:stylesheet src="phylolink.css" />
 </head>
-
 <body class="fluid" >
 <g:set var="userLoggedIn"><fc:userIsLoggedIn/></g:set>
 <div class="container"  style="min-height: 700px">

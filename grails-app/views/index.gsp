@@ -11,7 +11,7 @@
     <asset:stylesheet src="phylolink.css" />
 </head>
 
-<body class="fluid" >
+<body class="fluid">
 
 <div class="panelXX panel-defaultXX">
 

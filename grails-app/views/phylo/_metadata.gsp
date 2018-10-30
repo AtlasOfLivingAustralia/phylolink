@@ -1,10 +1,11 @@
 <g:set var="userLoggedIn"><fc:userIsLoggedIn/></g:set>
 <div>
     <table class="table table-bordered">
-        <tbody>
-        <tr>
+        <thead>
             <th colspan="2">Tree metadata</th>
-        </tr>
+        </thead>
+        <tbody>
+
         <tr>
             <td>Title:</td>
             <td>${tree.getTitle()}</td>

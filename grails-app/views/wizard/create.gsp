@@ -8,6 +8,8 @@
     <meta name="layout" content="main"/>
     <title>Add Phylogenetic Tree</title>
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
+
+    <asset:stylesheet src="phylolink.css" />
     <asset:javascript src="thirdparty/knockout-3.0.0.js" />
     <asset:javascript src="thirdparty/knockout-custom-bindings.js" />
 </head>

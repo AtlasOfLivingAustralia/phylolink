@@ -8,8 +8,9 @@
     <title>${tree.title} - Name reconciliation</title>
     <meta name="layout" content="main"/>
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'tree', action: 'treeAdmin')},Tree admin"/>
+    <asset:stylesheet src="phylolink.css" />
 </head>
-<body>
+<body class="fluid">
 <div class="container">
 
     <h1>${tree.title} - Reconcile names with ALA taxonomy </h1>

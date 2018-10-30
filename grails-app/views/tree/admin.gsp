@@ -8,6 +8,7 @@
     <meta name="layout" content="main"/>
     <title>Expert Tree Admin</title>
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink "/>
+    <asset:stylesheet src="phylolink.css" />
 </head>
 <body class="fluid">
 <div class="container">
