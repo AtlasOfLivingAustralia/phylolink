@@ -12,7 +12,8 @@ class ConvertSandbox extends au.org.ala.phyloviz.ConvertDomainObject {
                 'serverInstance': 'instanceUrl',
                 'title'         : 'title',
                 'biocacheServiceUrl': 'biocacheServiceUrl',
-                'biocacheHubUrl': 'biocacheHubUrl'
+                'biocacheHubUrl': 'biocacheHubUrl',
+                'dateCreated': 'dateCreated'
         ]
     }
 

@@ -112,7 +112,7 @@
                         <div class="col-sm-9">
                             <select id="sourceCharRecords"
                                     class="form-control"
-                                    data-bind="options:lists,optionsText:'title',value:selectedValue,
+                                    data-bind="options:lists,optionsText:'displayTitle',value:selectedValue,
                         optionsCaption:'Choose..', event:{change: drChanged}" required></select>
                         </div>
                     </div>

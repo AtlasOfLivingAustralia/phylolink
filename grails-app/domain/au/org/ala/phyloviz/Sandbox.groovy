@@ -10,6 +10,7 @@ class Sandbox {
     String phyloId
     Owner owner
     Boolean status
+    Date dateCreated
     static constraints = {
         phyloId nullable: true
     }

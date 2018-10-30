@@ -49,6 +49,13 @@ var Records = function (c) {
         this.biocacheHubUrl = ko.observable(opt.biocacheHubUrl||'');
         this.layerUrl = ko.observable(opt.layerUrl||'');
         this.type = ko.observable(opt.type||'');
+        if(opt.dateCreated){
+            var date = new Date(opt.dateCreated);
+            this.displayTitle = ko.observable(opt.title + ' - uploaded on '+ date.toLocaleDateString() + ' at ' + date.toLocaleTimeString() ||'');
+        } else {
+            this.displayTitle = ko.observable(opt.title ||'');
+        }
+
     };
 
     var FormModel = function (opt) {
