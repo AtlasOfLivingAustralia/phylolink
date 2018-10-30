@@ -920,11 +920,11 @@ class TreeService {
      * @param tree {@link Tree}
      * @return
      */
-    public List getMappedOtus(Tree tree){
-        Nexson nex;
+    List getMappedOtus(Tree tree){
+        au.org.ala.phyloviz.Nexson nex;
         List otus = [];
         if(tree.nexson){
-            nex = new Nexson( tree.nexson )
+            nex = new au.org.ala.phyloviz.Nexson( tree.nexson )
             otus = nex.getOtus()
             if(!areOtusMapped(otus)){
                 otus = nexsonService.autoSuggest( otus )

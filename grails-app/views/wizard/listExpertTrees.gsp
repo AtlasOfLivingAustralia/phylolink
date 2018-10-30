@@ -51,10 +51,10 @@
                         <g:if test="${userLoggedIn}">
                             <a class="btn btn-small btn-primary"
                                  onclick="window.location = '${createLink( action: 'visualize')}?id=${tree.getId()}'">
-                                <i class="icon icon-ok icon-white"></i> Open</a>
+                                <i class="glyphicon glyphicon-ok glyphicon-white"></i> Create visualisation</a>
                         </g:if>
                         <a href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
-                                class="btn btn-default btn-small"><i class="icon icon-camera"></i> Preview</a>
+                                class="btn btn-default btn-small"><i class="glyphicon glyphicon-camera"></i> Preview</a>
                     </div>
 
                 </td>

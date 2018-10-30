@@ -2,8 +2,12 @@
 <head>
     <meta name="layout" content="main"/>
     <title><g:message code="viewer.show"/></title>
+
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
+
     <asset:stylesheet src="PhyloJive.css" />
     <asset:stylesheet src="phylolink.css" />
+
 </head>
 
 <body>

@@ -8,7 +8,6 @@
     <title>${tree.title} - Name reconciliation</title>
     <meta name="layout" content="main"/>
     <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'tree', action: 'treeAdmin')},Tree admin"/>
-
 </head>
 <body>
 <div class="container">
@@ -24,6 +23,12 @@
         used for querying occurrence data. Changes to the  ALA matched name will not
         change what is displayed in the tree view.
     </p>
+    <div>
+        <div class="pull-right btn btn-small btn-primary" onclick="window.location ='${createLink( action: 'visualize')}?id=${tree.getId()}'">
+            <i class="glyphicon glyphicon-arrow-right"></i> Create visualisation
+        </div>
+    </div>
+
     <div id="myGrid">
         <table class="table">
             <thead>
@@ -63,7 +68,6 @@
     </div>
 </div>
     <g:javascript>
-
         $( ".nodeLabel, .nodeGuid" ).on("click change paste keyup", function(event) {
             var $row = $(event.target).parent().parent();
             $row.find('.saveOtuChange').addClass('btn-primary');
@@ -94,8 +98,6 @@
                 alert( "There was a problem saving" );
             });
         });
-
-
     </g:javascript>
 </body>
 

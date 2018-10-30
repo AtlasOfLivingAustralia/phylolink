@@ -6,7 +6,8 @@
 <html>
 <head>
     <meta name="layout" content="main"/>
-    <title>${name} trees</title>
+    <title>${raw(name)} trees</title>
+    <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink"/>
 </head>
 
 <body class="fluid">
@@ -27,10 +28,7 @@
                 <tr>
                     <td width="43%">
                         <div>
-                            <div class="btn btn-link" onclick="showInfo(${i})">
-                                ${tree.getTitle()}
-                                <i class="icon-info-sign"  title="Show more information"></i>
-                            </div>
+                            ${tree.getTitle()}
                         </div>
                     </td>
                     <td width="30%"><a
@@ -40,13 +38,13 @@
                     <td width="37%">
                         <div class="btn btn-small btn-primary" onclick="window.location =
                                 '${createLink( action: 'visualize')}?id=${tree.getId()}'">
-                            <i class="icon-ok"></i> Open</div>
+                            <i class="glyphicon glyphicon-ok"></i> Create visualisation</div>
                         <a
                                 href="${createLink(controller: 'viewer',action: 'show')}?studyId=${tree.getId()}"
-                                class="btn btn-small" ><i class="icon icon-camera"></i> Preview tree</a>
-                        <div class="btn btn-small" onclick="window.location =
+                                class="btn btn-default btn-small" ><i class="glyphicon glyphicon-camera"></i> Preview tree</a>
+                        <div class="btn btn-default btn-small" onclick="window.location =
                                 '${createLink( controller: 'tree', action: 'rematchMyTree')}?treeId=${tree.getId()}'">
-                            <i class="icon-repeat"></i> Rematch
+                            <i class="glyphicon glyphicon-repeat"></i> Rematch
                         </div>
                         <g:render template="/tree/mapOtu"  model="${[id:tree.getId()]}"></g:render>
                         <a id="deleteTreeLink${tree.getId()}" class="btn btn-default btn-small" data-toggle="modal" href="#${tree.getId()}ConfirmationModal"><i class="fa fa-trash"></i>&nbsp;Delete tree</a>

@@ -20,7 +20,7 @@ class NexsonService {
     def autoSuggest( otus ){
         // create a list of names
         def i, names=[], otu, count = 0, index, mapper = [:];
-        log.debug( 'otus received' +otus );
+        log.debug( 'otus received' + otus );
 
         for( i = 0; i < otus.size(); i++){
             otu = otus[i]
@@ -31,12 +31,9 @@ class NexsonService {
                 count ++
             }
         }
-        log.debug( names )
 
         // query webservice
         def lsids = alaService.getRecords( names )
-        log.debug('lsids found')
-        log.debug( lsids )
 
         // reconcile
         for( i = 0; i < otus.size(); i++){
