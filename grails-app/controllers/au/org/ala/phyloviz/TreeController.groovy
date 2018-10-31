@@ -102,9 +102,11 @@ class TreeController extends BaseController {
                     redirect(controller: 'wizard', action: 'start')
                 }
             } else {
+                log.error("Parameter id must be provided to mapOTUs")
                 badRequest "Parameter id must be provided"
             }
         } catch (Exception e){
+            log.error("Unable to load mapOTU page: " + e.getMessage(), e)
             e.printStackTrace()
             badRequest "Could not process request"
         }

@@ -241,15 +241,11 @@ class TreeService {
         switch (meta['format']) {
             case 'nexml':
                 nex = opentreeService.convertNexmlToNexson(tree)
-                nex = new Nexson(nex)
+                nex = new au.org.ala.phyloviz.Nexson(nex)
                 nex.getMeta(meta)
                 break;
         }
         return meta;
-    }
-
-    def saveTreeInstance(treep) {
-
     }
 
     /**
@@ -290,8 +286,6 @@ class TreeService {
         }
         return tree;
     }
-
-
 
     /**
      * gets the updated otus and saves them to nexson object and then to database

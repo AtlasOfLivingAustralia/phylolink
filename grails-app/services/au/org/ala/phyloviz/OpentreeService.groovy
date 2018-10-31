@@ -134,7 +134,7 @@ class OpentreeService {
         return this.convertToNexson( newick, 'newick' )
     }
 
-    def convertToNexson( tree, format){
+    def convertToNexson(tree, format){
         def url = grailsApplication.config['to_nexson'];
         log.debug( url )
         def data = [:]
@@ -151,13 +151,7 @@ class OpentreeService {
         data['inputFormat'] = format
         data['nexml2json'] = grailsApplication.config[ 'nexml2json' ]
         def nexson = webServiceService.postData2( url, data, ['Accepts':'application/json'])
-
-//        def nexson = response.keySet().find { it != 'uploadid'}
-
         log.debug('nexson returned is : ' + nexson)
         JSON.parse(nexson)
     }
-
-
-
 }

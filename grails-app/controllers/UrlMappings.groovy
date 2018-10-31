@@ -18,8 +18,11 @@ class UrlMappings {
         "/tree/mapOtus/$id(.$format)?"(controller: 'tree', action: 'mapOtus')
         "/tree/taxonInfo/$q"(controller: 'tree', action: 'taxonInfo')
         "/"(controller: 'phylo', action: 'startPage')
-        "/500"(view:'/error')
-        "/403"(view:'/notAuthorised')
-        "/401"(view:'/notAuthorised')
+        "500"(view:'/error')
+        "400"(view:'/error')
+        "403"(view:'/notAuthorised')
+        "401"(view:'/notAuthorised')
+        "404"(view:'/notFound')
+        "/error" (view:'error')
 	}
 }
