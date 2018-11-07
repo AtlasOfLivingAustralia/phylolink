@@ -18,6 +18,19 @@ class SandboxController {
         }
     }
 
+    def deleteResource(){
+        def alaId = authService.getUserId()
+        def sandbox = Sandbox.get(params.id)
+        if(sandbox && sandbox.owner.getUserId().toString() == alaId){
+            sandbox.delete(flush:true)
+            def result = [success:true]
+            render( text: result as JSON, contentType: 'application/json')
+        } else {
+            def result = [success:false]
+            render( text: result as JSON, contentType: 'application/json')
+        }
+    }
+
     def checkStatus(){
         def uid = params.uid;
         def msg = sandboxService.checkStatus(uid);

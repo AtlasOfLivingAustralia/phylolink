@@ -16,9 +16,7 @@ class AlaController extends BaseController {
 
     static allowedMethods = [saveAsList: 'POST', uploadData: 'POST']
 
-    def index() {
-
-    }
+    def index() {}
 
     def getOccurrenceRecords(speciesName, layer, region, biocacheServiceUrl){
         layer = layer ?: ''
@@ -28,9 +26,10 @@ class AlaController extends BaseController {
                 replace('SEARCH', speciesName.encodeAsURL()).
                 replace('LAYER',layer.encodeAsURL()).
                 replace('REGION',region.encodeAsURL())
-        def occurrencesResult = JSON.parse( webServiceService.get( occurrenceUrl ) );
-        return occurrencesResult;
+        JSON.parse( webServiceService.get( occurrenceUrl ) );
     }
+
+
 
     def extractFacets( occurrencesResults, speciesName ){
 
@@ -276,7 +275,6 @@ class AlaController extends BaseController {
         String drid = params.drid;
         String treeId = params.treeId;
         boolean characterQuery = params.characterQuery?.toBoolean()
-        log.debug(list);
         List json = JSON.parse(list) as List;
         def result;
         if(json && treeId){

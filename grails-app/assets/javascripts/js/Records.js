@@ -170,21 +170,45 @@ var Records = function (c) {
             this.indexingMessage('');
             this.indexingClass('');
             $('#' + config.formId + ' input[type="file"]').val(null);
+            $('#upload-file-info').html('Upload a CSV file of occurrences');
         }
 
     }
 
     var DataresourceViewModel = function () {
+
         var self = this;
+
         this.lists = ko.observableArray([]);
         this.selectedValue = ko.observable();
+
+        this.removeDataset = function(item){
+
+            console.log(config.deleteResourceUrl);
+
+            $.ajax({
+                url: config.deleteResourceUrl,
+                dataType: 'JSON',
+                method: 'POST',
+                data: { id: item.id() },
+                success: function (tmp) {
+                    self.lists.remove(item);
+                },
+                error: function ( jqXHR,  textStatus,  errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    console.log('error saving records!');
+                }
+            });
+        };
 
         /**
          * add a new data resource
          * @param src
          */
         this.addDataresource = function (src, select) {
-            var dr = new DataresourceModel(src)
+            var dr = new DataresourceModel(src);
             this.lists.push(dr);
             if(select){
                 this.selectedValue(dr);
@@ -274,7 +298,7 @@ var Records = function (c) {
     this.checkIndexingStatus = function () {
         $.ajax({
             url: config.indexingStatusUrl,
-            data: { uid: config.uid},
+            data: { uid: config.uid },
             success: function (data) {
                 viewModel.indexingMessage(data.description);
                 viewModel.indexingProgress(data.percentage);

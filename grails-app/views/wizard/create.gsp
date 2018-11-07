@@ -28,7 +28,7 @@
                 <g:render template="/tree/form" model="['tree':tree]"/>
                 <div class="control-group">
                     <div class="controls">
-                        <div name="back" class="btn" onclick="window.location = '${back}'"><i
+                        <div name="back" class="btn btn-default" onclick="window.location = '${back}'"><i
                                 class="icon icon-arrow-left"></i> Back</div>
                         <button type="submit" class="btn btn-primary" value="Next"><i
                                 class="icon icon-white icon-arrow-right"></i> Next</button>

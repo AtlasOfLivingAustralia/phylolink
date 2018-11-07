@@ -242,6 +242,7 @@
         edit: config.edit,
         runSaveQuery: false,
         saveQuery:{
+            defaultQuery: <phy:formatDefaultQueryAsJSON tree="${tree}"/>,
             url: '${raw(createLink(controller: 'ala', action: 'saveQuery'))}',
             type: 'POST',
             dataType: 'JSON',
@@ -264,6 +265,7 @@
     var records = new Records({
         id: 'recordsForm',
         template: $('#templateOccurrence').html(),
+        deleteResourceUrl:"${raw(createLink(controller: 'sandbox', action: 'deleteResource'))}",
         uploadUrl: '${raw(createLink(controller: 'ala', action: 'uploadData'))}?phyloId=${phyloInstance.id}',
         indexingStatusUrl: "${raw(createLink(controller: 'sandbox', action: 'checkStatus'))}",
         sampleFile: "${raw(resource(dir: 'artifacts', file: 'occurrenceRecords.csv'))}",

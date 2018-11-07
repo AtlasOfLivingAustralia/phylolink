@@ -132,7 +132,7 @@ environments:
     development:
         dataSource:
             dbCreate: update
-            url: jdbc:postgresql://localhost/phylolink
+            url: jdbc:postgresql://localhost/phylolink?autoReconnect=true&connectTimeout=0&useUnicode=true&characterEncoding=UTF-8
             username: "phylo"
             password: "postgres"
     test:
@@ -142,7 +142,7 @@ environments:
     production:
         dataSource:
             dbCreate: update
-            url: jdbc:postgresql://localhost/phylolink
+            url: jdbc:postgresql://localhost/phylolink?autoReconnect=true&connectTimeout=0&useUnicode=true&characterEncoding=UTF-8
             properties:
                 jmxEnabled: true
                 initialSize: 5

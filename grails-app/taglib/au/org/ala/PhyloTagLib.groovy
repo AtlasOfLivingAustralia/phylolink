@@ -13,6 +13,16 @@ class PhyloTagLib {
     def reg = { attrs, body ->
         out << ( this.getRegions() as JSON).toString()
     }
+
+    def formatDefaultQueryAsJSON = { attrs, body ->
+        if(attrs.tree.defaultQuery){
+            def list = attrs.tree.defaultQuery.split(',').collect { it.trim() }
+            out << ( list as JSON).toString()
+        } else {
+            out << 'null'
+        }
+    }
+
     private  def getRegions(){
         def regions =[], json;
         def regionsUrl = grailsApplication.config.regionsUrl;

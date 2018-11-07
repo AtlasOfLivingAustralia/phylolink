@@ -381,6 +381,7 @@ var Character = function (options) {
         }
         this.cancelCharUpload = function(model, e){
             $("#csvFile").val('');
+            $("#char-upload-file-info").html('Upload a CSV file of characters');
             this.headers([]);
         }
     }

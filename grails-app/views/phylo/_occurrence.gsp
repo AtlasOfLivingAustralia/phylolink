@@ -1,4 +1,3 @@
-<div>
 <div class="panel-group" id="uploadRecords" style="margin-top:20px;">
     <div class="panel panel-default">
         <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
@@ -19,9 +18,11 @@
 
                 <label class="btn btn-default btn-file">
                     <i class="glyphicon glyphicon-upload"> </i>
-                    Upload a CSV file of occurrences
+
+                    <span id="upload-file-info">Upload a CSV file of occurrences</span>
                     <input id="csvFileRecords" type="file" name="file" value="Upload" accept=".csv" style="display: none;"
                            data-bind="event:{change: onNewFile}, attr:{disabled: formDisabled}"
+                           onchange="$('#upload-file-info').html(this.files[0].name)"
                            required
                     />
                 </label>
@@ -48,17 +49,17 @@
                         </div>
                     </div>
 
-
                     <button id="uploadBtnRecords" class="btn btn-primary" data-bind="click: uploadFile, attr:{disabled: formDisabled}">
                         <i class="glyphicon glyphicon-upload"></i> Upload my file
                     </button>
-                    <button id="resetBtnRecords" class="btn btn-default" data-bind="click: resetForm, attr:{disabled: formDisabled}">Clear form</button>
+                    <button id="resetBtnRecords" class="btn btn-default" data-bind="click: resetForm, attr:{disabled: formDisabled}">Cancel</button>
                 </div>
             </form>
 
             <div id="sandboxProgress" style="margin-top: 10px;" class="well" data-bind="visible: progress() != undefined || indexingProgress() != undefined">
                 <div id="occurrenceUpload" data-bind="visible: progress() != undefined">
-                    <label>Uploading Data</label>
+                    <label data-bind="html:message, visible: !!message()"></label>
+                    <label data-bind="if:!message()">Uploading data ...</label>
                     <div class="progress">
                         <div class="progress-bar"
                              role="progressbar"
@@ -67,19 +68,17 @@
                              aria-valuemax="100">
                         </div>
                     </div>
-                    <div class="alert" data-bind="html: message, css:{ 'alert-error': error(), 'alert-success': !error()}, visible: !!message()">
-                    </div>
                 </div>
 
                 <div id="sandboxUpload" data-bind="visible: indexingProgress() != undefined">
-                    <label>Indexing Data</label>
-                    <div class="progress-bar"
-                         role="progressbar"
-                         data-bind="style:{width: indexingProgress() + '%'}"
-                         aria-valuemin="0"
-                         aria-valuemax="100">
-                    </div>
-                    <div id="uploadMessage" class="alert" data-bind="html: indexingMessage, attr:{class: 'alert ' + indexingClass()}">
+                    <label data-bind="html: indexingMessage">Indexing Data</label>
+                    <div class="progress">
+                        <div class="progress-bar"
+                             role="progressbar"
+                             data-bind="style:{width: indexingProgress() + '%'}"
+                             aria-valuemin="10"
+                             aria-valuemax="100">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,8 +117,49 @@
                     </div>
                 </form>
             </div>
-            <div >&nbsp;</div>
+
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">Manage occurrence datasets list</button>
+
+            <div id="occurrenceDatasets" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Manage occurrence datasets</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-wrapper-scroll-y">
+                                <table class="table">
+                                    <tbody data-bind="foreach: lists">
+                                        <tr data-bind="visible: id() != -1">
+                                            <td data-bind="text: displayTitle"></td>
+                                            <td>
+                                                <button class="btn btn-danger" data-bind="click:$parent.removeDataset; " >Remove</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
-</div>
+
+<style type="text/css">
+.table-wrapper-scroll-y {
+    display: block;
+    max-height: 300px;
+    overflow-y: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+</style>

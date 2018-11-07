@@ -5,7 +5,7 @@ package au.org.ala.phyloviz
  */
 class Visualization {
 
-    public enum VizType{
+    enum VizType{
         PhyloJive( 'PhyloJive' ),
         Argus( 'Argus' ),
         OneZoom( 'OneZoom' )

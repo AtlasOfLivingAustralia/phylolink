@@ -1430,11 +1430,11 @@ var PJ = function (params) {
             }
             this.emit('savequerybegin');
 
-            // if(names.length < 200){
+            if(names.length > 200 && config.saveQuery.defaultQuery){
+                params.speciesList = JSON.stringify(config.saveQuery.defaultQuery);
+            } else {
                 params.speciesList = JSON.stringify(names);
-            // } else {
-            //     params.speciesList = JSON.stringify(Array("Acacia"));
-            // }
+            }
 
             var obj = $.ajax({
                 url: config.saveQuery.url,

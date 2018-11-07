@@ -4,7 +4,7 @@ package au.org.ala.phyloviz
  * Created by Temi Varghese on 17/06/2014.
  */
 class Phylo {
-    def Owner owner
+    Owner owner
     static belongsTo = [Owner]
     Integer id
     String title = "unnamed"
@@ -47,5 +47,4 @@ class Phylo {
         source(nullable: true, blank: true)
         title(nullable: true)
     }
-
 }

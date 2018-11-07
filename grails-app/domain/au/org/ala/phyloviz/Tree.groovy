@@ -19,6 +19,7 @@ class Tree {
     String expertTreeLSID
     String expertTreeID
     String notes
+    String defaultQuery //stored as JSON array
     static constraints = {
         tree(nullable: false, widget: 'textarea')
         year(nullable: true)
@@ -34,6 +35,7 @@ class Tree {
         expertTreeLSID(nullable: true)
         expertTreeID(nullable: true)
         notes(nullable: true, widget: 'textarea')
+        defaultQuery(nullable: true)
     }
 
     static mapping = {
@@ -41,5 +43,6 @@ class Tree {
         tree type: "text"
         reference type: 'text'
         notes type: "text"
+        defaultQuery type: 'text'
     }
 }

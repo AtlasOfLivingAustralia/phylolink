@@ -26,8 +26,12 @@
                         <!-- upload file form -->
                         <form id="csvForm" class="form-horizontal" enctype="multipart/form-data">
                             <label class="btn btn-default btn-file">
-                                <i class="glyphicon glyphicon-upload"> </i> Upload a CSV file of characters
-                                <input id="csvFile" type="file" name="file" value="Upload" accept=".csv" style="display: none;" required/>
+                                <i class="glyphicon glyphicon-upload"> </i>
+                                <span id="char-upload-file-info">Upload a CSV file of characters</span>
+                                <input id="csvFile" type="file" name="file" value="Upload" accept=".csv"
+                                       style="display: none;"
+                                       onchange="$('#char-upload-file-info').html(this.files[0].name)"
+                                       required/>
                             </label>
                         </form>
 

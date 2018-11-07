@@ -9,9 +9,17 @@
         <g:textArea name="tree" class="field form-control" rows="8" value="${tree?.tree}"
                     placeholder="(Acacia_semicircinalis:0.03434179368091353,(Acacia_adinophylla:0.01786382226553121,Acacia_aphanoclada:0.027802263108902575));"
                     onfocus="utils.clearPlaceholder(this)" />
-                    <div class="row-fluid">Or, upload a file: <input type="file" name="file" value="Upload"/></div>
 
-                </div>
+        <div class="row-fluid" style="padding-top:10px; padding-bottom:10px;">
+            Or, upload a file:<br/>
+            <label class="btn btn-default" for="my-file-selector">
+                <input id="my-file-selector" type="file" name="file" style="display:none"
+                       onchange="$('#upload-file-info').html(this.files[0].name)">
+                <i class="glyphicon glyphicon-upload"> </i>
+                <span id="upload-file-info">Upload load file</span>
+            </label>
+        </div>
+    </div>
 </div>
 
 <div class="control-group">
@@ -68,6 +76,16 @@
     </div>
 </div>
 
+<g:if test="${isAdmin}">
+    <div class="control-group">
+        <label class="control-label" for="notes">Default Query to use (to help optimise visualisations of large trees)
+        - comma separated list of scientific names</label>
+        <div class="controls">
+            <g:textArea name="defaultQuery" class="form-control" value="${tree?.defaultQuery}" />
+        </div>
+    </div>
+</g:if>
+
 <div class="control-group">
     <div class="controls ${hasErrors(bean: tree, field: 'hide', 'error')}">
         <label class="checkbox">
@@ -86,93 +104,5 @@
 </div>
 </g:if>
 
-<script>
-    $("#expertTreeTaxonomy").autocomplete({
-        source: function (request, response) {
-            var url = "${createLink(controller: 'tree', action: 'autocomplete')}" +
-                    "?q=" + request.term;
-            $.ajax(url).done(function (data) {
-                var rows = [];
-                if (data.autoCompleteList) {
-                    var list = data.autoCompleteList;
-                    for (var i = 0; i < list.length; i++) {
-                        rows[i] = {
-                            value: list[i].name,
-                            label: list[i].name,
-                            data: list[i]
-                        };
-                    }
-                }
-                if (response) {
-                    response(rows);
-                }
-            });
-        },
-        select: function (event, i) {
-            $('#expertTreeLSID').val(i.item.data.guid);
-        }
-    })
-    /**
-     * this function will disable / enable input textbox
-     */
-    function toggleExpert(checkbox) {
-        if (checkbox.checked) {
-            $('#expertTreeTaxonomy').attr('disabled', false)
-            $('#expertTreeID').attr('disabled', false)
-        } else {
-            $('#expertTreeTaxonomy').attr('disabled', true)
-            $('#expertTreeID').attr('disabled', true)
-        }
-    }
-</script>
-
 <div class="col-sm-6 col-md-6" id="pubSuggestions">
-
 </div>
-
-<script>
-    function treeStats() {
-        var tree = $('#tree').val();
-        console.log(tree);
-        $.ajax({
-            url: "${createLink( controller: 'tree', action: 'getTreeMeta')}",
-            type: 'POST',
-            data: {
-                tree: tree
-            },
-            success: function (data) {
-
-            },
-            error: function (data) {
-
-            }
-        });
-        $.ajax({
-            url: "${createLink( controller: 'tree', action: 'treeInfo')}.html",
-            type: 'POST',
-            data: {
-                tree: tree
-            },
-            success: function (data) {
-                $("#treeInfo").html(data)
-            },
-            error: function (data) {
-
-            }
-        })
-    }
-    function doiInfo() {
-        var doi = $('#doi').val()
-        console.log(doi)
-        $.ajax({
-            url: "${createLink( controller: 'tree', action: 'searchDoi')}.json",
-            type: "GET",
-            data: {
-                q: doi
-            },
-            success: function (data) {
-                $("#doiField").html(JSON.stringify(data))
-            }
-        })
-    }
-</script>

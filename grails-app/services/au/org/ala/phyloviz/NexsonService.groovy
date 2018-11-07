@@ -20,8 +20,6 @@ class NexsonService {
     def autoSuggest( otus ){
         // create a list of names
         def i, names=[], otu, count = 0, index, mapper = [:];
-        log.debug( 'otus received' + otus );
-
         for( i = 0; i < otus.size(); i++){
             otu = otus[i]
 
@@ -37,12 +35,8 @@ class NexsonService {
 
         // reconcile
         for( i = 0; i < otus.size(); i++){
-            otu = otus[i]
             index = mapper[i]
-            log.debug( index + ' ' + i)
-
             if( index != null && lsids[ index ] ){
-                log.debug( lsids[ index ] )
                 otus[i]['^ot:altLabel'] = lsids[index]['name']
                 otus[i]['@ala'] = lsids[index]['guid']
             }
