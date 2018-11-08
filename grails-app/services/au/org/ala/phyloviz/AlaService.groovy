@@ -220,14 +220,14 @@ class AlaService {
 
         def url = "${baseUrl}/upload/dynamicFacets?q=${drid}";
         def facets = webServiceService.get(url);
-        def result = [];
+        def result = []
         JSON.parse(facets).eachWithIndex { value, i ->
-            log.debug(value);
-            if (!value.name.endsWith('_RNG')) {
-                result.push(facets[i]);
+            if (!value.name.endsWith('_RNG')) {  //filter ranges
+                value["group"] = "Custom"
+                result.push(value)
             }
         }
-        return result;
+        result
     }
 
     /**
@@ -307,7 +307,7 @@ class AlaService {
     def getSandboxFacets(baseUrl, q, fq) {
         def result = getFacets(baseUrl);
         def dFacets = getDynamicFacets(baseUrl, q);
-        return result.plus(dFacets);
+        return dFacets.plus(result);
     }
 
     /**
