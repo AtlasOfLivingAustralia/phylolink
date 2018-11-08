@@ -28,12 +28,6 @@ L.Control.Select = L.Control.extend({
         defaultValue: null,
         currentValue: null
     },
-
-    // <select data-bind="foreach: groups, value: selectedOption">
-    // <optgroup data-bind="attr: {label: label}, foreach: children">
-    // <option data-bind="text: label, option: $data"></option>
-    // </optgroup>
-    // </select>
     /**
      * select dom element
      */

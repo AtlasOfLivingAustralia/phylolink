@@ -137,10 +137,9 @@
                                     <tbody data-bind="foreach: lists">
                                         <tr data-bind="visible: id() != -1">
                                             <td data-bind="text: displayTitle"></td>
-                                            <td data-bind="text: drid">
-
-                                                <a href="#">
-                                                <span data-bind="text: drid"></span>
+                                            <td >
+                                                <a class="btn btn-default" target="_blank" data-bind="attr: {href: biocacheQueryUrl}">
+                                                    View records
                                                 </a>
                                             </td>
                                             <td>
