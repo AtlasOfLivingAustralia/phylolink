@@ -3,8 +3,6 @@
  * author: temi
  */
 
-
-
 L.Control.Select = L.Control.extend({
 
     options: {
@@ -14,9 +12,9 @@ L.Control.Select = L.Control.extend({
         /**
          * format: [{"name":"REGNO_s","displayName":"REGNO"}]
          */
-        initialValue:[],
-        url:undefined,
-        dataType:'jsonp',
+        initialValue : [],
+        url: undefined,
+        dataType :'jsonp',
         style:{
             height:'30px',
             padding: '5px'
@@ -80,7 +78,6 @@ L.Control.Select = L.Control.extend({
     },
 
     onRemove: function (map) {
-
     },
 
     _create: function (container) {
@@ -119,17 +116,6 @@ L.Control.Select = L.Control.extend({
 
         // this.viewModel.facets.removeAll();
         this.viewModel.facetsGrouped.removeAll();
-
-        // for (var i in data){
-        //     var modelValue = new this.Model(data[i]);
-        //     this.viewModel.facets.push(modelValue);
-        //
-        //     if (data[i].name === this.options.currentValue){
-        //         currentVal = modelValue
-        //     } else if (data[i].name === this.options.defaultValue) {
-        //         defval = modelValue;
-        //     }
-        // }
 
         var currentGroup = null
         for (var i in data){
@@ -201,9 +187,6 @@ L.Control.Select = L.Control.extend({
         return ko.toJS(this.getSelection());
     }
 });
-
-
-
 
 L.control.select = function (options) {
     return new L.Control.Select(options);

@@ -7,7 +7,7 @@ L.Control.Checkbox = L.Control.extend({
         position: 'topright',
         title:'click me',
         text:'Checkbox: ',
-        initialValue:true,
+        initialValue:false,
         style:{
             height:'20px',
             padding: '5px'
