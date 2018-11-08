@@ -105,20 +105,15 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="help">
-                    <iframe width="100%" height="315"
+
+                    <h3 style="margin-top:10px;">How do I use phylolink ?</h3>
+                    <p>Presented by: <strong>Joseph Miller</strong>
+                    </p>
+                    <iframe width="100%" height="430"
                             src="https://www.youtube.com/embed/_fN3Nn159Tw" frameborder="0" allowfullscreen>
                     </iframe>
                     &nbsp;
-                    <table class="table table-bordered">
-                        <tbody>
-                        <th>
-                            How to use phylolink?
-                        </th>
-                        <tr>
-                            <td>Speaker</td><td>Joseph Miller</td>
-                        </tr>
-                        </tbody>
-                    </table>
+
                 </div>
             </div>
 
