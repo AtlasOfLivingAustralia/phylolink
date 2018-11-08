@@ -118,7 +118,10 @@
                 </form>
             </div>
 
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">Manage occurrence datasets list</button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">
+                <i class="glyphicon glyphicon-cog"></i>
+                Manage occurrence datasets list
+            </button>
 
             <div id="occurrenceDatasets" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -134,6 +137,12 @@
                                     <tbody data-bind="foreach: lists">
                                         <tr data-bind="visible: id() != -1">
                                             <td data-bind="text: displayTitle"></td>
+                                            <td data-bind="text: drid">
+
+                                                <a href="#">
+                                                <span data-bind="text: drid"></span>
+                                                </a>
+                                            </td>
                                             <td>
                                                 <button class="btn btn-danger" data-bind="click:$parent.removeDataset; " >Remove</button>
                                             </td>

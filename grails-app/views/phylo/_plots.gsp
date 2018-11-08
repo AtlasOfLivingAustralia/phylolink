@@ -16,7 +16,7 @@
 
 <div id="habitatMain">
 
-    <div style="margin-top:10px;" class="btn btn-primary pull-right" data-bind="click:addHabitat"><i class="glyphicon glyphicon-white glyphicon glyphicon-plus-sign"></i>Add new histogram</div>
+    <div style="margin-top:10px;" class="btn btn-primary pull-right" data-bind="click:addHabitat"><i class="glyphicon glyphicon-white glyphicon glyphicon-plus-sign"></i> Add new histogram</div>
     <div>
         <p style="padding-top:10px;">Display histograms of information like precipitation, temperature, State etc. of occurrences in the selected clade.</p>
         %{--<div class="btn btn-primary pull-right" data-bind="click:addHabitat"><i class="glyphicon glyphicon-white glyphicon glyphicon-plus-sign"></i>Add new histogram</div>--}%

@@ -2,7 +2,11 @@
  * creates a select with a label. check options on configuration.
  * author: temi
  */
+
+
+
 L.Control.Select = L.Control.extend({
+
     options: {
         position: 'bottomleft',
         title:'click me',
@@ -24,22 +28,43 @@ L.Control.Select = L.Control.extend({
         defaultValue: null,
         currentValue: null
     },
+
+    // <select data-bind="foreach: groups, value: selectedOption">
+    // <optgroup data-bind="attr: {label: label}, foreach: children">
+    // <option data-bind="text: label, option: $data"></option>
+    // </optgroup>
+    // </select>
     /**
      * select dom element
      */
     _select:null,
-    _html:' <table style="height: 30px;"><tbody><tr><td><label style="display: inline-block" data-bind="text:text"></label>\
-            <div style="display: inline-block">\
-        <select data-bind="options:facets,optionsText:\'displayName\',optionsCaption:\'Choose...\',value:selectedValue"></select>' +
-        '</div></td></tr></tbody></table>',
+    _html:' <table style="height: 30px;">\
+                <tbody>\
+                    <tr>\
+                        <td>\
+                            <label style="display: inline-block" data-bind="text:text"></label>\
+                            <div style="display: inline-block">\
+                                <select data-bind="foreach: facetsGrouped, value:selectedValue">\
+                                    <optgroup data-bind="attr: {label: name}, foreach: children">\
+                                        <option data-bind="option: $data, text:displayName, value: $data"></option>\
+                                    </optgroup>\
+                                </select>\
+                            </div>\
+                        </td>\
+                    </tr>\
+                </tbody>\
+            </table>',
+
     ViewModel:function(){
-        this.facets = ko.observableArray();
+        // this.facets = ko.observableArray();
+        this.facetsGrouped = ko.observableArray();
         this.text = ko.observable();
         this.selectedValue = ko.observable();
     },
     Model: function(data){
         this.displayName = ko.observable(data.displayName);
         this.name = ko.observable(data.name);
+        this.group = ko.observable(data.group);
         this.type = ko.observable(data.type || 'facets');
     },
     viewModel: undefined,
@@ -74,9 +99,9 @@ L.Control.Select = L.Control.extend({
         container.innerHTML = this._html;
 
         this.viewModel = new this.ViewModel();
-        if(this.options.url){
+        if (this.options.url){
             this.updateUrl();
-        }else if(this.options.initialValue){
+        } else if(this.options.initialValue){
             this.updateData(this.options.initialValue)
         }
 
@@ -94,19 +119,55 @@ L.Control.Select = L.Control.extend({
         });
     },
 
-    updateData:function(data){
+    updateData : function(data){
         var defval = null,
             currentVal = null;
-        this.viewModel.facets.removeAll();
-        for(var i in data){
+
+        // this.viewModel.facets.removeAll();
+        this.viewModel.facetsGrouped.removeAll();
+
+        // for (var i in data){
+        //     var modelValue = new this.Model(data[i]);
+        //     this.viewModel.facets.push(modelValue);
+        //
+        //     if (data[i].name === this.options.currentValue){
+        //         currentVal = modelValue
+        //     } else if (data[i].name === this.options.defaultValue) {
+        //         defval = modelValue;
+        //     }
+        // }
+
+        var currentGroup = null
+        for (var i in data){
+
             var modelValue = new this.Model(data[i]);
-            this.viewModel.facets.push(modelValue);
+
+            if (currentGroup == null || data[i].group != currentGroup().name()){
+                if(currentGroup != null){
+                    this.viewModel.facetsGrouped.push(currentGroup)
+                }
+
+                //create new group
+                currentGroup = ko.observable({
+                    name: ko.observable(data[i].group),
+                    children: ko.observableArray()
+                })
+                currentGroup().children().push(modelValue)
+            } else  {
+                currentGroup().children().push(modelValue)
+            }
+
             if (data[i].name === this.options.currentValue){
                 currentVal = modelValue
             } else if (data[i].name === this.options.defaultValue) {
                 defval = modelValue;
             }
         }
+
+        if(currentGroup != null) {
+            this.viewModel.facetsGrouped.push(currentGroup)
+        }
+
 
         defval = currentVal || defval;
 
@@ -116,14 +177,14 @@ L.Control.Select = L.Control.extend({
         }
     },
 
-    updateUrl:function(url){
+    updateUrl : function(url){
         var that = this;
         url = url || this.options.url;
-        this.viewModel.facets.removeAll();
+        this.viewModel.facetsGrouped.removeAll();
         $.ajax({
-            url:url,
-            dataType:this.options.dataType,
-            success:function(data){
+            url: url,
+            dataType: this.options.dataType,
+            success: function(data){
                 that.updateData(data);
             }
         });
@@ -133,19 +194,22 @@ L.Control.Select = L.Control.extend({
        return $(this.el).find('select').val();
     },
 
-    setValue:function(val){
+    setValue : function(val){
         $(this.el).find('select').val(val);
         this.emit('change');
     },
 
-    getSelection: function(){
+    getSelection : function(){
       return this.viewModel.selectedValue();
     },
 
-    getSelectState: function(){
+    getSelectState : function(){
         return ko.toJS(this.getSelection());
     }
 });
+
+
+
 
 L.control.select = function (options) {
     return new L.Control.Select(options);

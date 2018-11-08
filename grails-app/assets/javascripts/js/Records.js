@@ -182,9 +182,11 @@ var Records = function (c) {
         this.lists = ko.observableArray([]);
         this.selectedValue = ko.observable();
 
+        /**
+         * Disassociate a dataset from the system.
+         * @param item
+         */
         this.removeDataset = function(item){
-
-            console.log(config.deleteResourceUrl);
 
             $.ajax({
                 url: config.deleteResourceUrl,
@@ -209,10 +211,21 @@ var Records = function (c) {
          */
         this.addDataresource = function (src, select) {
             var dr = new DataresourceModel(src);
-            this.lists.push(dr);
-            if(select){
-                this.selectedValue(dr);
-                records.updateMap();
+
+            //avoid duplicates
+            var registered = false
+            this.lists().forEach(function(list) {
+                console.log(list.drid())
+                if  (list.drid() == src.drid)
+                    registered = true;
+            });
+
+            if(!registered) {
+                this.lists.push(dr);
+                if (select) {
+                    this.selectedValue(dr);
+                    records.updateMap();
+                }
             }
         }
 

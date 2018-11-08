@@ -208,11 +208,11 @@
             url: ko.observable('${raw(grailsApplication.config.spatialPortalRoot)}')
         },
         runSaveQuery: false,
-        chartWidth: $('#tabs').width() - 30
+        chartWidth: $('#character').width() - 30
     }
 
     var pj = new PJ({
-        width: $('#' + config.pjId).width()-10,
+        width: $('#' + config.pjId).width() - 10,
         height: 590,
         codeBase: '../..',
         dataType:'json',
