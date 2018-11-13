@@ -55,6 +55,5 @@ class EnvironmentalWidget implements  au.org.ala.phyloviz.WidgetInterface{
         } else {
             return summary
         }
-
     }
 }

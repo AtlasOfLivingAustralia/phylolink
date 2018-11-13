@@ -217,7 +217,7 @@ var Records = function (c) {
             var registered = false
             this.lists().forEach(function(list) {
                 console.log(list.drid())
-                if  (list.drid() == src.drid)
+                if (list.drid() == src.drid)
                     registered = true;
             });
 

@@ -24,17 +24,25 @@ var CompareVariables = function (options) {
         self.variable2Options = ko.observableArray();
 
         self.init = function(){
-            // $.ajax({
-            //     url: graphibleFieldsUrl,
-            //     data: {
-            //         biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
-            //     },
-            //     success: function (data) {
-            //         console.log("Graphible fields: " + data);
-            //         self.variable1Options(data);
-            //         self.variable2Options(data);
-            //     }
-            // });
+
+            console.log("Updating comparison charts: " + pj.getQid(true));
+
+            if(records.getDataresource() === undefined){
+                return;
+            }
+
+            $.ajax({
+                url: graphibleFieldsUrl,
+                data: {
+                    biocacheServiceUrl: records.getDataresource().biocacheServiceUrl,
+                    q: "qid:" + pj.getQid(true)
+                },
+                success: function (data) {
+                    console.log("Graphible fields: " + data);
+                    self.variable1Options(data);
+                    self.variable2Options(data);
+                }
+            });
         };
 
         self.updateChart = function(){
@@ -45,13 +53,19 @@ var CompareVariables = function (options) {
                 return;
             }
 
+            console.log("selected:" + self.selectedVariable1() + ", selected:" + self.selectedVariable2())
+
+            if(self.selectedVariable1()  == "" || self.selectedVariable2()  == ""){
+                return;
+            }
+
             self.startLoading();
 
             var chartData = {
                 query: "qid:" + pj.getQid(true),
                 breakdown: $('#breakdown-type').val(),
-                variable1: $('#var1').val(),
-                variable2: $('#var2').val(),
+                variable1: self.selectedVariable1(),
+                variable2: self.selectedVariable2(),
                 biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
             };
 
@@ -122,17 +136,26 @@ var CompareVariables = function (options) {
     pj.on('savequeryend', function () {
         console.log(" compareVariables - savequeryend event");
         compareVariablesViewModel.updateChart();
+        compareVariablesViewModel.init();
     });
 
     pj.on('updateend', function () {
         console.log(" compareVariables - updateend event");
         compareVariablesViewModel.updateChart();
-    })
+        compareVariablesViewModel.init();
+    });
 
     pj.on('change', function () {
         console.log(" compareVariables - updateend event");
         compareVariablesViewModel.updateChart();
-    })
+        compareVariablesViewModel.init();
+    });
+
+    records.on('sourcechanged', function () {
+        console.log(" compareVariables - updateend event");
+        compareVariablesViewModel.init();
+    });
+
 
     this.googleChartsLoaded = function(){
         compareVariablesViewModel.updateChart();

@@ -228,6 +228,11 @@ class WizardController {
         if (myViz.size() == 0) {
             flash.message = 'You do not have any trees uploaded.'
         }
-        render(view: 'myViz', model: [viz: myViz, name: 'Demonstration', isDemonstration: true])
+
+        if(myViz && myViz.size() == 1){
+            redirect(controller: 'phylo', action:'show', id: myViz[0].id)
+        } else {
+            render(view: 'myViz', model: [viz: myViz, name: 'Demonstration', isDemonstration: true])
+        }
     }
 }

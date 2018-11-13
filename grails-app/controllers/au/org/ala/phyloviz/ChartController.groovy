@@ -5,9 +5,11 @@ import groovy.json.JsonSlurper
 
 class ChartController {
 
-    List graphibleFields = []
+    Map graphibleFields = [:]   //biocacheServiceURL -> fields cache
 
     def index() { }
+
+    def alaService
 
     /**
      * Move to a service
@@ -15,15 +17,17 @@ class ChartController {
      */
     def graphibleFields(){
 
-        if(!graphibleFields){
+        def biocacheServiceUrl = params.biocacheServiceUrl ?: grailsApplication.config.biocacheServiceUrl
 
-            def biocacheServiceUrl = params.biocacheServiceUrl
+        if(!graphibleFields[biocacheServiceUrl]){
+
+            def graphibleFieldsForEndpoint = []
 
             def indexedFields = "${biocacheServiceUrl}/index/fields"
             def js = new JsonSlurper()
             def json = js.parse(new URL(indexedFields))
 
-            def fields = json.findAll { it.name.startsWith("cl") &&  it.description}.collect { [id:it.name, name:it.description] }.sort {
+            def fields = json.findAll { it.name.startsWith("cl")}.collect { [id:it.name, name:it.description ?: it.name ] }.sort {
                 a,b -> a.name <=> b.name
             }
 
@@ -33,17 +37,30 @@ class ChartController {
                 def cardJson = js.parse(new URL(url))
                 if (cardJson[0].count < 25 && cardJson[0].count > 1){
                     field.cardinality = cardJson[0].count
-                    graphibleFields << field
+                    graphibleFieldsForEndpoint << field
                 }
             }
 
+            graphibleFields[biocacheServiceUrl] = graphibleFieldsForEndpoint
         }
-        render ( contentType: 'application/json', text: graphibleFields as JSON)
+
+
+        def fields = graphibleFields[biocacheServiceUrl].collect()
+
+        if(params.q) {
+            //add the dynamic fields....
+            def dynamicFields = alaService.getDynamicFacets(biocacheServiceUrl, params.q)
+            dynamicFields.each {
+                fields.add(0, [id: it.name, name: it.displayName])
+            }
+        }
+
+        render ( contentType: 'application/json', text: fields as JSON)
     }
 
     def stackedBar() {
 
-        def biocacheServiceUrl = params.biocacheServiceUrl
+        def biocacheServiceUrl = params.biocacheServiceUrl ?: grailsApplication.config.biocacheServiceUrl
         def query = params.query
         def variable2Name = "ChartName"
         def variable2 = params.variable2
