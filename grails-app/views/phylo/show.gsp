@@ -56,10 +56,10 @@
                                                                 role="tab"
                                                                 data-toggle="tab">Character</a>
                 </li>
-                <li role="presentation">
+                <li role="presentation" class="active">
                     <a href="#mapTabContent" aria-controls="profile" role="tab" data-toggle="tab" id="mapTab">Map</a>
                 </li>
-                <li role="presentation" class="active">
+                <li role="presentation">
                     <a href="#compareVariables" aria-controls="profile" role="tab" data-toggle="tab" id="compareVariablesTab">Compare variables</a>
                 </li>
                 <li role="presentation">
@@ -85,7 +85,7 @@
                     <g:render template="character"></g:render>
                 </div>
 
-                <div role="tabpanel" class="tab-pane" id="mapTabContent">
+                <div role="tabpanel" class="tab-pane active" id="mapTabContent">
                     <div id="map"></div>
                     <div id="mapControls">
                         <div class="text-right" style="display:none;">
@@ -101,7 +101,7 @@
                     <g:render template="plots"></g:render>
                 </div>
 
-                <div role="tabpanel" class="tab-pane active" id="compareVariables">
+                <div role="tabpanel" class="tab-pane" id="compareVariables">
                     <g:render template="compareVariables"></g:render>
                 </div>
 
