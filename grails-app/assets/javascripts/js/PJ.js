@@ -1297,7 +1297,7 @@ var PJ = function (params) {
         st.config.initCharacter = false;
         st.config.firstCharacter = st.firstCharacter = undefined;
         st.config.selectedCharacters = st.selectedCharacters = [];
-        this.clearCharacters()
+        this.clearCharacters();
         st.colorCharacter();
         redraw();
         st.plot();

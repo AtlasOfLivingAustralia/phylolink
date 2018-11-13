@@ -10,6 +10,7 @@ class UrlMappings {
         "/phylo/getTree.json"(controller: 'phylo',action:'getTree')
         "/phylo/getTree"(controller: 'viewer',action:'show')
         "/phylo/wizard"(controller: 'phylo',action:'wizard')
+        "/ws/chart/stackedBar"(controller: 'chart',action:'stackedBar')
         "/ws/listStudies"(controller: 'OTStudy',action:'listStudies')
         "/ws/searchDoi(.$format)?"(controller: "tree", action: 'searchDoi')
         "/ws/leafNodes"(controller: "OTStudy", action: 'leafNodes')

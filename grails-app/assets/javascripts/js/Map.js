@@ -339,7 +339,7 @@ function Map(options) {
 
         var cby = colorBy.getSelection();
         if (cby){
-            switch ( cby.type()){
+            switch (cby.type()){
                 case 'character':
                     this.showLegendsWithCharacter();
                     break;

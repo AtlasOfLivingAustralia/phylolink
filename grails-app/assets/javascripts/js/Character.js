@@ -112,17 +112,6 @@ var Character = function (options) {
     var input = $('#' + inputId);
     var characterList = [], charJson;
 
-    //check bootstrap version
-    switch (options.bootstrap){
-        case 2:
-            options.primaryClass = 'label label-info';
-            options.defaultClass = 'label';
-            break;
-        case 3:
-            //  use default value
-            break;
-    }
-
     // knockout code
     var Character = function (opt) {
         this.name = ko.observable(opt.name);
@@ -137,22 +126,12 @@ var Character = function (options) {
          * @type {Array}
          */
         self.events = [
-        /**
-         * params
-         * @selected - a list of
-         */
             'statechange',
             'moved',
             'edited',
-
-            // when new characters are added to the list.
-            'newchar',
+            'newchar', // when new characters are added to the list.
             'removed'
-        ]
-        /**
-         * serial number of the next character
-         * @type {number}
-         */
+        ];
         self.newChar = false;
         self.characters = ko.observableArray([]);
         self.count = ko.observable(1);
@@ -323,7 +302,6 @@ var Character = function (options) {
         }
     };
 
-
     this.getCharacterViewModel = function(){ return CharacterViewModel;}
 
     ko.bindingHandlers.addChart = {
@@ -440,7 +418,7 @@ var Character = function (options) {
             chart.draw(data, opt);
         } else {
             // some times google chart is not ready when this function is called
-            options.delayedChartCall.push([arguments.callee,this,arguments]);
+            options.delayedChartCall.push([arguments.callee, this, arguments]);
         }
     }
 
@@ -621,7 +599,7 @@ var Character = function (options) {
         }
 
         var species, char;
-        for(species in second){
+        for (species in second){
             if(!first[species]){
                 first[species] = second[species];
             } else {
@@ -669,7 +647,7 @@ var Character = function (options) {
     }
 
     this.chartHover = function () {
-        console.log(arguments);
+        // console.log(arguments);
     }
 
     /**

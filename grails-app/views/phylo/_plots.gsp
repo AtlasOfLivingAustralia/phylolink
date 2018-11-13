@@ -35,14 +35,25 @@
             </div>
 
             <div class="no-sort panel panel-default" data-bind="select: $root.isHabitatSelected($data), visible: $root.isHabitatSelected($data)">
-                <button type="button" class="close" data-bind="click: $root.clearHabitat">&times;</button>
+
+                %{--<button type="button" data-bind="click: $root.clearHabitat">--}%
+                    %{--<i class="glyphicon glyphicon-remove"> </i>--}%
+                %{--</button>--}%
+
                 <div class="hide">
                     <input class='pull-left' data-bind="value: displayName" id="layerCombobox"/>
                     <div>&nbsp;&nbsp;Search for a layer by name or browse the tree.</div>
                 </div>
-                <div>Select a layer below to add a histogram</div>
-                <div>&nbsp;</div>
-                <div id='jqxTree' class=""></div>
+
+                <div class="panel-heading">
+                    Select a layer below to add a histogram
+                    <span type="button" class="pull-right" data-bind="click: $root.clearHabitat">
+                        <i class="glyphicon glyphicon-remove"> </i>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div id='jqxTree'></div>
+                </div>
             </div>
         </div>
     </div>

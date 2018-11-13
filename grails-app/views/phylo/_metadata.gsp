@@ -4,7 +4,7 @@
         Tree metadata
     </div>
     <div class="panel-body">
-        <table class="table">
+        <table class="table table-sm">
             <tbody>
             <tr>
                 <td>Title:</td>

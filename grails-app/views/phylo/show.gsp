@@ -51,11 +51,16 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li id="charLi" role="presentation" class=""><a id="characterTab" href="#character" aria-controls="home"
+                <li id="charLi" role="presentation">
+                    <a id="characterTab" href="#character" aria-controls="home"
                                                                 role="tab"
-                                                                data-toggle="tab">Character</a></li>
-                <li role="presentation" class="active">
+                                                                data-toggle="tab">Character</a>
+                </li>
+                <li role="presentation">
                     <a href="#mapTabContent" aria-controls="profile" role="tab" data-toggle="tab" id="mapTab">Map</a>
+                </li>
+                <li role="presentation" class="active">
+                    <a href="#compareVariables" aria-controls="profile" role="tab" data-toggle="tab" id="compareVariablesTab">Compare variables</a>
                 </li>
                 <li role="presentation">
                     <a href="#habitat" aria-controls="profile" role="tab" data-toggle="tab" id="habitatTab">Analysis</a>
@@ -67,8 +72,8 @@
                                                 id="recordsTab">Occurrences</a>
                     </li>
                 </g:if>
-                <li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"
-                                           id="metadataTab">Metadata</a></li>
+                %{--<li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"--}%
+                                           %{--id="metadataTab">Metadata</a></li>--}%
                 <li role="presentation"><a href="#help" aria-controls="profile" role="tab" data-toggle="tab"
                                            id="helpTab">Help</a></li>
             </ul>
@@ -80,7 +85,7 @@
                     <g:render template="character"></g:render>
                 </div>
 
-                <div role="tabpanel" class="tab-pane active" id="mapTabContent">
+                <div role="tabpanel" class="tab-pane" id="mapTabContent">
                     <div id="map"></div>
                     <div id="mapControls">
                         <div class="text-right" style="display:none;">
@@ -96,24 +101,24 @@
                     <g:render template="plots"></g:render>
                 </div>
 
+                <div role="tabpanel" class="tab-pane active" id="compareVariables">
+                    <g:render template="compareVariables"></g:render>
+                </div>
+
                 <div role="tabpanel" class="tab-pane" id="records">
                     <div id="recordsForm"></div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane" id="metadata">
-                    <g:render template="metadata"></g:render>
-                </div>
-
                 <div role="tabpanel" class="tab-pane" id="help">
-
-                    <h3 style="margin-top:10px;">How do I use phylolink ?</h3>
-                    <p>Presented by: <strong>Joseph Miller</strong>
+                    <p class="pull-right">Presented by: <strong>Joseph Miller</strong>
                     </p>
-                    <iframe width="100%" height="430"
+                    <h3 style="margin-top:10px;">How do I use phylolink ?</h3>
+                    <iframe width="100%" height="230"
                             src="https://www.youtube.com/embed/_fN3Nn159Tw" frameborder="0" allowfullscreen>
                     </iframe>
                     &nbsp;
 
+                    <g:render template="metadata"></g:render>
                 </div>
             </div>
 
@@ -132,6 +137,7 @@
 <asset:javascript src="js/Filter.js" />
 <asset:javascript src="js/Habitat.js" />
 <asset:javascript src="js/Character.js" />
+<asset:javascript src="js/CompareVariables.js" />
 <asset:javascript src="thirdparty/jquery.contextMenu.js" />
 <asset:javascript src="js/application.js" />
 <asset:javascript src="js/Records.js" />
@@ -309,6 +315,21 @@
         chartWidth: config.chartWidth
     });
     google.setOnLoadCallback(character.googleChartsLoaded);
+
+
+    var compareVariables = new CompareVariables({
+        id: "compare-variables",
+        tabId: 'compareVariablesTab',
+        pj: pj,
+        variable1: "state",
+        variable2: "cl678",
+        chartDataUrl: "${raw(createLink(controller: "chart", action: "stackedBar"))}",
+        graphibleFieldsUrl: "${raw(createLink(controller: "chart", action: "graphibleFields"))}",
+        chartWidth: config.chartWidth,
+        records: records
+    });
+
+    google.setOnLoadCallback(compareVariables.googleChartsLoaded);
 
     var habitat = new Habitat({
         id:'habitat',

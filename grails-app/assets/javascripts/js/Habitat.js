@@ -199,7 +199,6 @@ var Habitat = function (c) {
         self.habitats = ko.observableArray();
         self.selectedHabitat = ko.observable();
         self.count = ko.observable(1);
-
         self.downloadViewModel = new utils.OccurrenceDownloadViewModel(config.downloadReasonsUrl);
 
         /**
