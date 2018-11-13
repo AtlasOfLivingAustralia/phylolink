@@ -87,14 +87,6 @@
 
                 <div role="tabpanel" class="tab-pane active" id="mapTabContent">
                     <div id="map"></div>
-                    <div id="mapControls">
-                        <div class="text-right" style="display:none;">
-                            <a id="spLink" class="btn btn-link" data-bind="attr:{href:spUrl.url}" target="_blank" ><i class="fa fa-external-link"></i>&nbsp;Open in Spatial Portal</a>
-                            <a id="downloadMapDataLink" class="btn btn-link" data-toggle="modal" href="#mapOccurrenceDownloadModal"><i class="fa fa-download"></i>&nbsp;Download occurrence data</a>
-                        </div>
-
-                        <g:render template="occurrenceDownloadPopup" model="[dialogId: 'mapOccurrenceDownloadModal', clickAction: '$root.downloadMapData', viewModel: '$root.downloadViewModel']"></g:render>
-                    </div>
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="habitat">

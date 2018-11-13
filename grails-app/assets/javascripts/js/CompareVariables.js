@@ -24,14 +24,17 @@ var CompareVariables = function (options) {
         self.variable2Options = ko.observableArray();
 
         self.init = function(){
-            $.ajax({
-                url: graphibleFieldsUrl,
-                success: function (data) {
-                    console.log("Graphible fields: " + data);
-                    self.variable1Options(data);
-                    self.variable2Options(data);
-                }
-            });
+            // $.ajax({
+            //     url: graphibleFieldsUrl,
+            //     data: {
+            //         biocacheServiceUrl: records.getDataresource().biocacheServiceUrl
+            //     },
+            //     success: function (data) {
+            //         console.log("Graphible fields: " + data);
+            //         self.variable1Options(data);
+            //         self.variable2Options(data);
+            //     }
+            // });
         };
 
         self.updateChart = function(){
