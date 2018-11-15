@@ -1440,12 +1440,14 @@ var PJ = function (params) {
 
             if(names.length > 200 && config.saveQuery.defaultQuery){
                 $('.node-count').html(names.length + ' taxa selected');
-                $('.node-count-query-detail').html('Using default query: ' + config.saveQuery.defaultQuery + " - select node with less than 200 nodes");
+                $('.node-count-query-detail').html('Using default query: ' + config.saveQuery.defaultQuery)
+                $('.node-count-query-help').html("Select node with less than 200 nodes");
                 params.speciesList = JSON.stringify(config.saveQuery.defaultQuery);
             } else {
 
                 $('.node-count').html(names.length + ' taxa selected');
                 $('.node-count-query-detail').html('');
+                $('.node-count-query-help').html('');
                 params.speciesList = JSON.stringify(names);
             }
 

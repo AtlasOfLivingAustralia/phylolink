@@ -77,6 +77,7 @@ L.Control.Legend = L.Control.extend({
                             <strong class="node-count"></strong> \
                         </label>\
                         <label class="node-count-query-detail"></label>\
+                        <label class="node-count-query-help"></label> \
                         \
                         <div id="no-records-matching" data-bind="html: message"> </div>\
                         <div style="overflow:auto; max-height:400px; width: 100%;">\

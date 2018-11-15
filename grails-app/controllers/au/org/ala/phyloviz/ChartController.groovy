@@ -35,7 +35,7 @@ class ChartController {
             fields.each { field ->
                 def url = "${biocacheServiceUrl}/occurrence/facets?q=*:*&facets=${field.id}&flimit=0"
                 def cardJson = js.parse(new URL(url))
-                if (cardJson[0].count < 25 && cardJson[0].count > 1){
+                if (cardJson[0].count < 35 && cardJson[0].count > 1){
                     field.cardinality = cardJson[0].count
                     graphibleFieldsForEndpoint << field
                 }
