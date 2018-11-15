@@ -35,7 +35,7 @@ function Map(options) {
         env: {
             'colormode': undefined,
             'name': 'circle',
-            'size': 7,
+            'size': 4,
             'opacity': 0.8,
             'color': 'df4a21'
         },
