@@ -187,7 +187,7 @@ var PJ = function (params) {
     // console.log('in pj');
     var self = new Emitter(this);
     var pj = this;
-    this.hData = params.hData
+    this.hData = params.hData;
     var qid,
         prevSearch,
         queryObj,
@@ -411,6 +411,8 @@ var PJ = function (params) {
                         if (config.runSaveQuery) {
                             queryObj = pj.saveQuery(node, names);
                         }
+
+
 
                         node && self.emit('click', node, names, queryObj);
                     }
@@ -831,8 +833,11 @@ var PJ = function (params) {
         }
 
         opt.codeBase = opt.codeBase || '';
-        var navHTML2 = '<div style="position:relative">' +
-            '<div style="position: absolute; left: -170px; top: 10px; width:50px; height: 20px; cursor: pointer;">' +
+
+        var navHTML2 = ''+
+            '<div class="node-count" style="position: absolute; right: -40px; top: 5px; white-space: nowrap;">No node selected</div>' +
+            '<div style="position:relative">' +
+            '<div style="position: absolute; left: -170px; top: 20px; width:50px; height: 20px; cursor: pointer;">' +
                 '<div class="input-group input-group-sm">' +
                     '<input type="text" id="searchText" style="width:180px;" class="form-control input-sm" placeholder="Search tree" name="srch-term" id="srch-term" onfocus="utils.clearPlaceholder(this)"> ' +
                     '<div class="input-group-btn">' +
@@ -891,7 +896,7 @@ var PJ = function (params) {
         var navHTML = config.bootstrap == 2 ? navHTML2 : navHTML3;
         var jitcontainer, rightJitContainer, centerJitContainer,
             id = typeof (opt.injectInto) == 'string' ? opt.injectInto : opt.injectInto.id,
-            infovis, parent, navigation, border;
+            infovis, parent, navigation, border, nodeCount;
 
         border = opt.width * 100 / 90;
         jitcontainer = $E('div', {
@@ -1421,6 +1426,9 @@ var PJ = function (params) {
     }
 
     this.saveQuery = function (node, names, characterQuery) {
+
+        console.log("selected nodes: " + names.length);
+
         var params = config.saveQuery.data;
         params.characterQuery = characterQuery;
         params.treeId = config.treeId;
@@ -1431,8 +1439,13 @@ var PJ = function (params) {
             this.emit('savequerybegin');
 
             if(names.length > 200 && config.saveQuery.defaultQuery){
+                $('.node-count').html(names.length + ' taxa selected');
+                $('.node-count-query-detail').html('Using default query: ' + config.saveQuery.defaultQuery + " - select node with less than 200 nodes");
                 params.speciesList = JSON.stringify(config.saveQuery.defaultQuery);
             } else {
+
+                $('.node-count').html(names.length + ' taxa selected');
+                $('.node-count-query-detail').html('');
                 params.speciesList = JSON.stringify(names);
             }
 

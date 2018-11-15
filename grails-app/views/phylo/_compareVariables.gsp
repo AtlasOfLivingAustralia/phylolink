@@ -13,8 +13,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="var2">X axis:</label>
-                    <select id="var2" name="var2" class="form-control input-sm" data-bind="options: variable1Options,  optionsValue: 'id', optionsText: 'name',
-                           value: selectedVariable2">
+                    <select id="var2" name="var2" class="form-control input-sm" data-bind="options: variable1Options,  optionsValue: 'id', optionsText: 'name', value: selectedVariable2">
                     </select>
                 </div>
             </div>

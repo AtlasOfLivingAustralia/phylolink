@@ -71,7 +71,13 @@ L.Control.Legend = L.Control.extend({
                    <div class="legend-short btn btn-xs" style="margin: 5px; display: none" data-bind="html:icon"></div>\
                    <div class="legend-full leaflet-control-layers-overlays" style="margin:5px;">\
                         <div class="pull-right close" style="padding-left:10px; border: 0;">&times;</div>\
-                        <label><strong id="map-records-datasource" style="word-wrap: break-word;" data-bind="html: title">Map Legend</strong></label>\
+                        <label>\
+                            <strong id="map-records-datasource" style="word-wrap: break-word;" data-bind="html: title">Map Legend</strong>\
+                            - \
+                            <strong class="node-count"></strong> \
+                        </label>\
+                        <label class="node-count-query-detail"></label>\
+                        \
                         <div id="no-records-matching" data-bind="html: message"> </div>\
                         <div style="overflow:auto; max-height:400px; width: 100%;">\
                             <table class="legendTable"><tbody  data-bind="foreach: legends">\

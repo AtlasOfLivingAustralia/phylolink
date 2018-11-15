@@ -8,6 +8,9 @@ var CompareVariables = function (options) {
     var chartWidth = options.chartWidth;
     var records = options.records;
 
+    var defaultVariable1 = options.variable1;
+    var defaultVariable2 = options.variable2;
+
     var CompareVariablesViewModel = function () {
         new Emitter(this);
         var self = this;
@@ -17,15 +20,13 @@ var CompareVariables = function (options) {
             className: 'loader'
         });
 
-        self.chartTitle = ko.observable("Land use by State/Territory");
-        self.selectedVariable1 = ko.observable(options.variable1);
-        self.selectedVariable2 = ko.observable(options.variable2);
+        self.chartTitle = ko.observable("");
+        self.selectedVariable1 = ko.observable("");
+        self.selectedVariable2 = ko.observable("");
         self.variable1Options = ko.observableArray();
         self.variable2Options = ko.observableArray();
 
         self.init = function(){
-
-            console.log("Updating comparison charts: " + pj.getQid(true));
 
             if(records.getDataresource() === undefined){
                 return;
@@ -38,22 +39,20 @@ var CompareVariables = function (options) {
                     q: "qid:" + pj.getQid(true)
                 },
                 success: function (data) {
-                    console.log("Graphible fields: " + data);
                     self.variable1Options(data);
                     self.variable2Options(data);
+
+                    self.selectedVariable1(defaultVariable1);
+                    self.selectedVariable2(defaultVariable2);
                 }
             });
         };
 
         self.updateChart = function(){
 
-            console.log("Updating comparison charts: " + pj.getQid(true));
-
             if(pj.getQid(true) === undefined){
                 return;
             }
-
-            console.log("selected:" + self.selectedVariable1() + ", selected:" + self.selectedVariable2())
 
             if(self.selectedVariable1()  == "" || self.selectedVariable2()  == ""){
                 return;
@@ -134,25 +133,21 @@ var CompareVariables = function (options) {
 
     //savequeryend
     pj.on('savequeryend', function () {
-        console.log(" compareVariables - savequeryend event");
         compareVariablesViewModel.updateChart();
         compareVariablesViewModel.init();
     });
 
     pj.on('updateend', function () {
-        console.log(" compareVariables - updateend event");
         compareVariablesViewModel.updateChart();
         compareVariablesViewModel.init();
     });
 
     pj.on('change', function () {
-        console.log(" compareVariables - updateend event");
         compareVariablesViewModel.updateChart();
         compareVariablesViewModel.init();
     });
 
     records.on('sourcechanged', function () {
-        console.log(" compareVariables - updateend event");
         compareVariablesViewModel.init();
     });
 
