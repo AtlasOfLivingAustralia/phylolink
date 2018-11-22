@@ -14,14 +14,28 @@ class CharactersController {
      * @return
      */
     def list() {
-        List characterLists = charactersService.getCharacterListsByOwner()
 
+        List characterLists = charactersService.getCharacterListsByOwner()
         List result = treeService.filterCharacterListsByTree(Integer.parseInt(params.treeId), characterLists)
 
         if (params.callback) {
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
             render(contentType: 'application/json', text: result as JSON)
+        }
+    }
+
+    def deleteResource(){
+        def alaId = authService.getUserId()
+        def characters = Characters.get(params.id)
+
+        if (characters && characters.owner.getUserId().toString() == alaId){
+            characters.delete(flush:true)
+            def result = [success:true]
+            render( text: result as JSON, contentType: 'application/json')
+        } else {
+            def result = [success:false]
+            render( text: result as JSON, contentType: 'application/json')
         }
     }
 

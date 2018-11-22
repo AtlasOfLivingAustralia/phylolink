@@ -214,7 +214,7 @@ class AlaService {
      */
     def getDynamicFacets(baseUrl, drid) {
 
-        if(!drid){
+        if(!drid || drid == "undefined"){
             return []
         }
 

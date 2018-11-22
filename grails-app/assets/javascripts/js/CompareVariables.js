@@ -54,7 +54,11 @@ var CompareVariables = function (options) {
                 return;
             }
 
-            if(self.selectedVariable1()  == "" || self.selectedVariable2()  == ""){
+            if(self.selectedVariable1() == ""
+                || self.selectedVariable1() == null
+                || self.selectedVariable2() == ""
+                || self.selectedVariable2() == null
+            ){
                 return;
             }
 

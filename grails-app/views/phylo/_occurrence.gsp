@@ -104,24 +104,23 @@
             </p>
 
             <div id="pickFromListRecords" class="panel-collapse">
-                <form id="sourceToolbarRecords" >
-
+                <form id="sourceToolbarRecords">
                     <div class="form-group row">
-                        <label for="sourceCharRecords" class="col-sm-3 col-form-label">Occurrence dataset:</label>
-                        <div class="col-sm-9">
+                        <label for="sourceCharRecords" class="col-sm-2 col-form-label">Occurrence&nbsp;dataset:</label>
+                        <div class="col-sm-7">
                             <select id="sourceCharRecords"
                                     class="form-control"
                                     data-bind="options:lists,optionsText:'displayTitle',value:selectedValue,
                         optionsCaption:'Choose..', event:{change: drChanged}" required></select>
                         </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">
+                                <i class="glyphicon glyphicon-cog"></i> Manage datasets
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
-
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">
-                <i class="glyphicon glyphicon-cog"></i>
-                Manage occurrence datasets list
-            </button>
 
             <div id="occurrenceDatasets" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -137,7 +136,7 @@
                                     <tbody data-bind="foreach: lists">
                                         <tr data-bind="visible: id() != -1">
                                             <td data-bind="text: displayTitle"></td>
-                                            <td >
+                                            <td>
                                                 <a class="btn btn-default" target="_blank" data-bind="attr: {href: biocacheQueryUrl}">
                                                     View records
                                                 </a>
@@ -154,10 +153,8 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 </div>

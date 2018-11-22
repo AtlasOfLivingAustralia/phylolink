@@ -1,7 +1,7 @@
 package au.org.ala.phyloviz
 
 class Characters {
-    def Owner owner
+    Owner owner
     static belongsTo = [Owner]
     String title
     String drid

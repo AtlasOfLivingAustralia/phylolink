@@ -56,6 +56,10 @@ var Character = function (options) {
             type: 'GET',
             dataType: 'JSON'
         },
+        /**
+         * url to get the delete a character dataset from a visualisation
+         */
+        deleteCharacterSourceUrl: 'http://dev.ala.org.au:8080/phylolink/characters/deleteResource',
         spinner: {
             top: '50%',
             left: '50%',
@@ -272,6 +276,66 @@ var Character = function (options) {
         }
 
         /**
+         * Disassociate a dataset from the system.
+         * @param item
+         */
+        self.removeSource = function(item){
+
+            self.lists.remove( function (listToTest) { return listToTest.id == item.id; } );
+
+            //is the source the active source
+            if(self.list.id == item.id){
+                self.list({});
+                self.activeCharacterList([]);
+            }
+
+            self.saveCharacters();
+
+            //if the list
+            $.ajax({
+                url: options.deleteCharacterSourceUrl,
+                dataType: 'JSON',
+                method: 'POST',
+                data: {
+                    id: item.id,
+                    drid: item.dataResourceId,
+                    phyloId: options.phyloId
+                },
+                success: function (tmp) {
+                    self.lists.remove(item);
+
+
+                },
+                error: function ( jqXHR,  textStatus,  errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    console.log('error saving records!');
+                }
+            });
+        };
+
+        self.saveCharacters = function(){
+            var data = ko.toJSON(this);
+            var sync = $.extend({}, options.syncData);
+            sync.json = data;
+            $.ajax({
+                url: options.syncUrl,
+                type: options.syncType,
+                data: sync,
+                success: function (data) {
+                    console.log('saved!');
+                    upload.headers([]);
+                    upload.charactersTitle('');
+                    upload.selectedValue('');
+                },
+                error: function () {
+                    console.log('error saving!');
+                }
+            });
+        };
+
+        /**
          * show header values
          * @param text
          */
@@ -431,7 +495,7 @@ var Character = function (options) {
         xAxis = xAxis || options.graph.xAxis
         if(options.googleChartsLoaded){
             var chart = new google.visualization.ColumnChart(document.getElementById(id));
-            var width = $('#'+options.id+' .panel-body:first').width() || options.chartWidth;
+            var width = $('#' + options.id + ' .panel-body:first').width() || options.chartWidth;
             var height = options.chartHeight;
             var opt = {
                 width: width,
@@ -870,7 +934,7 @@ var Character = function (options) {
         upload.message('');
 
         var param = {
-            title: upload.charactersTitle(),
+            title:  upload.charactersTitle(),
             column: upload.selectedValue()
         };
         var data = new FormData(document.getElementById('csvForm'));

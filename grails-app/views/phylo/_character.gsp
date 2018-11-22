@@ -81,29 +81,38 @@
         </div>
         <div id="addCharacterPanel" class="panel-body panel-collapse in" >
 
-            <p>First, select a character dataset from the given list, or upload your character data. Then click on <i>Add Character to Tree</i>
-            button. Tree branch color is determined by the first character on the list.
-            To color the tree using a character either drag that character to the top of the list, or
-            edit the first character by clicking on that character.</p>
-
+            <p>
+                First, select a character dataset from the given list, or upload your character data. Then click on <i>Add Character to Tree</i>
+                button. Tree branch color is determined by the first character on the list.
+                To color the tree using a character either drag that character to the top of the list, or
+                edit the first character by clicking on that character.
+            </p>
 
             <form id="sourceToolbar" >
 
                 <div class="form-group row">
-                    <label  for="sourceChar" class="col-sm-3 col-form-label">Character datasets:</label>
-                    <div class="col-sm-9">
+                    <label  for="sourceChar" class="col-sm-2 col-form-label">Character&nbsp;dataset:</label>
+                    <div class="col-sm-7">
                         <select id="sourceChar"
                                 class="form-control"
                                 data-bind="options:lists,optionsText:'title',value:list,optionsCaption:'Choose..', event:{change:loadNewCharacters}" required>
                         </select>
                     </div>
+
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#characterDatasets">
+                            <i class="glyphicon glyphicon-cog"></i> Manage datasets
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-3 col-form-label" for="selectChar">Select a character:</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-2 col-form-label" for="selectChar">Select a character:</label>
+                    <div class="col-sm-7">
                         <select id="selectChar" class="form-control" data-bind="options: activeCharacterList">
                         </select>
+                    </div>
+                    <div class="col-sm-3">
                     </div>
                 </div>
 
@@ -112,6 +121,42 @@
                     <i class="glyphicon glyphicon-white glyphicon-plus-sign"></i>
                     Add Character to Tree
                 </div>
+
+                <div id="characterDatasets" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Manage character datasets</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="table-wrapper-scroll-y">
+                                    <table class="table">
+                                        <tbody data-bind="foreach: lists">
+                                            <tr>
+                                                <td data-bind="text: title"></td>
+                                                <td>
+                                                    <a class="btn btn-default" target="_blank" data-bind="attr: {href: listurl}">
+                                                        View character list
+                                                    </a>
+                                                </td>
+                                                <td data-bind="text: dataResourceId"></td>
+                                                <td>
+                                                    <button class="btn btn-danger" data-bind="click:$parent.removeSource;">Remove</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="control-group hide">
                     <div class="controls">

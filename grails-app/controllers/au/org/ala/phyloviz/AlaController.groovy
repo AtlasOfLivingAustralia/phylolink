@@ -326,13 +326,14 @@ class AlaController extends BaseController {
         def colIndex = formParams['column']['id']
         def reader = utilsService.getCSVReaderForCSVFileUpload(file, utilsService.detectSeparator(file) as char)
         def result = speciesListService.createList(reader, title, colIndex, cookie);
-        if(result && result?.druid){
+        if(result && result.druid){
             def url = getUrl(result.druid);
             id = result.id
-            result = [:]
             result['url'] = url
             result['title'] = title
-            result['id'] = id;
+            result['id'] = id
+            result['listurl'] = result.listurl
+            result['dataResourceId'] = result.druid
         } else {
             result['error'] = 'error executing function';
             response.sendError(400)

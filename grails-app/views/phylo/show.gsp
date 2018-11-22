@@ -274,6 +274,7 @@
 
     var character = new Character({
         id: "character",
+        phyloId: config.id,
         tabId: 'characterTab',
         pj: pj,
         url: config.charUrl,
@@ -293,6 +294,7 @@
             type: 'GET',
             dataType: 'JSON'
         },
+        deleteCharacterSourceUrl:"${raw(createLink(controller: 'characters', action: 'deleteResource'))}",
         edit: ${edit},
         upload: {
             url: "${raw(createLink(controller: 'ala', action: 'saveAsList'))}?phyloId=${phyloInstance.id}",

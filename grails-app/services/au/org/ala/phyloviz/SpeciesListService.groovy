@@ -47,6 +47,7 @@ class SpeciesListService {
         if (result && result.druid) {
             ch = addCharacterToDB(name, result.druid)
             result.id = ch.id;
+            result.listurl = grailsApplication.config.listsPermUrl.replaceAll("DRID", result.druid)
             result
         }
         return result
