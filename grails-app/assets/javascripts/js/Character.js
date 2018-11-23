@@ -175,6 +175,15 @@ var Character = function (options) {
             return character;
         };
 
+        // self.toggleGradient = function(){
+        //     if(options.pj.useGradient){
+        //         options.pj.useGradient = false
+        //     } else {
+        //         options.pj.useGradient = true
+        //     }
+        //     self.emit('statechange');
+        // };
+
         self.setActiveCharacterList = function(list){
             self.activeCharacterList.removeAll();
             for (var i = 0; i< list.length; i++){
@@ -598,11 +607,12 @@ var Character = function (options) {
         if(!pj.isTreeLoaded()){
             return;
         }
+
+        var useGradient = true;
+
         if (selected && selected.length) {
-            pj.colorTreeWithCharacter(charJson, selected);
+            pj.colorTreeWithCharacter(charJson, selected, useGradient);
         } else {
-            // since the color is not disappearing when an empty array of selected character is passed
-//            charJson && pj.colorTreeWithCharacter(charJson, ['12#!!@']);
             pj.drawTreeWithoutCharacters()
         }
         that.emit('treecolored');
@@ -1116,9 +1126,8 @@ var Character = function (options) {
     }
 
     this.chartQualitativeChars = function (name, temp, id) {
-        var startTime = new Date();
         // clone array
-        var data = options.chartDataHeaders.slice()
+        var data = options.chartDataHeaders.slice();
         // google chart representation
         data = data.concat(that.chartDataTransform(temp));
         for (i = 1; i < data.length; i++) {
@@ -1128,7 +1137,6 @@ var Character = function (options) {
             }
         }
         character.columnchart(id, data, name);
-        // console.log('elapsed time for string char:' + (new Date() - startTime) / 1000);
     };
 
     this.chartQuantitativeChars = function(name, temp, id) {
@@ -1140,7 +1148,6 @@ var Character = function (options) {
             range1,
             range2;
 
-        startTime = new Date()
         for (i = 0; i < temp.length; i++) {
             //get range text '1 - 2' or '2 - 3'
             range = pj.getQuantCharacterState(temp[i][1], name);
@@ -1172,7 +1179,6 @@ var Character = function (options) {
             }
         }
         character.columnchart(id, data, name)
-        // console.log('elapsed time for numeric char:' + (new Date() - startTime)/1000);
     }
 
     //set style

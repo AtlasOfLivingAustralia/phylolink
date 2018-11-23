@@ -248,6 +248,7 @@ var PJ = function (params) {
         levelDistance: 20,
         levelsToShow: Number.MAX_VALUE,
         constrained: false,
+        useGradient: false,
         firstCharacter: 'Raceme_length_median',
         /**
          * save query flags
@@ -526,8 +527,6 @@ var PJ = function (params) {
             var first = st.config.firstCharacter;
             var shapes = ['box', 'star', 'triangle'],
                 index = 0;
-
-            boxes = '';
 
             for (i = 0; i < list.length; i += 1) {
                 char = list[i];
@@ -1152,13 +1151,11 @@ var PJ = function (params) {
     }
 
     var redraw = function () {
-        var legendElem = $jit.id('legend'),
-            i, node, label;
+        var i, node, label;
         if (st.character) {
             st.colorCharacter() || '';
         }
         var start, stop
-        start = new Date();
         for (i in st.graph.nodes) {
             if (st.graph.nodes.hasOwnProperty(i)) {
                 node = st.graph.nodes[i];
@@ -1166,10 +1163,7 @@ var PJ = function (params) {
                 label && st.config.onCreateLabel(label, node);
             }
         }
-        stop = new Date();
-        // console.log('elapsed time')
-        // console.log(stop - start);
-    }
+    };
 
     var setTitle = function (config) {
         var HeadingModel = function (d) {
@@ -1302,26 +1296,14 @@ var PJ = function (params) {
         }
     };
 
-    this.colorTreeWithCharacter = function (charJson, selected) {
+    this.colorTreeWithCharacter = function (charJson, selected, useGradient) {
         st.character = charJson;
         st.config.initCharacter = false;
         st.config.firstCharacter = st.firstCharacter = selected[0];
         st.config.selectedCharacters = st.selectedCharacters = selected;
-        var start = new Date(), stop
         st.colorCharacter();
-        stop = new Date();
-        console.log('elapsed time color tree');
-        console.log((stop - start) / 1000)
-        start = new Date()
         redraw();
-        stop = new Date();
-        console.log('elapsed time redraw');
-        console.log((stop - start) / 1000)
-        start = new Date()
         st.plot();
-        stop = new Date();
-        console.log('elapsed time plot');
-        console.log((stop - start) / 1000)
     };
 
     /**
@@ -1588,7 +1570,6 @@ var PJ = function (params) {
         if (!char) {
             return;
         }
-        ;
 
         var state = st.colorCoding[char];
         if (!state) {

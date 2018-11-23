@@ -222,6 +222,7 @@
         heading:'vizTitle',
         settingsId:'pjSettings',
         trimmingId:'pjTrimming',
+        useGradient: ${grailsApplication.config.useChartGradients?:'false'},
         hData:{
             id:config.id,
             title: config.title,

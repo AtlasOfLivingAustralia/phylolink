@@ -1074,13 +1074,12 @@ Options.Tree = {
 */
 Options.PhyloJive = {
     $extend: true,
-    
     alignName:false,
     lateralise:false,
     collapsedXOffset: 25,
-		branchLength: true,
-		levelDistance: 40,
-		branchMultiplier: 1,
+    branchLength: true,
+    levelDistance: 40,
+    branchMultiplier: 1,
     initCharacter: false,
     firstCharacter: false,
     presentClade: $.empty,
@@ -1089,9 +1088,11 @@ Options.PhyloJive = {
     shapes: ['box','star','square'],
     color: ['BlueViolet', 'Brown', 'CadetBlue', 'Coral', 'CornflowerBlue', 'Crimson', 'DarkCyan', 'DarkGoldenrod', 'DarkGreen', 'DarkKhaki', 'DarkOlive Green', 'DarkOrange', 'DarkRed', 'DarkSalmon', 'DarkSlateBlue', 'DarkSlateGray', 'DarkViolet', 'DeepPink', 'DimGray', 'DodgerBlue'],
     typeEnum: {quant:0,quali:1},
-    quantColor: ['#00FFFF','#00DDFF','#00BBFF','#0099FF','#0088FF','#0077FF','#0055FF','#0044FF','#0022FF','#0000FF'],
+    quantColorGradient: ['#00FFFF','#00DDFF','#00BBFF','#0099FF','#0088FF','#0077FF','#0055FF','#0044FF','#0022FF','#0000FF'],
+    quantColor: ["#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#0099C6", "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11", "#6633CC", "#E67200", "#8B0707", "#651067", "#329262", "#5574A6", "#3B3EAC", "#B77322", "#16D620", "#B91383", "#F43595", "#9C5935", "#A9C413", "#2A778D", "#668D1C", "#BEA413", "#0C5922", "#743411", "#000000"],
     quantShape: 'quant',
-    selectedCharacters: []
+    selectedCharacters: [],
+    useGradient: true
 };
 
 
@@ -9286,23 +9287,14 @@ $jit.Phylo = (function () {
           }
         });
       }
-      /*      if ( this.character && this.hasProperty ( this.character )) { 
-        all.push ( first ) ;         
-      }*/
       for (key in quali) {
         if (quali.hasOwnProperty(key)) {
           type.quali.push(key);
-          /*           if ( key !== first ) {
-              all.push ( key );
-           }*/
         }
       }
       for (key in quant) {
         if (quant.hasOwnProperty(key)) {
           type.quant.push(key);
-          /*           if ( key !== first ) {
-              all.push ( key );
-           }*/
         }
       }
       this.characterList = all;
@@ -9348,7 +9340,7 @@ $jit.Phylo = (function () {
       }
       return result;
     },
-    colorCharacter: function (colorOverwrite) {
+    colorCharacter: function () {
       var speciesHash = this.character,
         speciesName, char, i, that = this,
         box, node, characterValue, j, html;
@@ -9380,8 +9372,14 @@ $jit.Phylo = (function () {
 
         function $colorCharacter(root, characterColorCollection) {
           var firstCharacter = that.config.firstCharacter,
-            key, charArray, char, i, quantColor = that.config.quantColor,
-            currentAdj;
+            key, charArray, char, i, quantColor;
+
+          if(that.config.useGradient){
+              quantColor = that.config.quantColorGradient;
+          } else {
+              quantColor = that.config.quantColor;
+          }
+
           root.eachSubgraph(function (node) {
             node.data.color = node.data.color || {};
 
@@ -9456,6 +9454,7 @@ $jit.Phylo = (function () {
             }
           });
         }
+
         //append to legend table
         distinct = legendColorCollection[firstCharacter];
         if (!this.config.initCharacter) {
@@ -9504,7 +9503,6 @@ $jit.Phylo = (function () {
     },
     createLegend: function () {
 
-
       // find distinct character states for different characters
       var list, root, i, char, temp = {},
         ds = {},
@@ -9512,9 +9510,16 @@ $jit.Phylo = (function () {
         dsAlt = {},
         dscharAlt, color = this.config.color,
         shapePointer = 0,
-        rangeArray, label, quantColor = this.config.quantColor,
+        rangeArray, label, quantColor,
         quantShape = this.config.quantShape,
         heading, content;
+
+      if (this.config.useGradient){
+          quantColor = this.config.quantColorGradient;
+      } else {
+          quantColor = this.config.quantColor;
+      }
+
       root = this.graph.getNode(this.root);
       list = this.characterGroups.quali;
 
