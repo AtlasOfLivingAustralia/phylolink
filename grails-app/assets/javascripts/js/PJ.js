@@ -837,41 +837,65 @@ var PJ = function (params) {
         var navHTML2 = ''+
             '<div class="node-count" style="position: absolute; right: -40px; top: 5px; white-space: nowrap;">No node selected</div>' +
             '<div style="position:relative">' +
-            '<div style="position: absolute; left: -170px; top: 20px; width:50px; height: 20px; cursor: pointer;">' +
-                '<div class="input-group input-group-sm">' +
-                    '<input type="text" id="searchText" style="width:180px;" class="form-control input-sm" placeholder="Search tree" name="srch-term" id="srch-term" onfocus="utils.clearPlaceholder(this)"> ' +
-                    '<div class="input-group-btn">' +
-                        '<button class="btn btn-default btn-sm" id="searchBtn" type="submit"><i class="glyphicon glyphicon-search"></i></button>' +
+                '<div style="position: absolute; left: -170px; top: 20px; width:50px; height: 20px; cursor: pointer;">' +
+                    '<div class="input-group input-group-sm">' +
+                        '<input type="text" id="searchText" style="width:180px;" class="form-control input-sm" placeholder="Search tree" name="srch-term" id="srch-term" onfocus="utils.clearPlaceholder(this)"> ' +
+                        '<div class="input-group-btn">' +
+                            '<button class="btn btn-default btn-sm" id="searchBtn" type="submit"><i class="glyphicon glyphicon-search"></i></button>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
-            '</div>' +
-            '<div class="pj-nav-controls" style="position: absolute; left: -10px; top: 15px; width:50px; height: 20px; cursor: pointer;">' +
-            '<div id="panup" style="position: absolute; left: 10px; top: 42px; cursor: pointer;">' +
-            '<div id="north" title="Pan up"><i class="glyphicon glyphicon-arrow-up"' +
-            ' aria-hidden="true"></i></div></div><div id="panleft" title="Pan left" style="position: absolute; left: 0px; top: 56px;' +
-            ' cursor: pointer;"><div id="west"><i class="glyphicon glyphicon-arrow-left"' +
-            ' aria-hidden="true"></i></div></div><div id="panright" title="Pan right" style="position: absolute; left: 22px; ' +
-            'top: 56px; cursor: pointer;"><div id="east"><i class=" ' +
-            'glyphicon glyphicon-arrow-right" aria-hidden="true"></i></div></div><div id="pandown" title="Pan down" style="position: ' +
-            'absolute; left: 10px; top: 70px; cursor: pointer;"><div id="south"><i ' +
-            'class="glyphicon glyphicon-arrow-down" aria-hidden="true"></i></div></div>' +
-            '<div id="zoomout" title="Zoom out" style="position: absolute; left: 13px; top: 169px;  ' +
-            'cursor: pointer;"><div id="zoomOUT"><i class="glyphicon glyphicon-zoom-out"></i></div></div>' +
-            '<div id="zoomworld" style="position: absolute; left: 13px; top: 103px;  cursor: pointer;"><div id="world" style="position: relative;" >' +
-            '<i class="glyphicon glyphicon-resize-small"></i></div></div>' +
-            '<div id="zoomin" title="Zoom in" style="position: absolute; left: 13px; top: 141px;  cursor: ' +
-            'pointer;">' +
-            '<div id="zoomIN" margin-top="10px;"><i class="glyphicon glyphicon-zoom-in"></i></div></div>' +
-            '<div id="settingsBtn" title="Tree display options" style="margin-top:70px;">' +
-                ' <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
-                    '<i class="glyphicon glyphicon-cog"></i>' +
-                '</a>' +
-            '</div>' +
-            '<div id="trimmingBtn" title="Tree trimming options" style="margin-top:90px;"> ' +
-                '<a href="#' + config.trimmingId + '" role="button" data-toggle="modal">' +
-                    '<i class="glyphicon glyphicon-leaf"></i>' +
-                '</a>' +
-            '</div>' +
+                '<div class="pj-nav-controls" style="position: absolute; left: -10px; top: 15px; width:50px; height: 20px; cursor: pointer;">' +
+                '<div id="panup" style="position: absolute; left: 10px; top: 42px; cursor: pointer;">' +
+                    '<div id="north" title="Pan up">' +
+                '       <i class="glyphicon glyphicon-arrow-up" aria-hidden="true"></i>' +
+                '   </div>' +
+            '   </div>' +
+            '   <div id="panleft" title="Pan left" style="position: absolute; left: 0px; top: 56px;cursor: pointer;">' +
+            '       <div id="west">' +
+            '           <i class="glyphicon glyphicon-arrow-left" aria-hidden="true"></i>' +
+                '   </div>' +
+            '   </div>' +
+            '   <div id="panright" title="Pan right" style="position: absolute; left:22px; top: 56px; cursor: pointer;">' +
+            '       <div id="east">' +
+            '           <i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i>' +
+            '       </div>' +
+            '   </div>' +
+            '   <div id="pandown" title="Pan down" style="position: absolute; left: 10px; top: 70px; cursor: pointer;">' +
+            '       <div id="south">' +
+            '           <i class="glyphicon glyphicon-arrow-down" aria-hidden="true"></i>' +
+            '       </div>' +
+            '   </div>' +
+                '<div id="zoomout" title="Zoom out" style="position: absolute; left: 13px; top: 169px; cursor: pointer;">' +
+                    '<div id="zoomOUT">' +
+                '       <i class="glyphicon glyphicon-zoom-out"></i>' +
+                '   </div>' +
+                '</div>' +
+                '<div id="zoomworld" style="position: absolute; left: 13px; top: 103px;  cursor: pointer;">' +
+                    '<div id="world" style="position: relative;" >' +
+                        '<i class="glyphicon glyphicon-resize-small"></i>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="zoomin" title="Zoom in" style="position: absolute; left: 13px; top: 141px; cursor: pointer;">' +
+                    '<div id="zoomIN" margin-top="10px;">' +
+                        '<i class="glyphicon glyphicon-zoom-in"></i>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="settingsBtn" title="Tree display options" style="margin-top:70px;">' +
+                    ' <a href="#' + config.settingsId + '" role="button" data-toggle="modal">' +
+                        '<i class="glyphicon glyphicon-cog"></i>' +
+                    '</a>' +
+                '</div>' +
+                '<div id="trimmingBtn" title="Tree trimming options" style="margin-top:90px;"> ' +
+                    '<a href="#' + config.trimmingId + '" role="button" data-toggle="modal">' +
+                        '<i class="glyphicon glyphicon-leaf"></i>' +
+                    '</a>' +
+                '</div>' +
+                '<div id="resetTreeSelection" title="Clear node selection" style="margin-top:300px; cursor: pointer;"> ' +
+                    '<div id="resetTreeSelection">' +
+                        '<i class="glyphicon glyphicon-repeat"></i>' +
+                    '</div>' +
+                '</div>' +
             '</div>';
 
 
@@ -986,10 +1010,16 @@ var PJ = function (params) {
 
         var zoomIN = $jit.id('zoomIN'),
             zoomOUT = $jit.id('zoomOUT'),
-            world = $jit.id('world');
+            world = $jit.id('world'),
+            resetTree = $jit.id('resetTreeSelection');
+
         zoomIN.onclick = zoomOUT.onclick = zoomHandler;
         world.onclick = function () {
             st.fitScreen();
+        };
+
+        resetTree.onclick  = function () {
+            pj.clickNode(st.root);
         };
 
         var searchBox = $("#searchBtn");
