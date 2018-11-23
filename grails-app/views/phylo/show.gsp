@@ -397,7 +397,7 @@
         env: {
             'colormode': undefined,
             'name': 'circle',
-            'size': 7,
+            'size': 3,
             'opacity': 0.8,
             'color': 'df4a21'
         },

@@ -114,9 +114,11 @@
                         optionsCaption:'Choose..', event:{change: drChanged}" required></select>
                         </div>
                         <div class="col-sm-3">
+                            <g:if test="${edit}">
                             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">
                                 <i class="glyphicon glyphicon-cog"></i> Manage datasets
                             </button>
+                            </g:if>
                         </div>
                     </div>
                 </form>

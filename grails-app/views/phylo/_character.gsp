@@ -100,9 +100,12 @@
                     </div>
 
                     <div class="col-sm-3">
-                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#characterDatasets">
-                            <i class="glyphicon glyphicon-cog"></i> Manage datasets
-                        </button>
+
+                        <g:if test="${edit}">
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#characterDatasets">
+                                <i class="glyphicon glyphicon-cog"></i> Manage datasets
+                            </button>
+                        </g:if>
                     </div>
                 </div>
 
@@ -141,7 +144,6 @@
                                                         View character list
                                                     </a>
                                                 </td>
-                                                <td data-bind="text: dataResourceId"></td>
                                                 <td>
                                                     <button class="btn btn-danger" data-bind="click:$parent.removeSource;">Remove</button>
                                                 </td>
