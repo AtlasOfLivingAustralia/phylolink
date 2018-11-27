@@ -206,34 +206,6 @@ function Map(options) {
         }
     })
 
-    var sizeSlider = new L.Control.Slider({
-        text: 'Size',
-        position: 'topleft',
-        onChange: function (val) {
-            env.size = parseInt(val);
-            that.updateLayersEnv();
-        },
-        sliderOpt: {
-            min: 1,
-            max: 9,
-            step: 1,
-            value: env.size,
-            tooltip: 'hide'
-        }
-    });
-
-    var downloadRecordButton = new L.Control.MapControls({
-        text: 'Size',
-        position: 'topleft',
-        sliderOpt: {
-            min: 1,
-            max: 9,
-            step: 1,
-            value: env.size,
-            tooltip: 'hide'
-        }
-    });
-
     var colorBy = new L.Control.Select({
         position: 'topright',
         url: options.facetUrl,
@@ -245,6 +217,14 @@ function Map(options) {
         onSizeChange: function (val) {
             env.size = parseInt(val);
             that.updateLayersEnv();
+        },
+        sizeSliderOptions: {
+            min: 1,
+            max: 9,
+            step: 1,
+            value: env.size,
+            tooltip: 'hide',
+            sliderLength:'75px'
         }
     });
 

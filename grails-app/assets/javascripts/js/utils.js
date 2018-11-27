@@ -71,7 +71,7 @@ var utils={
     },
 
     OccurrenceDownloadViewModel: function(url) {
-        this.downloadReasons = utils.getDownloadReasons(url);
+        this.downloadReasons = []; //utils.getDownloadReasons(url);
         this.email = ko.observable();
         this.reason = ko.observable();
     },

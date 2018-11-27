@@ -17,25 +17,18 @@ L.Control.Select = L.Control.extend({
             height:'30px',
             padding: '5px'
         },
-        opacitySliderOpt: {
+        sizeSliderOptions: {
             position: 'topright',
             title:'click me',
             text:'slider: ',
-            style: {
-                padding: '2px'
-            },
+            style: { padding: '2px'},
             sliderLength:'75px',
-            /**
-             * callback when checkbox is clicked.
-             */
             onChange: null,
-            sliderOpt: {
-                min: 0.1,
-                max: 1.0,
-                step: 0.1,
-                value: 0.8,
-                tooltip: 'hide'
-            }
+            min: 0.1,
+            max: 1.0,
+            step: 0.1,
+            value: 0.8,
+            tooltip: 'hide'
         },
         onOutlineClick: null,
         onSizeChange: null,
@@ -71,11 +64,6 @@ L.Control.Select = L.Control.extend({
                             <i class="glyphicon glyphicon-download"></i>&nbsp;Download&nbsp;records\
                         </label>\
                     </td>\                               \
-                    <td style="padding-right:15px;">\
-                        <label style="display: inline-block" >Outline:</label> \
-                        <input type="checkbox" id="outlineChbox" data-bind="checked: selectedOutlineValue" />\
-                        \
-                    </td>\
                     <td>\
                         <label style="display: inline-block">Size:</label> \
                         <div id="sizeSlider" class="sizeSlider" style="display:inline-block;"></div>\
@@ -83,11 +71,10 @@ L.Control.Select = L.Control.extend({
                 </tr>\
             </table>',
 
-    ViewModel:function(){
+    ViewModel: function(options){
         this.facetsGrouped = ko.observableArray();
         this.text = ko.observable();
         this.selectedValue = ko.observable();
-        this.selectedSizeValue = ko.observable();
         this.selectedOutlineValue = ko.observable(false);
 
         /**
@@ -104,8 +91,8 @@ L.Control.Select = L.Control.extend({
          * Disassociate a dataset from the system.
          * @param item
          */
-        this.changeOutline = function(item){
-            alert('changeOutline!')
+        this.changeOutline = function(value){
+            this.options.onOutlineClick(value);
         };
     },
 
@@ -126,7 +113,7 @@ L.Control.Select = L.Control.extend({
     onAdd: function (map) {
         var container = L.DomUtil.create('div', 'leaflet-control-select leaflet-control-layers leaflet-bar');
         this._createColorBySelect(container);
-        this._createSizeSlider(this.options.opacitySliderOpt.text, this.options.opacitySliderOpt.title, '', container);
+        this._createSizeSlider(this.options.sizeSliderOptions.text, this.options.sizeSliderOptions.title, '', container);
         return container;
     },
     
@@ -142,27 +129,25 @@ L.Control.Select = L.Control.extend({
 
         var sizeSliderCont = container.getElementsByClassName("sizeSlider")[0];
         var cont =  L.DomUtil.create('div','', sizeSliderCont);
-        for(var i in this.options.opacitySliderOpt.style){
-            cont.style[i] = this.options.opacitySliderOpt.style[i];
+        for(var i in this.options.sizeSliderOptions.style){
+            cont.style[i] = this.options.sizeSliderOptions.style[i];
         }
 
         var div = L.DomUtil.create('div', '', cont);
-        div.style['width'] = this.options.opacitySliderOpt.sliderLength;
+        div.style['width'] = this.options.sizeSliderOptions.sliderLength;
 
-        $(div).slider(this.options.opacitySliderOpt.sliderOpt).on('slideStop', function(ev){
+        $(div).slider(this.options.sizeSliderOptions).on('slideStop', function(ev){
             var value;
             if(that.integer){
                 value = parseInt(ev.value);
             } else {
-                // prevent values like 0.30000000004 appearing
                 value = parseFloat(ev.value).toFixed(1);
             }
-            // label.innerHTML = that.options.opacitySliderOpt.text + ' ' + value + '&nbsp&nbsp&nbsp';
             that.onSizeChange(value);
         });
 
         //set integer flag
-        var opt = this.options.opacitySliderOpt.sliderOpt;
+        var opt = this.options.sizeSliderOptions;
         if(this.isInt(opt.min)&& this.isInt(opt.max) && this.isInt(opt.step)){
             this.integer = true;
         } else {
@@ -171,6 +156,11 @@ L.Control.Select = L.Control.extend({
         this._slider = $(div);
 
         L.DomEvent.on(div, 'mousedown dblclick', L.DomEvent.stopPropagation)
+    },
+
+    onOutlineClick : function(){
+        // alert('value change: ' + value);
+        this.options.onOutlineClick();
     },
 
     onSizeChange: function(value){
