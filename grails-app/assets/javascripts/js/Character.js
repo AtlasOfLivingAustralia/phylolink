@@ -1140,8 +1140,7 @@ var Character = function (options) {
     };
 
     this.chartQuantitativeChars = function(name, temp, id) {
-        var startTime,
-            data,
+        var data,
             i, j,
             range,
             charObj,
@@ -1155,7 +1154,8 @@ var Character = function (options) {
         }
 
         // clone array
-        data = options.chartDataHeaders.slice()
+        data = options.chartDataHeaders.slice();
+
         // google chart representation
         data = data.concat(that.chartDataTransform(temp));
 

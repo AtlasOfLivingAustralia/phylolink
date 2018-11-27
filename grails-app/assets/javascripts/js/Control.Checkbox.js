@@ -58,12 +58,10 @@ L.Control.Checkbox = L.Control.extend({
 
         L.DomEvent
             .on(input, 'mousedown dblclick', L.DomEvent.stopPropagation)
-//            .on(input, 'click', L.DomEvent.stop)
             .on(input, 'click', function(){
                 that.onClick(that.getValue())
             }, this)
             .on(input, 'click', this._refocusOnMap, this);
-
         return input;
     },
 

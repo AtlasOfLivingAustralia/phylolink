@@ -153,13 +153,13 @@ function Map(options) {
 
     this.updateEnv = function (l) {
         l = l || layer
-        if (colorBy.getValue() == 'None') {
+        if (colorBy.getColorBySelectValue() == 'None') {
             env.color = l.color;
         }
         l && l.setParams({
             'ENV': this.getEnv(),
             'opacity': env.opacity,
-            'outline': outlineCtrl.getValue(),
+            'outline': colorBy.getOutlineValue(),
             'STYLE': 'opacity:' + env.opacity
         });
     };
@@ -195,8 +195,11 @@ function Map(options) {
         spinjs: true
     });
 
+
+
+
     var outlineCtrl = new L.Control.Checkbox({
-        position: 'bottomleft',
+        position: 'topleft',
         text: 'Outline ',
         onClick: function () {
             that.updateLayersEnv();
@@ -205,7 +208,7 @@ function Map(options) {
 
     var sizeSlider = new L.Control.Slider({
         text: 'Size',
-        position: 'bottomleft',
+        position: 'topleft',
         onChange: function (val) {
             env.size = parseInt(val);
             that.updateLayersEnv();
@@ -219,10 +222,30 @@ function Map(options) {
         }
     });
 
+    var downloadRecordButton = new L.Control.MapControls({
+        text: 'Size',
+        position: 'topleft',
+        sliderOpt: {
+            min: 1,
+            max: 9,
+            step: 1,
+            value: env.size,
+            tooltip: 'hide'
+        }
+    });
+
     var colorBy = new L.Control.Select({
         position: 'topright',
         url: options.facetUrl,
-        defaultValue: options.colorBy.defaultValue
+        defaultValue: options.colorBy.defaultValue,
+        pj:pj,
+        onOutlineClick: function () {
+            that.updateLayersEnv();
+        },
+        onSizeChange: function (val) {
+            env.size = parseInt(val);
+            that.updateLayersEnv();
+        }
     });
 
     colorBy.on('change', function (val) {
@@ -234,12 +257,9 @@ function Map(options) {
 
     var legendCtrl = new L.Control.Legend(options.legend);
     // initializing
-    env.colormode = legendCtrl.options.urlParams.cm = colorBy.getValue();
+    env.colormode = legendCtrl.options.urlParams.cm = colorBy.getColorBySelectValue();
     colorBy.addTo(lmap);
     lmap.addControl(loadingControl);
-    lmap.addControl(outlineCtrl);
-    // lmap.addControl(opacitySlider);
-    lmap.addControl(sizeSlider);
     lmap.addControl(legendCtrl);
 
     pj.on('click', function (node, list, ajax) {

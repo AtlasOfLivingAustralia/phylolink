@@ -67,7 +67,7 @@ L.Control.Slider = L.Control.extend({
         }
 
         var label = L.DomUtil.create('label','', cont);
-        label.innerHTML = this.options.text; // + ' ' + this.options.sliderOpt.value+'&nbsp&nbsp&nbsp';
+        label.innerHTML = this.options.text;
         label.style['display'] ='inline-block'
         this._label = label;
 
@@ -85,6 +85,7 @@ L.Control.Slider = L.Control.extend({
             label.innerHTML = that.options.text + ' ' + value+'&nbsp&nbsp&nbsp';
             that.onChange(value);
         });
+
         //set integer flag
         var opt = this.options.sliderOpt;
         if(this.isInt(opt.min)&& this.isInt(opt.max) && this.isInt(opt.step)){
