@@ -87,6 +87,27 @@
 
                 <div role="tabpanel" class="tab-pane active" id="mapTabContent">
                     <div id="map"></div>
+                    <div id="downloadAndLinks" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                    <h3 id="pjSettingLabel">Downloads and links to other tools</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <ul>
+                                        <li><a id="viewInSpatialPortal"  href="#">View selected taxa in spatial portal</a></li>
+                                        <li><a id="downloadDataLink" href="#">Download records for selected taxa</a></li>
+                                        <li><a id="viewRecords"  href="#">View records for selected taxa</a></li>
+                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="habitat">
