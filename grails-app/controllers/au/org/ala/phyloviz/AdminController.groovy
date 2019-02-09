@@ -9,6 +9,7 @@ class AdminController {
 
     def treeService
     def alaService
+    def bootstrapService
 
     def index(){}
 
@@ -57,6 +58,17 @@ class AdminController {
             e.printStackTrace()
             flash.message = e.message
             redirect(controller: 'wizard', action: 'start')
+        }
+    }
+
+
+    def bootstrap(){
+        try {
+            bootstrapService.loadTrees()
+            render(contentType: 'application/json', text: [success:true] as JSON);
+        } catch (Exception e){
+            log.error(e.getMessage(), e)
+            render(contentType: 'application/json', text: [success:false] as JSON);
         }
     }
 }

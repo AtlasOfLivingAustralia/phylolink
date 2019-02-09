@@ -19,7 +19,7 @@ class Tree {
     String expertTreeLSID
     String expertTreeID
     String notes
-    String defaultQuery //stored as JSON array
+    String defaultQuery // default query to use for large tree e.g. "Acacia"
     static constraints = {
         tree(nullable: false, widget: 'textarea')
         year(nullable: true)

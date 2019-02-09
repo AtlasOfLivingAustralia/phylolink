@@ -13,7 +13,7 @@
 <ul>
 <li><g:link controller="admin" action="testSandboxLink">Test Sandbox integration</g:link></li>
 <li><g:link controller="admin" action="testQidGeneration">Test QID integration</g:link></li>
-<li>Test Species list integration</li>
+<li><g:link controller="admin" action="bootstrap">Load Bootstrap Data</g:link></li>
 </ul>
 </body>
 </html>
