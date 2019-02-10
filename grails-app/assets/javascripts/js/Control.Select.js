@@ -59,9 +59,9 @@ L.Control.Select = L.Control.extend({
                             </select>\
                         </div>\
                     </td>\
-                    <td style="padding-right:15px; padding-left:15px;">\
-                        <label style="display: inline-block" data-bind="click: downloadRecords">\
-                            <i class="glyphicon glyphicon-download"></i>&nbsp;Download&nbsp;records\
+                    <td style="padding-right:15px; padding-left:15px; cursor: pointer;">\
+                        <label style="display: inline-block; cursor: pointer;" data-bind="click: downloadRecords">\
+                            <i class="glyphicon glyphicon-download"></i>&nbsp;Download&nbsp;|&nbsp;<i class="glyphicon glyphicon-globe"></i>&nbsp;Spatial portal\
                         </label>\
                     </td>\                               \
                     <td>\
@@ -82,9 +82,15 @@ L.Control.Select = L.Control.extend({
          * @param item
          */
         this.downloadRecords = function(item){
-            var downloadUrl = "https://biocache.ala.org.au/download?searchParams=" + encodeURI("q=" + pj.getQid(true));
-            downloadUrl = downloadUrl + "&targetUri=/occurrences/search"
-            window.location.href = downloadUrl;
+
+            $('#downloadAndLinks').modal('show');
+
+            var downloadDataLink = "https://biocache.ala.org.au/download?searchParams=" + encodeURI("q=" + pj.getQid(true));
+            var viewInSpatialPortal = "https://spatial.ala.org.au/?q=" + encodeURI(pj.getQid(true));
+            var viewRecords = "https://biocache.ala.org.au/occurrence/search?q=" + encodeURI(pj.getQid(true));
+            $('#downloadDataLink').attr('href', downloadDataLink);
+            $('#viewInSpatialPortal').attr('href', viewInSpatialPortal);
+            $('#viewRecords').attr('href', viewRecords);
         };
 
         /**
