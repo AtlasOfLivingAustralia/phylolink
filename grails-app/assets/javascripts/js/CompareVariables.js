@@ -32,11 +32,17 @@ var CompareVariables = function (options) {
                 return;
             }
 
+            var qid = pj.getQid(true)
+
+            if(qid === undefined){
+                return;
+            }
+
             $.ajax({
                 url: graphibleFieldsUrl,
                 data: {
                     biocacheServiceUrl: records.getDataresource().biocacheServiceUrl,
-                    q: "qid:" + pj.getQid(true)
+                    q: "qid:" + qid
                 },
                 success: function (data) {
                     self.variable1Options(data);
@@ -50,9 +56,11 @@ var CompareVariables = function (options) {
 
         self.updateChart = function(){
 
-            if(pj.getQid(true) === undefined){
-                return;
-            }
+            var qid = pj.getQid(true);
+
+            // if(qid === undefined){
+            //     return;
+            // }
 
             if(self.selectedVariable1() == ""
                 || self.selectedVariable1() == null
@@ -65,7 +73,7 @@ var CompareVariables = function (options) {
             self.startLoading();
 
             var chartData = {
-                query: "qid:" + pj.getQid(true),
+                query: "qid:" + qid,
                 breakdown: $('#breakdown-type').val(),
                 variable1: self.selectedVariable1(),
                 variable2: self.selectedVariable2(),
