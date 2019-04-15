@@ -243,7 +243,7 @@ class UtilsService {
         url = url.replace('QUERY', q)
         def result = webServiceService.get(url)
         result = JSON.parse(result)
-        log.debug(result)
+        log.debug(String.valueOf(result))
         return result?.searchResults?.results
     }
 

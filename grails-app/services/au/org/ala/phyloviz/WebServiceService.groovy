@@ -171,7 +171,7 @@ class WebServiceService implements InitializingBean {
         def response = http.request( POST){
             requestContentType = enc;
             body = data;
-            log.debug(head['cookie'])
+            log.debug(String.valueOf(head['cookie']))
             response.'500' = { HttpResponseDecorator r ->
                 log.error("POST to ${url} with data ${data} failed with HTTP 500.");
                 return [error:'Internal server problem'];
