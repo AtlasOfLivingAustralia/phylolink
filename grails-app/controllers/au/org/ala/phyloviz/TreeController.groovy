@@ -61,7 +61,7 @@ class TreeController extends BaseController {
             redirect( action:'mapOtus', id: tree.id)
         } else {
             tree = treeService.createTreeInstance( params )
-            log.debug( tree?.getErrors() )
+            log.debug( String.valueOf(tree?.getErrors()) )
             if( !tree || tree?.hasErrors() ){
                 render ( view: 'create', model: [ tree: tree ] )
                 return
@@ -118,7 +118,7 @@ class TreeController extends BaseController {
 
     def searchDoi(){
         def terms = params.q;
-        log.debug( terms );
+        log.debug( String.valueOf(terms) );
         withFormat {
             json {
                 render ( contentType: 'application/json', text: utilsService.searchDoi( terms ) as JSON )
@@ -406,8 +406,7 @@ class TreeController extends BaseController {
                     notFound("Could not find tree for the given id or you do not have permission")
                 }
             } catch (Exception e){
-                log.error(e.message)
-                e.printStackTrace()
+                log.error(e.message, e)
                 flash.message = 'Internal Server error - Could not rematch tree. ' + e.message
                 redirect( controller: 'wizard', action: 'myTrees')
             }
@@ -447,8 +446,7 @@ class TreeController extends BaseController {
                     notFound("Could not find tree for the given id")
                 }
             } catch (Exception e) {
-                log.error(e.message)
-                e.printStackTrace()
+                log.error(e.message, e)
                 flash.message = 'Internal Server error - Could not rematch tree. ' + e.message
                 redirect( controller: controller, action: action)
             }

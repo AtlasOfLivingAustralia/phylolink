@@ -61,8 +61,8 @@ class PhyloController extends BaseController {
 
     def save(Phylo phyloInstance) {
         log.debug('save ')
-        log.debug( params )
-        log.debug( phyloInstance )
+        log.debug( String.valueOf(params) )
+        log.debug( String.valueOf(phyloInstance) )
         if (phyloInstance == null) {
             notFound()
             return
@@ -164,7 +164,7 @@ class PhyloController extends BaseController {
         if( layer.contains('el') ) {
             log.debug( 'parsing to double')
             summary.each() { k, v ->
-                log.debug( k )
+                log.debug( String.valueOf(k) )
                 result.push([ Double.parseDouble( k ), v]);
             }
         } else {
@@ -215,9 +215,7 @@ class PhyloController extends BaseController {
             result = noTreeText ? treeService.removeProp(result, grailsApplication.config.treeMeta.treeText) : result
             render(contentType: 'application/json', text: result as JSON)
         } catch (Exception e){
-            log.debug( e.message )
-            log.debug( e.stackTrace )
-            log.debug('breaking');
+            log.error( e.getMessage(), e)
         }
     }
 

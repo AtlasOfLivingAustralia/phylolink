@@ -120,7 +120,7 @@ class BootstrapService {
         result['tree'] = file.text
         log.debug('mammals tree' + result['tree'])
         result['treeFormat'] = 'newick'
-        log.debug(result['nexson'])
+        log.debug(String.valueOf(result['nexson']))
         result['year'] = 2009
         result['hide'] = false
         result['doi'] = ''
@@ -164,7 +164,7 @@ class BootstrapService {
         def file = getTreeFile('marsupials.newick')
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
-        log.debug(result['nexson'])
+        log.debug(String.valueOf(result['nexson']))
         result['year'] = 2004
         result['hide'] = false
         result['doi'] = 'http://onlinelibrary.wiley.com/doi/10.1017/S0952836904005539/full'
@@ -185,7 +185,7 @@ class BootstrapService {
         def file = getTreeFile('hornworts.newick')
         result['tree'] = file.text
         result['treeFormat'] = 'newick'
-        log.debug(result['nexson'])
+        log.debug(String.valueOf(result['nexson']))
         result['year'] = 2013;
         result['hide'] = false
         result['doi'] = 'http://dx.doi.org/10.1071/SB13030';

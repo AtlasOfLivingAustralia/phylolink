@@ -146,7 +146,7 @@ class AlaController extends BaseController {
 
     def browseLayersFragment() {
         log.debug( params.type )
-        log.debug( grailsApplication.config.layersMeta.env )
+        log.debug( String.valueOf(grailsApplication.config.layersMeta.env) )
         def layerData = getLayers( params.type );
         def results = new ArrayList<LayerDefinition>()
         layerData.each {
@@ -230,7 +230,7 @@ class AlaController extends BaseController {
         // do not use decodeUrl function since it converts + to whitespace.
         def url = params.url
         def result = webServiceService.get(url);
-        log.debug(result);
+        log.debug(String.valueOf(result));
         log.debug(url);
         result = JSON.parse(result)
         if(params.callback){

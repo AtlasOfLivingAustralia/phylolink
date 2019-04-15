@@ -54,8 +54,7 @@ class AdminController {
             flash.message = result.message;
             redirect(controller: 'wizard', action: 'start')
         } catch(Exception e){
-            log.error(e.message)
-            e.printStackTrace()
+            log.error(e.message, e)
             flash.message = e.message
             redirect(controller: 'wizard', action: 'start')
         }

@@ -22,8 +22,7 @@ class NameService {
             rankClassification.setScientificName(name)
             nameSearcher.searchForAcceptedLsidDefaultHandling(rankClassification, false)
         } catch (Exception e){
-            log.error(e)
-            e.printStackTrace()
+            log.error(e.getMessage(), e)
         }
     }
 
@@ -43,8 +42,7 @@ class NameService {
             NameSearchResult result = nameSearcher.searchForAcceptedRecordDefaultHandling(rankClassification, true, true)
             result?.getRankClassification()?.getScientificName()
         } catch (Exception e){
-            log.error(e)
-            e.printStackTrace()
+            log.error(e.getMessage(), e)
         }
     }
 }

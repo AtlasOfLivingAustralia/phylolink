@@ -38,7 +38,7 @@ class TreeService {
         otus = this.treeNamedNodes(nexson)
 
         result['numberOfNamedNodes'] = otus?.size()
-        log.debug(otus)
+        log.debug(String.valueOf(otus))
         def names = []
         (0..<otus.size()).each { i ->
             names.push(otus[i].name)
@@ -46,7 +46,7 @@ class TreeService {
 
         def lsid = alaService.getLsid(names)
 
-        log.debug(lsid)
+        log.debug(String.valueOf(lsid))
         (0..<lsid.size()).each { index ->
             if (lsid[index]) {
                 taxon = lsid[index]
@@ -73,7 +73,7 @@ class TreeService {
         def otus = nexson.data.nexml.otus, node, meta, otu, leaf, result = [], o
         def trees = nexson.data.nexml.trees.tree;
         otus = nexson.data.nexml.otus
-        log.debug(trees.size())
+        log.debug(String.valueOf(trees.size()))
 
         // now get the name of the otus
         for (def i = 0; i < otus.size(); i++) {
@@ -102,7 +102,7 @@ class TreeService {
         def leaves = [], nodes, meta, otus, i
         def trees = nexson.data.nexml.trees.tree;
         otus = nexson.data.nexml.otus.otu
-        log.debug(trees.size())
+        log.debug(String.valueOf(trees.size()))
 
         for (i = 0; i < trees.size(); i++) {
             // if tree id is provided then get leaves only for that tree otherwise all leaves
@@ -143,7 +143,7 @@ class TreeService {
         def leaves = [], nodes, meta, otus, i, otu, leaf
         def trees = nexson.data.nexml.trees.tree;
         otus = nexson.data.nexml.otus.otu
-        log.debug(trees.size())
+        log.debug(String.valueOf(trees.size()))
 
         // now get the name of the otus
         for (i = 0; i < leaves.size(); i++) {
@@ -182,7 +182,7 @@ class TreeService {
     def guessFormat(String tree) {
         def formats = ['nexml', 'nexus', 'newick']
         def result;
-        log.debug(formats)
+        log.debug(String.valueOf(formats))
         for (def i = 0; i < formats.size(); i++) {
             switch (formats[i]) {
                 case 'nexml':
@@ -237,7 +237,7 @@ class TreeService {
     def getTreeMeta(String tree) {
         def meta = [:], nex
         meta['format'] = this.guessFormat(tree)
-        log.debug(meta['format'])
+        log.debug(String.valueOf(meta['format']))
         switch (meta['format']) {
             case 'nexml':
                 nex = opentreeService.convertNexmlToNexson(tree)
@@ -309,7 +309,7 @@ class TreeService {
         urlStr = uri.toURL().toString();
         log.debug(urlStr)
         def rss = webServiceService.get(urlStr);
-        log.debug(rss);
+        log.debug(String.valueOf(rss));
         if (rss) {
             def df = DocumentBuilderFactory.newInstance();
             def builder = df.newDocumentBuilder()
@@ -554,7 +554,7 @@ class TreeService {
         sList = new JsonSlurper().parseText(speciesList)
         for (i = 0; i < input.size(); i++) {
             studyMeta = [:]
-            log.debug(input[i]);
+            log.debug(String.valueOf(input[i]));
             input[i][grailsApplication.config.treeMeta.treeText] = metricsService.treeProcessing(input[i][grailsApplication.config.treeMeta.treeText])
 
             // calculate pd

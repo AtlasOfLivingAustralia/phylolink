@@ -210,7 +210,7 @@ class WizardController {
         def url = params.url
         params.tree = treeService.importTB(url)
         log.debug('nexml value')
-        log.debug(params.tree)
+        log.debug(String.valueOf(params.tree))
         params.treeFormat = 'nexml'
         forward(action: 'save', params: params)
     }
