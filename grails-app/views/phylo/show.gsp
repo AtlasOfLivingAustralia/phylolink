@@ -7,7 +7,7 @@
 <head>
     <meta name="layout" content="main">
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
-    <title data-bind='text: title'>${phyloInstance.title}</title>
+    <title data-bind='text: title'>${phyloInstance.title} | Phylolink</title>
 
     <g:if test="${isDemonstration}">
         <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'demo')},Demonstration vizualisations"/>
@@ -31,19 +31,32 @@
     <asset:stylesheet src="leaflet.fullscreen.v0.0.2.css" />
     <asset:stylesheet src="Control.Legend.css" />
     <asset:stylesheet src="Control.Loading.css" />
+
+    <style type="text/css">
+        html,body,.container-fluid {
+            height:100%;
+        }
+
+        .container-fluid {
+            margin:0px 0px 0px 0px; padding:0px 0px 0px 0px;
+        }
+
+    #main { margin-top:0px; padding-top:10px; }
+    </style>
+
 </head>
 
 
-<body class="fluid" >
+<body class="fluid">
 <g:render template="settings"></g:render>
 <g:render template="trimming"></g:render>
 
-<div class="container-fluid" style="margin-left:-10px; margin-right:-20px;">
-    <div class="row" style="margin-top: -20px">
-        <div class="col-sm-4 col-md-4" style="padding-right:0px;padding-left:0px;">
-            <div id="info"></div>
+<div class="container-fluid" style="margin-top:0px; padding-top:0px; height:100%; width: 100%; display:table;">
+    <div class="row" style="margin-top: -20px; height:100%;  display: table-row; width: 100%; ">
+        <div class="col-sm-4 col-md-4" style="padding-right:0px; padding-left:0px; height:100%; display: table-cell; float: none;">
+            <div id="info" style="height:100%;"></div>
         </div>
-        <div role="tabpanel" id="tabs" class="col-sm-8 col-md-8" style="padding-left:0px; margin-left:0px; margin-right:0px;">
+        <div role="tabpanel" id="tabs" class="col-sm-8 col-md-8" style="padding-left:0px; margin-left:0px; margin-right:0px; width: 100%; height:100%;  display: table-cell; float: none;">
 
             <div style="float:left;">
                 <div id="vizTitle"><g:render template="title"></g:render></div>
@@ -86,7 +99,7 @@
                 </div>
 
                 <div role="tabpanel" class="tab-pane active" id="mapTabContent">
-                    <div id="map"></div>
+                    <div id="map" style="height:100%;overflow:auto;"></div>
                     <div id="downloadAndLinks" class="modal fade" role="dialog">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -227,12 +240,13 @@
             url: ko.observable('${raw(grailsApplication.config.spatialPortalRoot)}')
         },
         runSaveQuery: false,
-        chartWidth: $('#character').width() - 30
+        chartWidth: $('#map').width() - 30,
+        chartHeight: $('#info').height() - 30
     }
 
     var pj = new PJ({
         width: $('#' + config.pjId).width() - 10,
-        height: 590,
+        height: $('#' + config.pjId).height() ,
         codeBase: '../..',
         dataType:'json',
         bootstrap: 2,
@@ -342,6 +356,7 @@
         chartDataUrl: "${raw(createLink(controller: "chart", action: "stackedBar"))}",
         graphibleFieldsUrl: "${raw(createLink(controller: "chart", action: "graphibleFields"))}",
         chartWidth: config.chartWidth,
+        chartHeight: config.chartHeight - 100,
         records: records
     });
 

@@ -1,4 +1,4 @@
-<div id="compare-variables" style="margin-top:15px;">
+<div id="compare-variables" style="margin-top:15px;  ">
     <h4 style="display:none;" data-bind="text: chartTitle"></h4>
     <div>
         <div class="row">
@@ -36,7 +36,10 @@
         </div>
     </div>
 
-    <div class="row" style="margin-top: 15px;">
-        <div id="scatterplot-1"  class="col-md-9"> </div>
+    <div class="container" style="display:table; height:100%; width:100%;  ">
+        <div class="row" style="margin-top: 15px; height:100%;  display: table-row; width: 100%; ">
+            <div id="scatterplot-1"  style="width:100%; height:100%; display: table-cell; float: none; ;">
+            </div>
+        </div>
     </div>
 </div>

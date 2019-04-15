@@ -6,6 +6,7 @@ var CompareVariables = function (options) {
     var chartDataUrl = options.chartDataUrl;
     var graphibleFieldsUrl = options.graphibleFieldsUrl;
     var chartWidth = options.chartWidth;
+    var chartHeight = options.chartHeight;
     var records = options.records;
 
     var defaultVariable1 = options.variable1;
@@ -92,11 +93,11 @@ var CompareVariables = function (options) {
                     }
 
                     var options = {
-                        height: 650,
+                        height: chartHeight, //900, //chartHeight,
                         width: chartWidth,
                         isStacked: true,
                         bar: {groupWidth: "60%"},
-                        chartArea: {top:0, left: 200, width: 300},
+                        chartArea: {top:0, left: 200, width: chartWidth - 500, height: chartHeight - 100},
                         legend: {textStyle: {fontSize: 10}},
                         hAxis: {
                             textStyle: {
