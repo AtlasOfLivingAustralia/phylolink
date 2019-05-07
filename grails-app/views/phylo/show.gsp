@@ -197,10 +197,10 @@
     var config = {
         type: 'ala',
         sandboxLayer: 'http://sandbox1.ala.org.au/ws/mapping/wms/reflect',
-        biocacheLayer: 'https://biocache.ala.org.au/ws/mapping/wms/reflect',
+        biocacheLayer: 'https://biocache-ws.ala.org.au/ws/mapping/wms/reflect',
         sandboxLegend: 'http://sandbox1.ala.org.au/ala-hub/occurrence/legend',
         biocacheLegend: 'https://biocache.ala.org.au/occurrence/legend',
-        downloadReasonsUrl: 'http://logger.ala.org.au/service/logger/reasons',
+        downloadReasonsUrl: 'https://logger.ala.org.au/service/logger/reasons',
         legendUrl: function(){
             switch (config.type){
                 case 'sandbox': return config.sandboxLegend;
@@ -278,7 +278,7 @@
             data: {
                 speciesList: undefined,
                 dataLocationType: undefined, // 'ala' or 'sandbox'
-                biocacheServiceUrl: undefined, // 'http://sandbox.ala.org.au',
+                biocacheServiceUrl: undefined, // 'https://sandbox.ala.org.au',
                 drid: undefined // drt121
             }
         },
@@ -388,7 +388,7 @@
             dataType: 'JSONP'
         },
         downloadSummaryUrl: '${raw(createLink(controller: "phylo", action:"getHabitat" ))}/?download=true',
-        biocacheOccurrenceDownload: 'http://biocache.ala.org.au/ws/occurrences/index/download',
+        biocacheOccurrenceDownload: 'https://biocache-ws.ala.org.au/ws/occurrences/index/download',
         downloadReasonsUrl: config.downloadReasonsUrl,
         records: records,
         // dynamic chart size. the default chart width is too small.
