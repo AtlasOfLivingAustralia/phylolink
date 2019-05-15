@@ -403,9 +403,9 @@ class AlaController extends BaseController {
      */
     def getRecordsList(){
         def userId = authService.getUserId();
-        Integer phyloId= params.int('phyloId');
+        Integer phyloId = params.int('phyloId');
         def result = alaService.getRecordsList(userId, phyloId);
-        if(params.callback){
+        if (params.callback){
             render(contentType: 'text/javascript', text: "${params.callback}(${result as JSON})")
         } else {
             render( text: result as JSON, contentType: 'application/json');

@@ -20,7 +20,7 @@ class BootstrapService {
         //update alaDataresourceInfo with biocache urls
         grailsApplication.config.alaDataresourceInfo.biocacheServiceUrl = grailsApplication.config.biocacheServiceUrl
         grailsApplication.config.alaDataresourceInfo.biocacheHubUrl = grailsApplication.config.biocacheHubUrl
-        grailsApplication.config.alaDataresourceInfo.layerUrl = grailsApplication.config.biocacheServiceUrl + grailsApplication.config.alaDataresourceInfo.layerUrl
+        grailsApplication.config.alaDataresourceInfo.layerUrl = grailsApplication.config.alaDataresourceInfo.layerUrl
         grailsApplication.config.alaDataresourceInfo.title = "All occurrences"
         grailsApplication.config.alaDataresourceInfo.type = "ala"
         grailsApplication.config.alaDataresourceInfo.id = -1

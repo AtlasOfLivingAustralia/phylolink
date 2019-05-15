@@ -244,10 +244,12 @@ class SandboxService {
             owner == owner && status == status
         };
         def result = [], cs =  new au.org.ala.phyloviz.ConvertSandbox();
-        s.each{ item ->
+        s.each { item ->
             def c = cs.convert(item)
-            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
-            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl) c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
+            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl)
+                c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
+            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl)
+                c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
             result.push(c)
         }
         return result;
@@ -290,8 +292,10 @@ class SandboxService {
         def result = [], cs =  new au.org.ala.phyloviz.ConvertSandbox()
         s.each{ item ->
             def c = cs.convert(item)
-            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl) c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
-            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl) c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
+            if (!c.containsKey('biocacheServiceUrl') || !c.biocacheServiceUrl)
+                c.put('biocacheServiceUrl', grailsApplication.config.sandboxBiocacheServiceUrl)
+            if (!c.containsKey('biocacheHubUrl') || !c.biocacheHubUrl)
+                c.put('biocacheHubUrl', grailsApplication.config.sandboxHubUrl)
             result.push(c)
         }
         return result;

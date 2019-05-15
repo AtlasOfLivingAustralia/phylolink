@@ -56,7 +56,7 @@
         <div class="col-sm-4 col-md-4" style="padding-right:0px; padding-left:0px; height:100%; display: table-cell; float: none;">
             <div id="info" style="height:100%;"></div>
         </div>
-        <div role="tabpanel" id="tabs" class="col-sm-8 col-md-8" style="padding-left:0px; margin-left:0px; margin-right:0px; width: 100%; height:100%;  display: table-cell; float: none;">
+        <div role="tabpanel" id="tabs" class="col-sm-8 col-md-8" style="padding-left:0px; margin-left:0px; margin-right:0px; width: 100%; height:100%;  display: table-cell;">
 
             <div style="float:left;">
                 <div id="vizTitle"><g:render template="title"></g:render></div>
