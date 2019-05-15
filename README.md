@@ -38,9 +38,12 @@ These instructions are for Mac OSX Yosemite. Adapt them as necessary for your en
 1. Create the user: ```createuser phylo -P``` (-P prompts for a password: if not specified, the user will not have a password)
 1. Create the database: ```createdb phylolink```
 
-## Installing on virtual machine
+## Installing on local virtual machine with vagrant
+
+Ansible scripts are in the [ala-install](https://github.com/AtlasOfLivingAustralia/ala-install) repository 
+
 ```
-ansible-playbook phylolink.yml -i inventories/vagrant/phylolink-vagrant --sudo --private-key ~/.vagrant.d/insecure_private_key -u vagrant
+ansible-playbook phylolink.yml -i ala-install/ansible/inventories/vagrant/phylolink-vagrant --sudo --private-key ~/.vagrant.d/insecure_private_key -u vagrant
 ```
 
 ## Installing on production
