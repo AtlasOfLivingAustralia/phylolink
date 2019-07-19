@@ -1,19 +1,4 @@
 ---
-#security:
-#    cas:
-#        appServerName: http://dev.ala.org.au:8080
-#        uriFilterPattern: /paths/.*,/that,/require/.*,/auth.*
-#        uriExclusionFilterPattern: /assets/.*,/images/.*,/css/.*,/js/.*,/less/.*
-#        authenticateOnlyIfLoggedInPattern:
-#
-#server:
-#    contextPath: '/phylolink'
-#
-#map:
-#    mapbox:
-#        id: nickdos.kf2g7gpb
-#        token: pk.eyJ1Ijoibmlja2RvcyIsImEiOiJ2V2dBdEg0In0.Ep2VyMOaOUnOwN1ZVa9uyQ
-
 app:
     dataDir: /data/
 #skin:

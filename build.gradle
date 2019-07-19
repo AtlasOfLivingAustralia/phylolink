@@ -11,6 +11,7 @@ buildscript {
         classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:1.4"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.6"
+        classpath "org.postgresql:postgresql:$postgresVersion" // for flyway        
     }
 }
 
@@ -18,7 +19,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "1.4.17"
 }
 
-version "0.6.4"
+version "0.6.5"
 group "au.org.ala"
 
 apply plugin:"eclipse"
@@ -39,6 +40,7 @@ repositories {
 }
 
 dependencies {
+    runtime "org.postgresql:postgresql:$postgresVersion"    
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.grails:grails-core"
@@ -76,13 +78,13 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-api:3.6.0"
     compile group: 'org.grails.plugins', name: 'ala-auth', version: '3.1.0', changing: true
     compile group: 'org.grails.plugins', name: 'ala-ws-plugin', version: '2.0', changing: true
-    compile group: 'org.grails.plugins', name: 'ala-bootstrap3', version: '3.0.6', changing: true
+    compile group: 'org.grails.plugins', name: 'ala-bootstrap3', version: '3.2.0', changing: true
     compile group: 'org.grails.plugins', name: 'ala-admin-plugin', version: '2.1', changing: true
 
 
 
     compile group: 'au.org.ala', name: 'ala-name-matching', version: '3.3', changing: true
-    compile group: 'postgresql', name: 'postgresql', version: '9.1-901.jdbc4', changing: true
+
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6', changing: true
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.6', changing: true
     compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.6', changing: true
