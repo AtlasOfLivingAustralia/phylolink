@@ -16,24 +16,48 @@ abstract class BaseController {
     }
 
     def notAuthorised = {String message = null ->
-        sendError(SC_UNAUTHORIZED, message ?: "You do not have permission to perform the requested action.")
+		sendError(SC_UNAUTHORIZED, message ?: "You do not have permission to perform the requested action.")
+    }
+
+    def renderJSONNotAuthorised = {String message = null ->
+        renderJSONErrorMsg(SC_UNAUTHORIZED, message ?: "You do not have permission to perform the requested action.")
     }
 
     protected void notFound(String message = null) {
         sendError(SC_NOT_FOUND, message ?: "No matching record was found.")
     }
 
+	protected void error(String message = null) {
+		sendError(SC_INTERNAL_SERVER_ERROR, message ?: "An unexpected error has occurred.")
+	}
+
+	protected void renderJSONError(String message = null) {
+		renderJSONErrorMsg(SC_INTERNAL_SERVER_ERROR, message ?: "An unexpected error has occurred.")
+	}
+
     def success = { resp ->
-        response.status = SC_OK
-        response.setContentType(CONTEXT_TYPE_JSON)
-        render resp as JSON
+        renderJSONResponse(SC_OK, resp)
     }
 
+	protected void renderJSONResponse(int status, Object resp) {
+		response.status = status
+		response.setContentType(CONTEXT_TYPE_JSON)
+		render resp as JSON		
+	}
+	
+	private renderJSONErrorMsg(int status, String msg) {
+		Map resp = [
+			error: msg
+		]
+        renderJSONResponse(status, resp)
+	}
+	
     def saveFailed = {
         sendError(SC_INTERNAL_SERVER_ERROR)
     }
 
     def sendError = {int status, String msg = null ->
+log.error("About to sendError", new RuntimeException("About to sendError"))        
         response.status = status
         response.sendError(status, msg)
     }

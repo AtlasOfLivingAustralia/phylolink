@@ -19,7 +19,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "1.4.17"
 }
 
-version "0.6.5"
+version "0.7.0-SNAPSHOT"
 group "au.org.ala"
 
 apply plugin:"eclipse"
@@ -60,6 +60,7 @@ dependencies {
     compile "org.grails.plugins:events"
     compile "org.grails.plugins:hibernate5"
     compile 'org.grails.plugins:external-config:1.2.2'
+    compile "org.grails.plugins:mail:2.0.0.RC6"
     compile "org.hibernate:hibernate-core:5.1.5.Final"
     compile "org.grails.plugins:gsp"
     console "org.grails:grails-console"
@@ -81,7 +82,7 @@ dependencies {
     compile group: 'org.grails.plugins', name: 'ala-bootstrap3', version: '3.2.0', changing: true
     compile group: 'org.grails.plugins', name: 'ala-admin-plugin', version: '2.1', changing: true
 
-
+    runtime "javax.mail:mail:1.4.7"
 
     compile group: 'au.org.ala', name: 'ala-name-matching', version: '3.3', changing: true
 
@@ -94,7 +95,31 @@ dependencies {
     compile files('lib/jade.jar')
 }
 
+// Based on https://github.com/gradle/gradle/issues/1989 and https://tuhrig.de/gradles-bootrun-and-windows-command-length-limit/ and 
+// Enhanced to handle spaces in the paths as described on https://stackoverflow.com/questions/18659774/how-do-i-handle-files-with-spaces-in-the-classpath-in-manifest-mf
+// Uncomment for Windows - Start
+//task pathingJarForWindows(type: Jar) {
+//    dependsOn configurations.runtime
+//    appendix = 'pathing'
+// 
+//    doFirst {
+//        manifest {
+//            attributes "Class-Path": configurations.runtime.files.collect {
+//                it.toURL().toString().replaceAll(' ', '%20') //.replaceFirst(/file:/+/, '/')
+//            }.join(' ')
+//        }
+//    }
+//}
+// Uncomment for Windows - End
+ 
 bootRun {
+// Uncomment for Windows - Start
+//    dependsOn pathingJarForWindows
+//    doFirst {
+//		logger.error('pathingJarForWindows.archivePath=' + pathingJarForWindows.archivePath)
+//        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJarForWindows.archivePath)
+//    }
+// Uncomment for Windows - End
     jvmArgs('-Dspring.output.ansi.enabled=always')
     addResources = true
 }

@@ -1,11 +1,12 @@
 package au.org.ala.phyloviz
 
 class WizardController {
+    static final int DEFAULT_PAGE_SIZE = 10
+
     def treeService
     def phyloService
     def userService
     def authService
-    def utilsService
 
     static allowedMethods = [pickMethod: 'POST', save: 'POST']
 
@@ -40,6 +41,9 @@ class WizardController {
             case 'demo':
                 redirect(action: 'demo')
                 break;
+            case 'published':
+                redirect(action: 'published')
+                break;
             case 'treeAdmin':
                 redirect(controller: "tree", action: 'treeAdmin')
                 break;
@@ -58,12 +62,15 @@ class WizardController {
         //number of visualisations for this user
         def numberOfVisualisations = userId != null ? myViz().viz.size() : 0
 
+		def noOfVizThatRequireMyAttention = userId != null ? phyloService.listVizThatRequireMyAttention().size() : 0
+		
         render(view: '/wizard/pick', contentType: 'text/html',
                 model: [
                     numberOfTrees: numberOfTrees,
                     numberOfVisualisations: numberOfVisualisations,
                     loggedIn: userId != null,
-                    isAdmin: userService.userIsSiteAdmin()
+                    isAdmin: userService.userIsSiteAdmin(),
+					noOfVizThatRequireMyAttention: noOfVizThatRequireMyAttention
                 ]
         )
     }
@@ -196,6 +203,22 @@ class WizardController {
         [viz: myViz, name: name, isDemonstration: false]
     }
 
+	def vizThatNeedMyAttention() {
+		def vizThatRequireMyAttention = phyloService.listVizThatRequireMyAttention()
+        [viz: vizThatRequireMyAttention]
+	}
+	
+    def published() {
+        int pageSize = params.getInt("pageSize", DEFAULT_PAGE_SIZE)
+        int offset = params.getInt("offset", 0)
+        String filter = params.filter?:""
+
+        render view: "published", 
+			   model: [viz     : phyloService.listPublishedViz(filter, pageSize, offset, "doiCreationDate", "desc"),
+                       offset  : offset,
+                       pageSize: pageSize]
+    }
+
     /**
      * displays a ui to search TreeBASE
      */
@@ -219,7 +242,7 @@ class WizardController {
      * demo
      */
     def demo() {
-        def owner = utilsService.guestAccount();
+        def owner = phyloService.getOwnerOfDemoViz();
         def name;
         if (owner == null) {
             flash.message = 'No demonstration visualisations found.'

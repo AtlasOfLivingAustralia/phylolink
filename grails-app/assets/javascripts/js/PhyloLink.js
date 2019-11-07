@@ -1155,7 +1155,7 @@ function phylogenyExplorer_init(initial) {
                     html = '', name = '', maptitle = '', index;
                 if (!!node.name) {
                     //url = '<img class="tipImage" src="http://biocache.ala.org.au/ws/density/map?q=' + node.name.replace(' ', '+') + '"/>';
-                    //maptitle = '<br/>ALA <strong>reported</strong> occurences';
+                    //maptitle = '<br/>ALA <strong>reported</strong> occurrences';
                     name = "<i>" + node.name + "</i>";
                 }
                 else {

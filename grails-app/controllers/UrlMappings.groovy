@@ -9,7 +9,7 @@ class UrlMappings {
         "/phylo/create/$studyid/$treeid/$index"(controller: 'phylo',action:'create')
         "/phylo/getTree.json"(controller: 'phylo',action:'getTree')
         "/phylo/getTree"(controller: 'viewer',action:'show')
-        "/phylo/wizard"(controller: 'phylo',action:'wizard')
+        "/phylo/wizard"(controller: 'phylo',action:'wizard') // this action isn't defined in the phyloController??
         "/ws/chart/stackedBar"(controller: 'chart',action:'stackedBar')
         "/ws/listStudies"(controller: 'OTStudy',action:'listStudies')
         "/ws/searchDoi(.$format)?"(controller: "tree", action: 'searchDoi')

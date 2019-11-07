@@ -120,6 +120,24 @@ environments:
             url: jdbc:postgresql://localhost/phylolink?autoReconnect=true&connectTimeout=0&useUnicode=true&characterEncoding=UTF-8
             username: "phylo"
             password: "postgres"
+        grails:
+            mail:
+#               Couldn't get this to work even though I followed https://jfrog.com/knowledge-base/how-to-resolve-unable-to-find-valid-certification-path-to-requested-target-error/
+#               So used https://github.com/Nilhcem/FakeSMTP instead e.g. java -jar fakeSMTP-2.0.jar --start-server --port 1025
+#               host: "smtp.live.com"
+#                host: "smtp-mail.outlook.com"
+#                port: 587
+#                username: "aladevt@hotmail.com"
+#                password: "Al@devt1"
+#                props:
+#                    mail.smtp.starttls.enable: "true"
+#                    mail.smtp.port: "587"
+#                    mail.debug: "true"
+                host: "localhost"
+                port: 1025
+                props:
+                    mail.debug: "true"
+#                    mail.debug: "false"
     test:
         dataSource:
             dbCreate: update
@@ -146,3 +164,7 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+        grails:
+            mail:
+                host: "localhost"
+                port: 25

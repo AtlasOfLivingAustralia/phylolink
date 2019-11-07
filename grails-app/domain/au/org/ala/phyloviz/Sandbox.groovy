@@ -11,10 +11,13 @@ class Sandbox {
     Owner owner
     Boolean status
     Date dateCreated
+	Boolean canDelete
     static constraints = {
         phyloId nullable: true
+		canDelete nullable: true
     }
     static mapping = {
         status defaultValue: false
+		canDelete defaultValue: true
     }
 }

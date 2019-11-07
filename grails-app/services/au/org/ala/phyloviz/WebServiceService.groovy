@@ -147,8 +147,9 @@ class WebServiceService implements InitializingBean {
      * @param data - data to post
      * @return data from post response
      */
-    def postData( String url, body, head = [:], enc = org.apache.http.entity.ContentType.APPLICATION_FORM_URLENCODED  ){
-        def response = webService.post(url, body, [:], enc, true, true, head)
+    def postData( String url, body, head = [:], enc = org.apache.http.entity.ContentType.APPLICATION_FORM_URLENCODED,
+			boolean includeApiKey = true, boolean includeUser = true){
+        def response = webService.post(url, body, [:], enc, includeApiKey, includeUser, head)
         response.resp
     }
 

@@ -1,0 +1,26 @@
+character,character_description,type
+morph_SVL,snout-vent length in mm,Integer
+morph_head_width,width of head at widest point in mm,Integer
+morph_head_length,length of head from tip to front of ear in mm,Integer
+morph_hind_leg_length,hind leg length from angle of leg to centre of foot in mm,Integer
+trunk_length,length of trunk from front leg to back leg in mm,Integer
+trunk_width,width of trunk at the front legs in mm,Integer
+foreleg_length,foreleg length from angle of foreleg to centre of palm in mm,Integer
+femur_length,length of femur in mm,Integer
+head_depth,depth of head behind the eyes in mm,Integer
+snout_length,length of snout from front corner of eye to tip of snout in mm,Integer
+snout_depth,depth of snout in front of eyes in mm,Integer
+naris_to_eye,distance between front corner of eye and closest nostril in mm,Integer
+eye_to_ear,distance between rear corner of eye and centre of ear in mm,Integer
+internarial_dist,distance between nostrils in mm,Integer
+interorbital_dist,distance between front corners of eyes in mm,Integer
+orbit_length,length of eye in mm,Integer
+rostral_scale_height,size of rostral scale in the vertical axis in mm,Integer
+rostral_scale_width,size of rostral scale in the horizontal axis in mm,Integer
+supralabial_scales,number of supralabial scales - scales above mouth,Integer
+infralabial_scales,number of infralabial scales - scale below the mouth,Integer
+internarial_scales,number of scales between nostrils,Integer
+toe_length,length of longest toe in mm,Integer
+number_toe_lamellae,number of lamellae (plate-like structures) under the longest toe,Integer
+division_type,whether the toe lamellae are divided or not divided,Categorical
+number_finger_lamellae,number of lamellae (plate-like structures) under the longest finger,Integer

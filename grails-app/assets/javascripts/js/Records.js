@@ -56,7 +56,7 @@ var Records = function (c) {
         } else {
             this.displayTitle = ko.observable(opt.title ||'');
         }
-
+		this.canDelete = ko.observable(opt.canDelete == null ? true : opt.canDelete);
     };
 
     var FormModel = function (opt) {
@@ -182,6 +182,7 @@ var Records = function (c) {
 
         this.lists = ko.observableArray([]);
         this.selectedValue = ko.observable();
+		this.edit = ko.observable();
 
         /**
          * Disassociate a dataset from the system.
@@ -428,11 +429,11 @@ var Records = function (c) {
      * called when a new data resource is selected
      */
     this.updateMap = function(){
-        if (dataresourceViewModel.selectedValue() === undefined) {
+        var sel = dataresourceViewModel.selectedValue();
+        if (sel === undefined) {
             return
         }
         
-        var sel = dataresourceViewModel.selectedValue();
         var layer = sel.layerUrl(),
             biocacheServiceUrl = sel.biocacheServiceUrl();
         pj.clearQid();
@@ -477,19 +478,21 @@ var Records = function (c) {
     }
 
     this.save = function () {
-        if (!(config.edit && !config.firstInitialisation) ) {
+        if (!(dataresourceViewModel.edit() && !config.firstInitialisation) ) {
             return;
         }
 
-        var sync = {id: config.phyloId, sourceId: dataresourceViewModel.selectedValue().id};
+        var sel = dataresourceViewModel.selectedValue();
+        var sourceId = (sel == null ? null : sel.id);
+        var sync = {id: config.phyloId, sourceId: sourceId};
         $.ajax({
             url: config.syncUrl,
             data: sync,
             success: function (data) {
-                console.log('saved records in database!');
+                console.log('saved records in database id=' + config.phyloId + ', sourceId=' + sourceId + ' !');
             },
             error: function () {
-                console.log('error saving records!');
+                console.log('error saving records id=' + config.phyloId + ', sourceId=' + sourceId + ' !');
             }
         });
     }
@@ -500,9 +503,18 @@ var Records = function (c) {
 
     records.on('sourcechanged', this.save);
 
-    if(config.edit){
-        $("#csvFormRecordsUnavailable").hide();
-    } else {
-        $("#csvFormRecords").hide();
-    }
+	dataresourceViewModel.edit.subscribe(function(newValue) {
+		if(newValue){
+			$("#csvFormRecordsUnavailable").hide();
+			$("#csvFormRecords").show();
+		} else {
+			$("#csvFormRecordsUnavailable").show();
+			$("#csvFormRecords").hide();
+		}
+    });
+	dataresourceViewModel.edit(config.edit);
+	
+    //Expose this for use by other tabs
+    this.config = config;
+    this.dataresourceViewModel = dataresourceViewModel;
 }

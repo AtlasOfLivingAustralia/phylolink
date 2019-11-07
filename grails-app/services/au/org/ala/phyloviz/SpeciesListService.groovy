@@ -64,7 +64,8 @@ class SpeciesListService {
         def charList = [
                 'owner': own,
                 'title': title,
-                'drid' : drid
+                'drid' : drid,
+				'canDelete': true
         ]
         def c = new Characters(charList).save(
                 flush: true

@@ -1,13 +1,15 @@
 <div class="panel-group" id="uploadRecords" style="margin-top:20px;">
     <div class="panel panel-default">
-        <div class="panel-heading" style="cursor:pointer" id="uploadCharactersTitle" >
+        <div class="panel-heading" style="cursor:pointer">
             Upload your occurrence records
         </div>
         <div id="occurrenceUploadPanel" class="panel-body panel-collapse">
 
             <p>
                 Upload your own occurrence data. Once you upload the dataset, you'll be able
-                to select this for viewing with the phylogenetic tree and map.
+                to select this for viewing with the phylogenetic tree and map. For best results please ensure the species name exactly matches the species name as shown 
+				in the tree (please note that underscores in the species names in the tree are replaced with spaces before being shown, so please remove underscores from
+				your species names in your occurrence data).
             </p>
             <div id="csvFormRecordsUnavailable" class="alert-error hide">
                 <i>Login to enable occurrence upload or,
@@ -111,11 +113,11 @@
                             <select id="sourceCharRecords"
                                     class="form-control"
                                     data-bind="options:lists,optionsText:'displayTitle',value:selectedValue,
-                        optionsCaption:'Choose..', event:{change: drChanged}" required></select>
+                        optionsCaption:'Please choose..', event:{change: drChanged}, disable: ! edit()" required></select>
                         </div>
                         <div class="col-sm-3">
                             <g:if test="${edit}">
-                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">
+                            <button data-bind="disable: ! edit()" type="button" class="btn btn-default" data-toggle="modal" data-target="#occurrenceDatasets">
                                 <i class="glyphicon glyphicon-cog"></i> Manage datasets
                             </button>
                             </g:if>
@@ -144,7 +146,7 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <button class="btn btn-danger" data-bind="click:$parent.removeDataset; " >Remove</button>
+                                                <button class="btn btn-danger" data-bind="disable: ! canDelete(), click:$parent.removeDataset;">Remove</button>
                                             </td>
                                         </tr>
                                     </tbody>

@@ -1,4 +1,4 @@
-package au.org.ala.phylolink
+package au.org.ala.phyloviz
 
 import grails.converters.JSON
 import groovy.json.JsonSlurper

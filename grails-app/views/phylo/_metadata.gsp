@@ -1,35 +1,31 @@
-<g:set var="userLoggedIn"><fc:userIsLoggedIn/></g:set>
 <div class="panel panel-default" style="margin-top:10px;">
-    <div class="panel-heading" id="uploadCharactersTitle" >
-        Tree metadata
+    <div class="panel-heading">
+        Phylogenetic tree metadata
     </div>
     <div class="panel-body">
         <table class="table table-sm">
             <tbody>
             <tr>
-                <td>Title:</td>
+                <td class="col-md-2">Title:</td>
                 <td>${tree.getTitle()}</td>
             </tr>
             <g:if test="${tree.getReference()!= null}">
             <tr>
-                <td>Reference:</td>
+                <td>Publication citation:</td>
                 <td>${tree.getReference()}</td>
             </tr>
             </g:if>
             <g:if test="${tree.getYear()!= null}">
             <tr>
-                <td>Year:</td>
+                <td>Publication Year:</td>
                 <td>${tree.getYear()}</td>
             </tr>
             </g:if>
             <g:if test="${tree.getDoi()!= null}">
                 <tr>
-                    <td>Doi:</td>
+                    <td>Publication DOI:</td>
                     <td>
-                       <g:if test="${tree.getDoi()}">
-                          <g:link url="${tree.getDoi()}">${tree.getDoi()}</g:link>
-                       </g:if>
-
+                       <g:link url="${tree.getDoi()}">${tree.getDoi()}</g:link>
                     </td>
                 </tr>
             </g:if>

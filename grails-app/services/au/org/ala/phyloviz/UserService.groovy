@@ -1,6 +1,8 @@
 package au.org.ala.phyloviz
 
+import grails.util.Environment
 import javax.annotation.PostConstruct
+import javax.mail.internet.InternetAddress
 
 class UserService {
     def grailsApplication, authService, webServiceService
@@ -36,8 +38,49 @@ class UserService {
 
     def userIsSiteAdmin() {
         return authService.userInRole(grailsApplication.config.security.cas.officerRole?:'ROLE_OFFICER') ||
-            authService.userInRole(grailsApplication.config.security.cas.adminRole?:'ROLE_PHYLOLINK_ADMIN') ||
+            userIsPhylolinkAdmin() ||
             authService.userInRole(grailsApplication.config.security.cas.alaAdminRole?:'ROLE_ADMIN')
+    }
+
+    def userIsPhylolinkAdmin() {
+        return authService.userInRole(grailsApplication.config.security.cas.adminRole?:'ROLE_PHYLOLINK_ADMIN')
+    }
+
+    def userIsPhylolinkWorkflowAdmin() {
+        authService.userInRole(getPhylolinkWorkflowAdminRole()) ||
+				(Environment.isDevelopmentMode() && "jasenschremmer@hotmail.com".equals(authService.userDetails()?.email))
+    }
+
+	private String getPhylolinkWorkflowAdminRole() {
+		return grailsApplication.config.security.cas.workflowAdminRole?:'ROLE_PHYLOLINK_ADMIN'
+	}
+
+	public List<String> getPhylolinkWorkflowAdminEmailRecipients() throws Exception {
+		List<String> recipients = new ArrayList<>()
+		try {
+			def url = grailsApplication.config.security.cas.casServerName + "/userdetails/userDetails/byRole?role=" + getPhylolinkWorkflowAdminRole()
+			//NOTE: this is secured by IP whitelisting so the external IP of the environment the grails app is running on will need to be added to
+			//      the list of Authorised Services by someone in the development team
+			def userList = webServiceService.doJsonPost(url, "{}")?.data
+			if (userList) {
+				for (user in userList) {
+					if (! Boolean.valueOf(user.locked)) {
+						recipients.add(new InternetAddress(user.email, user.firstName + " " + user.lastName).toString())
+					}
+				}
+			}		
+			log.debug("In getPhylolinkWorkflowAdminEmailRecipients recipients=${recipients}")
+
+		} catch (Exception e) {
+			if (Environment.isDevelopmentMode()) {
+				recipients.add(new InternetAddress("renee.catullo@csiro.au", "Renee Catullo").toString())
+				recipients.add(new InternetAddress("jasen.schremmer@anu.edu.au", "O'Schremmer, Jasen").toString())
+			} else {
+				recipients.add(new InternetAddress("support@ala.org.au", "ALA Support - Error in Phylolink Logs").toString())
+			}
+			log.error("IGNORING exception while trying to getPhylolinkWorkflowAdminEmailRecipients and sending to these recipients instead=" + recipients, e)
+		}
+		return recipients
     }
 
     def getRecentEditsForUserId(userId) {

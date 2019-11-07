@@ -120,6 +120,8 @@ var Character = function (options) {
     var Character = function (opt) {
         this.name = ko.observable(opt.name);
         this.id = ko.observable(opt.id);
+		this.description = ko.observable([]);
+		this.type = ko.observable([]);
     }
 
     var CharacterViewModel = function () {
@@ -143,9 +145,10 @@ var Character = function (options) {
         self.lists = ko.observableArray([]);
         self.activeCharacterList = ko.observableArray([]);
         self.list = ko.observable({});
-        self.edit = ko.observable(options.edit);
+        self.edit = ko.observable();
         self.listLoading = ko.observable(false);
-
+		self.saveSource = false;
+		
         self.clearCharacter = function (data, event) {
             if (data === self.selectedCharacter()) {
                 self.selectedCharacter(null);
@@ -270,7 +273,23 @@ var Character = function (options) {
         }
 
         self.loadNewCharacters = function(){
-            self.activeCharacterList.removeAll();
+			var sel = self.list();
+			if (self.saveSource && self.edit()) {
+				var characterSourceId = (sel == null ? null : sel.id);
+				var sync = {id: options.phyloId, characterSourceId: characterSourceId};
+				$.ajax({
+					url: options.syncSourceUrl,
+					data: sync,
+					success: function (data) {
+						console.log('saved charactersSource in database id=' + options.phyloId + ', characterSourceId=' + characterSourceId + ' !');
+					},
+					error: function () {
+						console.log('error saving charactersSource id=' + options.phyloId + ', characterSourceId=' + characterSourceId + ' !');
+					}
+				});
+			}
+            
+			self.activeCharacterList.removeAll();
             if(self.list()){
                 self.characters.removeAll()
                 that.loadCharacterFromUrl(self.list().url);
@@ -290,11 +309,15 @@ var Character = function (options) {
          */
         self.removeSource = function(item){
 
-            self.lists.remove( function (listToTest) { return listToTest.id == item.id; } );
+            //the remove below can change self.list() so look it up before the remove
+			var removeCurrentSelection = (self.list() != null && self.list().id == item.id);
 
-            //is the source the active source
-            if(self.list.id == item.id){
-                self.list({});
+			self.saveSource = false;
+            self.lists.remove( function (listToTest) { return listToTest.id == item.id; } );
+			self.saveSource = true;
+
+            if(removeCurrentSelection){
+                self.list(null);
                 self.activeCharacterList([]);
             }
 
@@ -352,7 +375,9 @@ var Character = function (options) {
             upload.headers([]);
             upload.charactersTitle('');
             upload.selectedValue('');
-            $('#characterUploadPanel').attr('aria-expanded', false).removeClass('in');
+			if (!upload.message()) {
+				$('#characterUploadPanel').attr('aria-expanded', false).removeClass('in');
+			}
         }
 
         /**
@@ -372,6 +397,12 @@ var Character = function (options) {
                 }
             }
             return selected;
+        }
+		
+		self.findResourceById = function(id){
+            return ko.utils.arrayFirst(self.lists(), function(item){
+                return id === item.id;
+            });
         }
     };
 
@@ -958,10 +989,43 @@ var Character = function (options) {
             data: data,
             processData: false,
             contentType: false,
-            success: function(data){
-                spinner.stop();
-                view.addNewSource(data);
-                view.resetForm();
+            success: function(result){
+				// check if the just uploaded characters files does not have any species that overlap with the species in the tree
+		        $.ajax({
+					url: options.checkCharacterFile.url,
+					dataType:'JSON',
+					data: {
+						id: result.id,
+						treeId: options.treeId
+					},
+					success: function(data){
+						spinner.stop();
+						if (data.isCompatibleWithTree) {
+							result = $.extend({
+								canDelete: true,
+							}, result);
+							view.addNewSource(result);				
+						} else {
+							//show message that file is not compatible
+							$(upload.alertId).alert();
+							upload.message('There are no species in your uploaded file that match the tree. Please ensure the species scientific name ' + 
+								'exactly matches the species name as shown in the tree (please note that underscores in the species names in the tree ' + 
+								'are replaced with spaces before being shown, so please remove underscores from your species names in your character ' + 
+								'data).  Please update the file or choose another file.');
+//							setTimeout($(upload.alertId).close, 10000)
+							console.log('There are no species in your uploaded file that match the tree.  Please update the file or choose another file.')
+						}
+						view.resetForm();
+					},
+					error: function(){
+						spinner.stop();
+						$(upload.alertId).alert();
+						upload.message('Checking that the uploaded file is compatible with the tree failed');
+						setTimeout($(upload.alertId).close, 5000)
+						console.log('Checking that the uploaded file is compatible with the tree failed!')
+						view.resetForm();
+					}
+				})				
             },
             error: function(){
                 spinner.stop();
@@ -1020,6 +1084,9 @@ var Character = function (options) {
      * load character from url or from provided list.
      */
     if(options.initCharacters && options.initCharacters.list){
+		options.initCharacters.list.id = null;
+		options.initCharacters.list.title = '(Removed while active) ' + options.initCharacters.list.title;
+		options.initCharacters.list.canDelete = false;
         view.addNewSource(options.initCharacters.list);
     }else if (options.url) {
         $.ajax({
@@ -1041,7 +1108,8 @@ var Character = function (options) {
             url: options.charactersList.url,
             dataType:'JSON',
             data: {
-                treeId: options.treeId
+                treeId: options.treeId,
+				initCharacterResourceId: options.initCharacterResourceId
             },
             success: function(data){
                 var i, slistId;
@@ -1052,10 +1120,28 @@ var Character = function (options) {
                     }
                 }
                 flag = true
+                character.selectADataresource();
             }
         })
     }
 
+    /**
+     * select a data resource on init
+     * todo: change this
+     */
+    this.selectADataresource = function(){
+        var id = options.initCharacterResourceId,
+            selected = view.list();
+        if(id || !selected){
+            if(options.selectResourceOnInit){
+                var dr = view.findResourceById(id);
+                view.list(dr);				
+				view.loadNewCharacters();
+				view.saveSource = true;
+            }
+        }
+    }	
+	
     function initPopover(){
         var pops = options.popOver, i,id;
         if($.cookie('_chari') == "ok")    {
@@ -1232,22 +1318,33 @@ var Character = function (options) {
         // do not save when initializing the charts. changed event is fired there too.
         !init && that.emit('sync');
     });
-    if (options.edit){
-        $("#csvFile").on('change', function(event){
-            var file = event.target.files[0];
-            that.readFile(file, that.showHeaders);
-            that.initialiseTitleAndSelected(file.name)
-            $('#sciNameColumn').focus();
-        });
+    
+	view.edit.subscribe(function(newValue) {
+		if (newValue){
+			$("#csvFile").on('change', function(event){
+				var file = event.target.files[0];
+				that.readFile(file, that.showHeaders);
+				that.initialiseTitleAndSelected(file.name)
+				$('#sciNameColumn').focus();
+			});
 
-        $("#uploadBtn").on('click', function(){
-            that.uploadCharacter();
-            return false;
-        });
+			$("#uploadBtn").on('click', function(){
+				that.uploadCharacter();
+				return false;
+			});
 
-        $("#csvFormUnavailable").hide();
-    } else {
-        $("#csvForm").hide();
-        $('#charactermain .alert').hide();
-    }
+			$("#csvForm").show();
+			$('#charactermain .alert').show();
+			$("#csvFormUnavailable").hide();
+		} else {
+			$("#csvForm").hide();
+			$('#charactermain .alert').hide();
+			$("#csvFormUnavailable").show();
+		}
+    });
+	view.edit(options.edit);
+	
+    //Expose this for use by other tabs
+    this.config = options;
+    this.characterViewModel = view;
 };

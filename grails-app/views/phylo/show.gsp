@@ -3,17 +3,32 @@
 --%>
 
 <%@ page import="grails.converters.JSON" contentType="text/html;charset=UTF-8" %>
+<%@ page import="groovy.json.StringEscapeUtils" %>
+<%@ page import="au.org.ala.phyloviz.DoiService" %>
+<%@ page import="au.org.ala.phyloviz.Phylo" %>
+<%@ page import="au.org.ala.phyloviz.CharacterTrait" %>
 <html>
 <head>
     <meta name="layout" content="main">
+  <g:if test="${showLoginToViewMsg}">
+		<title>Login Required | Phylolink</title>
+  </g:if>
+  <g:else>
     <g:set var="entityName" value="${message(code: 'phylo.label', default: 'Phylo')}"/>
+	
     <title data-bind='text: title'>${phyloInstance.title} | Phylolink</title>
 
     <g:if test="${isDemonstration}">
         <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'demo')},Demonstration vizualisations"/>
     </g:if>
-    <g:else>
+    <g:elseif test="${isOwner}">
         <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'myViz')},My Visualisations"/>
+    </g:elseif>
+    <g:elseif test="${isPublished}">
+        <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'published')},Published Visualisations"/>
+    </g:elseif>
+    <g:else>
+        <meta name="breadcrumbs" content="${g.createLink( controller: 'phylo', action: 'startPage')}, Phylolink \\ ${createLink(controller: 'wizard', action: 'start')}, Start PhyloLink \\ ${g.createLink( controller: 'wizard', action: 'vizThatNeedMyAttention')},Visualisations that require your attention"/>
     </g:else>
 
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -31,11 +46,14 @@
     <asset:stylesheet src="leaflet.fullscreen.v0.0.2.css" />
     <asset:stylesheet src="Control.Legend.css" />
     <asset:stylesheet src="Control.Loading.css" />
+  </g:else>
 
     <style type="text/css">
+  <g:if test="${! showLoginToViewMsg}">
         html,body,.container-fluid {
             height:100%;
         }
+  </g:if>
 
         .container-fluid {
             margin:0px 0px 0px 0px; padding:0px 0px 0px 0px;
@@ -48,6 +66,23 @@
 
 
 <body class="fluid">
+  <g:if test="${showLoginToViewMsg}">
+<div class="container-fluid" style="margin-left: 35px; margin-top:0px; padding-top:0px; width: 100%; display:table;">
+	<h1>Login Required</h1>
+	Please <span id="loginSpanForShow">login</span> to view this visualisation.  If you don't have an account, please <span id="signUpSpanForShow">sign up</span> first.
+	<g:javascript>
+		var loginLink = document.querySelector(".loginBtn");
+		if (loginLink != null && loginLink.href) {
+			$('#loginSpanForShow').html('<a href="' + loginLink.href + '">login</a>');
+		}		
+		var signUpLink = document.querySelector(".signUpBtn");
+		if (signUpLink != null && signUpLink.href) {
+			$('#signUpSpanForShow').html('<a href="' + signUpLink.href + '">sign up</a>');
+		}		
+	</g:javascript>
+</div>
+  </g:if>
+  <g:else>
 <g:render template="settings"></g:render>
 <g:render template="trimming"></g:render>
 
@@ -84,6 +119,13 @@
                                                 data-toggle="tab"
                                                 id="recordsTab">Occurrences</a>
                     </li>
+                </g:if>
+                <g:if test="${! isDemonstration}">
+					<li role="presentation" >
+						<a href="#expert" aria-controls="profile" role="tab"
+												data-toggle="tab"
+												id="expertTab">Metadata</a>
+					</li>
                 </g:if>
                 %{--<li role="presentation"><a href="#metadata" aria-controls="profile" role="tab" data-toggle="tab"--}%
                                            %{--id="metadataTab">Metadata</a></li>--}%
@@ -135,6 +177,10 @@
                     <div id="recordsForm"></div>
                 </div>
 
+                <div role="tabpanel" class="tab-pane" id="expert">
+                    <g:render template="expert"></g:render>
+                </div>
+
                 <div role="tabpanel" class="tab-pane" id="help">
                     <p class="pull-right">Presented by: <strong>Joseph Miller</strong>
                     </p>
@@ -159,13 +205,15 @@
 <asset:javascript src="thirdparty/jsphylosvg-min.js" />
 <asset:javascript src="thirdparty/jit.js" />
 <asset:javascript src="thirdparty/md5.js" />
+<asset:javascript src="js/application.js" />
 <asset:javascript src="js/PJ.js" />
 <asset:javascript src="js/Filter.js" />
 <asset:javascript src="js/Habitat.js" />
 <asset:javascript src="js/Character.js" />
 <asset:javascript src="js/CompareVariables.js" />
+<asset:javascript src="js/Expert.js" />
 <asset:javascript src="thirdparty/jquery.contextMenu.js" />
-<asset:javascript src="js/application.js" />
+<asset:javascript src="thirdparty/papaparse.min.js" />
 <asset:javascript src="js/Records.js" />
 <asset:javascript src="jqwidgets/jqxcore.js" />
 <asset:javascript src="thirdparty/jquery-ui.min.js" />
@@ -225,7 +273,7 @@
         colorByUrl: '${raw(createLink(controller: 'ala', action: 'facets'))}',
         edit:${edit},
         id: ${phyloInstance.getId()},
-        title:'<g:message message="${phyloInstance.getTitle().replace('\'', '\\\'')}"/>',
+        title:'<g:message message="${StringEscapeUtils.escapeJavaScript(phyloInstance.getTitle())}"/>',
         titleUrl: '${raw(createLink(controller: 'restrictedmethods', action: 'saveTitle'))}',
         pjId: 'info',
         charOnRequest: true,
@@ -302,7 +350,8 @@
         dataresourceListUrl: '${raw(createLink(controller: 'ala', action: 'getRecordsList'))}?phyloId=${phyloInstance.id}',
         pj: pj,
         selectResourceOnInit: true,
-        initResourceId: <g:message message="${phyloInstance.getSource()?:-1}"/>,
+        initResourceId: <g:message message="${phyloInstance.getSource()?:grailsApplication.config.alaDataresourceInfo.id}"/>,
+        allOccurrencesSourceId: ${grailsApplication.config.alaDataresourceInfo.id},
         edit: ${edit},
         syncUrl: "${raw(createLink(controller: 'phylo', action: 'saveSource'))}",
         phyloId: config.id
@@ -317,6 +366,8 @@
         dataType:'jsonp',
         height:700,
         headerHeight:55,
+        initCharacterResourceId: <g:message message="${phyloInstance.getCharacterSource()?.getId()?:'0'}"/>,
+        selectResourceOnInit: true,
         initCharacters:config.initCharacters,
         bootstrap: 2,
         sampleCSV:'${raw(resource(dir: 'artifacts', file: 'traits.csv'))}',
@@ -325,6 +376,7 @@
             id: ${phyloInstance.getId()}
         },
         syncUrl: "${raw(createLink(controller: 'phylo', action: 'saveCharacters'))}",
+        syncSourceUrl: "${raw(createLink(controller: 'phylo', action: 'saveCharacterSource'))}",
         charactersList : {
             url: '${raw(createLink(controller: 'characters', action: 'list'))}',
             type: 'GET',
@@ -336,6 +388,11 @@
             url: "${raw(createLink(controller: 'ala', action: 'saveAsList'))}?phyloId=${phyloInstance.id}",
             type: 'POST'
         },
+        checkCharacterFile : {
+            url: '${raw(createLink(controller: 'characters', action: 'isResourceCompatibleWithTree'))}',
+            type: 'GET',
+            dataType: 'JSON'
+        },
         charOnRequest: config.charOnRequest,
         charOnRequestBaseUrl: config.charOnRequestBaseUrl,
         charOnRequestParams: config.charOnRequestParams,
@@ -346,6 +403,44 @@
     });
     google.setOnLoadCallback(character.googleChartsLoaded);
 
+    var expert = new Expert({
+        id: "expert",
+        phyloId: config.id,
+        tabId: 'expertTab',
+        pj: pj,
+        records: records,
+		character: character,
+        syncUrl: "${raw(createLink(controller: 'phylo', action: 'saveExpertVisualisation'))}",
+        changeStatusUrl: "${raw(createLink(controller: 'phylo', action: 'changeWorkflowStatus'))}",
+        edit: ${edit},
+        userCanApprove: ${userCanApprove},
+        userCanReject: ${userCanReject},
+        userCanReinstate: ${userCanReinstate},
+        genus: '<g:message message="${StringEscapeUtils.escapeJavaScript(phyloInstance.getGenus()?:'')}"/>',
+        species: '<g:message message="${StringEscapeUtils.escapeJavaScript(phyloInstance.getSpecies()?:'')}"/>',
+        authors: '<g:message message="${StringEscapeUtils.escapeJavaScript(phyloInstance.getAuthors()?:'')}"/>',
+        publishedPapers: '<g:message message="${StringEscapeUtils.escapeJavaScript(phyloInstance.getPublishedPapers()?:(tree.getReference()?:''))}"/>',
+        unpublishedData: "${phyloInstance.unpublishedData}",
+        doi: "${phyloInstance.doi}",
+        doiURL: "${phyloInstance.doiURL}",
+        doiCitationUrlPrefix: '${raw(grailsApplication.config.doi?.citationUrlPrefix?:DoiService.DEFAULT_DOI_CITATIONURL_PREFIX)}',
+        notes: '<g:message message="${StringEscapeUtils.escapeJavaScript(phyloInstance.getNotes()?:'')}"/>',
+        status: "${phyloInstance.workflowStatus}",
+        doiCreationDate: "${phyloInstance.doiCreationDate}",
+        draftStatus: '<g:message message="${StringEscapeUtils.escapeJavaScript(Phylo.WorkflowStatus.Draft.toString())}"/>',
+        requestedApprovalStatus: '<g:message message="${StringEscapeUtils.escapeJavaScript(Phylo.WorkflowStatus.Requested_Approval.toString())}"/>',
+        approvedStatus: '<g:message message="${StringEscapeUtils.escapeJavaScript(Phylo.WorkflowStatus.Approved.toString())}"/>',
+        revisionRequiredStatus: '<g:message message="${StringEscapeUtils.escapeJavaScript(Phylo.WorkflowStatus.Revision_Required.toString())}"/>',
+        noLongerRequiredStatus: '<g:message message="${StringEscapeUtils.escapeJavaScript(Phylo.WorkflowStatus.No_Longer_Required.toString())}"/>',
+		userName: '<g:message message="${StringEscapeUtils.escapeJavaScript(userName?:'')}"/>',
+        sampleCSV:'${raw(resource(dir: 'artifacts', file: 'traits_metadata.csv'))}',
+		characterDataSetTraits: <g:message message="${(phyloInstance.characterSource?.characterTraits?:[]) as grails.converters.JSON}"/>,
+		characterDataSetTraitTypes: [ 
+			<g:each in="${CharacterTrait.TraitType.values()}" var="type" status="i">
+				<g:message message="${ i == 0 ? '' : ','}"/> "${StringEscapeUtils.escapeJavaScript(type.toString())}"
+			</g:each> 
+		]
+      });
 
     var compareVariables = new CompareVariables({
         id: "compare-variables",
@@ -469,5 +564,6 @@
 #FreshWidget { display:none; }
 #freshwidget-button { display:none; }
 </style>
+  </g:else>
 </body>
 </html>

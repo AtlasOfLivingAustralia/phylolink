@@ -6,3 +6,7 @@ build
 target/
 *.iml
 .idea/*
+/.settings
+bin
+/.classpath
+/.project

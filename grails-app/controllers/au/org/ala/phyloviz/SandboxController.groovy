@@ -21,7 +21,14 @@ class SandboxController {
     def deleteResource(){
         def alaId = authService.getUserId()
         def sandbox = Sandbox.get(params.id)
-        if(sandbox && sandbox.owner.getUserId().toString() == alaId){
+		
+        log.debug("In deleteResource id=${params.id}, sandbox=${sandbox}")
+		
+        if(sandbox && sandbox.owner.getUserId().toString() == alaId && ! Boolean.FALSE.equals(sandbox.canDelete)){
+			log.debug("In deleteResource about to delete")
+            Object eUresult = Phylo.executeUpdate("update Phylo p set p.source = null where p.source=:source",
+                      [source: String.valueOf(params.id)])
+			log.debug("In deleteResource executeUpdate returned=${eUresult}")
             sandbox.delete(flush:true)
             def result = [success:true]
             render( text: result as JSON, contentType: 'application/json')

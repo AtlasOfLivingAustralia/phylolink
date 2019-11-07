@@ -241,3 +241,28 @@ body.fluid .container.container-navbar, body.fluid #breadcrumb .container, body.
 
 #FreshWidget { display:none; }
 #freshwidget-button { display:none; }
+
+table.readOnlyTable {
+	width: 100%;
+	border: 1px solid;
+    border-radius: 4px;
+    border-collapse: separate;
+    border-color: rgb(153, 153, 153);
+}
+table.readOnlyTable td, table.readOnlyTable th {
+    padding-left: 10px;  
+	padding-right: 10px;  
+    padding-top: 4px;  
+    padding-bottom: 4px;  
+//	border: 1px solid;
+//    border-color: rgb(153, 153, 153);
+}	
+table.readOnlyInfoInForm tr td:first-child {
+	font-weight: bold;
+	border: none;
+}
+table.readOnlyInfoInForm tr td:not(:first-child) {
+	background-color: #f2f2f2;
+	opacity: 1;
+	border: none;
+}

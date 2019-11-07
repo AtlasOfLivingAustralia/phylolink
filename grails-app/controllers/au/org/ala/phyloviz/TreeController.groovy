@@ -41,8 +41,22 @@ class TreeController extends BaseController {
         def userId = authService.getUserId()
         def user = userId != null ? Owner.findByUserId(userId) : Owner.findByDisplayName('Guest')
         if( user ){
-            params.user = user
-            render( view: 'create', model:  [ tree: Tree.findById(params.id ? params.id : params.studyId ), isAdmin:userService.userIsSiteAdmin() ])
+			def treeId = (params.id ? params.id : params.studyId)
+			String hql = "select count(p) " + 
+					"from Phylo as p " +
+                    "where p.status = '" + Phylo.WorkflowStatus.Approved.getKey() + "' " +
+					"and p.studyid = :treeId"
+			Map hqlParams = [ treeId: treeId ]					
+			def rowCount = Phylo.executeQuery(hql, hqlParams).get(0)
+			log.debug("In edit hql='${hql}', treeId=${treeId}, rowCount=${rowCount}")
+			if (rowCount == 0) {
+				params.user = user
+				render( view: 'create', model:  [ tree: Tree.findById(treeId), isAdmin:userService.userIsSiteAdmin() ])
+			} else {
+				def msg = "You can't edit this tree as it is associated with a Published visualisation."
+				flash.message = msg
+				treeAdmin();
+			}
         } else {
             def msg = "Failed to detect current user details. Are you logged in?"
             flash.message = msg

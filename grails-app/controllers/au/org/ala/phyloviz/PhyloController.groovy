@@ -2,6 +2,7 @@ package au.org.ala.phyloviz
 
 import grails.converters.JSON
 import groovy.json.JsonBuilder
+import org.apache.commons.lang3.StringUtils
 
 import static org.springframework.http.HttpStatus.*
 /**
@@ -13,7 +14,9 @@ class PhyloController extends BaseController {
     def treeService
     def phyloService
     def authService
-
+	def userService
+	def doiService
+	
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def list(Integer max) {
@@ -22,21 +25,42 @@ class PhyloController extends BaseController {
     }
 
     def show(Phylo phyloInstance) {
-        def tree = Tree.findById(phyloInstance.getStudyid());
-        def userId = authService.getUserId();
-        if(userId != ""){
-            userId = userId instanceof String?Long.parseLong(userId):userId;
-        }
+		if (! phyloService.isAuthorisedToView(phyloInstance)) {
+//            notAuthorised "Only the visualisation owner or an administrator can view an unapproved visualisation"			
+            if (phyloService.isLoggedIn() || !phyloInstance) {
+				notAuthorised "Only a logged on user can view a visualisation that is not a demonstration"
+			} else {
+				respond phyloInstance, model: [ showLoginToViewMsg: true ] 
+			}
+		} else {
+			def tree = Tree.findById(phyloInstance.getStudyid());
+			def userId = authService.getUserId();
+			
+			log.debug("In show, user id : ${userId}")
+			log.debug("In show, owner id: ${phyloInstance.getOwner()?.userId}");
+			log.debug("In show, source: ${phyloInstance.getSource()}");
+			
+			Boolean isDemonstration = phyloService.isDemonstrationViz(phyloInstance)
+			Boolean isOwner = phyloService.isOwner(phyloInstance)
+			Boolean edit = phyloService.isAuthorised(phyloInstance)
+			Boolean userCanApprove = phyloService.isAuthorisedToApprove(phyloInstance)
+			Boolean userCanReject = phyloService.isAuthorisedToReject(phyloInstance)
+			Boolean userCanReinstate = phyloService.isAuthorisedToReinstate(phyloInstance)
+			Boolean userIsWorkflowAdmin = phyloService.isAuthorisedWorkflowAdmin()
+			Boolean showWorkflowStatusEntries = isOwner || userIsWorkflowAdmin
+			Boolean isPublished = phyloService.isPublished(phyloInstance)
 
-        Boolean edit = false
-        log.debug("user id : ${userId instanceof String}")
-        log.debug("owner id: ${phyloInstance.getOwner()?.userId}");
-        if( phyloInstance.getOwner()?.userId == userId && userId != null){
-            edit = true
-            log.debug('editable');
-        }
-
-        respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid(), phyloInstance: phyloInstance, isDemonstration: !edit]
+			log.debug("In show, edit: ${edit}, userCanApprove: ${userCanApprove}, userCanReject: ${userCanReject}, userCanReinstate: ${userCanReinstate}");
+			
+			phyloService.prepopulateEmptyFields(phyloInstance)
+					
+			respond phyloInstance, model: [ tree: tree, userId: userId, edit: edit, studyId: phyloInstance.getStudyid(), 
+				phyloInstance: phyloInstance, isOwner: isOwner, isDemonstration: isDemonstration, userCanApprove: userCanApprove,
+				userCanReject: userCanReject, userCanReinstate: userCanReinstate, showWorkflowStatusEntries: showWorkflowStatusEntries,
+				userName: userService.getCurrentUserDisplayName(), licences: doiService.getLicences(), userIsWorkflowAdmin: userIsWorkflowAdmin,
+				isPublished: isPublished, showLoginToViewMsg: false
+				]
+		}
     }
 
     def deleteViz() {
@@ -275,51 +299,120 @@ class PhyloController extends BaseController {
      * @return
      */
     def saveHabitat(Phylo phyloInstance){
-        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+        if(!phyloService.isAuthorised(phyloInstance)){
             notAuthorised "Only owner can edit this visualisation";
         }
 
         String habInit = params.json
-        log.debug(habInit);
+        log.debug("In saveHabitat about to setHabitat to ${habInit}");
         phyloInstance.setHabitat(JSON.parse(habInit).toString());
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
     }
 
     /**
-     * save the habitats json string into database
+     * save the characters/traits json string into database
      * @param phyloInstance
      * @return
      */
     def saveCharacters(Phylo phyloInstance){
-        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+        if(!phyloService.isAuthorised(phyloInstance)){
             notAuthorised "Only owner can edit this visualisation";
         }
 
         String charInit = params.json
-        log.debug(charInit);
+        log.debug("In saveCharacters about to setCharacters to ${charInit}");
         phyloInstance.setCharacters(JSON.parse(charInit).toString());
+        phyloInstance.setCharacterSource(null);
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
     }
 
     /**
-     * save the habitats json string into database
+     * save the reference to the character traits data set into the database
+     * @param phyloInstance
+     * @return
+     */
+    def saveCharacterSource(Phylo phyloInstance){
+        if(!phyloService.isAuthorised(phyloInstance)){
+            notAuthorised "Only owner can edit this visualisation";
+        }
+
+        String id = params.characterSourceId
+        log.debug("In saveCharacterSource about to setSource to '${id}'");
+		
+		Characters characters = (StringUtils.isNotBlank(id) ? Characters.findById(id) : null);
+		if (StringUtils.isNotBlank(id) && characters == null) {
+			throw new IllegalArgumentException("In saveCharacterSource unknown characterSourceId '" + id + "'");
+		}
+        if (characters != null) {
+			phyloInstance.setCharacters(null);
+		}
+        phyloInstance.setCharacterSource(characters);
+        phyloInstance.save(flush: true);
+        render(contentType: 'application/json',text:"{\"message\":\"success\"}");
+    }
+
+    /**
+     * save the reference to the occurrence distribution into the database
      * @param phyloInstance
      * @return
      */
     def saveSource(Phylo phyloInstance){
-        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+        if(!phyloService.isAuthorised(phyloInstance)){
             notAuthorised "Only owner can edit this visualisation";
         }
 
         String id = params.sourceId
-        log.debug(id);
+        log.debug("In saveSource about to setSource to '${id}'");
         phyloInstance.setSource(id);
         phyloInstance.save(flush: true);
         render(contentType: 'application/json',text:"{\"message\":\"success\"}");
     }
 
+    /**
+     * save the visualisation metadata to the database
+     * @param phyloInstance
+     * @return
+     */
+    def saveExpertVisualisation(Phylo phyloInstance){
+		String responseMessage = "";
+		String processDescription = "save metadata";
+		try {
+			phyloService.saveMetadata(phyloInstance, params)
+		
+			responseMessage = "Successfully saved metadata."
+		
+		} catch (Exception e) {
+			log.error("Exception while trying to " + processDescription + " for Phylo with Id=" + phyloInstance?.getId(), e);
+			return renderJSONError(responseMessage + " Failed to " + processDescription + ".");
+		}
+		
+		Map response = [
+			message: responseMessage
+		]
+		
+        success(response);
+    }
+	
+    /**
+     * change the workflow status of the visualisation
+     * @param phyloInstance
+     * @return
+     */
+    def changeWorkflowStatus(Phylo phyloInstance){
+		String visualisationURL = grailsApplication.config.serverURL + 
+				createLink(controller: 'phylo', action: 'show', params: [id: phyloInstance.id])
+
+		Map response = phyloService.changeWorkflowStatus(phyloInstance, params, visualisationURL)
+		
+		if (response.containsKey('userCanApprove')) {
+			success(response);
+		} else {
+			renderJSONError(response.get('responseMessage'))
+		}
+    }
+	
     /**
      * start page for phylolink
      */
@@ -342,7 +435,7 @@ class PhyloController extends BaseController {
      * save pj settings to the database. currently only saving clicked node id.
      */
     def savePjSettings(Phylo phyloInstance){
-        if(!phyloService.isAuthorised(phyloInstance.getOwner())){
+        if(!phyloService.isAuthorised(phyloInstance)){
             notAuthorised "Only owner can edit this visualisation";
         }
 
@@ -353,7 +446,7 @@ class PhyloController extends BaseController {
         if(!phyloInstance.hasErrors()){
             render(contentType: 'application/json',text: ["message":"success"] as JSON);
         } else {
-            render(contentType: 'application/json',text: ["message":"failed"] as JSON, status: 500);
+            render(contentType: 'application/json',text: ["message":"failed"] as JSON, status: INTERNAL_SERVER_ERROR.value());
         }
     }
 }

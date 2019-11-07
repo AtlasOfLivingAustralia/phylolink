@@ -67,3 +67,11 @@ function addWidgetForm(){
         return data ? fn( data ) : fn;
     };
 })();
+
+function dateToString(date) {
+	if (date) {
+		var dateObj = new Date(date);
+		return dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+	}
+	return date;
+}				

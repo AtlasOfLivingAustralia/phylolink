@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader
 import au.org.ala.web.AuthService
 import grails.converters.JSON
 import grails.transaction.Transactional
+import org.apache.commons.lang3.StringUtils
 import org.grails.web.json.JSONObject
 
 import java.util.regex.Pattern
@@ -16,13 +17,27 @@ class CharactersService {
     def grailsApplication
     AuthService authService
 
-    def getCharacterListsByOwner() {
+    def getCharacterListsByOwner(initCharacterResourceId = null) {
         def id = authService.getUserId()
         log.debug(id)
         def owner = Owner.findByUserId(id)
         def lists = Characters.findAllByOwner(owner);
         def slist = Characters.findAllByOwner(Owner.findByUserId(1));
         lists.addAll(slist);
+		if (initCharacterResourceId != null) {
+			def found = false;
+			for (Characters characters : lists) {
+				if (String.valueOf(characters.id).equals(String.valueOf(initCharacterResourceId))) {
+					found = true
+				}
+			}
+			if (!found) {
+				Characters characters = Characters.findById(initCharacterResourceId);
+				if (characters != null) {
+					lists.add(characters)
+				}
+			}
+		}		
         getCharUrl(lists);
     }
 
@@ -37,7 +52,8 @@ class CharactersService {
                 'url': getUrl(list.drid),
                 'title':list.title,
                 'id': list.id,
-                'listurl': listsUrl.replace('DRID', list.drid)
+                'listurl': listsUrl.replace('DRID', list.drid),
+				'canDelete': ! Boolean.FALSE.equals(list.canDelete)
             ]);
         }
         return result
@@ -166,6 +182,7 @@ class CharactersService {
             result['url'] = url
             result['title'] = title
             result['id'] = id;
+			result['canDelete'] = true;
         } else {
             result['error'] = 'error executing function';
         }

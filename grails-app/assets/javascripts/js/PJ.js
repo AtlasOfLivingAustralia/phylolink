@@ -1170,7 +1170,7 @@ var PJ = function (params) {
             this.title = ko.observable(d.title || 'unnamed');
             this.id = d.id;
             this.selected = ko.observable(d.selected || false)
-            this.edit = d.edit || false
+            this.edit = ko.observable(d.edit || false)
             this.selectedDr = d.selectedDr
             this.selectedClade = d.selectedClade
             this.selectedCladeNumber = d.selectedCladeNumber
@@ -1182,7 +1182,7 @@ var PJ = function (params) {
                 this.selected(false)
             }
             this.select = function () {
-                if (this.edit) {
+                if (this.edit()) {
                     this.selected(true)
                     $('#' + config.heading).find('input').focus()
                 }
@@ -1196,6 +1196,7 @@ var PJ = function (params) {
         var titleDom = $('#' + config.heading);
         var model = new HeadingModel(data);
         ko.applyBindings(model, titleDom[0]);
+        return model;
     }
 
     this.st = st;
@@ -1825,6 +1826,7 @@ var PJ = function (params) {
     st = new $jit.Phylo(config);
     navigation(config)
     setTree(config)
-    setTitle(config);
+    //Expose this for use by other tabs
+    this.titleViewModel = setTitle(config);
     // console.log('after jit initialized')
 };

@@ -15,7 +15,9 @@
 
                         <p>
                             Upload your own character data. Data should be in CSV format with the
-                            <b>first column being a scientific name</b>.
+                            <b>first column being a species scientific name</b>.  For best results please ensure the species scientific name exactly matches the 
+							species name as shown in the tree (please note that underscores in the species names in the tree are replaced with spaces before being 
+							shown, so please remove underscores from your species names in your character data).
                         You can supply any number of additional columns with each column being a trait/character.
                             <br/>
                             You can download an
@@ -60,11 +62,11 @@
                                 </button>
 
                             </form>
-
-                            <div class="alert alert-danger" id="uploadMessage" data-bind="visible:message">
-                                <div data-bind="text:message"></div>
-                            </div>
                         </div>
+
+						<div class="alert alert-danger" id="uploadMessage" data-bind="visible:message">
+							<div data-bind="text:message"></div>
+						</div>
                     </div>
                 </div>
             </div>
@@ -95,14 +97,15 @@
                     <div class="col-sm-7">
                         <select id="sourceChar"
                                 class="form-control"
-                                data-bind="options:lists,optionsText:'title',value:list,optionsCaption:'Choose..', event:{change:loadNewCharacters}" required>
+                                data-bind="options:lists,optionsText:'title',value:list,optionsCaption:'Choose..', event:{change:loadNewCharacters}, disable: ! edit()"
+								required>
                         </select>
                     </div>
 
                     <div class="col-sm-3">
 
                         <g:if test="${edit}">
-                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#characterDatasets">
+                            <button data-bind="disable: ! edit()" type="button" class="btn btn-default" data-toggle="modal" data-target="#characterDatasets">
                                 <i class="glyphicon glyphicon-cog"></i> Manage datasets
                             </button>
                         </g:if>
@@ -145,7 +148,7 @@
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-danger" data-bind="click:$parent.removeSource;">Remove</button>
+                                                    <button class="btn btn-danger" data-bind="disable: ! canDelete, click:$parent.removeSource;">Remove</button> 
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -191,6 +194,7 @@
                 <div data-bind="text: name"></div>
             </div>
             <div class="panel-body" >
+                <div data-bind="visible: description">Description: <span data-bind="text: description"></span></div>
                 <div data-bind="attr:{id: id}, addChart: !!$data.name()" style="width: 100%; height: 200px;"></div>
             </div>
         </div>
